@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draft Day HQ | NBA Draft Coverage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0a0a0c;
+    --panel:#141417;
+    --panel-2:#1b1c20;
+    --steel:#2e3136;
+    --steel-soft:#3a3d43;
+    --paper:#ece7dc;
+    --paper-dim:#a9a49a;
+    --gold:#c6a15b;
+    --gold-bright:#e8c873;
+    --signal:#d9483a;
+    --signal-up:#5c9e6f;
+    --display:'Anton', sans-serif;
+    --serif:'Source Serif 4', serif;
+    --mono:'Space Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--paper);
+    font-family:var(--serif);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--gold); color:var(--void);}
+
+  /* ---------- scrollbar ---------- */
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:var(--void);}
+  ::-webkit-scrollbar-thumb{background:var(--steel-soft); border-radius:0;}
+
+  /* ================= LOADER ================= */
+  #loader{
+    position:fixed; inset:0; z-index:9999;
+    background:var(--void);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  #loader.hide{opacity:0; visibility:hidden; pointer-events:none;}
+  .loader-mark{
+    font-family:var(--display);
+    font-weight:900;
+    font-size:clamp(2.5rem, 8vw, 5rem);
+    letter-spacing:.02em;
+    color:var(--paper);
+    display:flex;
+    overflow:hidden;
+  }
+  .loader-mark span{
+    display:inline-block;
+    transform:translateY(110%);
+    animation:riseUp .7s cubic-bezier(.2,.9,.25,1) forwards;
+  }
+  .loader-mark .gold{color:var(--gold);}
+  @keyframes riseUp{ to{ transform:translateY(0); } }
+  .loader-bar{
+    margin-top:22px; width:220px; height:2px; background:var(--steel);
+    position:relative; overflow:hidden;
+  }
+  .loader-bar::after{
+    content:''; position:absolute; left:-100%; top:0; bottom:0; width:100%;
+    background:var(--gold);
+    animation:loadSweep 1.5s ease-in-out forwards .3s;
+  }
+  @keyframes loadSweep{ to{ left:0%; } }
+  .loader-tag{
+    margin-top:14px; font-family:var(--mono); font-size:.65rem; letter-spacing:.25em;
+    text-transform:uppercase; color:var(--paper-dim); opacity:0;
+    animation:fadeIn .6s ease forwards 1.6s;
+  }
+  @keyframes fadeIn{ to{ opacity:1; } }
+
+  /* ================= NAV ================= */
+  header{
+    position:sticky; top:0; z-index:500;
+    background:rgba(10,10,12,.92); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--steel);
+  }
+  .nav-wrap{
+    max-width:1320px; margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+  }
+  .logo{
+    font-family:var(--display); font-weight:400; font-size:1.5rem;
+    letter-spacing:.01em; display:flex; align-items:center; gap:8px; cursor:pointer;
+  }
+  .logo .dot{color:var(--gold);}
+  nav.links{display:flex; gap:2px; align-items:center;}
+  nav.links button{
+    background:none; border:none; color:var(--paper-dim);
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+    padding:10px 14px; cursor:pointer; position:relative; transition:color .2s;
+  }
+  nav.links button:hover{color:var(--paper);}
+  nav.links button.active{color:var(--gold);}
+  nav.links button.active::after{
+    content:''; position:absolute; left:14px; right:14px; bottom:4px; height:1px; background:var(--gold);
+  }
+  .nav-social{display:flex; gap:14px; align-items:center;}
+  .nav-social a{
+    width:30px; height:30px; border:1px solid var(--steel); display:flex; align-items:center; justify-content:center;
+    color:var(--paper-dim); transition:all .2s; border-radius:2px;
+  }
+  .nav-social a:hover{color:var(--gold); border-color:var(--gold);}
+  .nav-social svg{width:14px; height:14px;}
+  .burger{display:none; background:none; border:none; color:var(--paper); font-size:1.4rem; cursor:pointer;}
+
+  /* ================= TICKER (signature element) ================= */
+  .ticker{
+    background:var(--panel); border-bottom:1px solid var(--steel);
+    overflow:hidden; white-space:nowrap; position:relative;
+  }
+  .ticker::before, .ticker::after{
+    content:''; position:absolute; top:0; bottom:0; width:60px; z-index:2; pointer-events:none;
+  }
+  .ticker::before{ left:0; background:linear-gradient(90deg, var(--panel), transparent); }
+  .ticker::after{ right:0; background:linear-gradient(270deg, var(--panel), transparent); }
+  .ticker-track{
+    display:inline-flex; gap:0; animation:tickerScroll 42s linear infinite;
+  }
+  .ticker:hover .ticker-track{ animation-play-state:paused; }
+  @keyframes tickerScroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .tick{
+    display:inline-flex; align-items:center; gap:8px; padding:9px 26px;
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.05em;
+    border-right:1px solid var(--steel); color:var(--paper-dim);
+  }
+  .tick b{color:var(--paper); font-weight:500;}
+  .tick .up{color:var(--signal-up);}
+  .tick .down{color:var(--signal);}
+  .sbadge{
+    display:inline-flex; align-items:center; justify-content:center; padding:2px 6px;
+    border:1px solid var(--steel-soft); font-family:var(--mono); font-size:.62rem;
+    letter-spacing:.04em; color:var(--gold); border-radius:2px; margin-right:6px; vertical-align:middle;
+  }
+  .flag{margin-right:6px; font-size:.95rem; vertical-align:middle;}
+
+  /* ================= VIEWS ================= */
+  .view{display:none;}
+  .view.active{display:block; animation:viewFade .5s ease;}
+  @keyframes viewFade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  section{max-width:1320px; margin:0 auto; padding:90px 28px;}
+  .eyebrow{
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:22px; height:1px; background:var(--gold);}
+  h2.section-title{
+    font-family:var(--display); font-weight:400; font-size:clamp(2rem,4vw,3rem);
+    letter-spacing:.005em; line-height:1; margin-bottom:8px;
+  }
+  .section-sub{ color:var(--paper-dim); font-size:1rem; max-width:560px; margin-bottom:44px; }
+
+  /* ================= HERO ================= */
+  .hero{
+    position:relative; min-height:92vh; display:flex; align-items:center;
+    padding:120px 28px 60px; overflow:hidden;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 0%, rgba(198,161,91,.10), transparent 60%),
+      linear-gradient(180deg, #0a0a0c 0%, #121214 55%, #0a0a0c 100%);
+  }
+  .hero-inner{max-width:1320px; margin:0 auto; width:100%; display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center; position:relative; z-index:3;}
+  .hero-eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.3em; color:var(--gold); text-transform:uppercase; margin-bottom:18px; opacity:0;
+    animation:heroIn .8s ease forwards .2s;}
+  .hero h1{
+    font-family:var(--display); font-weight:400; font-size:clamp(3rem,6.4vw,5.6rem);
+    line-height:.94; letter-spacing:.005em; opacity:0; animation:heroIn .9s ease forwards .35s;
+  }
+  .hero h1 .line2{color:var(--gold);}
+  .hero p.lede{
+    font-family:var(--serif); font-size:1.15rem; color:var(--paper-dim); margin-top:24px; max-width:480px;
+    opacity:0; animation:heroIn .9s ease forwards .55s;
+  }
+  @keyframes heroIn{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+  .hero-ctas{display:flex; gap:14px; margin-top:34px; opacity:0; animation:heroIn .9s ease forwards .7s;}
+  .btn{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.15em; text-transform:uppercase;
+    padding:15px 26px; border:1px solid var(--gold); cursor:pointer; transition:all .25s; background:none;
+  }
+  .btn-solid{background:var(--gold); color:var(--void);}
+  .btn-solid:hover{background:var(--gold-bright); border-color:var(--gold-bright);}
+  .btn-ghost{color:var(--paper); border-color:var(--steel-soft);}
+  .btn-ghost:hover{border-color:var(--gold); color:var(--gold);}
+
+  /* fanned prospect cards */
+  .fan{position:relative; height:460px; display:flex; align-items:center; justify-content:center; opacity:0; animation:heroIn 1s ease forwards .5s;}
+  .pcard{
+    position:absolute; width:190px; height:260px; border-radius:4px;
+    border:1px solid var(--steel-soft);
+    background:linear-gradient(155deg, var(--panel-2), var(--void));
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
+    transition:transform .4s ease;
+  }
+  .pcard:hover{transform:translateY(-14px) !important;}
+  .pcard .num{position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:.65rem; color:var(--gold); letter-spacing:.1em;}
+  .pcard .mono{
+    width:64px; height:64px; border-radius:50%; margin:0 auto 14px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:400; font-size:1.4rem; color:var(--gold);
+    border:1px solid var(--gold); background:rgba(198,161,91,.08);
+  }
+  .pcard .pname{font-family:var(--display); font-weight:400; font-size:1.05rem; text-align:center; line-height:1.05;}
+  .pcard .pschool{font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; color:var(--paper-dim); text-align:center; margin-top:4px; text-transform:uppercase;}
+  .fan .p1{transform:rotate(-9deg) translate(-150px,10px); z-index:1;}
+  .fan .p2{transform:rotate(-3deg) translate(-58px,-14px); z-index:2;}
+  .fan .p3{transform:rotate(3deg) translate(58px,-14px) ; z-index:2;}
+  .fan .p4{transform:rotate(9deg) translate(150px,10px); z-index:1;}
+
+  /* ================= RECENT SLIDESHOW ================= */
+  .recent-wrap{position:relative;}
+  .slideshow{
+    position:relative; height:420px; border:1px solid var(--steel); overflow:hidden; background:var(--panel);
+  }
+  .slide{
+    position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr;
+    opacity:0; transition:opacity .7s ease; pointer-events:none;
+  }
+  .slide.active{opacity:1; pointer-events:auto;}
+  .slide-visual{
+    background:linear-gradient(155deg, var(--panel-2), var(--void));
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+    border-right:1px solid var(--steel);
+  }
+  .slide-visual .big-num{font-family:var(--display); font-weight:400; font-size:9rem; color:var(--steel-soft); line-height:1;}
+  .slide-visual .tagchip{
+    position:absolute; top:22px; left:22px; font-family:var(--mono); font-size:.65rem; letter-spacing:.15em;
+    text-transform:uppercase; padding:6px 12px; border:1px solid var(--gold); color:var(--gold);
+  }
+  .slide-body{padding:44px; display:flex; flex-direction:column; justify-content:center;}
+  .slide-kicker{font-family:var(--mono); font-size:.68rem; letter-spacing:.2em; color:var(--paper-dim); text-transform:uppercase; margin-bottom:12px;}
+  .slide-body h3{font-family:var(--display); font-weight:400; font-size:1.9rem; line-height:1.05; margin-bottom:14px;}
+  .slide-body p{color:var(--paper-dim); font-size:.98rem; line-height:1.55; margin-bottom:22px;}
+  .slide-link{font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; color:var(--gold); text-transform:uppercase; cursor:pointer; width:fit-content; border-bottom:1px solid var(--gold); padding-bottom:2px;}
+  .dots{display:flex; gap:8px; margin-top:20px; justify-content:center;}
+  .dots button{width:26px; height:2px; background:var(--steel-soft); border:none; cursor:pointer; transition:background .2s;}
+  .dots button.active{background:var(--gold);}
+
+  /* ================= PLAYER GRID ================= */
+  .filter-row{display:flex; gap:10px; margin-bottom:36px; flex-wrap:wrap;}
+  .chip{
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+    padding:8px 16px; border:1px solid var(--steel-soft); color:var(--paper-dim); cursor:pointer; transition:all .2s;
+  }
+  .chip.active, .chip:hover{border-color:var(--gold); color:var(--gold);}
+  .player-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:1px; background:var(--steel); border:1px solid var(--steel);}
+  .player-card{
+    background:var(--panel); padding:26px 22px; cursor:pointer; transition:background .2s; position:relative;
+  }
+  .player-card:hover{background:var(--panel-2);}
+  .player-card .rk{font-family:var(--mono); font-size:.68rem; color:var(--gold); letter-spacing:.08em;}
+  .player-card .avatar{
+    width:56px; height:56px; border-radius:50%; margin:16px 0 14px;
+    display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:400;
+    color:var(--gold); border:1px solid var(--steel-soft); background:var(--void);
+  }
+  .player-card h4{font-family:var(--display); font-weight:400; font-size:1.2rem; line-height:1.05;}
+  .player-card .meta{font-family:var(--mono); font-size:.68rem; color:var(--paper-dim); margin-top:6px; text-transform:uppercase; letter-spacing:.05em;}
+  .player-card .stat-row{display:flex; gap:16px; margin-top:16px; padding-top:14px; border-top:1px solid var(--steel);}
+  .player-card .stat-row div{font-family:var(--mono); font-size:.7rem; color:var(--paper-dim);}
+  .player-card .stat-row b{display:block; color:var(--paper); font-size:.95rem; font-family:var(--display); font-weight:400;}
+  .player-card .trend{position:absolute; top:26px; right:22px; font-family:var(--mono); font-size:.75rem;}
+  .trend.up{color:var(--signal-up);}
+  .trend.down{color:var(--signal);}
+
+  /* ================= PLAYER PROFILE (detail) ================= */
+  .profile-back{
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.12em; color:var(--paper-dim); text-transform:uppercase;
+    cursor:pointer; margin-bottom:30px; display:inline-flex; align-items:center; gap:8px;
+  }
+  .profile-back:hover{color:var(--gold);}
+  .profile-head{display:grid; grid-template-columns:260px 1fr; gap:44px; margin-bottom:60px;}
+  .profile-avatar{
+    width:100%; aspect-ratio:3/4; border:1px solid var(--steel-soft);
+    background:linear-gradient(155deg, var(--panel-2), var(--void));
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .profile-avatar .initials{font-family:var(--display); font-weight:400; font-size:5rem; color:var(--gold); opacity:.85;}
+  .profile-avatar .rankbadge{
+    position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:.7rem; letter-spacing:.1em;
+    padding:6px 10px; background:var(--gold); color:var(--void); font-weight:600;
+  }
+  .profile-title .eyebrow{margin-bottom:10px;}
+  .pos-tag{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:7px 14px; border:1px solid var(--steel-soft); background:var(--panel-2);
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--paper-dim); margin-bottom:14px;
+  }
+  .pos-tag::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--pos-dot, var(--gold));}
+  .pos-tag b{color:var(--paper); font-weight:400; letter-spacing:.05em;}
+  .profile-title h1{font-family:var(--display); font-weight:400; font-size:clamp(2.4rem,4vw,3.6rem); line-height:.98;}
+  .profile-title .sub{font-family:var(--mono); font-size:.82rem; letter-spacing:.05em; color:var(--paper-dim); margin-top:12px; text-transform:uppercase;}
+  .vitals{display:grid; grid-template-columns:repeat(5,1fr); gap:0; margin-top:30px; border-top:1px solid var(--steel); border-left:1px solid var(--steel);}
+  .vitals div{padding:16px; border-right:1px solid var(--steel); border-bottom:1px solid var(--steel);}
+  .vitals div span{display:block; font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; color:var(--paper-dim); text-transform:uppercase; margin-bottom:6px;}
+  .vitals div b{font-family:var(--display); font-weight:400; font-size:1.3rem;}
+
+  .profile-grid{display:grid; grid-template-columns:2fr 1fr; gap:56px;}
+  .profile-grid h3{font-family:var(--display); font-weight:400; font-size:1.4rem; margin-bottom:16px; margin-top:36px;}
+  .profile-grid h3:first-child{margin-top:0;}
+  .profile-grid p{color:#cfc9bc; line-height:1.75; font-size:1.02rem;}
+  .sw-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:16px;}
+  .sw-box{border:1px solid var(--steel); padding:20px;}
+  .sw-box .lbl{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:10px;}
+  .sw-box.strength .lbl{color:var(--signal-up);}
+  .sw-box.weakness .lbl{color:var(--signal);}
+  .sw-box ul{padding-left:18px; color:#cfc9bc; font-size:.92rem; line-height:1.7;}
+  .side-panel{border:1px solid var(--steel); padding:24px; height:fit-content;}
+  .side-panel .lbl{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; color:var(--gold); text-transform:uppercase; margin-bottom:16px;}
+  .comp-row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--steel); font-family:var(--mono); font-size:.82rem;}
+  .comp-row:last-child{border-bottom:none;}
+  .season-table{width:100%; border-collapse:collapse; margin-top:14px; font-family:var(--mono); font-size:.82rem;}
+  .season-table th, .season-table td{border:1px solid var(--steel); padding:10px; text-align:center;}
+  .season-table th{color:var(--gold); font-weight:500; letter-spacing:.05em; text-transform:uppercase; font-size:.65rem;}
+
+  /* ================= RANKINGS ================= */
+  .rank-table{width:100%; border-collapse:collapse;}
+  .rank-table th{
+    font-family:var(--mono); font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:var(--gold);
+    text-align:left; padding:14px 16px; border-bottom:1px solid var(--gold);
+  }
+  .rank-table td{padding:18px 16px; border-bottom:1px solid var(--steel); font-family:var(--serif);}
+  .rank-table tr{cursor:pointer; transition:background .2s;}
+  .rank-table tr:hover td{background:var(--panel);}
+  .rank-table .rknum{font-family:var(--display); font-weight:400; font-size:1.4rem; color:var(--gold);}
+  .rank-table .pname{font-family:var(--display); font-weight:400; font-size:1.1rem;}
+  .rank-table .school{font-family:var(--mono); font-size:.75rem; color:var(--paper-dim); text-transform:uppercase;}
+  .move{font-family:var(--mono); font-size:.75rem;}
+
+  /* ================= ARTICLES ================= */
+  .article-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:1px; background:var(--steel); border:1px solid var(--steel);}
+  .article-card{background:var(--panel); padding:30px; display:flex; flex-direction:column; cursor:pointer; transition:background .2s;}
+  .article-card:hover{background:var(--panel-2);}
+  .article-card.feature{grid-row:span 2; justify-content:flex-end; min-height:440px; position:relative;}
+  .article-card .cat{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; color:var(--gold); text-transform:uppercase; margin-bottom:12px;}
+  .article-card h4{font-family:var(--display); font-weight:400; font-size:1.3rem; line-height:1.1; margin-bottom:10px;}
+  .article-card.feature h4{font-size:2rem;}
+  .article-card p{color:var(--paper-dim); font-size:.9rem; line-height:1.5;}
+  .article-card .byline{font-family:var(--mono); font-size:.66rem; color:var(--paper-dim); margin-top:16px; text-transform:uppercase; letter-spacing:.05em;}
+
+  /* ================= NEWSLETTER ================= */
+  .nl-section{background:var(--panel); border-top:1px solid var(--steel); border-bottom:1px solid var(--steel);}
+  .nl-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
+  .price-tag{display:flex; align-items:baseline; gap:10px; margin:22px 0 28px;}
+  .price-tag .big{font-family:var(--display); font-weight:400; font-size:3rem; color:var(--gold);}
+  .price-tag .small{font-family:var(--mono); font-size:.85rem; color:var(--paper-dim);}
+  .nl-perks{list-style:none; margin-bottom:0;}
+  .nl-perks li{font-family:var(--mono); font-size:.82rem; color:var(--paper-dim); padding:8px 0; border-bottom:1px solid var(--steel); display:flex; gap:10px;}
+  .nl-perks li:last-child{border-bottom:none;}
+  .nl-perks li::before{content:'•'; color:var(--gold);}
+  .nl-form{border:1px solid var(--steel-soft); padding:36px; background:var(--void);}
+  .nl-form .lbl{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; color:var(--gold); text-transform:uppercase; margin-bottom:18px;}
+  .nl-form input{
+    width:100%; background:none; border:none; border-bottom:1px solid var(--steel-soft);
+    color:var(--paper); font-family:var(--mono); font-size:.9rem; padding:14px 4px; margin-bottom:22px; outline:none;
+  }
+  .nl-form input:focus{border-color:var(--gold);}
+  .nl-form input::placeholder{color:var(--paper-dim);}
+  .nl-form button{width:100%;}
+  .nl-fine{font-family:var(--mono); font-size:.62rem; color:var(--paper-dim); margin-top:16px; line-height:1.6;}
+  .nl-success{display:none; font-family:var(--mono); font-size:.85rem; color:var(--signal-up); margin-top:16px;}
+
+  /* ================= PODCASTS ================= */
+  .pod-list{display:flex; flex-direction:column; border-top:1px solid var(--steel);}
+  .pod-row{display:grid; grid-template-columns:70px 90px 1fr auto; gap:24px; align-items:center; padding:24px 4px; border-bottom:1px solid var(--steel); cursor:pointer; transition:background .2s;}
+  .pod-row:hover{background:var(--panel);}
+  .pod-row .ep{font-family:var(--mono); font-size:.7rem; color:var(--gold);}
+  .pod-play{
+    width:52px; height:52px; border:1px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0;
+  }
+  .pod-info h4{font-family:var(--display); font-weight:400; font-size:1.15rem;}
+  .pod-info p{font-family:var(--mono); font-size:.75rem; color:var(--paper-dim); margin-top:6px;}
+  .pod-len{font-family:var(--mono); font-size:.75rem; color:var(--paper-dim);}
+
+  /* ================= FOOTER ================= */
+  footer{background:var(--panel); border-top:1px solid var(--steel); padding:70px 28px 30px;}
+  .foot-wrap{max-width:1320px; margin:0 auto;}
+  .foot-top{display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr; gap:40px; padding-bottom:50px; border-bottom:1px solid var(--steel);}
+  .foot-logo{font-family:var(--display); font-weight:400; font-size:1.5rem; margin-bottom:14px;}
+  .foot-logo .gold{color:var(--gold);}
+  .foot-desc{color:var(--paper-dim); font-size:.88rem; line-height:1.6; max-width:280px;}
+  .foot-social{display:flex; gap:12px; margin-top:20px;}
+  .foot-col .lbl{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; color:var(--gold); text-transform:uppercase; margin-bottom:16px;}
+  .foot-col a{display:block; color:var(--paper-dim); font-size:.85rem; padding:6px 0; transition:color .2s;}
+  .foot-col a:hover{color:var(--paper);}
+  .foot-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:26px; font-family:var(--mono); font-size:.7rem; color:var(--paper-dim); flex-wrap:wrap; gap:10px;}
+
+  /* ================= RESPONSIVE ================= */
+  @media (max-width:980px){
+    nav.links{display:none;}
+    .burger{display:block;}
+    .hero-inner{grid-template-columns:1fr;}
+    .fan{height:340px; margin-top:20px;}
+    .pcard{width:140px; height:190px;}
+    .slide{grid-template-columns:1fr;}
+    .slide-visual{display:none;}
+    .player-grid{grid-template-columns:repeat(2,1fr);}
+    .article-grid{grid-template-columns:1fr;}
+    .article-card.feature{min-height:280px;}
+    .profile-head{grid-template-columns:1fr;}
+    .profile-avatar{max-width:220px;}
+    .profile-grid{grid-template-columns:1fr;}
+    .nl-grid{grid-template-columns:1fr;}
+    .vitals{grid-template-columns:repeat(3,1fr);}
+    .foot-top{grid-template-columns:1fr 1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOADER ============ -->
+<div id="loader">
+  <div class="loader-mark">
+    <span style="animation-delay:.05s">D</span><span style="animation-delay:.08s">r</span><span style="animation-delay:.11s">a</span><span style="animation-delay:.14s">f</span><span style="animation-delay:.17s">t</span><span style="animation-delay:.2s">d</span><span style="animation-delay:.23s">a</span><span style="animation-delay:.26s">y</span>
+    <span class="gold" style="animation-delay:.34s">&nbsp;HQ</span>
+  </div>
+  <div class="loader-bar"></div>
+  <div class="loader-tag">Loading the board&nbsp;&nbsp;·&nbsp;&nbsp;HQ</div>
+</div>
+
+<!-- ============ NAV ============ -->
+<header>
+  <div class="nav-wrap">
+    <div class="logo" onclick="showView('home')">DRAFT<span class="dot">•</span>DAY<span style="color:var(--paper-dim); font-weight:500; font-size:.9rem; margin-left:2px;">HQ</span></div>
+    <nav class="links" id="navLinks">
+      <button data-view="home" class="active" onclick="showView('home')">Home</button>
+      <button data-view="players" onclick="showView('players')">Players</button>
+      <button data-view="rankings" onclick="showView('rankings')">Rankings</button>
+      <button data-view="stats" onclick="showView('stats')">Stats</button>
+      <button data-view="articles" onclick="showView('articles')">Articles</button>
+      <button data-view="podcasts" onclick="showView('podcasts')">Podcasts</button>
+      <button data-view="newsletter" onclick="showView('newsletter')">Newsletter</button>
+    </nav>
+    <div class="nav-social">
+      <a href="https://twitter.com" target="_blank" title="X / Twitter" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.5 8.6L23.3 22h-6.9l-5.4-7-6.2 7H1.7l8-9.2L1 2h7l4.9 6.4L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/></svg></a>
+      <a href="https://instagram.com" target="_blank" title="Instagram" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.7 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.16.56.55.9 1.11 1.16 1.77.25.64.42 1.37.47 2.43.05 1.06.06 1.42.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.16 1.77 4.9 4.9 0 0 1-1.77 1.16c-.64.25-1.37.42-2.43.47-1.06.05-1.42.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.16 4.9 4.9 0 0 1-1.16-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.7 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.16-1.77A4.9 4.9 0 0 1 5.46 2.53c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.3 2 12 2Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4ZM17.4 6.6a1.17 1.17 0 1 0 0-2.34 1.17 1.17 0 0 0 0 2.34Z"/></svg></a>
+      <a href="https://youtube.com" target="_blank" title="YouTube" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.2a2.8 2.8 0 0 0-2-2C18.9 3.7 12 3.7 12 3.7s-6.9 0-8.5.5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 1 12a29 29 0 0 0 .5 5.8 2.8 2.8 0 0 0 2 2c1.6.5 8.5.5 8.5.5s6.9 0 8.5-.5a2.8 2.8 0 0 0 2-2A29 29 0 0 0 23 12a29 29 0 0 0-.5-5.8ZM9.8 15.5V8.5L15.8 12l-6 3.5Z"/></svg></a>
+    </div>
+    <button class="burger" onclick="toggleMobileNav()">☰</button>
+  </div>
+  <div class="ticker">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</header>
+
+<!-- ============ HOME VIEW ============ -->
+<div class="view active" id="view-home">
+
+  <section class="hero" style="padding-top:70px;">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-eyebrow">2027 NBA Draft Cycle &nbsp;·&nbsp; Est. by Draft Day HQ</div>
+        <h1>THE DRAFT<br><span class="line2">COVERED RIGHT.</span></h1>
+        <p class="lede">Updated big boards, mock drafts and weekly reporting on this year's NBA draft class.</p>
+        <div class="hero-ctas">
+          <button class="btn btn-solid" onclick="showView('players')">View Player Profiles</button>
+          <button class="btn btn-ghost" onclick="showView('newsletter')">Get the Newsletter</button>
+        </div>
+      </div>
+      <div class="fan" id="heroFan"></div>
+    </div>
+  </section>
+
+  <section class="recent-wrap">
+    <div class="eyebrow">On the site now</div>
+    <h2 class="section-title">Recently Published</h2>
+    <p class="section-sub">The latest from our rankings desk, our writers and the pod, all in one strip.</p>
+    <div class="slideshow" id="slideshow"></div>
+    <div class="dots" id="slideDots"></div>
+  </section>
+
+  <section id="home-players-preview">
+    <div class="eyebrow">The Board</div>
+    <h2 class="section-title">Featured Player Profiles</h2>
+    <p class="section-sub">Deep-dive pages for every name that matters: measurements, film notes, stat lines and where they're trending.</p>
+    <div class="player-grid" id="homePlayerGrid"></div>
+    <div style="text-align:center; margin-top:40px;">
+      <button class="btn btn-ghost" onclick="showView('rankings')">See the Full Board</button>
+    </div>
+  </section>
+
+  <section class="nl-section" style="max-width:none;">
+    <div style="max-width:720px; margin:0 auto; padding:90px 28px; text-align:center;">
+      <div class="eyebrow" style="justify-content:center;">The Weekly Board</div>
+      <h2 class="section-title">The Newsletter</h2>
+      <p class="section-sub" style="margin:0 auto 0;">One email, every week: stock risers and fallers, what scouts are actually saying, and the stories that don't make it to Instagram. Sign-ups are coming soon.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PLAYERS VIEW ============ -->
+<div class="view" id="view-players">
+  <section>
+    <div class="eyebrow">2027 Big Board</div>
+    <h2 class="section-title">Player Profiles</h2>
+    <p class="section-sub">Every prospect we're tracking, ranked and updated weekly. Click a name for the full profile.</p>
+    <div class="filter-row" id="filterRow"></div>
+    <div class="player-grid" id="fullPlayerGrid"></div>
+  </section>
+</div>
+
+<!-- ============ PLAYER PROFILE DETAIL ============ -->
+<div class="view" id="view-profile">
+  <section id="profileContent"></section>
+</div>
+
+<!-- ============ RANKINGS VIEW ============ -->
+<div class="view" id="view-rankings">
+  <section>
+    <div class="eyebrow">Updated Weekly</div>
+    <h2 class="section-title">Big Board Rankings</h2>
+    <p class="section-sub">Our staff consensus, blended with select metrics from around the industry. Movement tracked week over week.</p>
+    <table class="rank-table">
+      <thead>
+        <tr><th>Rk</th><th>Prospect</th><th>Pos</th><th>School</th><th>Class</th></tr>
+      </thead>
+      <tbody id="rankTableBody"></tbody>
+    </table>
+  </section>
+</div>
+
+<!-- ============ STATS VIEW ============ -->
+<div class="view" id="view-stats">
+  <section style="min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center;">
+    <div>
+      <div class="eyebrow" style="justify-content:center;">Coming Soon</div>
+      <h2 class="section-title">Stats</h2>
+      <p class="section-sub" style="margin:0 auto;">Full statistical database for every prospect on the board, in progress. Check back soon.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ ARTICLES VIEW ============ -->
+<div class="view" id="view-articles">
+  <section>
+    <div class="eyebrow">Reporting &amp; Analysis</div>
+    <h2 class="section-title">Articles</h2>
+    <p class="section-sub">Scouting breakdowns, draft-night mechanics, and the stories behind the stock watch.</p>
+    <div class="article-grid" id="articleGrid"></div>
+  </section>
+</div>
+
+<!-- ============ PODCASTS VIEW ============ -->
+<div class="view" id="view-podcasts">
+  <section style="min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center;">
+    <div>
+      <div class="eyebrow" style="justify-content:center;">Coming Soon</div>
+      <h2 class="section-title">Podcasts</h2>
+      <p class="section-sub" style="margin:0 auto;">The Draft Day HQ Pod is in the works: weekly conversations on the prospects, the mocks, and what NBA front offices are watching for. Check back soon.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ NEWSLETTER VIEW ============ -->
+<div class="view" id="view-newsletter">
+  <section style="min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center;">
+    <div>
+      <div class="eyebrow" style="justify-content:center;">Coming Soon</div>
+      <h2 class="section-title">The Newsletter</h2>
+      <p class="section-sub" style="margin:0 auto;">Delivered every Monday: rankings movement, scouting notes and the stories we're chasing that week. Sign-ups aren't open yet, check back soon.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-wrap">
+    <div class="foot-top">
+      <div>
+        <div class="foot-logo">DRAFT<span class="gold">•</span>DAY <span class="gold">HQ</span></div>
+        <p class="foot-desc">Independent NBA draft coverage: player profiles, rankings, reporting and the pod. Built from @Draftday.HQ.</p>
+        <div class="foot-social">
+          <a href="https://twitter.com" target="_blank" rel="noopener" style="width:34px;height:34px;border:1px solid var(--steel);display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.5 8.6L23.3 22h-6.9l-5.4-7-6.2 7H1.7l8-9.2L1 2h7l4.9 6.4L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/></svg></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" style="width:34px;height:34px;border:1px solid var(--steel);display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.7 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.16.56.55.9 1.11 1.16 1.77.25.64.42 1.37.47 2.43.05 1.06.06 1.42.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.16 1.77 4.9 4.9 0 0 1-1.77 1.16c-.64.25-1.37.42-2.43.47-1.06.05-1.42.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.16 4.9 4.9 0 0 1-1.16-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.7 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.16-1.77A4.9 4.9 0 0 1 5.46 2.53c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.3 2 12 2Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4ZM17.4 6.6a1.17 1.17 0 1 0 0-2.34 1.17 1.17 0 0 0 0 2.34Z"/></svg></a>
+          <a href="https://youtube.com" target="_blank" rel="noopener" style="width:34px;height:34px;border:1px solid var(--steel);display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.2a2.8 2.8 0 0 0-2-2C18.9 3.7 12 3.7 12 3.7s-6.9 0-8.5.5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 1 12a29 29 0 0 0 .5 5.8 2.8 2.8 0 0 0 2 2c1.6.5 8.5.5 8.5.5s6.9 0 8.5-.5a2.8 2.8 0 0 0 2-2A29 29 0 0 0 23 12a29 29 0 0 0-.5-5.8ZM9.8 15.5V8.5L15.8 12l-6 3.5Z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <div class="lbl">Coverage</div>
+        <a onclick="showView('players')" href="javascript:void(0)">Player Profiles</a>
+        <a onclick="showView('rankings')" href="javascript:void(0)">Rankings</a>
+        <a onclick="showView('articles')" href="javascript:void(0)">Articles</a>
+        <a onclick="showView('podcasts')" href="javascript:void(0)">Podcasts</a>
+      </div>
+      <div class="foot-col">
+        <div class="lbl">Draft Day HQ</div>
+        <a onclick="showView('newsletter')" href="javascript:void(0)">Newsletter</a>
+        <a href="javascript:void(0)">About</a>
+        <a href="javascript:void(0)">Contact</a>
+        <a href="javascript:void(0)">Advertise</a>
+      </div>
+      <div class="foot-col">
+        <div class="lbl">Stay in the loop</div>
+        <p style="color:var(--paper-dim); font-size:.85rem; margin-bottom:14px;">Weekly board, straight to your inbox. Coming soon.</p>
+        <button class="btn btn-ghost" style="width:100%;" onclick="showView('newsletter')">Newsletter · Coming Soon</button>
+      </div>
+    </div>
+    <div class="foot-disclaimer" style="padding-top:26px; font-family:var(--mono); font-size:.68rem; line-height:1.7; color:var(--paper-dim); max-width:1000px;">
+      Disclaimer: This website is an unofficial, non-commercial fan project and is not affiliated with, endorsed by, or sponsored by the NBA, the NCAA, or any individual college or university. All team names, logos, and brands are the intellectual property of their respective owners. Logos are utilized here under nominative fair use for informational and identification purposes only. If you are a copyright or trademark holder and wish to have your media removed, please contact us at draftdayhq1@gmail.com and we will comply immediately.
+    </div>
+    <div class="foot-bottom" style="border-top:1px solid var(--steel); margin-top:20px; padding-top:20px;">
+      <span>© 2026 Draft Day HQ. All rights reserved.</span>
+      <span>Built from @Draftday.HQ</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ================= DATA ================= */
+const players = [
+  {rk:1, name:"Tyran Stokes", school:"Kansas", pos:"SF/PF", cls:"Freshman", trend:"up", hs:"6'7\"", wt:230, age:18, hometown:"Rocklin, CA",
+   summary:"Stokes enters Kansas as the clear top talent in the 2027 class, a jumbo wing who can put the ball on the floor, finish above the rim in transition, and stuff a stat sheet from three positions. The physical tools are already NBA-ready; what teams want to see this season is shot consistency and a settled off-court profile after a whirlwind senior year.",
+   strengths:["Elite size-speed combo for a wing ball-handler","Transition force that gets to the rim in a hurry","Flashes of high-level playmaking for teammates","Defensive versatility across 2 through 4"],
+   weaknesses:["Jumper needs a more repeatable base","Shot selection tightens up under pressure","Off-ball habits still inconsistent"],
+   comps:["Recent lottery wing archetype","Long-armed, transition-first slasher"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:2, name:"Stefan Joksimovic", school:"Slovenia (Pro)", pos:"SG/PG", cls:"International", trend:"up", hs:"6'7\"", wt:205, age:17, hometown:"Slovenia",
+   summary:"A skilled, fast-rising forward logging professional minutes in Slovenia. Joksimovic pairs a smooth face-up game with the kind of positional size teams covet, and his stock has climbed quickly as he's proven he can produce against grown men overseas.",
+   strengths:["Advanced footwork and touch for his size","Comfortable operating from the mid-post and perimeter","Growing production against professional competition"],
+   weaknesses:["Needs to add strength for NBA-level physicality","Limited sample against top-tier international defenses"],
+   comps:["Skilled European forward, face-up scoring profile"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:3, name:"Jordan Smith Jr.", school:"Arkansas", pos:"PG/SG", cls:"Freshman", trend:"up", hs:"6'2\"", wt:200, age:18, hometown:"Fairfax, VA",
+   summary:"A downhill, physical lead guard who was one of the top combo guards in his high school class. Smith gets into the paint at will and profiles as a table-setter who can also get his own shot when Arkansas needs a bucket.",
+   strengths:["Strong, compact frame that finishes through contact","Live dribble pace changes to break down defenders","Competitive, high-motor defender for his position"],
+   weaknesses:["Jump shot consistency still developing","Needs to tighten decision-making in ball-screen reads"],
+   comps:["Physical combo guard, paint-touch playmaker"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:4, name:"Caleb Holt", school:"Arizona", pos:"SG/SF", cls:"Freshman", trend:"up", hs:"6'5\"", wt:190, age:18, hometown:"Phoenix, AZ",
+   summary:"A USA Basketball fixture for years, Holt pairs above-the-rim athleticism with a jumper that keeps improving. Arizona's system should let him play on and off the ball, and scouts see a two-way guard who can defend the position and punish mistakes as a shooter.",
+   strengths:["Improving catch-and-shoot jumper","High motor on defense","Big-moment competitor with USAB pedigree"],
+   weaknesses:["Needs to add shot creation off the dribble","Frame still filling out"],
+   comps:["3-and-D guard prototype"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:5, name:"Abdou Toure", school:"Arkansas", pos:"SG/SF", cls:"Freshman", trend:"steady", hs:"6'5\"", wt:200, age:18, hometown:"West Haven, CT",
+   summary:"A wiry, high-upside wing who checks the length and athleticism boxes teams look for early on a board. Toure is still refining the fine points of his offensive game, but the defensive tools and frame give him a high floor.",
+   strengths:["Excellent length and defensive versatility","Quick leaper, disruptive in passing lanes","Room to grow as frame fills out"],
+   weaknesses:["Shot mechanics still inconsistent","Offensive role needs to expand at the college level"],
+   comps:["Long, defense-first wing with scoring upside"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:6, name:"Bruce Branch III", school:"BYU", pos:"SF/SG", cls:"Freshman", trend:"steady", hs:"6'7\"", wt:190, age:17, hometown:"Fort Lauderdale, FL",
+   summary:"A smooth, do-everything wing who profiles well in BYU's spacing-heavy system. Branch can shoot it, put it on the floor, and defend multiple spots, the kind of low-maintenance forward that fits next to any style of lead guard.",
+   strengths:["Fluid shooting stroke with range","Fits any lineup as a low-usage, high-efficiency profile","Solid on-ball defender for his size"],
+   weaknesses:["Needs to add strength for physical matchups","Not yet a primary shot creator"],
+   comps:["3-and-D wing, connective offensive profile"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:7, name:"Dylan Mingo", school:"Baylor", pos:"PG/SG", cls:"Freshman", trend:"up", hs:"6'5\"", wt:190, age:18, hometown:"Glen Head, NY",
+   summary:"A crafty combo guard with a polished mid-range package and the passing feel to play either backcourt spot. Mingo profiles as a plug-and-play scorer who can shoulder more shot creation as his frame develops.",
+   strengths:["Advanced footwork and pull-up scoring package","Reads ball screens well as a passer","Poised, controls tempo in the half-court"],
+   weaknesses:["Needs to add strength to finish through contact","Three-point volume still building"],
+   comps:["Scoring combo guard, mid-range heavy profile"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:8, name:"Alex Wilkins", school:"Kentucky", pos:"PG/SG", cls:"Sophomore", trend:"up", hs:"6'5\"", wt:170, age:19, hometown:"Greenville, SC",
+   summary:"A high-volume scoring guard who put up big numbers in his first season and now steps into a loaded Kentucky backcourt. Wilkins' shot-making shows up in bunches, and Mark Pope's up-tempo system should maximize his scoring instincts.",
+   strengths:["Natural scorer, shot-making at all three levels","Comfortable operating as a high-usage option","Improving as a table-setter in ball-screen actions"],
+   weaknesses:["Slight frame needs to add strength","Defensive consistency still a work in progress"],
+   comps:["High-volume scoring guard"],
+   stats:{ppg:"17.7", rpg:"2.0", apg:"4.7", fg:"45.8%"},
+   seasons:[{yr:"Freshman", ppg:17.7, rpg:2.0, apg:4.7, stl:0.8, blk:0.1, to:3.8, min:29.6, fg:45.8, tpt:32.1, tpa:5.6, ft:83.5, fta:4.1}]},
+  {rk:9, name:"Sayon Keita", school:"North Carolina", pos:"C", cls:"Freshman", trend:"steady", hs:"7'0\"", wt:215, age:18, hometown:"Mali", 
+   summary:"A rangy, rim-running center with real shot-blocking instincts. Keita's game is still developing offensively, but the timing as a rim protector and finishing above the rim give him a clear NBA role even before the rest of his game catches up.",
+   strengths:["Shot-blocking timing and verticality at the rim","Runs the floor well for his size","High motor rebounder on both ends"],
+   weaknesses:["Offensive skill package still raw","Needs to add strength to hold position inside"],
+   comps:["Rim-running, shot-blocking center"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:10, name:"Bryson Howard", school:"Duke", pos:"SG/SF", cls:"Freshman", trend:"up", hs:"6'5\"", wt:180, age:17, hometown:"Brooklyn, NY",
+   summary:"A shifty, confident scoring guard who joins a deep Duke backcourt. Howard's blend of shot-making and burst gives him a path to a featured offensive role as the season goes on.",
+   strengths:["Tight handle, creates separation off the bounce","Confident shot-maker off movement","Competes hard on the defensive end"],
+   weaknesses:["Needs to tighten shot selection","Frame still developing for physical matchups"],
+   comps:["Shifty scoring guard, movement shooter"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:11, name:"Cameron Williams", school:"Duke", pos:"PF", cls:"Freshman", trend:"steady", hs:"6'11\"", wt:200, age:18, hometown:"Phoenix, AZ",
+   summary:"A long, switchable forward who gives Duke another versatile defensive piece up front. Williams projects as a modern combo forward who can guard multiple positions while his offensive role continues to expand.",
+   strengths:["Excellent length for a face-up forward","Switchable defender across 3 through 5","Flashes as a stretch shooter"],
+   weaknesses:["Needs to add strength to bang inside","Handle needs polish for a bigger offensive role"],
+   comps:["Long, switchable combo forward"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:12, name:"Hugo Yimga-Moukouri", school:"France (Pro)", pos:"PF/SF", cls:"International", trend:"up", hs:"6'8\"", wt:220, age:18, hometown:"Paris, FRA",
+   summary:"An athletic, NBA-ready frame with a jumper that keeps trending up. Moukouri is the headline name in a promising French wing pipeline and profiles as a potential top-tier talent as he continues to log professional minutes.",
+   strengths:["NBA-ready frame and athleticism today","Shot continues to improve in games","Comfortable creating in half-court and transition"],
+   weaknesses:["Consistency start-to-start still developing","Limited high-level minutes sample so far"],
+   comps:["Athletic international wing, two-way upside"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:13, name:"Dame Sarr", school:"Duke", pos:"SF/SG", cls:"Sophomore", trend:"down", hs:"6'8\"", wt:190, age:20, hometown:"Rome, ITA",
+   summary:"An internationally-seasoned wing with a smooth offensive skillset. Sarr's stock cooled slightly as consistency issues surfaced late last season, but the shot-making touch and size combination remain rare.",
+   strengths:["Fluid shot-making from multiple levels","High feel, plays within the offense","International experience against grown men"],
+   weaknesses:["Needs to add strength for NBA wing defense","Streaky shot selection in stretches"],
+   comps:["Skilled combo forward, floor-spacer profile"],
+   stats:{ppg:"6.4", rpg:"3.8", apg:"1.1", fg:"40.4%"},
+   seasons:[{yr:"Freshman", ppg:6.4, rpg:3.8, apg:1.1, stl:1.0, blk:0.4, to:1.1, min:23.5, fg:40.4, tpt:32.3, tpa:3.5, ft:53, fta:1.6}]},
+  {rk:14, name:"Thomas Haugh", school:"Florida", pos:"PF/SF", cls:"Senior", trend:"up", hs:"6'9\"", wt:215, age:23, hometown:"Sarasota, FL",
+   summary:"A winning, high-IQ forward who returned to a national title roster and kept climbing. Haugh's game is built on quick decisions, physicality, and doing the hard things that let stars around him play faster.",
+   strengths:["High processing speed, quick decisions","Physical, versatile defender","Battle-tested in the highest-leverage games"],
+   weaknesses:["Ceiling questions relative to top tier","Half-court shot creation limited"],
+   comps:["Winning glue-forward, program cornerstone"],
+   stats:{ppg:"17.1", rpg:"6.1", apg:"2.1", fg:"46%"},
+   seasons:[{yr:"Freshman", ppg:3.9, rpg:3.7, apg:0.6, stl:0.3, blk:0.7, to:0.4, min:14.7, fg:45, tpt:25.5, tpa:1.3, ft:45.7, fta:1.3}, {yr:"Sophomore", ppg:9.9, rpg:6.2, apg:2.1, stl:0.8, blk:0.7, to:1.1, min:24.5, fg:48.7, tpt:34.7, tpa:2.6, ft:79.2, fta:3.9}, {yr:"Junior", ppg:17.1, rpg:6.1, apg:2.1, stl:1.1, blk:1.0, to:1.5, min:33.3, fg:46, tpt:32.6, tpa:5.2, ft:77.4, fta:5.9}]},
+  {rk:15, name:"Patrick Ngongba II", school:"Duke", pos:"C", cls:"Junior", trend:"steady", hs:"6'11\"", wt:250, age:20, hometown:"Baltimore, MD",
+   summary:"A powerful, well-built center who provides Duke with interior physicality and rim protection. Ngongba's ability to anchor the paint on both ends gives him a clear floor as an NBA rotation big.",
+   strengths:["Physical presence, holds position inside","Reliable finisher around the basket","Solid rim-protection instincts"],
+   weaknesses:["Offensive skill package limited outside the paint","Foul management against skilled bigs"],
+   comps:["Physical, interior-anchor center"],
+   stats:{ppg:"10.1", rpg:"5.8", apg:"2.0", fg:"60.6%"},
+   seasons:[{yr:"Freshman", ppg:4.0, rpg:2.8, apg:0.8, stl:0.4, blk:0.6, to:0.2, min:10.8, fg:71.9, tpt:0, tpa:0.0, ft:72.7, fta:1.1}, {yr:"Sophomore", ppg:10.1, rpg:5.8, apg:2.0, stl:0.6, blk:1.1, to:1.3, min:21.9, fg:60.6, tpt:25.8, tpa:1.0, ft:66.4, fta:4.1}]},
+  {rk:16, name:"Quentin Coleman", school:"Illinois", pos:"SG/PG", cls:"Freshman", trend:"steady", hs:"6'4\"", wt:180, age:18, hometown:"St. Louis, MO",
+   summary:"A smooth-scoring wing who profiles as a floor spacer with more juice off the dribble than he's given credit for. Coleman's shooting touch translates cleanly, and Illinois should give him plenty of catch-and-shoot reps early.",
+   strengths:["Clean shooting mechanics, translates to NBA range","Moves well without the ball","Underrated as a secondary shot creator"],
+   weaknesses:["Needs to add strength for on-ball defense","Frame still developing"],
+   comps:["Floor-spacing wing, secondary shot creator"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:17, name:"Cameron Houindo", school:"North Carolina", pos:"PF/C", cls:"International", trend:"steady", hs:"6'8\"", wt:210, age:18, hometown:"France",
+   summary:"A well-rounded forward with a mature offensive game for his age. Houindo gives North Carolina another versatile frontcourt piece who can shoot, put the ball on the floor, and defend multiple positions.",
+   strengths:["Polished footwork and shot-making for his age","Good size for a wing, plays bigger than listed","Solid decision-maker in the half-court"],
+   weaknesses:["Needs to add explosiveness/athleticism","Adjustment period to the pace of college basketball"],
+   comps:["Skilled, all-around frontcourt profile"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:18, name:"Motiejus Krivas", school:"Arizona", pos:"C", cls:"Senior", trend:"steady", hs:"7'2\"", wt:260, age:21, hometown:"Vilnius, LTU",
+   summary:"A physical, high-motor center coming off a run to the title game. Krivas anchors the paint on both ends and continues to add face-up skill to a game built on rim protection and offensive rebounding.",
+   strengths:["Elite rim protection and rebounding rate","Physical tools built for NBA size at center","Improving touch around the basket"],
+   weaknesses:["Perimeter defense against smaller lineups","Free-throw shooting needs work"],
+   comps:["Traditional rim-protecting center"],
+   stats:{ppg:"10.4", rpg:"8.2", apg:"1.1", fg:"56.9%"},
+   seasons:[{yr:"Freshman", ppg:5.4, rpg:4.2, apg:0.3, stl:0.3, blk:0.5, to:0.7, min:12.1, fg:55.4, tpt:0, tpa:0.0, ft:77.8, fta:1.8}, {yr:"Sophomore", ppg:7.9, rpg:4.5, apg:1.1, stl:0.4, blk:0.8, to:0.8, min:15.9, fg:55, tpt:0, tpa:0.0, ft:70, fta:3.8}, {yr:"Junior", ppg:10.4, rpg:8.2, apg:1.1, stl:0.7, blk:1.9, to:1.4, min:25.3, fg:56.9, tpt:30.8, tpa:0.3, ft:78, fta:4.3}]},
+  {rk:19, name:"Amari Allen", school:"Kansas", pos:"SF/SG", cls:"Sophomore", trend:"steady", hs:"6'7\"", wt:195, age:20, hometown:"Montgomery, AL",
+   summary:"A multi-tool forward who impacts winning in ways that don't always show up in a box score. Allen transferred to Kansas after flashing rebounding and passing rarely seen at his size as a freshman.",
+   strengths:["Advanced feel and passing for a big wing","Strong rebounder at both ends","Positional size to guard multiple spots"],
+   weaknesses:["Shot needs to stretch further out","Not yet a reliable shot creator"],
+   comps:["Point-forward big with connective passing"],
+   stats:{ppg:"11.6", rpg:"7.0", apg:"3.1", fg:"45.3%"},
+   seasons:[{yr:"Freshman", ppg:11.6, rpg:7.0, apg:3.1, stl:1.1, blk:0.7, to:1.4, min:28.4, fg:45.3, tpt:35.1, tpa:4.3, ft:73.3, fta:3.3}]},
+  {rk:20, name:"Baba Oladotun", school:"Maryland", pos:"SF/PF", cls:"Freshman", trend:"up", hs:"6'9\"", wt:200, age:17, hometown:"Silver Spring, MD",
+   summary:"A long, springy forward whose defensive versatility jumps off the tape first. Oladotun profiles as a play-finisher early with real upside if his perimeter shot continues to come along.",
+   strengths:["Exceptional length and vertical athleticism","Disruptive off-ball defender","Efficient finisher around the rim"],
+   weaknesses:["Jumper is still a work in progress","Limited on-ball creation currently"],
+   comps:["Long, athletic play-finishing forward"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:21, name:"Miikka Muurinen", school:"Arkansas", pos:"PF/SF", cls:"Freshman", trend:"steady", hs:"6'10\"", wt:190, age:19, hometown:"Finland",
+   summary:"A skilled, floor-spacing big man with a rare shooting touch for his size. Muurinen gives Arkansas a stretch-four look who can space the floor from day one while he continues to add strength.",
+   strengths:["Legitimate perimeter shooting touch for a big","Good size and mobility combination","High feel passer out of the short roll"],
+   weaknesses:["Needs significant strength added","Interior defense a work in progress"],
+   comps:["Stretch-four, floor-spacing big"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:22, name:"Caleb Gaskins", school:"Miami", pos:"PF/SF", cls:"Freshman", trend:"up", hs:"6'8\"", wt:220, age:17, hometown:"Melbourne, FL",
+   summary:"A physical, college-ready forward who arrives at Miami as an engaged, willing defender with a frame built for the next level. Gaskins projects as an early-impact piece in Miami's frontcourt.",
+   strengths:["College-ready frame, physical presence early","Engaged, high-effort defender","Good rebounding instincts for a wing"],
+   weaknesses:["Offensive skill package still developing","Jump shot consistency needs work"],
+   comps:["Physical, defense-first forward"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:23, name:"Milan Momcilovic", school:"Kentucky", pos:"SF/PF", cls:"Senior", trend:"up", hs:"6'8\"", wt:220, age:21, hometown:"Pewaukee, WI",
+   summary:"A sharpshooting forward who transferred to Kentucky after leading the NCAA in three-point percentage. Momcilovic gives Mark Pope's roster elite floor-spacing at his size, with real shot-making volume already proven at the high-major level.",
+   strengths:["Elite, high-volume three-point shooter","Proven production against high-major competition","Good size for a stretch forward"],
+   weaknesses:["Lateral quickness limits on-ball defense","Needs to diversify shot creation off the dribble"],
+   comps:["Elite floor-spacing forward"],
+   stats:{ppg:"16.9", rpg:"3.1", apg:"1.0", fg:"50.6%"},
+   seasons:[{yr:"Freshman", ppg:11.2, rpg:3.2, apg:1.2, stl:0.5, blk:0.4, to:0.8, min:30.4, fg:42.9, tpt:36.1, tpa:4.7, ft:81.8, fta:1.8}, {yr:"Sophomore", ppg:11.5, rpg:3.3, apg:0.9, stl:0.4, blk:0.3, to:0.9, min:27.5, fg:42.9, tpt:39.6, tpa:5.7, ft:83.7, fta:1.5}, {yr:"Junior", ppg:16.9, rpg:3.1, apg:1.0, stl:0.8, blk:0.2, to:0.8, min:30.5, fg:50.6, tpt:48.6, tpa:7.6, ft:87.8, fta:2.2}]},
+  {rk:24, name:"Braylon Mullins", school:"UConn", pos:"SG/SF", cls:"Sophomore", trend:"up", hs:"6'5\"", wt:190, age:20, hometown:"Greenfield, IN",
+   summary:"Mullins turned down first-round buzz to return to UConn, a bet on himself that already looks smart after a signature NCAA Tournament moment. A pure shooter with real connective passing, he's expected to take on a bigger shot-creation role this season.",
+   strengths:["Knockdown catch-and-shoot shooter (42-34-89 splits)","Moves well without the ball, hard to lose in space","Winning-habit player with big-game production"],
+   weaknesses:["Below-average frame for NBA wing defense","Needs more self-creation vs. set defenses"],
+   comps:["Movement shooter with secondary playmaking"],
+   stats:{ppg:"12.0", rpg:"3.5", apg:"1.4", fg:"42.1%"},
+   seasons:[{yr:"Freshman", ppg:12.0, rpg:3.5, apg:1.4, stl:1.0, blk:0.6, to:1.2, min:28.3, fg:42.1, tpt:33.5, tpa:6.5, ft:88.9, fta:1.1}]},
+  {rk:25, name:"Malachi Moreno", school:"Kentucky", pos:"C", cls:"Sophomore", trend:"steady", hs:"7'0\"", wt:250, age:19, hometown:"Georgetown, KY",
+   summary:"A former McDonald's All-American big man who tested the draft before returning to Kentucky. Moreno's combination of size and mobility gives him a real interior role, with room to grow as a scorer.",
+   strengths:["Prototypical NBA size at center","Mobile for his frame, runs the floor well","Improving as a rim protector"],
+   weaknesses:["Offensive polish still behind physical tools","Needs to add strength to hold up against bigger centers"],
+   comps:["Mobile, high-upside center"],
+   stats:{ppg:"7.9", rpg:"6.3", apg:"1.7", fg:"58.2%"},
+   seasons:[{yr:"Freshman", ppg:7.9, rpg:6.3, apg:1.7, stl:0.5, blk:1.5, to:1.3, min:22.7, fg:58.2, tpt:0, tpa:0.1, ft:70.0, fta:3.4}]},
+  {rk:26, name:"Luigi Suigo", school:"Villanova", pos:"C", cls:"Freshman", trend:"up", hs:"7'4\"", wt:250, age:19, hometown:"Italy",
+   summary:"A towering rim protector who gives Villanova a legitimate interior anchor immediately. Suigo's size alone changes shots at the rim, and his mobility for a player his height stands out on tape.",
+   strengths:["Elite size and length, alters shots at the rim","Better mobility than his frame suggests","High shot-blocking upside"],
+   weaknesses:["Offensive skill package very early in development","Needs to add strength for physical post play"],
+   comps:["Rim-protecting, elite-size center"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:27, name:"Alijah Arenas", school:"USC", pos:"SG/SF", cls:"Sophomore", trend:"steady", hs:"6'5\"", wt:205, age:19, hometown:"Chatsworth, CA",
+   summary:"A high-scoring combo guard with advanced shot-creation instincts and a feel for the game built around USC. Arenas projects as a high-usage scorer who can create his own shot from anywhere on the floor.",
+   strengths:["Advanced shot-creation and scoring instincts","Confident, high-volume shot-maker","Strong feel for pace and shot selection"],
+   weaknesses:["Defensive consistency needs development","Frame still filling out for NBA physicality"],
+   comps:["High-usage scoring guard"],
+   stats:{ppg:"14.1", rpg:"2.9", apg:"2.1", fg:"34.1%"},
+   seasons:[{yr:"Freshman", ppg:14.1, rpg:2.9, apg:2.1, stl:0.9, blk:0.5, to:2.3, min:27.6, fg:34.1, tpt:21.3, tpa:4.4, ft:79.2, fta:5.5}]},
+  {rk:28, name:"Rueben Chinyelu", school:"Florida", pos:"C", cls:"Senior", trend:"steady", hs:"6'10\"", wt:265, age:22, hometown:"Enugu, NGA",
+   summary:"A decorated defensive anchor coming off Defensive Player of the Year honors across multiple conferences and organizations. Chinyelu's rim protection and physicality make him one of the safest defensive bets in the class.",
+   strengths:["Decorated, proven elite interior defender","Excellent rebounding rate at both ends","Physical enough to bang with any frontcourt"],
+   weaknesses:["Offensive role limited, finishes more than creates","Older prospect relative to the class"],
+   comps:["Elite defensive-anchor center"],
+   stats:{ppg:"10.9", rpg:"11.2", apg:"0.7", fg:"58.4%"},
+   seasons:[{yr:"Freshman", ppg:4.7, rpg:5.0, apg:0.1, stl:0.2, blk:1.3, to:1.1, min:13.9, fg:61.7, tpt:0, tpa:0.0, ft:48.9, fta:1.3}, {yr:"Sophomore", ppg:6.0, rpg:6.6, apg:0.7, stl:0.5, blk:0.8, to:1.0, min:19.0, fg:60.0, tpt:0, tpa:0.0, ft:58.5, fta:1.4}, {yr:"Junior", ppg:10.9, rpg:11.2, apg:0.7, stl:0.8, blk:1.0, to:1.5, min:24.5, fg:58.4, tpt:0, tpa:0.1, ft:69.5, fta:3.4}]},
+  {rk:29, name:"Anthony Thompson", school:"Ohio State", pos:"SF/PF", cls:"Freshman", trend:"steady", hs:"6'8\"", wt:200, age:17, hometown:"Hudson, OH",
+   summary:"A well-regarded forward prospect who brings good size and length to Ohio State's wing rotation. Thompson's game is still rounding into form, but the physical profile gives him a real developmental path.",
+   strengths:["Good size and length for a wing","Flashes of shot-making at all three levels","Competes on the defensive end"],
+   weaknesses:["Consistency game-to-game still developing","Needs a clearer offensive role to show full skill set"],
+   comps:["Developmental two-way wing"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:30, name:"Jason Crowe Jr.", school:"Missouri", pos:"PG", cls:"Freshman", trend:"up", hs:"6'3\"", wt:170, age:18, hometown:"Inglewood, CA",
+   summary:"California's all-time leading high school scorer arrives at Missouri as a five-star combo guard with an advanced scoring package. Crowe navigates ball screens with polish beyond his years and gets to the rim at will.",
+   strengths:["Advanced ball-screen navigation and pull-up scoring","Gets to the rim at will, strong finishing package","Big-stage production against elite competition"],
+   weaknesses:["Slight frame needs to add strength","Defensive consistency still developing"],
+   comps:["High-scoring combo guard, shot-creation profile"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+];
+
+const articles = [
+  {cat:"Feature", title:"Inside Tyran Stokes' Whirlwind Senior Year and What Comes Next at Kansas", excerpt:"A look at the transfers, the tape and the maturity questions that will define the No. 1 prospect's freshman season.", byline:"Shaan Lakhani · 8 min read", feature:true},
+  {cat:"Stock Watch", title:"Three Risers From the First Month of the Season", excerpt:"Mullins, Momcilovic and a surprise name are climbing the board fast.", byline:"Julian Farber · 4 min read"},
+  {cat:"Film Room", title:"Breaking Down Yimga-Moukouri's Improving Jumper", excerpt:"Frame-by-frame on the mechanics change that has scouts buzzing.", byline:"Shaan Lakhani · 6 min read"},
+  {cat:"Mock Draft", title:"Way-Too-Early 2027 Mock: Lottery Edition", excerpt:"Our first full lottery projection of the cycle, pick by pick.", byline:"Julian Farber · 10 min read"},
+  {cat:"Analysis", title:"Why the 2027 Class Lacks a Consensus No. 1, and Why That's Fine", excerpt:"Flat top of the board doesn't mean flat talent. Here's the case.", byline:"Shaan Lakhani · 5 min read"},
+  {cat:"International", title:"The International Pipeline Keeps Producing. Here's Who's Next.", excerpt:"From Joksimovic to Yimga-Moukouri: scouting the latest wave.", byline:"Julian Farber · 7 min read"},
+];
+
+const podcasts = [
+  {ep:"EP 42", title:"Way-Too-Early Lottery Reactions", desc:"Breaking down the first mock of the cycle and where we disagree.", len:"52 min"},
+  {ep:"EP 41", title:"Scouting Trip Notes: Big 12 Media Day", desc:"On-the-ground notes from Kansas, Arizona and Alabama.", len:"61 min"},
+  {ep:"EP 40", title:"The Case for Braylon Mullins Returning", desc:"Why staying at UConn could be the smartest move of the cycle.", len:"44 min"},
+  {ep:"EP 39", title:"International Radar: France's Next Wave", desc:"A deep dive on the prospects following Wembanyama's path.", len:"38 min"},
+];
+
+const slides = [
+  {kicker:"Player Profile · Updated", title:"Tyran Stokes: The Clear No. 1", body:"Full breakdown of the Kansas freshman's game, frame, and what he needs to show scouts this season.", tag:"NEW", num:"01", action:()=>openProfile(0)},
+  {kicker:"Rankings · This Week", title:"Big Board: Week 1 Movement", body:"Mullins and Allen both climb after standout season openers. See the full board.", tag:"RANK", num:"02", action:()=>showView('rankings')},
+  {kicker:"Podcast · New Episode", title:"Way-Too-Early Lottery Reactions", body:"The crew reacts to the first full mock draft of the cycle, pick by pick.", tag:"POD", num:"03", action:()=>showView('podcasts')},
+  {kicker:"Article · Film Room", title:"Breaking Down Moukouri's Jumper", body:"A frame-by-frame look at the mechanical tweak that's raised his stock.", tag:"FILM", num:"04", action:()=>showView('articles')},
+];
+
+function initials(name){ return name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase(); }
+function trendArrow(t){ return t==="up" ? '<span class="up">▲</span>' : t==="down" ? '<span class="down">▼</span>' : '<span style="color:var(--paper-dim)">-</span>'; }
+
+const schoolAbbr = {
+  "Kansas":"KU","Arizona":"ARIZ","Arkansas":"ARK","BYU":"BYU","Baylor":"BAY","Kentucky":"UK",
+  "North Carolina":"UNC","Duke":"DUKE","Florida":"FLA","Illinois":"ILL","Maryland":"MD",
+  "Miami":"MIA","Missouri":"MIZ","Ohio State":"OSU","USC":"USC","UConn":"UCONN","Villanova":"NOVA"
+};
+// Each school's traditional signature color — used only on the player profile page, not site-wide
+const schoolColor = {
+  "Kansas":"#0051BA","Arizona":"#AB0520","Arkansas":"#9D2235","BYU":"#0062B8","Baylor":"#F2A900",
+  "Kentucky":"#0033A0","North Carolina":"#7BAFD4","Duke":"#00539B","Florida":"#0021A5","Illinois":"#E84A27",
+  "Maryland":"#E03A3E","Miami":"#F47321","Missouri":"#F1B82D","Ohio State":"#BB0000","USC":"#990000",
+  "UConn":"#0C2340","Villanova":"#13294B","Slovenia (Pro)":"#0052A5","France (Pro)":"#0055A4"
+};
+function accentFor(school){ return schoolColor[school] || "#c6a15b"; }
+const flagMap = { "Slovenia (Pro)":"🇸🇮", "France (Pro)":"🇫🇷" };
+function schoolBadge(school, colored){
+  if(flagMap[school]) return `<span class="flag" title="${school}">${flagMap[school]}</span>`;
+  const label = schoolAbbr[school] || school.replace(/\(.*?\)/g,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,4).toUpperCase();
+  const style = colored ? ` style="border-color:${accentFor(school)}; color:${accentFor(school)};"` : "";
+  return `<span class="sbadge"${style}>${label}</span>`;
+}
+
+/* ================= RENDER: TICKER ================= */
+function renderTicker(){
+  const items = players.slice(0,14).map(p => `<span class="tick"><b>#${p.rk} ${p.name}</b> <span style="color:var(--paper-dim)">${schoolBadge(p.school)}${p.school}</span></span>`).join("");
+  document.getElementById('tickerTrack').innerHTML = items + items; // duplicate for seamless loop
+}
+
+/* ================= RENDER: HERO FAN ================= */
+function renderFan(){
+  const top4 = players.slice(0,4);
+  const classes = ["p1","p2","p3","p4"];
+  document.getElementById('heroFan').innerHTML = top4.map((p,i)=>`
+    <div class="pcard ${classes[i]}" onclick="openProfile(${i})">
+      <div class="num">#${p.rk}</div>
+      <div class="mono">${initials(p.name)}</div>
+      <div class="pname">${p.name}</div>
+      <div class="pschool">${schoolBadge(p.school)}${p.school} · ${p.pos}</div>
+    </div>`).join("");
+}
+
+/* ================= RENDER: SLIDESHOW ================= */
+let slideIdx = 0, slideTimer;
+function renderSlideshow(){
+  const ss = document.getElementById('slideshow');
+  ss.innerHTML = slides.map((s,i)=>`
+    <div class="slide ${i===0?'active':''}" data-i="${i}">
+      <div class="slide-visual"><div class="tagchip">${s.tag}</div><div class="big-num">${s.num}</div></div>
+      <div class="slide-body">
+        <div class="slide-kicker">${s.kicker}</div>
+        <h3>${s.title}</h3>
+        <p>${s.body}</p>
+        <div class="slide-link" onclick="(${s.action.toString().includes('=>')?'':''})">Read More →</div>
+      </div>
+    </div>`).join("");
+  // attach real handlers (avoid inline serialization issues)
+  document.querySelectorAll('.slide').forEach((el,i)=>{
+    el.querySelector('.slide-link').onclick = slides[i].action;
+  });
+  document.getElementById('slideDots').innerHTML = slides.map((_,i)=>`<button class="${i===0?'active':''}" onclick="goSlide(${i})"></button>`).join("");
+  slideTimer = setInterval(()=>goSlide((slideIdx+1)%slides.length), 5000);
+}
+function goSlide(i){
+  slideIdx = i;
+  document.querySelectorAll('.slide').forEach((el,idx)=>el.classList.toggle('active', idx===i));
+  document.querySelectorAll('.dots button').forEach((el,idx)=>el.classList.toggle('active', idx===i));
+}
+
+/* ================= RENDER: PLAYER GRID ================= */
+function playerCardHTML(p, idx){
+  return `<div class="player-card" onclick="openProfile(${idx})">
+    <div class="rk">RANK #${p.rk}</div>
+    <div class="avatar">${initials(p.name)}</div>
+    <h4>${p.name}</h4>
+    <div class="meta">${p.pos} · ${schoolBadge(p.school)}${p.school}</div>
+    <div class="stat-row">
+      <div>HT<b>${p.hs}</b></div>
+      <div>WT<b>${p.wt}</b></div>
+      <div>AGE<b>${p.age}</b></div>
+    </div>
+  </div>`;
+}
+function renderPlayerGrids(){
+  document.getElementById('homePlayerGrid').innerHTML = players.slice(0,4).map((p,i)=>playerCardHTML(p,i)).join("");
+  document.getElementById('fullPlayerGrid').innerHTML = players.map((p,i)=>playerCardHTML(p,i)).join("");
+}
+
+/* ================= FILTER ROW ================= */
+function renderFilters(){
+  const positions = ["All","PG","SG","SF","PF","C"];
+  document.getElementById('filterRow').innerHTML = positions.map((pos,i)=>
+    `<button class="chip ${i===0?'active':''}" onclick="filterPlayers('${pos}', this)">${pos}</button>`).join("");
+}
+function filterPlayers(pos, btn){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = pos==="All" ? players : players.filter(p=>p.pos.split('/').includes(pos));
+  document.getElementById('fullPlayerGrid').innerHTML = filtered.map(p=>playerCardHTML(p, players.indexOf(p))).join("");
+}
+
+/* ================= PLAYER PROFILE DETAIL ================= */
+function openProfile(idx){
+  const p = players[idx];
+  document.getElementById('profileContent').innerHTML = `
+    <div class="profile-back" onclick="showView('players')">← Back to Player Profiles</div>
+    <div class="profile-head">
+      <div class="profile-avatar" style="border-top:4px solid ${accentFor(p.school)};">
+        <div class="rankbadge">RANK #${p.rk}</div>
+        <div class="initials">${initials(p.name)}</div>
+      </div>
+      <div class="profile-title">
+        <div class="pos-tag" style="--pos-dot:${accentFor(p.school)};"><b>${p.pos}</b> · ${p.cls}</div>
+        <h1>${p.name}</h1>
+        <div class="sub">${schoolBadge(p.school, true)}${p.school} &nbsp;·&nbsp; ${p.hometown} &nbsp;·&nbsp; Trending ${p.trend.toUpperCase()}</div>
+        <div class="vitals">
+          <div><span>Height</span><b>${p.hs}</b></div>
+          <div><span>Weight</span><b>${p.wt}</b></div>
+          <div><span>Age</span><b>${p.age}</b></div>
+          <div><span>Position</span><b>${p.pos}</b></div>
+          <div><span>Class</span><b>${p.cls}</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-grid">
+      <div>
+        <h3>Scouting Report</h3>
+        <p>${p.summary}</p>
+        <div class="sw-grid">
+          <div class="sw-box strength"><div class="lbl">Strengths</div><ul>${p.strengths.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+          <div class="sw-box weakness"><div class="lbl">Areas to Watch</div><ul>${p.weaknesses.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+        </div>
+        <h3>Season Stats</h3>
+        ${p.seasons && p.seasons.length ? `
+        <div style="overflow-x:auto;">
+        <table class="season-table" style="min-width:760px;">
+          <thead><tr><th>Season</th><th>PPG</th><th>RPG</th><th>APG</th><th>STL</th><th>BLK</th><th>TO</th><th>MIN</th><th>FG%</th><th>3PT%</th><th>3PA</th><th>FT%</th><th>FTA</th></tr></thead>
+          <tbody>
+          ${p.seasons.map(s=>`<tr><td style="text-align:left;">${s.yr}</td><td>${s.ppg}</td><td>${s.rpg}</td><td>${s.apg}</td><td>${s.stl}</td><td>${s.blk}</td><td>${s.to}</td><td>${s.min}</td><td>${s.fg}%</td><td>${s.tpt}%</td><td>${s.tpa}</td><td>${s.ft}%</td><td>${s.fta}</td></tr>`).join("")}
+          </tbody>
+        </table>
+        </div>` : `
+        <table class="season-table">
+          <thead><tr><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th></tr></thead>
+          <tbody><tr><td>${p.stats.ppg}</td><td>${p.stats.rpg}</td><td>${p.stats.apg}</td><td>${p.stats.fg}</td></tr></tbody>
+        </table>`}
+      </div>
+      <div class="side-panel">
+        <div class="lbl">NBA Comparison</div>
+        ${p.comps.map(c=>`<div class="comp-row"><span>${c}</span></div>`).join("")}
+        <div class="lbl" style="margin-top:24px;">Rankings Context</div>
+        <div class="comp-row"><span>Consensus Rank</span><span>#${p.rk}</span></div>
+        <div class="comp-row"><span>Weekly Movement</span><span>${trendArrow(p.trend)}</span></div>
+        <div class="comp-row"><span>Position Rank</span><span>${p.pos} · Top 5</span></div>
+        <button class="btn btn-ghost" style="width:100%; margin-top:20px;" onclick="showView('newsletter')">Get Updates on ${p.name.split(' ')[0]}</button>
+      </div>
+    </div>
+  `;
+  showView('profile', true);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ================= RANKINGS TABLE ================= */
+function renderRankings(){
+  document.getElementById('rankTableBody').innerHTML = players.map((p,i)=>`
+    <tr onclick="openProfile(${i})">
+      <td class="rknum">${p.rk}</td>
+      <td class="pname">${p.name}</td>
+      <td>${p.pos}</td>
+      <td class="school">${schoolBadge(p.school)}${p.school}</td>
+      <td class="school">${p.cls}</td>
+    </tr>`).join("");
+}
+
+/* ================= ARTICLES ================= */
+function renderArticles(){
+  document.getElementById('articleGrid').innerHTML = articles.map(a=>`
+    <div class="article-card ${a.feature?'feature':''}">
+      <div class="cat">${a.cat}</div>
+      <h4>${a.title}</h4>
+      <p>${a.excerpt}</p>
+      <div class="byline">${a.byline}</div>
+    </div>`).join("");
+}
+
+/* ================= PODCASTS ================= */
+function renderPodcasts(){
+  const el = document.getElementById('podList');
+  if(!el) return; // podcasts view currently shows "Coming soon", re-enable when ready
+  el.innerHTML = podcasts.map(pd=>`
+    <div class="pod-row">
+      <div class="ep">${pd.ep}</div>
+      <div class="pod-play">▶</div>
+      <div class="pod-info"><h4>${pd.title}</h4><p>${pd.desc}</p></div>
+      <div class="pod-len">${pd.len}</div>
+    </div>`).join("");
+}
+
+/* ================= VIEW SWITCHING ================= */
+function showView(name, skipNav){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  if(!skipNav){
+    document.querySelectorAll('nav.links button').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+    window.scrollTo({top:0, behavior:'smooth'});
+  } else {
+    document.querySelectorAll('nav.links button').forEach(b=>b.classList.remove('active'));
+  }
+}
+
+function subscribeForm(e){
+  e.preventDefault();
+  const form = e.target;
+  const success = form.querySelector('.nl-success');
+  success.style.display = 'block';
+  form.querySelector('button[type="submit"]').style.display = 'none';
+}
+
+/* ================= INIT ================= */
+renderTicker();
+renderFan();
+renderSlideshow();
+renderPlayerGrids();
+renderFilters();
+renderRankings();
+renderArticles();
+renderPodcasts();
+
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{ document.getElementById('loader').classList.add('hide'); }, 1900);
+});
+// fallback in case load already fired
+setTimeout(()=>{ document.getElementById('loader').classList.add('hide'); }, 2600);
+</script>
+</body>
+</html>
