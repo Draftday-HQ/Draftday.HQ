@@ -1292,6 +1292,14 @@ const sb = supabase.createClient(
 let currentUser = null;
 let currentProfile = null;
 let authMode = 'signin';
+let sessionLoaded = false;
+
+// Fires on sign-in, sign-out, token refresh, and right after Supabase finishes
+// processing a confirmation-link redirect, so the UI updates the instant it's ready.
+sb.auth.onAuthStateChange((_event, session) => {
+  if(!sessionLoaded) return; // let the initial loadSession() call handle first paint
+  loadSession();
+});
 
 function openAuthModal(){
   document.getElementById('authModal').classList.add('open');
@@ -1325,11 +1333,14 @@ async function handleAuthSubmit(e){
     if(authMode === 'signup'){
       const { data, error } = await sb.auth.signUp({ email, password });
       if(error) throw error;
-      msgEl.textContent = 'Account created! You can now sign in.';
-      msgEl.className = 'modal-msg success';
       if(data.session){
+        msgEl.textContent = 'Account created! You are signed in.';
+        msgEl.className = 'modal-msg success';
         await loadSession();
         setTimeout(closeAuthModal, 900);
+      } else {
+        msgEl.textContent = 'Check your email and click the confirmation link before signing in.';
+        msgEl.className = 'modal-msg success';
       }
     } else {
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
@@ -1363,6 +1374,7 @@ async function loadSession(){
     currentProfile = null;
   }
   updateAcctUI();
+  sessionLoaded = true;
 }
 
 function updateAcctUI(){
