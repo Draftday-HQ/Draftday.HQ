@@ -423,7 +423,10 @@
   .nl-form button{width:100%;}
   .nl-fine{font-family:var(--mono); font-size:.62rem; color:var(--paper-dim); margin-top:16px; line-height:1.6;}
   .nl-success{display:none; font-family:var(--mono); font-size:.85rem; color:var(--signal-up); margin-top:16px;}
-  .beehiiv-embed-wrap{max-width:440px; margin:0 auto;}
+  .beehiiv-embed-wrap{
+    max-width:440px; margin:0 auto; background:var(--void); border:1px solid var(--steel-soft);
+    padding:14px; border-radius:2px;
+  }
   .nl-form-inline input{
     flex:1; background:var(--void); border:1px solid var(--steel-soft); border-right:none;
     color:var(--paper); font-family:var(--mono); font-size:.85rem; padding:14px 16px; outline:none;
@@ -645,9 +648,9 @@
     </div>
     <div id="rankMockPanel" style="display:none; min-height:40vh; align-items:center; justify-content:center; text-align:center;">
       <div>
-        <div class="eyebrow" style="justify-content:center;">Coming Soon</div>
+        <div class="eyebrow" style="justify-content:center;">Coming December 1</div>
         <h2 class="section-title">Mock Draft</h2>
-        <p class="section-sub" style="margin:0 auto;">Our full pick-by-pick mock draft is on the way. Check back soon.</p>
+        <p class="section-sub" style="margin:0 auto;">Our full pick-by-pick mock draft launches December 1st.</p>
       </div>
     </div>
   </section>
@@ -657,9 +660,9 @@
 <div class="view" id="view-stats">
   <section style="min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center;">
     <div>
-      <div class="eyebrow" style="justify-content:center;">Coming Soon</div>
+      <div class="eyebrow" style="justify-content:center;">Coming November 10</div>
       <h2 class="section-title">Stats</h2>
-      <p class="section-sub" style="margin:0 auto;">Full statistical database for every prospect on the board, in progress. Check back soon.</p>
+      <p class="section-sub" style="margin:0 auto;">Full statistical database for every prospect on the board. Launching November 10th.</p>
     </div>
   </section>
 </div>
@@ -668,9 +671,9 @@
 <div class="view" id="view-stock">
   <section style="min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center;">
     <div id="stockAccountArea" style="max-width:520px;">
-      <div class="eyebrow" style="justify-content:center;">Coming Soon</div>
+      <div class="eyebrow" style="justify-content:center;">Coming November 10</div>
       <h2 class="section-title">Prospect Stock</h2>
-      <p class="section-sub" style="margin:0 auto 24px;">Tracking who's rising and who's falling across the board, in progress. Create an account now so you're ready when trading opens.</p>
+      <p class="section-sub" style="margin:0 auto 24px;">Trading opens November 10th. Create an account now so you're ready to go on day one.</p>
       <button class="btn btn-solid" onclick="openAuthModal()">Create Free Account</button>
     </div>
   </section>
@@ -757,11 +760,11 @@
 <script>
 /* ================= DATA ================= */
 const players = [
-  {rk:1, name:"Tyran Stokes", school:"Kansas", pos:"SF/PF", cls:"Freshman", hs:"6'7\"", wt:230, age:18, hometown:"Louisville, KY",
-   summary:"Stokes was the last uncommitted name in a loaded 2026 class before picking Kansas over Kentucky and Oregon in April, a recruitment that included a postponed Kentucky visit and ended with him announcing live on Inside the NBA, flanked by Kenny Smith, whose AAU program Stokes played for. At Rainier Beach in Seattle he averaged 31.0 points, 13.0 rebounds, 6.0 assists and 4.0 steals as a senior, including a 63-point outburst against West Seattle and a triple-double in the state quarterfinals. He was named MVP of the Jordan Brand Classic and has three USA Basketball gold medals, including the first triple-double in U19 World Cup history.",
-   strengths:["Downhill power at 230 pounds with a 7-foot wingspan, hard to keep out of the paint","Instinctive driving lanes, finds paths to the rim even when none seem open","Proven at every level: high school MVPs, USAB gold medals, a U19 triple-double","Fills a Kansas roster that lost its top three guards this offseason"],
-   weaknesses:["Jump shot is still the swing skill scouts want to see develop","Walks into a Kansas lineup that lost Peterson, Council and multiple transfers, big role fast","Instinct-driven scoring can tip into forcing shots against set defenses"],
-   comps:["Powerful, downhill wing with guard skills"],
+  {rk:1, name:"Jordan Smith Jr.", school:"Arkansas", pos:"PG/SG", cls:"Freshman", hs:"6'2\"", wt:200, age:18, hometown:"Washington, D.C. / Fairfax, VA",
+   summary:"Smith was the last five-star domino to fall in a stacked D.C.-area backcourt class, picking Arkansas over Duke, Georgetown, Indiana, Kentucky and Syracuse after averaging 26.6 points, 6.3 rebounds and 5.6 assists as a senior at Paul VI. He wasted no time backing it up in his first look in a Razorback uniform, dropping 22 points and 6 assists in his Bahamas exhibition debut, then following it with a triple-double against Carleton, 20 points on 9-of-14 shooting, 11 assists, 11 rebounds and just one turnover. He plays like a small forward trapped in a 6'2\" frame: downhill, physical, always hunting contact, and his rebounding numbers come from refusing to let bigger players box him out.",
+   strengths:["Elite two-way rebounding guard, pulled down 11 boards in a exhibition triple-double at 6'2\"","Physical, switchable defender who guards up multiple positions","Plays winning basketball, teammates call him the most impactful player in the class"],
+   weaknesses:["Outside shot was once a real weakness, though it improved noticeably this past year","Decision-making in ball-screen actions is still a work in progress"],
+   comps:["Physical combo guard, paint-touch playmaker"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
   {rk:2, name:"Stefan Joksimovic", school:"Baskonia (Spain)", pos:"SG/PG", cls:"International", hs:"6'7\"", wt:205, age:17, hometown:"Ljubljana, Slovenia",
    summary:"Joksimovic's camp made it official this spring: no NCAA detour, he's staying with Saski Baskonia in Spain's Liga ACB and EuroLeague through the 2026-27 season, closing the door on interest from Kentucky and others. He just finished a U18 EuroBasket run averaging 22.4 points on 49.3/43.8 shooting to help Slovenia reach the semifinals, and evaluators have started reaching for the Dončić comparison given the size, feel and left-handed shot-making. He became Baskonia's youngest-ever Copa del Rey player this season.",
@@ -769,11 +772,11 @@ const players = [
    weaknesses:["Needs to add strength before he holds up physically at the next level","Outside shot is promising but not yet a finished, high-volume weapon","Staying overseas means less exposure than his college-bound peers"],
    comps:["Do-everything European guard-forward, Dončić-style feel"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:3, name:"Jordan Smith Jr.", school:"Arkansas", pos:"PG/SG", cls:"Freshman", hs:"6'2\"", wt:200, age:18, hometown:"Washington, D.C. / Fairfax, VA",
-   summary:"Smith was the last five-star domino to fall in a stacked D.C.-area backcourt class, picking Arkansas over Duke, Georgetown, Indiana, Kentucky and Syracuse after averaging 26.6 points, 6.3 rebounds and 5.6 assists as a senior at Paul VI. He wasted no time backing it up in his first look in a Razorback uniform, dropping 22 points and 6 assists in his Bahamas exhibition debut, then following it with a triple-double against Carleton, 20 points on 9-of-14 shooting, 11 assists, 11 rebounds and just one turnover. He plays like a small forward trapped in a 6'2\" frame: downhill, physical, always hunting contact, and his rebounding numbers come from refusing to let bigger players box him out.",
-   strengths:["Elite two-way rebounding guard, pulled down 11 boards in a exhibition triple-double at 6'2\"","Physical, switchable defender who guards up multiple positions","Plays winning basketball, teammates call him the most impactful player in the class"],
-   weaknesses:["Outside shot was once a real weakness, though it improved noticeably this past year","Decision-making in ball-screen actions is still a work in progress"],
-   comps:["Physical combo guard, paint-touch playmaker"],
+  {rk:3, name:"Tyran Stokes", school:"Kansas", pos:"SF/PF", cls:"Freshman", hs:"6'7\"", wt:230, age:18, hometown:"Louisville, KY",
+   summary:"Stokes was the last uncommitted name in a loaded 2026 class before picking Kansas over Kentucky and Oregon in April, a recruitment that included a postponed Kentucky visit and ended with him announcing live on Inside the NBA, flanked by Kenny Smith, whose AAU program Stokes played for. At Rainier Beach in Seattle he averaged 31.0 points, 13.0 rebounds, 6.0 assists and 4.0 steals as a senior, including a 63-point outburst against West Seattle and a triple-double in the state quarterfinals. He was named MVP of the Jordan Brand Classic and has three USA Basketball gold medals, including the first triple-double in U19 World Cup history.",
+   strengths:["Downhill power at 230 pounds with a 7-foot wingspan, hard to keep out of the paint","Instinctive driving lanes, finds paths to the rim even when none seem open","Proven at every level: high school MVPs, USAB gold medals, a U19 triple-double","Fills a Kansas roster that lost its top three guards this offseason"],
+   weaknesses:["Jump shot is still the swing skill scouts want to see develop","Walks into a Kansas lineup that lost Peterson, Council and multiple transfers, big role fast","Instinct-driven scoring can tip into forcing shots against set defenses"],
+   comps:["Powerful, downhill wing with guard skills"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
   {rk:4, name:"Caleb Holt", school:"Arizona", pos:"SG/SF", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Huntsville, AL",
    summary:"Holt picked Arizona over Houston, Kentucky, Alabama and Providence, crediting his relationship with Tommy Lloyd, who coached him on the gold medal-winning USA Basketball U19 team last summer. His game is built around downhill pressure: he doesn't have elite blow-by burst, but he plays through contact and finishes with either hand, and the catch-and-shoot jumper has visibly caught up to his slashing over the past year.",
@@ -889,106 +892,254 @@ const players = [
    weaknesses:["Needs significant added strength for interior play","Defense in space is still a work in progress"],
    comps:["Stretch-four, floor-spacing big"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:22, name:"Caleb Gaskins", school:"Miami", pos:"PF/SF", cls:"Freshman", hs:"6'8\"", wt:220, age:17, hometown:"West Palm Beach, FL",
+  {rk:22, name:"Neoklis Avdalas", school:"North Carolina", pos:"SG/SF", cls:"Sophomore", hs:"6'9\"", wt:215, age:20, hometown:"Kalamata, Greece",
+   summary:"Avdalas played four years professionally in Greece, including stints with Panathinaikos, Karditsa and Peristeri, before a standout freshman year at Virginia Tech (12.1 ppg, 3.1 rpg, 4.6 apg on 31.4% three-point shooting) made him the No. 17 overall transfer in the country. He became new head coach Michael Malone's first portal commitment at North Carolina, a homecoming of sorts given his close friendship with fellow Greek import Sayon Keita.",
+   strengths:["Rare positional size for a lead guard, 6'9\" with real playmaking feel","Proven against ACC competition already, ranked 9th in assists as a freshman","Professional experience in Greece gives him a maturity edge over typical freshmen"],
+   weaknesses:["Three-point shot needs to become more consistent (31.4% as a freshman)","Efficiency dipped against tougher ACC defenses (35.7% FG in-conference)"],
+   comps:["Jumbo playmaking guard, international pro background"],
+   stats:{ppg:"12.1", rpg:"3.1", apg:"4.6", fg:"N/A"}},
+  {rk:23, name:"Caleb Gaskins", school:"Miami", pos:"PF/SF", cls:"Freshman", hs:"6'8\"", wt:220, age:17, hometown:"West Palm Beach, FL",
    summary:"Gaskins grew up in West Palm Beach and chose Miami over Florida, Alabama and Michigan, becoming one of Jai Lucas' first two five-star signings for the program alongside Shelton Henderson and the second-highest-rated recruit in Miami history. His game is built around footwork and touch, not just size: he's comfortable operating from the mid-post, has real passing feel out of double-teams, and prefers a high-arcing shot that's hard to contest even when a defender gets a hand up. He led Columbus High to a fourth straight state championship and a national title, and his longtime high school coach followed him to Miami as Lucas' top assistant.",
    strengths:["Elite footwork and touch for a 6'8\" forward, comfortable in the mid-range","Advanced passing for his position, finds teammates off the bounce and the catch","Proven winner, led his high school to back-to-back-to-back-to-back state titles"],
    weaknesses:["One of the younger players in his class, won't turn 18 until after enrolling","Decision-making under pressure still developing given his youth and offensive workload"],
    comps:["Jumbo shot-making forward, primary-option upside"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:23, name:"Braylon Mullins", school:"UConn", pos:"SG/SF", cls:"Sophomore", hs:"6'5\"", wt:190, age:20, hometown:"Greenfield, IN",
+  {rk:24, name:"Braylon Mullins", school:"UConn", pos:"SG/SF", cls:"Sophomore", hs:"6'5\"", wt:190, age:20, hometown:"Greenfield, IN",
    summary:"Mullins turned down first-round buzz to return to UConn off a huge freshman year that included a game-winning buzzer-beater against No. 1 Duke in last year's Elite Eight, sending the Huskies to the Final Four, where they'd go on to lose the title game to Michigan. That moment says a lot about his game: a low-usage but supremely confident catch-and-shoot threat (42/34/89 splits as a true freshman) who doesn't need plays run for him to be dangerous, with real secondary passing when defenses run him off the line. The obvious swing skill for this season is proving he can create more of his own offense off the dribble rather than living almost entirely off movement and kick-outs.",
    strengths:["Knockdown catch-and-shoot shooter, especially off movement","Hard to lose without the ball, elite off-ball habits","Ice-cold under pressure, hit the shot that sent UConn to the Final Four as a true freshman"],
    weaknesses:["Frame is light for a wing defender at the next level","Almost entirely a play-finisher so far, self-creation off the dribble is the swing skill to watch this season"],
    comps:["Movement shooter with secondary playmaking"],
    stats:{ppg:"12.0", rpg:"3.5", apg:"1.4", fg:"42.1%"},
    seasons:[{yr:"Freshman", ppg:12.0, rpg:3.5, apg:1.4, stl:1.0, blk:0.6, to:1.2, min:28.3, fg:42.1, tpt:33.5, tpa:6.5, ft:88.9, fta:1.1}]},
-  {rk:24, name:"Milan Momcilovic", school:"Kentucky", pos:"SF/PF", cls:"Senior", hs:"6'8\"", wt:220, age:21, hometown:"Pewaukee, WI",
+  {rk:25, name:"Milan Momcilovic", school:"Kentucky", pos:"SF/PF", cls:"Senior", hs:"6'8\"", wt:220, age:21, hometown:"Pewaukee, WI",
    summary:"Momcilovic led the entire country in three-point volume and efficiency at Iowa State (48.7% on 7.5 attempts a game, 16.9 points) before transferring to Kentucky as the No. 1-ranked player available in the portal. What made him so hard to guard at Iowa State wasn't just standstill shooting, he moves well without the ball, curls off screens into a shot pocket that's ready the instant he catches it, and he's shown he can put the ball on the floor for one or two dribbles into a pull-up rather than needing a completely clean look. The move to Kentucky reportedly came with one of the largest NIL packages in college basketball, and puts him in a No. 1-option role for the first time in his career.",
    strengths:["Led the nation in high-volume three-point shooting last season","Proven All-Big 12 producer across three years and two Sweet 16 runs","Moves well without the ball and can shoot off movement, not just standstill"],
    weaknesses:["Lateral quickness limits him as an on-ball defender","Was a complementary scorer at Iowa State, now steps into a No. 1-option role at Kentucky"],
    comps:["Elite floor-spacing forward, portal riser"],
    stats:{ppg:"16.9", rpg:"3.1", apg:"1.0", fg:"50.6%"},
    seasons:[{yr:"Freshman", ppg:11.2, rpg:3.2, apg:1.2, stl:0.5, blk:0.4, to:0.8, min:30.4, fg:42.9, tpt:36.1, tpa:4.7, ft:81.8, fta:1.8}, {yr:"Sophomore", ppg:11.5, rpg:3.3, apg:0.9, stl:0.4, blk:0.3, to:0.9, min:27.5, fg:42.9, tpt:39.6, tpa:5.7, ft:83.7, fta:1.5}, {yr:"Junior", ppg:16.9, rpg:3.1, apg:1.0, stl:0.8, blk:0.2, to:0.8, min:30.5, fg:50.6, tpt:48.6, tpa:7.6, ft:87.8, fta:2.2}]},
-  {rk:25, name:"Malachi Moreno", school:"Kentucky", pos:"C", cls:"Sophomore", hs:"7'0\"", wt:250, age:19, hometown:"Georgetown, KY",
+  {rk:26, name:"Malachi Moreno", school:"Kentucky", pos:"C", cls:"Sophomore", hs:"7'0\"", wt:250, age:19, hometown:"Georgetown, KY",
    summary:"A lifelong Kentucky fan from Georgetown, Moreno tested the NBA draft process this spring before withdrawing to return home for a sophomore season. His game is straightforward but effective: he protects the rim with verticality rather than fouling, runs the floor well for his size, and finishes mostly through dunks and put-backs rather than any real face-up skill yet, the profile of a defense-and-rebounding center whose offensive role should expand as Kentucky leans on him more.",
    strengths:["Prototypical NBA size at center with real mobility","Efficient finisher around the basket (58.2% FG)","Shot-blocking instincts have improved with more minutes, led the Wildcats in both categories"],
    weaknesses:["Offensive polish still behind his physical tools","Outside touch remains almost entirely undeveloped"],
    comps:["Mobile, high-upside center"],
    stats:{ppg:"7.9", rpg:"6.3", apg:"1.7", fg:"58.2%"},
    seasons:[{yr:"Freshman", ppg:7.9, rpg:6.3, apg:1.7, stl:0.5, blk:1.5, to:1.3, min:22.7, fg:58.2, tpt:0, tpa:0.1, ft:70.0, fta:3.4}]},
-  {rk:26, name:"Luigi Suigo", school:"Villanova", pos:"C", cls:"Freshman", hs:"7'4\"", wt:250, age:19, hometown:"Tradate, Italy",
+  {rk:27, name:"Luigi Suigo", school:"Villanova", pos:"C", cls:"Freshman", hs:"7'4\"", wt:250, age:19, hometown:"Tradate, Italy",
    summary:"At 7-foot-3, Suigo withdrew from the 2026 NBA Draft after a Combine invite to instead sign with Villanova, coming off a season with BC Mega Basket in Serbia's Adriatic League. His college debut will fittingly come in his home country, as Villanova opens the season against Notre Dame in Rome, about six hours from his hometown of Tradate. For Kevin Willard, Suigo is an immediate answer at a position Villanova has lacked size at for years: he changes shots simply by standing near the rim, moves better than most players his size, and already shows real touch and passing feel out of the post rather than being purely a rim-runner.",
    strengths:["Elite size and length, alters shots at the rim by presence alone","Real feel and passing ability for a player his size","Already tested against professional competition in Europe"],
    weaknesses:["Offensive skill package is very early in its development","Needs added strength for physical post play"],
    comps:["Elite-size rim protector, could be Villanova's first true interior anchor in years"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:27, name:"Alijah Arenas", school:"USC", pos:"SG/SF", cls:"Sophomore", hs:"6'5\"", wt:205, age:19, hometown:"Oakland, CA",
+  {rk:28, name:"Alijah Arenas", school:"USC", pos:"SG/SF", cls:"Sophomore", hs:"6'5\"", wt:205, age:19, hometown:"Oakland, CA",
    summary:"Arenas returns to USC for a sophomore season after a genuinely difficult freshman year. He was hospitalized following a serious car accident in the spring before his freshman season, then tore his meniscus over the summer, an injury that pushed his college debut all the way to mid-January. Once healthy he still managed 14.1 points and 2.1 assists in 14 games, wearing his father Gilbert Arenas' old No. 0, but the lost reps showed: he is a confident, high-volume shot-maker with real advanced shot-creation instincts, comfortable pulling up off tough dribble combinations, but his efficiency was poor across the board (34.1% from the field, 21.3% from three), and defensively he was still learning to translate his physical tools into consistent effort and positioning. This season is as much about conditioning, reps and shot selection as it is about raw talent.",
    strengths:["Advanced shot creation and scoring instincts despite the lost development time","Confident, high-volume shot-maker willing to take tough shots","Comes from a basketball family (father Gilbert, uncles Matt Barnes and Derek Fisher), strong feel for pace"],
    weaknesses:["Missed most of a year of development between injuries, conditioning and rhythm are real question marks","Shooting efficiency across the board (34.1% FG, 21.3% 3PT) needs major improvement, and shot selection needs tightening"],
    comps:["High-usage scoring guard"],
    stats:{ppg:"14.1", rpg:"2.9", apg:"2.1", fg:"34.1%"},
    seasons:[{yr:"Freshman", ppg:14.1, rpg:2.9, apg:2.1, stl:0.9, blk:0.5, to:2.3, min:27.6, fg:34.1, tpt:21.3, tpa:4.4, ft:79.2, fta:5.5}]},
-  {rk:28, name:"Rueben Chinyelu", school:"Florida", pos:"C", cls:"Senior", hs:"6'10\"", wt:265, age:22, hometown:"Enugu Agidi, Nigeria",
+  {rk:29, name:"Rueben Chinyelu", school:"Florida", pos:"C", cls:"Senior", hs:"6'10\"", wt:265, age:22, hometown:"Enugu Agidi, Nigeria",
    summary:"Chinyelu won the Naismith, NABC and SEC Defensive Player of the Year awards after averaging 10.9 points and a nation-leading 11.2 rebounds, becoming the first Florida player to average double-digit boards in 50 years, before withdrawing from the NBA Draft to return for a senior season. His game is about positioning and effort rather than flash: he holds his ground against bigger post players, times his verticality well enough to contest without fouling, and his 137 offensive rebounds last season, a Florida single-season record, came almost entirely from outworking bigger, sometimes more talented opponents for the ball.",
    strengths:["Reigning national Defensive Player of the Year across three major awards","Set Florida's single-season offensive rebounding record (137) largely through positioning and effort","Physical enough to bang with any frontcourt in the country"],
    weaknesses:["Offensive role stays limited to finishing rather than creating","Older prospect relative to the rest of the class"],
    comps:["Elite defensive-anchor center"],
    stats:{ppg:"10.9", rpg:"11.2", apg:"0.7", fg:"58.4%"},
    seasons:[{yr:"Freshman", ppg:4.7, rpg:5.0, apg:0.1, stl:0.2, blk:1.3, to:1.1, min:13.9, fg:61.7, tpt:0, tpa:0.0, ft:48.9, fta:1.3}, {yr:"Sophomore", ppg:6.0, rpg:6.6, apg:0.7, stl:0.5, blk:0.8, to:1.0, min:19.0, fg:60.0, tpt:0, tpa:0.0, ft:58.5, fta:1.4}, {yr:"Junior", ppg:10.9, rpg:11.2, apg:0.7, stl:0.8, blk:1.0, to:1.5, min:24.5, fg:58.4, tpt:0, tpa:0.1, ft:69.5, fta:3.4}]},
-  {rk:29, name:"Anthony Thompson", school:"Ohio State", pos:"SF/PF", cls:"Freshman", hs:"6'8\"", wt:200, age:17, hometown:"Lebanon, OH",
-   summary:"Thompson picked Ohio State from a final group that included Michigan, Kentucky, North Carolina and Texas, a lefty forward Adam Finkelstein says creates matchup problems on both ends with his extreme length. His game leans on that length: he defends the rim like a much bigger player, runs the floor in transition, and scores mostly off cuts and straight-line drives right now rather than any real face-up shot creation, part of why he transferred high schools twice chasing better competition and jumped his production at each stop.",
-   strengths:["Skilled left-handed scorer with genuine matchup-creating length","Runs the floor and defends the rim like a much taller player","Averaged 22.8 points on the Adidas circuit while shooting 59% from the field"],
-   weaknesses:["Consistency game-to-game is still unproven at high-major pace","Needs a clearer role to show his full skill set early"],
-   comps:["Developmental two-way wing, 3-and-D long-term profile"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
   {rk:30, name:"Jason Crowe Jr.", school:"Missouri", pos:"PG", cls:"Freshman", hs:"6'3\"", wt:170, age:18, hometown:"Lynwood, CA",
    summary:"Crowe set the all-time California high school scoring record with 4,718 career points, breaking the mark in just 100 games, and did it while playing for his own father, Jason Crowe Sr., who coached him at Inglewood. His game is pure shot-making at every level: a smooth pull-up from three, a tight, low handle that lets him change speeds in the paint, and touch around the rim that let him score a Hoophall Classic-record 48 points on a night nothing else was working for his team. Dennis Gates called him Missouri's highest-ranked signee since Michael Porter Jr.",
    strengths:["California's all-time leading scorer, elite advanced scoring instincts at every level","Gets to the rim at will with a strong finishing package","Battle-tested against elite competition his entire high school career"],
    weaknesses:["Slight frame needs added strength for physical Big 12 point guards","Defensive consistency still developing"],
    comps:["High-scoring combo guard, historic high school scorer"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:31, name:"Billy Richmond III", school:"Arkansas", pos:"SF/SG", cls:"Junior", hs:"6'7\"", wt:195, age:20, hometown:"Memphis, TN",
+  {rk:31, name:"Ivan Kharchenkov", school:"Arizona", pos:"SF", cls:"Sophomore", hs:"6'7\"", wt:220, age:19, hometown:"Munich, Germany",
+   summary:"Kharchenkov became the youngest player to score in Bundesliga history at 16 with Bayern Munich before committing to Arizona, where he opened his college career with a 12-point, 10-rebound double-double against Florida. His father Alexander played 22 professional seasons in the Soviet Union and Russia and won the 1974 FIBA World Cup, and Ivan's own game reflects that pedigree: size, strength and off-ball feel well beyond a typical freshman.",
+   strengths:["Excellent size and strength for a wing, plays like a seasoned pro","Sharp off-ball movement and spatial awareness from his European background","Active, high-anticipation defender who generates turnovers"],
+   weaknesses:["Perimeter shot is inconsistent (32.7% from three as a freshman)","Limited usage so far (17% usage rate) makes his offensive ceiling hard to project"],
+   comps:["European wing, size-and-feel over flash"],
+   stats:{ppg:"10.4", rpg:"4.3", apg:"2.3", fg:"49.2%"}},
+  {rk:32, name:"Anthony Thompson", school:"Ohio State", pos:"SF/PF", cls:"Freshman", hs:"6'8\"", wt:200, age:17, hometown:"Lebanon, OH",
+   summary:"Thompson picked Ohio State from a final group that included Michigan, Kentucky, North Carolina and Texas, a lefty forward Adam Finkelstein says creates matchup problems on both ends with his extreme length. His game leans on that length: he defends the rim like a much bigger player, runs the floor in transition, and scores mostly off cuts and straight-line drives right now rather than any real face-up shot creation, part of why he transferred high schools twice chasing better competition and jumped his production at each stop.",
+   strengths:["Skilled left-handed scorer with genuine matchup-creating length","Runs the floor and defends the rim like a much taller player","Averaged 22.8 points on the Adidas circuit while shooting 59% from the field"],
+   weaknesses:["Consistency game-to-game is still unproven at high-major pace","Needs a clearer role to show his full skill set early"],
+   comps:["Developmental two-way wing, 3-and-D long-term profile"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:33, name:"Billy Richmond III", school:"Arkansas", pos:"SF/SG", cls:"Junior", hs:"6'7\"", wt:195, age:20, hometown:"Memphis, TN",
    summary:"Richmond's efficiency jumped across the board as a sophomore at Arkansas, 11.2 points on 56.3% shooting plus 4.3 rebounds, 2.0 assists and 1.1 steals, part of a freshman wing duo with Karter Knox that helped drive Arkansas to the Sweet 16 the year before. As the lone returning rotation piece on a rebuilt Razorback roster, he opened this season's Bahamas exhibition trip with 16 points and 6 assists, and the trip doubled as a reminder of the one real hole in his game: he shot just 1-of-8 from three across the four games, though he stayed efficient inside the arc (68.4%). What stands out on tape is how little he needs the ball to matter: he cuts hard without it, crashes the offensive glass from the perimeter, and finishes efficiently around the rim rather than settling for tough jumpers.",
    strengths:["Efficient, well-rounded scorer, 56.3% FG as a sophomore","Contributes across the stat sheet without needing plays run for him: boards, assists, steals","Proven production trajectory year over year at the high-major level"],
    weaknesses:["Three-point shot remains the clear swing skill, just 1-of-8 from deep across four Bahamas exhibitions","Needs a bigger offensive role to show his full ceiling"],
    comps:["Efficient, do-it-all wing"],
    stats:{ppg:"11.2", rpg:"4.3", apg:"2.0", fg:"56.3%"},
    seasons:[{yr:"Freshman", ppg:5.8, rpg:3.0, apg:1.3, stl:0.5, blk:0.4, to:1.3, min:17.5, fg:52.6, tpt:12.5, tpa:0.5, ft:73.2, fta:1.6}, {yr:"Sophomore", ppg:11.2, rpg:4.3, apg:2.0, stl:1.1, blk:0.8, to:1.2, min:27.6, fg:56.3, tpt:25.9, tpa:1.6, ft:78.4, fta:2.0}]},
-  {rk:32, name:"Brandon McCoy", school:"Michigan", pos:"SG/PG", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Oakland, CA",
+  {rk:34, name:"Brandon McCoy", school:"Michigan", pos:"SG/PG", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Oakland, CA",
    summary:"McCoy is part of a talented Michigan freshman class joining a program that just won a national title and has a real track record developing guards under Dusty May, including returning sophomore sharpshooter Trey McKenney. At 6'5\" he has good size for a combo guard, comfortable putting the ball on the floor and getting into the mid-range rather than just shooting from range, and his physical tools should let him defend either backcourt spot once he adjusts to the speed of the college game.",
    strengths:["Good size for a combo guard at 6'5\"","Comfortable creating and scoring off the dribble","Joins a Michigan program with a track record developing guards under Dusty May"],
    weaknesses:["No college production yet to evaluate against","Role and consistency still to be determined in a deep Michigan backcourt"],
    comps:["Combo guard, size at the position"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:33, name:"Trey McKenney", school:"Michigan", pos:"SG/SF", cls:"Sophomore", hs:"6'4\"", wt:225, age:19, hometown:"Flint, MI",
+  {rk:35, name:"Trey McKenney", school:"Michigan", pos:"SG/SF", cls:"Sophomore", hs:"6'4\"", wt:225, age:19, hometown:"Flint, MI",
    summary:"McKenney's freshman year ended with him hitting the biggest shot of Michigan's season, a late step-back three in the national championship game against UConn that sealed a 69-63 win and Michigan's first title in 37 years. He was excellent throughout the tournament run, upping his production from 9.9 points in the regular season to 12.0 across March Madness, with a 17-point game against Alabama in the Sweet 16 and 16 points against Arizona in the Final Four. He's a physical 6'4\", 225-pound guard whose game is about strength and shot-making as much as burst, a knockdown three-point shooter (39.1%) who's strong enough to finish through contact and stayed composed all postseason under pressure.",
    strengths:["Strong three-point shooter, 39.1% as a freshman, who raised his level in the NCAA Tournament","Physical frame, plays bigger than his height, finishes through contact","Proven in the biggest moments: hit the deciding shot of the national championship game as a true freshman"],
    weaknesses:["Playmaking and assist numbers are limited so far, more scorer than table-setter","Needs to add on-ball defensive versatility"],
    comps:["Physical, shot-making guard, program-legacy riser"],
    stats:{ppg:"9.9", rpg:"2.8", apg:"0.9", fg:"46.2%"},
    seasons:[{yr:"Freshman", ppg:9.9, rpg:2.8, apg:0.9, stl:0.4, blk:0.1, to:0.9, min:22.1, fg:46.2, tpt:39.1, tpa:4.3, ft:89.5, fta:2.1}]},
-  {rk:34, name:"Keanu Dawes", school:"Kansas", pos:"PF", cls:"Senior", hs:"6'9\"", wt:225, age:21, hometown:"Salt Lake City, UT",
+  {rk:36, name:"Keanu Dawes", school:"Kansas", pos:"PF", cls:"Senior", hs:"6'9\"", wt:225, age:21, hometown:"Salt Lake City, UT",
    summary:"Dawes' path to Kansas has taken him through three programs: he started his career at Rice, transferred to Utah for two seasons, and is now a senior at Kansas, where Bill Self is counting on him after an offseason that saw the Jayhawks lose Bidunga, Tiller and several others to the portal. His production has grown at every stop, from 6.6 points as a freshman to 12.5 and 8.8 rebounds last season, and his game is built on activity: crashing the offensive glass relentlessly, running the floor hard in transition, and finishing mostly around the rim, with a jumper that's shown flashes but hasn't become a consistent weapon yet.",
    strengths:["Production has grown at every stop across three programs, clear developmental trend","Efficient interior scorer, 54.6% FG last season","Experienced against high-major competition across three different conferences"],
    weaknesses:["Older prospect relative to the rest of the class","Three-point shot has been inconsistent year to year"],
    comps:["Steadily-improving, experienced forward"],
    stats:{ppg:"12.5", rpg:"8.8", apg:"2.2", fg:"54.6%"},
    seasons:[{yr:"Freshman", ppg:6.6, rpg:4.1, apg:0.9, stl:0.8, blk:0.4, to:1.1, min:23.6, fg:41.0, tpt:28.8, tpa:2.3, ft:70.6, fta:2.1}, {yr:"Sophomore", ppg:8.3, rpg:6.4, apg:1.0, stl:0.6, blk:0.5, to:1.0, min:18.7, fg:61.4, tpt:34.3, tpa:1.1, ft:75.6, fta:2.9}, {yr:"Junior", ppg:12.5, rpg:8.8, apg:2.2, stl:0.5, blk:0.4, to:1.8, min:30.8, fg:54.6, tpt:31.7, tpa:3.2, ft:72.4, fta:3.1}]},
-  {rk:35, name:"Flory Bidunga", school:"Louisville", pos:"C/PF", cls:"Junior", hs:"6'9\"", wt:235, age:21, hometown:"Kinshasa, DR Congo",
+  {rk:37, name:"Flory Bidunga", school:"Louisville", pos:"C/PF", cls:"Junior", hs:"6'9\"", wt:235, age:21, hometown:"Kinshasa, DR Congo",
    summary:"Bidunga transferred from Kansas to Louisville this offseason and his per-game numbers nearly doubled as a sophomore, 13.3 points, 9.1 rebounds and a class-leading 2.6 blocks on 63.9% shooting. His game is pure verticality and explosiveness: he protects the rim by timing his jump rather than just standing under it, finishes above the rim in traffic, and his offensive game right now is almost entirely dunks, put-backs and rolls to the basket rather than any face-up skill.",
    strengths:["Elite shot-blocking rate, jumped from 1.6 to 2.6 blocks per game","High-efficiency interior scorer, 63.9% FG as a sophomore","Explosive athlete for his size, plays above the rim"],
    weaknesses:["No perimeter shooting to speak of yet","Free-throw shooting is still a work in progress"],
    comps:["Explosive, rim-protecting big"],
    stats:{ppg:"13.3", rpg:"9.1", apg:"1.5", fg:"63.9%"},
    seasons:[{yr:"Freshman", ppg:5.9, rpg:5.4, apg:0.3, stl:0.6, blk:1.6, to:0.8, min:16.3, fg:69.8, tpt:0, tpa:0.0, ft:53.3, fta:1.3}, {yr:"Sophomore", ppg:13.3, rpg:9.1, apg:1.5, stl:0.7, blk:2.6, to:1.5, min:31.6, fg:63.9, tpt:0, tpa:0.1, ft:65.4, fta:3.1}]},
-  {rk:36, name:"Tyler Tanner", school:"Vanderbilt", pos:"PG", cls:"Junior", hs:"6'0\"", wt:167, age:20, hometown:"Brentwood, TN",
+  {rk:38, name:"Tyler Tanner", school:"Vanderbilt", pos:"PG", cls:"Junior", hs:"6'0\"", wt:167, age:20, hometown:"Brentwood, TN",
    summary:"Tanner's game exploded as a sophomore at Vanderbilt, assists nearly tripling from 1.9 to 5.1 a game alongside a jump from 5.8 to 19.3 points on a tidy 48.8/37.3/86.1 split, one of the more dramatic single-season leaps in college basketball. He plays fast and downhill for a 6'0\" guard, using ball screens to get into the paint and either finish or kick out, and the accompanying jump in his steal numbers (1.7 to 2.3 a game) shows a player who got more disruptive on defense at the same time his offensive role exploded. CBS Sports named him among the SEC's marquee returners heading into a season the conference expects to be its best in years.",
    strengths:["Playmaking surged, 1.9 to 5.1 assists per game in one offseason","High-steal, disruptive on-ball defender","Efficient across the board despite the massive usage jump"],
    weaknesses:["Undersized at 6'0\", limited finishing radius inside","Needs to prove last season's leap holds up against tougher matchups"],
    comps:["Pass-first, high-efficiency point guard"],
    stats:{ppg:"19.3", rpg:"3.7", apg:"5.1", fg:"48.8%"},
    seasons:[{yr:"Freshman", ppg:5.8, rpg:2.3, apg:1.9, stl:1.7, blk:0.2, to:0.4, min:20.7, fg:46.2, tpt:25.4, tpa:2.0, ft:75.0, fta:1.0}, {yr:"Sophomore", ppg:19.3, rpg:3.7, apg:5.1, stl:2.3, blk:0.3, to:1.9, min:33.4, fg:48.8, tpt:37.3, tpa:4.4, ft:86.1, fta:6.0}]},
+  {rk:39, name:"Alex Condon", school:"Florida", pos:"PF/C", cls:"Senior", hs:"6'11\"", wt:236, age:22, hometown:"Perth, Western Australia, Australia",
+   summary:"Condon grew up a multi-sport star in Perth, excelling in Australian football and water polo before choosing basketball, and came to Florida in 2023 by way of the NBA Global Academy in Canberra. He's started every season since, won a national title as a sophomore, and was considered a projected late-first to second-round pick before withdrawing from the 2026 NBA Draft to return for his senior year on a Florida team many are already calling the preseason No. 1 in the country alongside teammates Thomas Haugh and Rueben Chinyelu. His game is built on passing and activity rather than raw scoring volume: his 123 assists as a sophomore were the most by any player 6-foot-11 or taller in the country, and his junior year saw a career-best 55.6% shooting and a first career 1,000-point milestone, even as his three-point shot (which had been trending up) collapsed to 17% and turnovers became a real issue.",
+   strengths:["Elite passing for a big man, led all 6'11\"+ players nationally in assists as a sophomore (123)","Efficient interior scorer, career-best 55.6% shooting as a junior","Proven winner: national champion, SEC champion, All-SEC every season he's played"],
+   weaknesses:["Three-point shot has regressed badly, from 32.8% as a sophomore to 17% as a junior","Turnovers were a real problem last season, 83 on the year, the most on the team"],
+   comps:["Passing, winning big man, connective frontcourt piece"],
+   stats:{ppg:"15.1", rpg:"7.5", apg:"3.6", fg:"55.6%"},
+   seasons:[{yr:"Freshman", ppg:7.7, rpg:6.4, apg:1.2, stl:0.4, blk:1.3, to:1.5, min:20.3, fg:46.2, tpt:28.9, tpa:0.4, ft:67.3, fta:2.4}, {yr:"Sophomore", ppg:10.6, rpg:7.5, apg:2.2, stl:0.9, blk:1.3, to:1.4, min:24.9, fg:49.3, tpt:32.8, tpa:0.7, ft:60.4, fta:2.7}, {yr:"Junior", ppg:15.1, rpg:7.5, apg:3.6, stl:1.0, blk:1.4, to:2.4, min:30.6, fg:55.6, tpt:17.0, tpa:1.4, ft:63.0, fta:3.6}]},
+  {rk:40, name:"Taylen Kinney", school:"Kansas", pos:"PG", cls:"Freshman", hs:"6'2\"", wt:185, age:18, hometown:"Newport, KY",
+   summary:"Kinney picked Kansas over Kentucky, Indiana, Louisville, Arkansas and Oregon, giving Bill Self the No. 1 point guard in the 2026 class to pair with fellow Kansas signee Tyran Stokes. A McDonald's All-American who starred for Overtime Elite in Atlanta (20.1 ppg, 5.0 apg, 4.0 rpg on 55.6% shooting), he was also named to USA Basketball's U18 national team this spring.",
+   strengths:["Advanced playmaking feel: reads pick-and-rolls and post entries well for his age","Size and physicality to cause matchup problems against smaller point guards","Efficient scorer with a varied finishing package (55.6% FG on Overtime Elite)"],
+   weaknesses:["No college minutes yet, unproven against high-major competition","Three-point volume and consistency still developing (33.3% on limited attempts)"],
+   comps:["Big, playmaking lead guard"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:41, name:"Christian Collins", school:"USC", pos:"SG/SF", cls:"Freshman", hs:"6'6\"", wt:200, age:18, hometown:"Los Angeles, CA",
+   summary:"Collins is one of USC's headline 2026 signees, ranked the No. 2 prospect in the class by SC Next 100 as the Trojans rebuild their perimeter talent under their current staff.",
+   strengths:["Highly regarded wing prospect with a versatile offensive skill set","Part of a loaded USC signing class alongside Brandon McCoy and Tajh Ariza"],
+   weaknesses:["No college production yet to evaluate against","Specific strengths and weaknesses still becoming clear at this level"],
+   comps:["Versatile wing prospect"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:42, name:"Tounde Yessoufou", school:"St. John's", pos:"SF", cls:"Sophomore", hs:"6'5\"", wt:215, age:19, hometown:"Cotonou, Benin",
+   summary:"Yessoufou set Baylor's single-season freshman scoring record (605 points) on his way to All-Big 12 Honorable Mention, including a 37-point outburst against BYU, the most by a freshman against a ranked opponent in program history. He transferred to St. John's for his sophomore season, giving Rick Pitino a powerful, downhill scoring wing to build around.",
+   strengths:["Explosive, physical slasher, sets a school freshman scoring record in the Big 12","Active hands, averaged 2.0 steals per game as a freshman","Plays bigger than his size, effective offensive rebounder and finisher"],
+   weaknesses:["Three-point shot is inconsistent (29.3% as a freshman), needs to become a real weapon","Assist numbers are low for his usage, more scorer than facilitator right now"],
+   comps:["Powerful, downhill scoring wing"],
+   stats:{ppg:"17.8", rpg:"5.9", apg:"1.6", fg:"46.5%"},
+   seasons:[{yr:"Freshman", ppg:17.8, rpg:5.9, apg:1.6, stl:2.0, blk:0.5, to:2.3, min:30.0, fg:46.5, tpt:29.3, tpa:3.5, ft:74.6, fta:5.5}]},
+  {rk:43, name:"Silas Demary Jr.", school:"UConn", pos:"PG", cls:"Senior", hs:"6'4\"", wt:195, age:21, hometown:"Raleigh, NC",
+   summary:"Demary transferred from Georgia to UConn and was named First-Team All-Big East and to the Big East All-Defensive team in his first season in Storrs, giving Dan Hurley a proven, two-way lead guard heading into 2026-27.",
+   strengths:["Proven, high-major production across two different programs","First-team All-Big East, strong on-ball defender","Experienced, battle-tested against multiple conference styles"],
+   weaknesses:["Efficiency can be streaky game to game","Needs to keep developing as a distributor at the next level"],
+   comps:["Two-way, experienced lead guard"],
+   stats:{ppg:"12.8", rpg:"4.0", apg:"4.5", fg:"43.0%"},
+   seasons:[{yr:"Freshman", ppg:9.7, rpg:3.8, apg:2.5, stl:1.4, blk:0.2, to:2.0, min:28.0, fg:41.0, tpt:33.0, tpa:2.5, ft:75.0, fta:2.8}, {yr:"Sophomore", ppg:13.5, rpg:3.9, apg:3.1, stl:1.7, blk:0.2, to:2.2, min:32.0, fg:39.6, tpt:37.4, tpa:3.8, ft:80.4, fta:3.6}, {yr:"Junior", ppg:12.8, rpg:4.0, apg:4.5, stl:1.6, blk:0.2, to:2.4, min:31.0, fg:43.0, tpt:33.0, tpa:3.0, ft:78.0, fta:2.6}]},
+  {rk:44, name:"JT Toppin", school:"Texas Tech", pos:"PF", cls:"Senior", hs:"6'9\"", wt:245, age:21, hometown:"Dallas, TX",
+   summary:"Toppin was the Big 12 Player of the Year as a sophomore and a unanimous All-Big 12 First Team pick as a junior, averaging 21.8 points and leading the conference in rebounding before a torn ACL against Arizona State ended his season five games early in February 2026. A Dallas native who started his career at New Mexico before transferring to Texas Tech, he now enters his senior year working back from that injury.",
+   strengths:["Elite, proven rebounder, led the Big 12 in rebounding multiple seasons","Dominant interior scorer with a long track record of 20-point, double-double games","Battle-tested: Big 12 Player of the Year, multiple All-America honors"],
+   weaknesses:["Coming off a season-ending ACL tear, health and burst are real questions entering the year","Game is still more traditional post-scorer than floor-spacer"],
+   comps:["Dominant, undersized power forward"],
+   stats:{ppg:"21.8", rpg:"10.8", apg:"2.1", fg:"54.8%"},
+   seasons:[{yr:"Freshman", ppg:12.4, rpg:9.1, apg:0.8, stl:0.5, blk:1.9, to:1.8, min:27.5, fg:62.3, tpt:0.0, tpa:0.1, ft:64.0, fta:3.2}, {yr:"Sophomore", ppg:18.2, rpg:9.4, apg:1.2, stl:0.7, blk:1.5, to:2.2, min:30.9, fg:55.4, tpt:32.7, tpa:1.1, ft:67.6, fta:5.4}, {yr:"Junior", ppg:21.8, rpg:10.8, apg:2.1, stl:0.9, blk:1.6, to:2.5, min:33.2, fg:54.8, tpt:28.1, tpa:1.8, ft:57.9, fta:6.8}]},
+  {rk:45, name:"Dash Daniels", school:"Melbourne United (Australia)", pos:"SG/PG", cls:"International", hs:"6'6\"", wt:199, age:18, hometown:"Victoria, Australia",
+   summary:"The younger brother of Atlanta Hawks wing Dyson Daniels, Dash signed with Melbourne United's NBL Next Stars program at 16 and was once considered a potential top-10 pick in the 2026 NBA Draft before his stock cooled due to limited minutes. He withdrew from the 2026 draft to keep developing in the NBL, now targeting the 2027 class, and was named the top defensive player at the 2025 Basketball Without Borders camp.",
+   strengths:["Elite defensive tools and instincts, following his brother's two-way mold","Good size and length for the position, comfortable on or off the ball","International experience against grown professionals from a young age"],
+   weaknesses:["Limited minutes in the NBL have slowed his development and stock","Finishing at the rim and shot consistency are real needs"],
+   comps:["Defense-first Australian guard, Dyson Daniels-style profile"],
+   stats:{ppg:"4.2", rpg:"2.3", apg:"0.8", fg:"N/A"}},
+  {rk:46, name:"John Blackwell", school:"Duke", pos:"SG", cls:"Senior", hs:"6'4\"", wt:203, age:21, hometown:"Bloomfield Hills, MI",
+   summary:"Blackwell averaged 19.1 points as a junior at Wisconsin, earning Third-Team All-Big Ten honors, before transferring to Duke as the No. 3 overall transfer in the country per 247Sports. He withdrew from the 2026 NBA Draft on May 22 to join Jon Scheyer's Blue Devils for his senior season.",
+   strengths:["Proven, high-volume scorer at every level of the Big Ten","Strong finisher who plays through contact","Big shot-maker: scored 24-plus points in every Wisconsin win over a top-10 opponent"],
+   weaknesses:["Efficiency can dip when his shot isn't falling early","Jump in competition and role adjusting to a new system at Duke"],
+   comps:["High-volume scoring guard, proven transfer riser"],
+   stats:{ppg:"19.1", rpg:"5.1", apg:"2.3", fg:"43.0%"},
+   seasons:[{yr:"Freshman", ppg:8.0, rpg:3.2, apg:1.0, stl:0.6, blk:0.2, to:1.1, min:18.5, fg:45.1, tpt:45.0, tpa:1.2, ft:82.1, fta:1.8}, {yr:"Sophomore", ppg:15.8, rpg:5.1, apg:2.2, stl:1.0, blk:0.3, to:1.9, min:31.2, fg:45.1, tpt:32.2, tpa:3.9, ft:81.5, fta:4.2}, {yr:"Junior", ppg:19.1, rpg:5.1, apg:2.3, stl:1.2, blk:0.3, to:2.1, min:33.8, fg:43.0, tpt:38.9, tpa:7.1, ft:85.9, fta:5.0}]},
+  {rk:47, name:"Tomislav Ivisic", school:"Illinois", pos:"C", cls:"Junior", hs:"7'1\"", wt:255, age:23, hometown:"Vodice, Croatia",
+   summary:"Ivisic played professionally for SC Derby in Montenegro's Adriatic League before joining Illinois, where he helped lead the Illini to the 2026 Final Four alongside his twin brother Zvonimir, reunited for the first time in three years after both played apart at Kentucky and Arkansas. He averaged 13.0 points and 7.7 rebounds last season and hit a signature three-pointer in Illinois' Elite Eight win over Iowa.",
+   strengths:["Skilled shooting big man, comfortable stretching the floor from the perimeter","Physical, experienced interior scorer from years of professional ball in Europe","Chemistry with twin brother Zvonimir creates a unique two-big frontcourt dynamic"],
+   weaknesses:["Mobility and lateral quickness are limited defensively","Missed time last season with tonsil surgery and a knee bruise"],
+   comps:["Skilled, floor-spacing European center"],
+   stats:{ppg:"10.4", rpg:"5.6", apg:"1.6", fg:"N/A"},
+   seasons:[{yr:"Sophomore", ppg:13.0, rpg:7.7, apg:2.3, stl:0.6, blk:0.7, to:1.9, min:27.0, fg:52.0, tpt:38.0, tpa:3.5, ft:73.0, fta:3.0}, {yr:"Junior", ppg:10.4, rpg:5.6, apg:1.6, stl:0.5, blk:0.5, to:1.7, min:24.0, fg:49.0, tpt:35.0, tpa:2.8, ft:70.0, fta:2.5}]},
+  {rk:48, name:"Zvonimir Ivisic", school:"Illinois", pos:"C", cls:"Senior", hs:"7'2\"", wt:245, age:23, hometown:"Vodice, Croatia",
+   summary:"Zvonimir followed John Calipari from Kentucky to Arkansas before transferring again to reunite with twin brother Tomislav at Illinois for the Illini's 2026 Final Four run. A career 37.6% three-point shooter, he brings a rare shooting touch for a 7-foot-2 center, doing most of his damage facing up rather than in the post.",
+   strengths:["Excellent shooting touch for his size, career 37.6% from three","Interchangeable with his brother as a stretch-five or pick-and-pop threat","Well-rounded, European-style frontcourt skill set"],
+   weaknesses:["Limited rim protection and post defense for his size","Has bounced between three programs, still building program continuity"],
+   comps:["Stretch-five, shooting touch over physicality"],
+   stats:{ppg:"6.6", rpg:"4.6", apg:"0.3", fg:"N/A"},
+   seasons:[{yr:"Freshman", ppg:5.5, rpg:3.3, apg:0.5, stl:0.4, blk:1.3, to:1.0, min:14.0, fg:57.7, tpt:37.5, tpa:1.0, ft:77.3, fta:1.3}, {yr:"Sophomore", ppg:8.5, rpg:4.3, apg:0.6, stl:0.4, blk:1.9, to:1.2, min:19.1, fg:47.3, tpt:37.6, tpa:3.6, ft:72.4, fta:1.8}, {yr:"Junior", ppg:6.6, rpg:4.6, apg:0.3, stl:0.3, blk:2.0, to:1.0, min:16.5, fg:45.0, tpt:28.0, tpa:2.0, ft:70.0, fta:1.2}]},
+  {rk:49, name:"Pryce Sandfort", school:"Nebraska", pos:"SF", cls:"Senior", hs:"6'7\"", wt:210, age:22, hometown:"Waukee, IA",
+   summary:"Sandfort followed brother Payton to Iowa before transferring to Nebraska, where he earned First-Team All-Big Ten honors under Fred Hoiberg and helped the Cornhuskers to a 15-0 start. Iowa's Mr. Basketball in 2023, he's become one of the conference's more reliable outside shooters, connecting on 40% of his threes in his final Iowa season.",
+   strengths:["Reliable, high-volume three-point shooter (40% at Iowa)","Durable and consistent, played in every game across multiple seasons","Comfortable in a featured offensive role after transferring"],
+   weaknesses:["Not a high-level athlete, relies on shooting more than physical tools","Limited shot creation off the dribble"],
+   comps:["Reliable stretch forward, high-volume shooter"],
+   stats:{ppg:"18.1", rpg:"4.9", apg:"2.0", fg:"47.9%"},
+   seasons:[{yr:"Freshman", ppg:2.3, rpg:1.1, apg:0.3, stl:0.2, blk:0.1, to:0.4, min:8.6, fg:38.0, tpt:35.0, tpa:1.0, ft:70.0, fta:0.4}, {yr:"Sophomore", ppg:8.8, rpg:2.9, apg:1.3, stl:0.5, blk:0.2, to:0.9, min:22.4, fg:48.8, tpt:40.0, tpa:4.2, ft:75.0, fta:1.5}, {yr:"Junior", ppg:18.1, rpg:4.9, apg:2.0, stl:0.8, blk:0.3, to:1.8, min:33.0, fg:47.9, tpt:41.6, tpa:8.5, ft:86.0, fta:3.2}]},
+  {rk:50, name:"Jeremy Fears Jr.", school:"Michigan State", pos:"PG", cls:"Redshirt Junior", hs:"6'2\"", wt:190, age:20, hometown:"Joliet, IL",
+   summary:"Fears led the nation in assists last season (9.4 per game) while averaging 15.2 points for Michigan State, earning Second-Team All-American and First-Team All-Big Ten honors. He waited until the withdrawal deadline to decide, ultimately turning down a projected early second-round selection in the 2026 draft to return to Tom Izzo for another season.",
+   strengths:["Led the nation in assists, elite table-setter and pace-controller","Proven at an All-American level in a major conference","Strong on-ball defender who disrupts passing lanes"],
+   weaknesses:["Scoring efficiency dips against elite defenses (0-for-10 shooting in one marquee game)","Below-average size for the position at the next level"],
+   comps:["Elite distributor, pass-first floor general"],
+   stats:{ppg:"15.2", rpg:"2.4", apg:"9.4", fg:"N/A"},
+   seasons:[{yr:"Freshman", ppg:4.5, rpg:1.8, apg:3.2, stl:0.9, blk:0.1, to:1.6, min:16.0, fg:38.0, tpt:25.0, tpa:0.8, ft:70.0, fta:1.5}, {yr:"Sophomore", ppg:7.2, rpg:2.1, apg:5.4, stl:1.0, blk:0.1, to:2.0, min:23.7, fg:39.7, tpt:28.0, tpa:2.0, ft:73.0, fta:3.9}, {yr:"Junior", ppg:15.2, rpg:2.4, apg:9.4, stl:1.3, blk:0.2, to:2.8, min:32.4, fg:43.6, tpt:38.0, tpa:3.5, ft:75.0, fta:4.5}]},
+  {rk:51, name:"Miles Byrd", school:"Providence", pos:"SG/SF", cls:"Senior", hs:"6'7\"", wt:190, age:21, hometown:"Stockton, CA",
+   summary:"Byrd spent four years as San Diego State's longest-tenured player, becoming the Mountain West Defensive Player of the Year and a two-time All-Defensive selection, before transferring to Providence for his final season. A long, switchable wing, his defensive instincts have always outpaced his outside shot, which improved to 30%+ by his final Aztec season.",
+   strengths:["Elite length and defensive versatility, proven conference Defensive Player of the Year","High steal and block numbers for a wing","Experienced, battle-tested across four college seasons"],
+   weaknesses:["Three-point shot is still inconsistent (career efficiency below average)","Scoring role has been secondary for most of his career, unproven as a first option"],
+   comps:["Long, defense-first wing"],
+   stats:{ppg:"10.4", rpg:"4.7", apg:"2.6", fg:"38.1%"},
+   seasons:[{yr:"Freshman", ppg:4.0, rpg:2.5, apg:0.6, stl:0.5, blk:0.3, to:0.7, min:14.0, fg:40.0, tpt:28.0, tpa:1.0, ft:75.0, fta:0.8}, {yr:"Sophomore", ppg:12.3, rpg:4.4, apg:2.7, stl:2.1, blk:1.1, to:1.6, min:30.1, fg:38.1, tpt:30.1, tpa:5.9, ft:83.2, fta:3.2}, {yr:"Junior", ppg:10.4, rpg:4.7, apg:2.6, stl:1.9, blk:1.2, to:1.5, min:27.9, fg:38.5, tpt:30.4, tpa:4.9, ft:82.9, fta:2.9}]},
+  {rk:52, name:"Joseph Tugler", school:"Houston", pos:"PF/C", cls:"Senior", hs:"6'8\"", wt:225, age:21, hometown:"Cypress, TX",
+   summary:"Tugler returns to Houston for the 2026-27 season as one of the anchors of Kelvin Sampson's frontcourt, continuing a program lineage of elite defensive bigs that includes Jarace Walker and J'Wan Roberts.",
+   strengths:["Elite shot-blocking and rim protection instincts","Fits Houston's physical, defense-first identity","High motor rebounder and disruptor"],
+   weaknesses:["Offensive game remains limited, finisher rather than shot creator","Foul trouble has been a recurring issue"],
+   comps:["Defensive-anchor big, Houston-system rim protector"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+  {rk:53, name:"Andrej Stojakovic", school:"Illinois", pos:"SG/SF", cls:"Senior", hs:"6'6\"", wt:215, age:21, hometown:"Sacramento, CA",
+   summary:"The son of three-time NBA All-Star Peja Stojakovic, Andrej transferred through Stanford and Cal before landing at Illinois, where he helped lead the Illini to their first Final Four in over two decades. He tested the 2026 NBA Draft process, including the combine, before withdrawing hours before the deadline to return for his senior season.",
+   strengths:["Downhill attacker who gets to the rim and draws contact well","Versatile two-way wing who can defend the opponent's top perimeter option","Big-stage experience: Final Four run, draft combine testing"],
+   weaknesses:["Three-point shot badly needs to improve (24.4% as a junior)","Has changed programs twice, still building long-term system fit"],
+   comps:["Downhill, defense-first wing"],
+   stats:{ppg:"13.5", rpg:"4.5", apg:"1.5", fg:"42.0%"},
+   seasons:[{yr:"Freshman", ppg:7.8, rpg:3.4, apg:0.8, stl:0.4, blk:0.1, to:1.1, min:19.0, fg:40.9, tpt:32.7, tpa:2.6, ft:52.8, fta:1.9}, {yr:"Sophomore", ppg:17.9, rpg:4.7, apg:1.8, stl:0.7, blk:1.2, to:2.3, min:33.4, fg:42.7, tpt:31.8, tpa:4.4, ft:81.8, fta:5.0}, {yr:"Junior", ppg:13.5, rpg:4.5, apg:1.5, stl:0.6, blk:0.5, to:1.9, min:28.0, fg:42.0, tpt:24.4, tpa:3.5, ft:75.0, fta:3.2}]},
+  {rk:54, name:"Anton Bonke", school:"Michigan State", pos:"C/PF", cls:"Senior", hs:"7'2\"", wt:270, age:22, hometown:"Port Vila, Vanuatu",
+   summary:"Bonke is a 7-foot-2 Vanuatuan center who came stateside via Eastern Arizona College, had a limited debut season at Providence, then broke out at Charlotte, averaging 10.6 points, 8.3 rebounds and finishing eighth in program history for single-season blocks (51). He transferred to Michigan State for his senior year, giving Tom Izzo a legitimate rim-runner and shot-blocker to pair with Jeremy Fears Jr.'s playmaking.",
+   strengths:["Massive frame with real physicality and touch around the rim","Elite offensive rebounder, proven shot-blocker (51 blocks at Charlotte)","Efficient finisher, shot 57%+ in each of his last two seasons"],
+   weaknesses:["Limited perimeter skill, almost exclusively a finisher near the basket","Jump in competition level from the AAC to the Big Ten is significant"],
+   comps:["Physical, rim-running center"],
+   stats:{ppg:"10.6", rpg:"8.3", apg:"1.0", fg:"57.6%"},
+   seasons:[{yr:"Freshman", ppg:1.3, rpg:1.2, apg:0.1, stl:0.1, blk:0.3, to:0.3, min:6.0, fg:45.0, tpt:0.0, tpa:0.0, ft:55.0, fta:0.5}, {yr:"Sophomore", ppg:10.6, rpg:8.3, apg:1.0, stl:0.4, blk:1.5, to:1.3, min:25.6, fg:57.6, tpt:20.0, tpa:0.4, ft:65.0, fta:2.8}]},
+  {rk:55, name:"Elliot Cadeau", school:"Michigan", pos:"PG", cls:"Senior", hs:"6'2\"", wt:180, age:21, hometown:"Brooklyn, NY",
+   summary:"Cadeau transferred from North Carolina to Michigan and was named the 2026 NCAA Tournament's Most Outstanding Player after leading the Wolverines to their first national title since 1989, scoring a combined 32 points and dishing 20 assists across the Final Four and championship game. He represents Sweden internationally and briefly tested the 2026 draft process before returning to Ann Arbor to defend the title.",
+   strengths:["Proven winner: Final Four Most Outstanding Player, national champion","Elite table-setter, led Michigan in assists all season (5.9 per game)","Big-shot shooter, improved from 38.7% from three in the tournament run"],
+   weaknesses:["Undersized at 6'2\" for the position at the next level","Scoring efficiency still secondary to his playmaking"],
+   comps:["Winning point guard, program-legacy floor general"],
+   stats:{ppg:"10.5", rpg:"2.7", apg:"5.9", fg:"41.1%"},
+   seasons:[{yr:"Freshman", ppg:7.0, rpg:2.0, apg:4.0, stl:0.9, blk:0.2, to:1.8, min:24.0, fg:41.7, tpt:18.9, tpa:1.8, ft:64.8, fta:1.5}, {yr:"Sophomore", ppg:10.4, rpg:3.1, apg:6.0, stl:1.1, blk:0.3, to:3.3, min:29.3, fg:45.4, tpt:30.2, tpa:2.9, ft:67.9, fta:2.1}, {yr:"Junior", ppg:10.5, rpg:2.7, apg:5.9, stl:1.0, blk:0.2, to:2.4, min:27.3, fg:41.1, tpt:37.6, tpa:4.4, ft:70.9, fta:1.9}]},
+  {rk:56, name:"Collin Chandler", school:"BYU", pos:"SG", cls:"Senior", hs:"6'5\"", wt:202, age:22, hometown:"Farmington, UT",
+   summary:"Chandler was the highest-rated recruit to commit to BYU since Eric Mika in 2013, but delayed his enrollment two years for an LDS mission and ultimately started his college career at Kentucky before transferring to BYU. Utah's Mr. Basketball in 2022, he averaged 9.7 points on 41% three-point shooting in his lone season with the Wildcats.",
+   strengths:["Efficient, high-percentage three-point shooter (41% at Kentucky)","Long, athletic guard with size for the position","Patient developmental path suggests strong long-term feel for the game"],
+   weaknesses:["Limited on-ball creation, mostly a play-finisher so far","Missed two years of competitive development during his mission"],
+   comps:["Efficient shooting guard, late-blooming developmental path"],
+   stats:{ppg:"9.7", rpg:"2.8", apg:"2.3", fg:"43.5%"},
+   seasons:[{yr:"Freshman", ppg:2.7, rpg:1.0, apg:0.5, stl:0.3, blk:0.1, to:0.6, min:9.0, fg:38.0, tpt:33.0, tpa:0.8, ft:70.0, fta:0.9}, {yr:"Sophomore", ppg:9.7, rpg:2.8, apg:2.3, stl:0.7, blk:0.2, to:1.3, min:24.0, fg:43.5, tpt:41.0, tpa:4.9, ft:83.3, fta:2.1}]},
+  {rk:57, name:"Nolan Winter", school:"Wisconsin", pos:"PF/C", cls:"Senior", hs:"7'0\"", wt:220, age:20, hometown:"Lakeville, MN",
+   summary:"Winter has anchored Wisconsin's frontcourt since 2023, developing from a role player into a double-double threat who can both protect the rim and space the floor. A Lakeville, Minnesota native, his production has climbed steadily as his role has grown each season under the Badgers' staff.",
+   strengths:["Legitimate 7-footer with real mobility and floor-spacing touch","Rebounding and rim protection have improved every season","Experienced, program-tested frontcourt anchor"],
+   weaknesses:["Still adding strength for physical Big Ten post matchups","Offensive role can be inconsistent game to game"],
+   comps:["Mobile, floor-spacing seven-footer"],
+   stats:{ppg:"13.1", rpg:"8.5", apg:"1.5", fg:"56.9%"},
+   seasons:[{yr:"Freshman", ppg:2.4, rpg:1.8, apg:0.3, stl:0.2, blk:0.0, to:0.5, min:9.4, fg:42.3, tpt:30.8, tpa:1.1, ft:69.6, fta:0.6}, {yr:"Sophomore", ppg:9.4, rpg:5.8, apg:1.0, stl:0.4, blk:0.8, to:1.3, min:21.1, fg:56.4, tpt:35.8, tpa:0.9, ft:74.0, fta:2.0}, {yr:"Junior", ppg:13.1, rpg:8.5, apg:1.5, stl:0.5, blk:1.2, to:1.8, min:31.0, fg:56.9, tpt:32.6, tpa:1.2, ft:74.2, fta:3.5}]},
+  {rk:58, name:"Baye Ndongo", school:"Pittsburgh", pos:"PF/C", cls:"Senior", hs:"6'9\"", wt:235, age:23, hometown:"Mbour, Senegal",
+   summary:"Ndongo was one of only two freshmen in Division I to average 12+ points, 8+ rebounds and a block a game while shooting 55%+ across three seasons at Georgia Tech, twice withdrawing from NBA Draft consideration to keep developing before transferring to Pittsburgh for his final year. He's been remarkably consistent, topping 10 points and 5 rebounds a game in every season of his college career.",
+   strengths:["Elite, proven interior efficiency across three full seasons (55%+ shooting each year)","Reliable double-double threat, ranked among ACC's best rebounders every season","Experienced, physical post presence from Senegal"],
+   weaknesses:["Offensive game stays limited to close-range finishing, not a floor-spacer","Older prospect relative to the rest of the class"],
+   comps:["Proven, efficient interior scorer"],
+   stats:{ppg:"11.8", rpg:"8.1", apg:"2.4", fg:"55.6%"},
+   seasons:[{yr:"Freshman", ppg:12.4, rpg:8.2, apg:1.0, stl:0.8, blk:1.1, to:1.8, min:22.0, fg:55.8, tpt:30.0, tpa:0.3, ft:64.0, fta:3.0}, {yr:"Sophomore", ppg:13.4, rpg:8.9, apg:1.6, stl:0.9, blk:1.1, to:1.9, min:25.5, fg:54.9, tpt:34.0, tpa:0.4, ft:68.0, fta:3.5}, {yr:"Junior", ppg:11.8, rpg:8.1, apg:2.4, stl:0.8, blk:1.0, to:2.0, min:27.1, fg:55.6, tpt:35.7, tpa:1.3, ft:71.6, fta:2.8}]},
 ];
 
 const articles = [
@@ -1163,9 +1314,9 @@ function openProfile(idx, fromHistory){
         ${p.seasons && p.seasons.length ? `
         <div style="overflow-x:auto;">
         <table class="season-table" style="min-width:760px;">
-          <thead><tr><th>Season</th><th>PPG</th><th>RPG</th><th>APG</th><th>STL</th><th>BLK</th><th>TO</th><th>MIN</th><th>FG%</th><th>3PT%</th><th>3PA</th><th>FT%</th><th>FTA</th></tr></thead>
+          <thead><tr><th>Season</th><th>MIN</th><th>PPG</th><th>RPG</th><th>APG</th><th>STL</th><th>BLK</th><th>TO</th><th>FG%</th><th>3PT%</th><th>3PA</th><th>FT%</th><th>FTA</th></tr></thead>
           <tbody>
-          ${p.seasons.map(s=>`<tr><td style="text-align:left;">${s.yr}</td><td>${s.ppg}</td><td>${s.rpg}</td><td>${s.apg}</td><td>${s.stl}</td><td>${s.blk}</td><td>${s.to}</td><td>${s.min}</td><td>${s.fg}%</td><td>${s.tpt}%</td><td>${s.tpa}</td><td>${s.ft}%</td><td>${s.fta}</td></tr>`).join("")}
+          ${p.seasons.map(s=>`<tr><td style="text-align:left;">${s.yr}</td><td>${s.min}</td><td>${s.ppg}</td><td>${s.rpg}</td><td>${s.apg}</td><td>${s.stl}</td><td>${s.blk}</td><td>${s.to}</td><td>${s.fg}%</td><td>${s.tpt}%</td><td>${s.tpa}</td><td>${s.ft}%</td><td>${s.fta}</td></tr>`).join("")}
           </tbody>
         </table>
         </div>` : `
@@ -1398,14 +1549,14 @@ function renderStockView(){
   if(!el) return;
   if(currentUser && currentProfile){
     el.innerHTML = `
-      <div class="eyebrow" style="justify-content:center;">Signed In</div>
+      <div class="eyebrow" style="justify-content:center;">Coming November 10</div>
       <h2 class="section-title">Your Balance</h2>
-      <p class="section-sub" style="margin:0 auto;">$${Number(currentProfile.balance).toLocaleString()} in virtual currency, ready to invest once trading opens.</p>`;
+      <p class="section-sub" style="margin:0 auto;">$${Number(currentProfile.balance).toLocaleString()} in virtual currency, ready to invest when trading opens November 10th.</p>`;
   } else {
     el.innerHTML = `
-      <div class="eyebrow" style="justify-content:center;">Coming Soon</div>
+      <div class="eyebrow" style="justify-content:center;">Coming November 10</div>
       <h2 class="section-title">Prospect Stock</h2>
-      <p class="section-sub" style="margin:0 auto 24px;">Tracking who's rising and who's falling across the board, in progress. Create an account now so you're ready when trading opens.</p>
+      <p class="section-sub" style="margin:0 auto 24px;">Trading opens November 10th. Create an account now so you're ready to go on day one.</p>
       <button class="btn btn-solid" onclick="openAuthModal()">Create Free Account</button>`;
   }
 }
