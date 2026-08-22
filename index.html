@@ -256,22 +256,27 @@
     background:linear-gradient(155deg, var(--panel-2), var(--void));
     box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
     display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
-    transition:transform .4s ease;
+    transition:transform .25s ease, box-shadow .25s ease;
   }
-  .pcard:hover{transform:translateY(-14px) !important;}
+  .pcard:hover{box-shadow:0 40px 70px -20px rgba(0,0,0,.85);}
   .pcard .num{position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:.65rem; color:var(--gold); letter-spacing:.1em;}
   .pcard .mono{
     width:64px; height:64px; border-radius:50%; margin:0 auto 14px;
     display:flex; align-items:center; justify-content:center;
     font-family:var(--display); font-weight:400; font-size:1.4rem; color:var(--gold);
-    border:1px solid var(--gold); background:rgba(198,161,91,.08);
+    border:1px solid var(--gold); background:rgba(198,161,91,.08); overflow:hidden;
   }
+  .pcard .mono img{width:100%; height:100%; object-fit:cover; object-position:center top; display:block;}
   .pcard .pname{font-family:var(--display); font-weight:400; font-size:1.05rem; text-align:center; line-height:1.05;}
   .pcard .pschool{font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; color:var(--paper-dim); text-align:center; margin-top:4px; text-transform:uppercase;}
   .fan .p1{transform:rotate(-9deg) translate(-150px,10px); z-index:1;}
   .fan .p2{transform:rotate(-3deg) translate(-58px,-14px); z-index:2;}
   .fan .p3{transform:rotate(3deg) translate(58px,-14px) ; z-index:2;}
   .fan .p4{transform:rotate(9deg) translate(150px,10px); z-index:1;}
+  .fan .p1:hover{transform:rotate(-9deg) translate(-150px,10px) translateY(-14px); z-index:5;}
+  .fan .p2:hover{transform:rotate(-3deg) translate(-58px,-14px) translateY(-14px); z-index:5;}
+  .fan .p3:hover{transform:rotate(3deg) translate(58px,-14px) translateY(-14px); z-index:5;}
+  .fan .p4:hover{transform:rotate(9deg) translate(150px,10px) translateY(-14px); z-index:5;}
 
   /* ================= RECENT SLIDESHOW ================= */
   .recent-wrap{position:relative;}
@@ -319,7 +324,9 @@
     width:56px; height:56px; border-radius:50%; margin:16px 0 14px;
     display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:400;
     color:var(--gold); border:1px solid var(--steel-soft); background:var(--void);
+    overflow:hidden;
   }
+  .player-card .avatar img{width:100%; height:100%; object-fit:cover; object-position:center top; display:block;}
   .player-card h4{font-family:var(--display); font-weight:400; font-size:1.2rem; line-height:1.05;}
   .player-card .meta{font-family:var(--mono); font-size:.68rem; color:var(--paper-dim); margin-top:6px; text-transform:uppercase; letter-spacing:.05em;}
   .player-card .stat-row{display:flex; gap:16px; margin-top:16px; padding-top:14px; border-top:1px solid var(--steel);}
@@ -339,6 +346,7 @@
     display:flex; align-items:center; justify-content:center; position:relative;
   }
   .profile-avatar .initials{font-family:var(--display); font-weight:400; font-size:5rem; color:var(--gold); opacity:.85;}
+  .profile-avatar img{width:100%; height:100%; object-fit:cover; object-position:center top; display:block;}
   .profile-avatar .rankbadge{
     position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:.7rem; letter-spacing:.1em;
     padding:6px 10px; background:var(--gold); color:var(--void); font-weight:600;
@@ -364,12 +372,39 @@
   .profile-grid h3{font-family:var(--display); font-weight:400; font-size:1.4rem; margin-bottom:16px; margin-top:36px;}
   .profile-grid h3:first-child{margin-top:0;}
   .profile-grid p{color:#cfc9bc; line-height:1.75; font-size:1.02rem;}
+  .hl-tabs{display:flex; gap:0; margin-bottom:16px; border-bottom:1px solid var(--steel); flex-wrap:wrap;}
+  .hl-tab{
+    background:none; border:none; color:var(--paper-dim); font-family:var(--mono);
+    font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; padding:10px 18px;
+    cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+  }
+  .hl-tab.active{color:var(--gold); border-bottom-color:var(--gold);}
+  .hl-tab:hover{color:var(--paper);}
+  .hl-frame{position:relative; width:100%; padding-top:56.25%; border:1px solid var(--steel); background:var(--void); overflow:hidden;}
+  .hl-cover{position:absolute; inset:0; display:block; text-decoration:none; cursor:pointer;}
+  .hl-cover img{width:100%; height:100%; object-fit:cover; opacity:.5; transition:opacity .3s ease, transform .4s ease;}
+  .hl-cover:hover img{opacity:.7; transform:scale(1.04);}
+  .hl-play-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+    background:linear-gradient(180deg, rgba(10,10,12,.15) 0%, rgba(10,10,12,.55) 70%, rgba(10,10,12,.75) 100%);
+  }
+  .hl-play-btn{
+    width:68px; height:68px; border-radius:50%; border:2px solid var(--gold); display:flex; align-items:center; justify-content:center;
+    color:var(--gold); font-size:1.5rem; background:rgba(10,10,12,.65); transition:all .25s ease;
+  }
+  .hl-cover:hover .hl-play-btn{background:var(--gold); color:var(--void); transform:scale(1.1);}
+  .hl-cover-text{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--paper); text-align:center; padding:0 20px;}
+  .hl-cover-text span{display:block; color:var(--gold); font-size:.65rem; margin-top:6px; letter-spacing:.1em;}
   .sw-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:16px;}
   .sw-box{border:1px solid var(--steel); padding:20px;}
   .sw-box .lbl{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:10px;}
   .sw-box.strength .lbl{color:var(--signal-up);}
   .sw-box.weakness .lbl{color:var(--signal);}
   .sw-box ul{padding-left:18px; color:#cfc9bc; font-size:.92rem; line-height:1.7;}
+  .highlight-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
+  .highlight-embed{position:relative; aspect-ratio:16/9; border:1px solid var(--steel); background:var(--void); overflow:hidden;}
+  .highlight-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  @media (max-width:700px){ .highlight-grid{grid-template-columns:1fr;} }
   .side-panel{border:1px solid var(--steel); padding:24px; height:fit-content;}
   .adv-toggle{
     width:100%; display:flex; align-items:center; justify-content:space-between;
@@ -447,9 +482,33 @@
   .stock-trade button{
     font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; text-transform:uppercase;
     padding:8px 10px; border:1px solid var(--steel-soft); background:none; color:var(--paper); cursor:pointer;
+    transition:transform .1s ease;
   }
+  .stock-trade button:active{transform:scale(0.9);}
+  .stock-trade button:disabled{cursor:default; opacity:.85;}
   .stock-trade .buy-btn:hover{border-color:var(--signal-up); color:var(--signal-up);}
   .stock-trade .sell-btn:hover{border-color:var(--signal); color:var(--signal);}
+  @keyframes tradeClickPulse{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(0.9); background:var(--gold); border-color:var(--gold); color:var(--void); }
+    100%{ transform:scale(1); }
+  }
+  .trade-clicked{ animation:tradeClickPulse .35s ease; }
+  @keyframes tradePulse{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.15); }
+    100%{ transform:scale(1); }
+  }
+  .stock-trade button.pulse-buy{
+    animation:tradePulse .35s ease;
+    border-color:var(--signal-up) !important; color:var(--signal-up) !important;
+    background:rgba(92,158,111,.12);
+  }
+  .stock-trade button.pulse-sell{
+    animation:tradePulse .35s ease;
+    border-color:var(--signal) !important; color:var(--signal) !important;
+    background:rgba(217,72,58,.12);
+  }
   .stock-msg{font-family:var(--mono); font-size:.72rem; margin-top:14px; min-height:16px;}
   .stock-msg.error{color:var(--signal);}
   .stock-msg.success{color:var(--signal-up);}
@@ -824,88 +883,101 @@
 <script>
 /* ================= DATA ================= */
 const players = [
-  {rk:1, name:"Jordan Smith Jr.", school:"Arkansas", pos:"PG/SG", cls:"Freshman", hs:"6'2\"", wt:200, age:18, hometown:"Washington, D.C. / Fairfax, VA",
+  {rk:1, name:"Jordan Smith Jr.", image:"jordan-smith-jr.png", school:"Arkansas", pos:"PG/SG", cls:"Freshman", hs:"6'2\"", wt:200, age:18, hometown:"Washington, D.C. / Fairfax, VA",
    summary:"Smith was the last five-star domino to fall in a stacked D.C.-area backcourt class, picking Arkansas over Duke, Georgetown, Indiana, Kentucky and Syracuse after averaging 26.6 points, 6.3 rebounds and 5.6 assists as a senior at Paul VI. He wasted no time backing it up in his first look in a Razorback uniform, dropping 22 points and 6 assists in his Bahamas exhibition debut, then following it with a triple-double against Carleton, 20 points on 9-of-14 shooting, 11 assists, 11 rebounds and just one turnover. He plays like a small forward trapped in a 6'2\" frame: downhill, physical, always hunting contact, and his rebounding numbers come from refusing to let bigger players box him out.",
    strengths:["Elite two-way rebounding guard, pulled down 11 boards in a exhibition triple-double at 6'2\"","Physical, switchable defender who guards up multiple positions","Plays winning basketball, teammates call him the most impactful player in the class"],
    weaknesses:["Outside shot was once a real weakness, though it improved noticeably this past year","Decision-making in ball-screen actions is still a work in progress"],
    comps:["Physical combo guard, paint-touch playmaker"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:2, name:"Stefan Joksimovic", school:"Baskonia (Spain)", pos:"SG/PG", cls:"International", hs:"6'7\"", wt:205, age:17, hometown:"Ljubljana, Slovenia",
-   summary:"Joksimovic's camp made it official this spring: no NCAA detour, he's staying with Saski Baskonia in Spain's Liga ACB and EuroLeague through the 2026-27 season, closing the door on interest from Kentucky and others. He just finished a U18 EuroBasket run averaging 22.4 points on 49.3/43.8 shooting to help Slovenia reach the semifinals, and evaluators have started reaching for the Dončić comparison given the size, feel and left-handed shot-making. He became Baskonia's youngest-ever Copa del Rey player this season.",
-   strengths:["Full offensive toolkit: pull-up shooting, live-dribble passing, some pick-and-roll feel","6'7\" frame with plus vertical athleticism, threatens above the rim consistently","Already producing against grown men in EuroLeague and Liga ACB minutes"],
-   weaknesses:["Needs to add strength before he holds up physically at the next level","Outside shot is promising but not yet a finished, high-volume weapon","Staying overseas means less exposure than his college-bound peers"],
-   comps:["Do-everything European guard-forward, Dončić-style feel"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:3, name:"Tyran Stokes", school:"Kansas", pos:"SF/PF", cls:"Freshman", hs:"6'7\"", wt:230, age:18, hometown:"Louisville, KY",
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"SVEpqH-AgaI"}]},
+  {rk:2, name:"Tyran Stokes", school:"Kansas", pos:"SF/PF", cls:"Freshman", hs:"6'7\"", wt:230, age:18, hometown:"Louisville, KY",
    summary:"Stokes was the last uncommitted name in a loaded 2026 class before picking Kansas over Kentucky and Oregon in April, a recruitment that included a postponed Kentucky visit and ended with him announcing live on Inside the NBA, flanked by Kenny Smith, whose AAU program Stokes played for. At Rainier Beach in Seattle he averaged 31.0 points, 13.0 rebounds, 6.0 assists and 4.0 steals as a senior, including a 63-point outburst against West Seattle and a triple-double in the state quarterfinals. He was named MVP of the Jordan Brand Classic and has three USA Basketball gold medals, including the first triple-double in U19 World Cup history.",
    strengths:["Downhill power at 230 pounds with a 7-foot wingspan, hard to keep out of the paint","Instinctive driving lanes, finds paths to the rim even when none seem open","Proven at every level: high school MVPs, USAB gold medals, a U19 triple-double","Fills a Kansas roster that lost its top three guards this offseason"],
    weaknesses:["Jump shot is still the swing skill scouts want to see develop","Walks into a Kansas lineup that lost Peterson, Council and multiple transfers, big role fast","Instinct-driven scoring can tip into forcing shots against set defenses"],
    comps:["Powerful, downhill wing with guard skills"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"17x9Y-U27ms", start:30}]},
+  {rk:3, name:"Stefan Joksimovic", school:"Baskonia (Spain)", pos:"SG/PG", cls:"International", hs:"6'7\"", wt:205, age:17, hometown:"Ljubljana, Slovenia",
+   summary:"Joksimovic's camp made it official this spring: no NCAA detour, he's staying with Saski Baskonia in Spain's Liga ACB and EuroLeague through the 2026-27 season, closing the door on interest from Kentucky and others. He just finished a U18 EuroBasket run averaging 22.4 points on 49.3/43.8 shooting to help Slovenia reach the semifinals, and evaluators have started reaching for the Dončić comparison given the size, feel and left-handed shot-making. He became Baskonia's youngest-ever Copa del Rey player this season.",
+   strengths:["Full offensive toolkit: pull-up shooting, live-dribble passing, some pick-and-roll feel","6'7\" frame with plus vertical athleticism, threatens above the rim consistently","Already producing against grown men in EuroLeague and Liga ACB minutes"],
+   weaknesses:["Needs to add strength before he holds up physically at the next level","Outside shot is promising but not yet a finished, high-volume weapon","Staying overseas means less exposure than his college-bound peers"],
+   comps:["Do-everything European guard-forward, Dončić-style feel"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"U18 EuroBasket 2026", videoId:"U9_Wp7Otrk4"}]},
   {rk:4, name:"Caleb Holt", school:"Arizona", pos:"SG/SF", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Huntsville, AL",
    summary:"Holt picked Arizona over Houston, Kentucky, Alabama and Providence, crediting his relationship with Tommy Lloyd, who coached him on the gold medal-winning USA Basketball U19 team last summer. His game is built around downhill pressure: he doesn't have elite blow-by burst, but he plays through contact and finishes with either hand, and the catch-and-shoot jumper has visibly caught up to his slashing over the past year.",
    strengths:["Downhill attacker who plays through contact and finishes with both hands","Three-time USA Basketball gold medalist, tested against elite competition","Improving catch-and-shoot jumper, flashed real growth at Eurocamp"],
    weaknesses:["Still more of a slasher than a self-creator off the dribble","Frame continues to fill out for physical Big 12 wing matchups"],
    comps:["3-and-D guard, Anthony Edwards-style self-comp"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:5, name:"Abdou Toure", school:"Arkansas", pos:"SG/SF", cls:"Freshman", hs:"6'5\"", wt:200, age:18, hometown:"New Haven, CT",
-   summary:"Toure chose Arkansas over Providence and UConn, drawn in part by John Calipari's track record developing NBA talent. His game is defined by length: a 6'5\" frame that plays much bigger, capable of switching onto forwards and erasing shots at the rim, which showed up immediately in his Razorback debut, a 16-point, 10-rebound double-double against the Bahamas national team with 4 blocks, then 15 more points and 3 blocks against Carleton. Across the Bahamas trip he blocked 7 shots and shot a strong percentage inside the arc, exactly the two-way profile scouts have flagged.",
-   strengths:["Excellent length and shot-blocking instincts for a wing, 7 blocks across his first four college exhibitions","Efficient scorer inside the arc, opened his college career with a double-double","International experience representing Guinea at multiple FIBA tournaments"],
-   weaknesses:["Shot mechanics still inconsistent release to release","Overshadowed in his own recruiting class, needs a featured role to show full range"],
-   comps:["Long, defense-first wing with real shot-blocking upside"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:6, name:"Bruce Branch III", school:"BYU", pos:"SF/SG", cls:"Freshman", hs:"6'7\"", wt:190, age:17, hometown:"Gilbert, AZ",
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"nIRIgq4XBIQ"}]},
+  {rk:5, name:"Bruce Branch III", school:"BYU", pos:"SF/SG", cls:"Freshman", hs:"6'7\"", wt:190, age:17, hometown:"Gilbert, AZ",
    summary:"Branch was the No. 1 player in the 2027 class before reclassifying to 2026 and picking BYU over Kansas, Kentucky, Louisville, USC and Arizona, becoming Kevin Young's third straight five-star signee after Egor Demin and AJ Dybantsa, both of whom Young built winning, NBA-caliber rosters around rather than just handing them the ball and hoping. He's a big wing who leans back into his jumper rather than rising into it, which gives the shot a slightly unorthodox look but hasn't stopped it from becoming a legitimate weapon (38-39% from three across multiple circuits this past year). Away from the three-point line, he attacks closeouts, shoots well off the catch, and is still learning to leverage his size against smaller defenders in the mid-range and at the rim.",
    strengths:["Big wing with legitimate secondary ball-handling upside","Shooting is a real, ascending weapon, 38-39% from three across multiple circuits","Attacks closeouts confidently and gets to his pull-up or the rim off one or two dribbles"],
    weaknesses:["Needs to better leverage his frame against smaller, quicker defenders","Still projects more as a play-finisher than primary shot creator right now"],
    comps:["Big wing with shot-making and secondary ball-handling upside"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:7, name:"Dylan Mingo", school:"Baylor", pos:"PG/SG", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Farmingdale, NY",
-   summary:"Mingo was actually committed to North Carolina before reopening his recruitment and choosing Baylor, reuniting him with older brother Kayden, who transferred there from Penn State. Adam Finkelstein calls him a big guard with natural feel who can get wherever he wants with the ball, at his best working off two-man actions with a screener, reading the defense a beat ahead and either turning the corner himself or hitting the roll man. A significant injury cost him most of his senior season, and it's a real question how much of his freshman year at Baylor, if any, he'll be available for while he works back to full strength.",
-   strengths:["Advanced pull-up scoring package, 19.3 points on the EYBL circuit","Reads ball-screen coverages well, natural table-setting feel","6'10\" wingspan gives him real positional size for a lead guard"],
-   weaknesses:["Significant senior-year injury, health and availability for his freshman season are real open questions","Needs to add strength to finish through contact once healthy"],
-   comps:["Scoring combo guard, mid-range-heavy profile"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
-  {rk:8, name:"Alex Wilkins", school:"Kentucky", pos:"PG/SG", cls:"Sophomore", hs:"6'5\"", wt:170, age:19, hometown:"Mattapan, MA",
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"iDpxwCk2oVk"}]},
+  {rk:6, name:"Abdou Toure", school:"Arkansas", pos:"SG/SF", cls:"Freshman", hs:"6'5\"", wt:200, age:18, hometown:"New Haven, CT",
+   summary:"Toure chose Arkansas over Providence and UConn, drawn in part by John Calipari's track record developing NBA talent. His game is defined by length: a 6'5\" frame that plays much bigger, capable of switching onto forwards and erasing shots at the rim, which showed up immediately in his Razorback debut, a 16-point, 10-rebound double-double against the Bahamas national team with 4 blocks, then 15 more points and 3 blocks against Carleton. Across the Bahamas trip he blocked 7 shots and shot a strong percentage inside the arc, exactly the two-way profile scouts have flagged.",
+   strengths:["Excellent length and shot-blocking instincts for a wing, 7 blocks across his first four college exhibitions","Efficient scorer inside the arc, opened his college career with a double-double","International experience representing Guinea at multiple FIBA tournaments"],
+   weaknesses:["Shot mechanics still inconsistent release to release","Overshadowed in his own recruiting class, needs a featured role to show full range"],
+   comps:["Long, defense-first wing with real shot-blocking upside"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"4G1uYGAbi7w"}]},
+  {rk:7, name:"Alex Wilkins", school:"Kentucky", pos:"PG/SG", cls:"Sophomore", hs:"6'5\"", wt:170, age:19, hometown:"Mattapan, MA",
    summary:"He was Furman's only All-SoCon selection, was named the conference tournament's MVP after a 34-point outburst over UNC-Greensboro, and then, as a 15-seed, nearly knocked off eventual national runner-up UConn in the NCAA Tournament, scoring 21 points on 8-of-15 shooting in an 82-71 loss. His game is built on heavy ball-screen usage: he's a fluid, low-release shooter who can pull up off the dribble or knock down catch-and-shoot threes (he shot 39% in that mode down the stretch), and scouts have compared his profile to Illinois' Keaton Wagler, who went from unheralded freshman to the No. 5 overall pick in this year's draft.",
    strengths:["Elite pick-and-roll operator, comfortable scoring or creating out of ball screens","Complete shooting package: pull-up, catch-and-shoot (39% by season's end), floater range","Proven big-stage performer, 21 points against a UConn team that reached the title game"],
    weaknesses:["Slight frame for a 6'5\" guard who's often the ball-handler against physical defenses","Jump from SoCon competition to the SEC is a real, unproven leap"],
    comps:["Ball-screen guard, Keaton Wagler-style breakout profile"],
    stats:{ppg:"17.7", rpg:"2.0", apg:"4.7", fg:"45.8%"},
    seasons:[{yr:"Freshman", ppg:17.7, rpg:2.0, apg:4.7, stl:0.8, blk:0.1, to:3.8, min:29.6, fg:45.8, tpt:32.1, tpa:5.6, ft:83.5, fta:4.1}],
-   advanced:[{yr:"Freshman", ortg:114.0, usg:26.0, bpm:9.2, efg:52.0, ts:58.0, asttoRatio:"1.2"}]},
+   advanced:[{yr:"Freshman", ortg:114.0, usg:26.0, bpm:9.2, efg:52.0, ts:58.0, asttoRatio:"1.2"}],
+   highlights:[{yr:"25-26", videoId:"ApAAMLJ5O4Q", start:2}]},
+  {rk:8, name:"Dylan Mingo", school:"Baylor", pos:"PG/SG", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Farmingdale, NY",
+   summary:"Mingo was actually committed to North Carolina before reopening his recruitment and choosing Baylor, reuniting him with older brother Kayden, who transferred there from Penn State. Adam Finkelstein calls him a big guard with natural feel who can get wherever he wants with the ball, at his best working off two-man actions with a screener, reading the defense a beat ahead and either turning the corner himself or hitting the roll man. A significant injury cost him most of his senior season, and it's a real question how much of his freshman year at Baylor, if any, he'll be available for while he works back to full strength.",
+   strengths:["Advanced pull-up scoring package, 19.3 points on the EYBL circuit","Reads ball-screen coverages well, natural table-setting feel","6'10\" wingspan gives him real positional size for a lead guard"],
+   weaknesses:["Significant senior-year injury, health and availability for his freshman season are real open questions","Needs to add strength to finish through contact once healthy"],
+   comps:["Scoring combo guard, mid-range-heavy profile"],
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"y-0XzuPgCaM", start:99}]},
   {rk:9, name:"Sayon Keita", school:"North Carolina", pos:"C", cls:"Freshman", hs:"7'0\"", wt:215, age:18, hometown:"Bamako, Mali", 
    summary:"Keita was the top-ranked 2027 international prospect before reclassifying and choosing North Carolina over Duke and Kentucky. He's a mobile, rangy rim protector first: a 7-foot-5 wingspan that covers enormous ground defensively, timing that let him put up seven blocks in a single EuroLeague youth game, and enough foot speed to hedge or switch onto smaller players. Offensively he's still more finisher than shot creator, catching lobs and cleaning up misses, though DraftExpress has already flagged real long-term passing and face-up potential.",
    strengths:["Elite shot-blocking timing, 7 blocks in a single EuroLeague youth game","7-foot-5 wingspan, covers immense ground defensively","DraftExpress projects him as a 2027 lottery talent as a finisher, passer and rebounder"],
    weaknesses:["Offensive skill package still raw relative to his physical tools","Needs to add strength to hold position against physical post players"],
    comps:["Rim-running, shot-blocking center"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26", videoId:"PuCOE3A-Rjw"}]},
   {rk:10, name:"Bryson Howard", school:"Duke", pos:"SG/SF", cls:"Freshman", hs:"6'5\"", wt:180, age:17, hometown:"Frisco, TX",
    summary:"Howard is the son of former NBA All-Star Josh Howard, and gave Jon Scheyer his first commitment of the 2026 class, picking Duke over North Carolina and Kentucky. The bigger story is the path there: just months before his commitment, Howard was an unranked prospect, and an explosive EYBL summer with Pro Skills rocketed him all the way to a five-star ranking, one of the fastest recruiting risers in the country. He's a smooth, left-handed wing whose game leans on shot-making, on and off the ball, paired with the length and physicality to guard multiple positions; he was also, notably, left off this year's McDonald's All-American Game, a snub he's carried into his freshman year as motivation.",
    strengths:["One of the premier shooters in his class per Jon Scheyer, comfortable on or off the ball","Complete two-way game: scoring versatility plus multi-position defense","Massive summer riser, went from unranked to five-star in a matter of months, proof of a real developmental jump"],
    weaknesses:["Was passed over for the McDonald's Game, still unproven against that top tier of competition","Frame still developing for physical ACC backcourt matchups"],
    comps:["Shifty scoring guard, movement shooter"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"n74sfPNTHXw"}]},
   {rk:11, name:"Cameron Williams", school:"Duke", pos:"PF", cls:"Freshman", hs:"6'11\"", wt:200, age:18, hometown:"Phoenix, AZ",
    summary:"Williams committed to Duke over Arizona and Texas, becoming the highest-ranked recruit in the 2026 class. At St. Mary's in Phoenix he averaged 18.0 points, 11.2 rebounds, 3.6 assists, 2.6 blocks and 1.8 steals as a junior while winning a state title, a stat line that points to what he actually is: a face-up four who can put the ball on the floor, protect the rim, and pass out of doubles, not just a straight-line finisher. His 7-foot-1.5-inch wingspan lets him affect shots away from the paint as much as at the rim.",
    strengths:["Elite two-way production: 18/11/3.6/2.6/1.8 stat line as a junior","7-foot-1.5-inch wingspan, elite length for a face-up four","Passes well out of the post and out of doubles for a player his size"],
    weaknesses:["Handle needs polish to support a bigger shot-creation role","Interior physicality against grown men still unproven"],
    comps:["Long, switchable combo forward"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"LmpdoYW6in0"}]},
   {rk:12, name:"Hugo Yimga-Moukouri", school:"Nanterre 92 (France)", pos:"PF/SF", cls:"International", hs:"6'8\"", wt:220, age:18, hometown:"Colombes, Hauts-de-Seine, France",
    summary:"Yimga-Moukouri is part of the same French pipeline that produced Wembanyama, turning pro with Nanterre 92 in France's top league (Betclic Elite) at just 16 years old. He plays a modern forward's game: comfortable putting the ball on the floor in transition, capable of shooting over smaller closeouts, and long enough to guard multiple frontcourt spots, with his coach citing genuine star potential from the moment he arrived at the club.",
    strengths:["NBA-ready frame and athleticism already, turned pro at 16","Jumper has visibly improved year over year","Comfortable creating in both half-court and transition"],
    weaknesses:["Game-to-game consistency still developing at the pro level","Limited high-level minutes so far against grown men"],
    comps:["Athletic French wing, two-way upside"],
    stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
-   advanced:[{yr:"Freshman", ortg:122.0, usg:19.9, bpm:8.0, efg:60.0, ts:64.8, asttoRatio:"0.8"}]},
+   advanced:[{yr:"Freshman", ortg:122.0, usg:19.9, bpm:8.0, efg:60.0, ts:64.8, asttoRatio:"0.8"}],
+   highlights:[{yr:"25-26", videoId:"NV04dzXkB6U"}]},
   {rk:13, name:"Dame Sarr", school:"Duke", pos:"SF/SG", cls:"Sophomore", hs:"6'8\"", wt:190, age:20, hometown:"Oderzo, Italy",
    summary:"Sarr came to Duke last May as a late add out of FC Barcelona's academy and quietly became the Blue Devils' best wing defender on a team that reached the Elite Eight. His game is built around activity more than gaudy numbers: closing out hard, moving his feet in isolation, and finding the right rotations off the ball, the traits that had Jon Scheyer singling out his Sweet 16 sequence against St. John's, six rebounds and three assists on a night his shot wasn't falling, as one of the biggest plays of Duke's run. Offensively he's a low-usage mover who scores mostly off cuts and spot-ups, with real touch on his catch-and-shoot three when he's in rhythm, and he turned down a shot at going pro to return for a redemption year Scheyer has called central to the team's ceiling.",
    strengths:["Emerged as Duke's best perimeter defender as a true freshman","Efficient off-ball mover who's hard to lose in space","Big-game production: Elite Eight run, multiple NCAA Tournament highs"],
    weaknesses:["Outside shot needs to become more consistent to unlock the rest of his game","Frame still needs strength for physical ACC wing matchups"],
    comps:["Two-way wing, defense-first with shot-making upside"],
    stats:{ppg:"6.4", rpg:"3.8", apg:"1.1", fg:"40.4%"},
-   seasons:[{yr:"Freshman", ppg:6.4, rpg:3.8, apg:1.1, stl:1.0, blk:0.4, to:1.1, min:23.5, fg:40.4, tpt:32.3, tpa:3.5, ft:53, fta:1.6}]},
+   seasons:[{yr:"Freshman", ppg:6.4, rpg:3.8, apg:1.1, stl:1.0, blk:0.4, to:1.1, min:23.5, fg:40.4, tpt:32.3, tpa:3.5, ft:53, fta:1.6}],
+   highlights:[{yr:"25-26", videoId:"H8BVjANtGqw"}]},
   {rk:14, name:"Thomas Haugh", school:"Florida", pos:"PF/SF", cls:"Senior", hs:"6'9\"", wt:215, age:23, hometown:"New Oxford, PA",
    summary:"Haugh's production has climbed every single season at Florida, from 3.9 points as a freshman to 17.1 as a junior, and he was good enough this past year that he seriously weighed turning pro with legitimate first-round buzz before choosing to run it back for a shot at a title. His game is about processing speed more than any single tool: quick, simple decisions with the ball, a nose for the right rotation on defense, and enough physicality to guard multiple frontcourt spots, the kind of player who makes the guys around him faster just by not slowing anything down.",
    strengths:["Scoring, rebounding and playmaking have all grown every season","Physical, versatile defender across multiple frontcourt spots","Had real first-round buzz last spring and chose to return anyway, unusually experienced for a draft prospect"],
@@ -913,7 +985,8 @@ const players = [
    comps:["Winning glue-forward, program cornerstone"],
    stats:{ppg:"17.1", rpg:"6.1", apg:"2.1", fg:"46%"},
    seasons:[{yr:"Freshman", ppg:3.9, rpg:3.7, apg:0.6, stl:0.3, blk:0.7, to:0.4, min:14.7, fg:45, tpt:25.5, tpa:1.3, ft:45.7, fta:1.3}, {yr:"Sophomore", ppg:9.9, rpg:6.2, apg:2.1, stl:0.8, blk:0.7, to:1.1, min:24.5, fg:48.7, tpt:34.7, tpa:2.6, ft:79.2, fta:3.9}, {yr:"Junior", ppg:17.1, rpg:6.1, apg:2.1, stl:1.1, blk:1.0, to:1.5, min:33.3, fg:46, tpt:32.6, tpa:5.2, ft:77.4, fta:5.9}],
-   advanced:[{yr:"Junior", ortg:130.9, usg:22.0, bpm:11.0, efg:54.0, ts:58.6, asttoRatio:"1.4"}]},
+   advanced:[{yr:"Junior", ortg:130.9, usg:22.0, bpm:11.0, efg:54.0, ts:58.6, asttoRatio:"1.4"}],
+   highlights:[{yr:"25-26", videoId:"Y6rOat_QTw0"}]},
   {rk:15, name:"Patrick Ngongba II", school:"Duke", pos:"C", cls:"Junior", hs:"6'11\"", wt:250, age:20, hometown:"Manassas, VA",
    summary:"Ngongba II more than doubled his production as a sophomore at Duke, 10.1 points and 5.8 rebounds on 60.6% shooting, playing almost exclusively around the rim: rolling hard to the basket, cleaning up misses, and using his frame to seal smaller defenders deep in the post rather than facing up. He's one of five returners Jon Scheyer brought back alongside Sarr, Cayden Boozer and Caleb Foster for another Final Four push.",
    strengths:["Elite interior efficiency, 60.6% from the floor as a sophomore","Physical presence that holds up against ACC frontcourts, seals and finishes through contact","Production has scaled up significantly year over year"],
@@ -921,13 +994,15 @@ const players = [
    comps:["Physical, efficient interior anchor"],
    stats:{ppg:"10.1", rpg:"5.8", apg:"2.0", fg:"60.6%"},
    seasons:[{yr:"Freshman", ppg:4.0, rpg:2.8, apg:0.8, stl:0.4, blk:0.6, to:0.2, min:10.8, fg:71.9, tpt:0, tpa:0.0, ft:72.7, fta:1.1}, {yr:"Sophomore", ppg:10.1, rpg:5.8, apg:2.0, stl:0.6, blk:1.1, to:1.3, min:21.9, fg:60.6, tpt:25.8, tpa:1.0, ft:66.4, fta:4.1}],
-   advanced:[{yr:"Junior", ortg:125.0, usg:21.1, bpm:10.9, efg:60.0, ts:64.5, asttoRatio:"1.5"}]},
+   advanced:[{yr:"Junior", ortg:125.0, usg:21.1, bpm:10.9, efg:60.0, ts:64.5, asttoRatio:"1.5"}],
+   highlights:[{yr:"25-26", videoId:"NEVqwt3FqHI"}]},
   {rk:16, name:"Quentin Coleman", school:"Illinois", pos:"SG/PG", cls:"Freshman", hs:"6'4\"", wt:180, age:18, hometown:"O'Fallon, IL",
    summary:"Coleman initially signed with Wake Forest before decommitting and choosing Illinois after an official visit just four days later, drawn to Brad Underwood's track record turning lightly-recruited guards into real NBA talent, most recently Keaton Wagler's leap from an under-the-radar freshman into the No. 5 overall pick this year. A St. Louis native who failed to make varsity as a freshman at O'Fallon before transferring and breaking out at Principia, his game is pure shot-making: a virtually pure release with good loft and rotation, real gravity spotting up, and a developing one-dribble pull-up that gives him a scoring gear beyond standstill threes.",
    strengths:["Pure, high-arcing shooting stroke, 39% from three on the EYBL circuit","Comfortable off the catch or the bounce, deep range","High-IQ decision-maker who fits Illinois' NBA-style spacing system"],
    weaknesses:["Needs to add strength for on-ball defensive matchups","Path to varsity wasn't linear, missed his own high school team as a freshman"],
    comps:["Floor-spacing guard, Kevin Huerter-style scoring versatility"],
-   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}},
+   stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"},
+   highlights:[{yr:"25-26 HS", videoId:"atkQ3sO0iJI", start:186}]},
   {rk:17, name:"Cameron Houindo", school:"Cedevita Olimpija (Slovenia)", pos:"PF/C", cls:"International", hs:"6'8\"", wt:210, age:18, hometown:"Sainte-Catherine, France",
    summary:"Houindo turned pro with KK Cedevita Olimpija in Slovenia in 2025, following the same path as fellow Frenchman Joan Beringer, who left the same club for the 2025 NBA Draft. He's had a breakout year on the international stage, earning MVP honors at both the EuroLeague NextGen Ulm Qualifier and the 2026 Basketball Without Borders Global Camp, and averaged north of 21 points and nearly 10 rebounds a game at the NextGen Finals in Athens. His game centers on frontcourt versatility: comfortable facing up from the mid-post, active enough defensively to contest at the rim, and still growing into the frame that should eventually let him hold up against bigger, more physical fours.",
    strengths:["Versatile frontcourt frame, comfortable facing up or playing inside","Rim-protection instincts ahead of his offensive polish","Room to add strength as his body matures"],
@@ -1289,7 +1364,7 @@ function renderFan(){
   document.getElementById('heroFan').innerHTML = top4.map((p,i)=>`
     <div class="pcard ${classes[i]}" onclick="openProfile(${i})">
       <div class="num">#${p.rk}</div>
-      <div class="mono">${initials(p.name)}</div>
+      <div class="mono">${p.image ? `<img src="${p.image}" alt="${p.name}">` : initials(p.name)}</div>
       <div class="pname">${p.name}</div>
       <div class="pschool">${schoolBadge(p.school)}${p.school} · ${p.pos} · ${p.cls}</div>
     </div>`).join("");
@@ -1326,7 +1401,7 @@ function goSlide(i){
 function playerCardHTML(p, idx){
   return `<div class="player-card" onclick="openProfile(${idx})">
     <div class="rk">RANK #${p.rk}</div>
-    <div class="avatar">${initials(p.name)}</div>
+    <div class="avatar">${p.image ? `<img src="${p.image}" alt="${p.name}">` : initials(p.name)}</div>
     <h4>${p.name}</h4>
     <div class="meta">${p.pos} · ${schoolBadge(p.school)}${p.school} · ${p.cls}</div>
     <div class="stat-row">
@@ -1375,7 +1450,7 @@ function openProfile(idx, fromHistory){
     <div class="profile-head">
       <div class="profile-avatar" style="border-top:4px solid ${accentFor(p.school)};">
         <div class="rankbadge">RANK #${p.rk}</div>
-        <div class="initials">${initials(p.name)}</div>
+        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<div class="initials">${initials(p.name)}</div>`}
       </div>
       <div class="profile-title">
         <div class="pos-tag" style="--pos-dot:${accentFor(p.school)};"><b>${p.pos}</b> · ${p.cls}</div>
@@ -1412,6 +1487,20 @@ function openProfile(idx, fromHistory){
           <thead><tr><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th></tr></thead>
           <tbody><tr><td>${p.stats.ppg}</td><td>${p.stats.rpg}</td><td>${p.stats.apg}</td><td>${p.stats.fg}</td></tr></tbody>
         </table>`}
+        ${p.highlights && p.highlights.length ? `
+        <h3>Highlights</h3>
+        <div class="hl-tabs">
+          ${p.highlights.map((h,i)=>`<button class="hl-tab ${i===0?'active':''}" onclick="switchHighlight(${p.rk}, ${i}, this)">${h.yr}</button>`).join("")}
+        </div>
+        <div class="hl-frame">
+          <a id="hlCover-${p.rk}" class="hl-cover" href="https://www.youtube.com/watch?v=${p.highlights[0].videoId}${p.highlights[0].start ? '&t='+p.highlights[0].start+'s' : ''}" target="_blank" rel="noopener">
+            <img id="hlThumb-${p.rk}" src="https://img.youtube.com/vi/${p.highlights[0].videoId}/maxresdefault.jpg" onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${p.highlights[0].videoId}/hqdefault.jpg';" alt="${p.name} highlights">
+            <div class="hl-play-overlay">
+              <div class="hl-play-btn">▶</div>
+              <div class="hl-cover-text">Watch ${p.name}'s Highlights<span>on YouTube ↗</span></div>
+            </div>
+          </a>
+        </div>` : ""}
       </div>
       <div class="side-panel">
         <div class="lbl">NBA Comparison</div>
@@ -1522,6 +1611,24 @@ function showView(name, skipNav, fromHistory){
 
 function mobileNavigate(name){
   showView(name);
+}
+
+function switchHighlight(rk, idx, btnEl){
+  const p = players.find(x => x.rk === rk);
+  if(!p || !p.highlights || !p.highlights[idx]) return;
+  const h = p.highlights[idx];
+  const cover = document.getElementById('hlCover-'+rk);
+  if(cover){
+    cover.href = `https://www.youtube.com/watch?v=${h.videoId}${h.start ? '&t='+h.start+'s' : ''}`;
+  }
+  const thumb = document.getElementById('hlThumb-'+rk);
+  if(thumb){
+    thumb.onerror = function(){ this.onerror=null; this.src = `https://img.youtube.com/vi/${h.videoId}/hqdefault.jpg`; };
+    thumb.src = `https://img.youtube.com/vi/${h.videoId}/maxresdefault.jpg`;
+  }
+  const tabsContainer = btnEl.parentElement;
+  tabsContainer.querySelectorAll('.hl-tab').forEach(t => t.classList.remove('active'));
+  btnEl.classList.add('active');
 }
 
 function toggleAdvancedStats(){
@@ -1875,12 +1982,12 @@ async function renderStockDetailView(el, pv){
     <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-end; margin-bottom:10px;">
       <div class="stock-trade">
         <input type="number" min="1" value="1" id="detail-qty-${rk}">
-        <button class="buy-btn" onclick="buySharesDetail(${rk})">Buy</button>
+        <button class="buy-btn" onclick="buySharesDetail(${rk}, this)">Buy</button>
       </div>
       ${shares > 0 ? `
       <div class="stock-trade">
         <input type="number" min="1" max="${shares}" value="1" id="detail-sellqty-${rk}">
-        <button class="sell-btn" onclick="sellSharesDetail(${rk})">Sell</button>
+        <button class="sell-btn" onclick="sellSharesDetail(${rk}, this)">Sell</button>
       </div>` : ''}
     </div>
     <div class="stock-msg" id="stockMsg"></div>
@@ -1920,7 +2027,7 @@ function renderStockList(){
         <div class="sprice">$${price.toLocaleString()}</div>
         <div class="stock-trade">
           <input type="number" min="1" value="1" id="qty-${p.rk}">
-          <button class="buy-btn" onclick="buyShares(${p.rk})">Buy</button>
+          <button class="buy-btn" onclick="buyShares(${p.rk}, this)">Buy</button>
         </div>
       </div>`;
     }).join("");
@@ -1945,18 +2052,19 @@ function renderStockList(){
         <div class="sprice">$${price.toLocaleString()}</div>
         <div class="stock-trade">
           <input type="number" min="1" max="${shares}" value="1" id="sellqty-${rk}">
-          <button class="sell-btn" onclick="sellShares(${rk})">Sell</button>
+          <button class="sell-btn" onclick="sellShares(${rk}, this)">Sell</button>
         </div>
       </div>`;
     }).join("");
   }
 }
 
-async function buyShares(rk){
+async function buyShares(rk, btnEl){
   const input = document.getElementById('qty-'+rk);
   const qty = Number(input.value);
   const msgEl = document.getElementById('stockMsg');
   if(!qty || qty <= 0){ msgEl.textContent = 'Enter a valid share amount.'; msgEl.className = 'stock-msg error'; return; }
+  if(btnEl){ btnEl.classList.remove('trade-clicked'); void btnEl.offsetWidth; btnEl.classList.add('trade-clicked'); }
   try{
     const { error } = await sb.rpc('buy_stock', { p_player_rk: rk, p_shares: qty });
     if(error) throw error;
@@ -1971,11 +2079,12 @@ async function buyShares(rk){
   }
 }
 
-async function sellShares(rk){
+async function sellShares(rk, btnEl){
   const input = document.getElementById('sellqty-'+rk);
   const qty = Number(input.value);
   const msgEl = document.getElementById('stockMsg');
   if(!qty || qty <= 0){ msgEl.textContent = 'Enter a valid share amount.'; msgEl.className = 'stock-msg error'; return; }
+  if(btnEl){ btnEl.classList.remove('trade-clicked'); void btnEl.offsetWidth; btnEl.classList.add('trade-clicked'); }
   try{
     const { error } = await sb.rpc('sell_stock', { p_player_rk: rk, p_shares: qty });
     if(error) throw error;
@@ -1990,11 +2099,12 @@ async function sellShares(rk){
   }
 }
 
-async function buySharesDetail(rk){
+async function buySharesDetail(rk, btnEl){
   const input = document.getElementById('detail-qty-'+rk);
   const qty = Number(input.value);
   const msgEl = document.getElementById('stockMsg');
   if(!qty || qty <= 0){ msgEl.textContent = 'Enter a valid share amount.'; msgEl.className = 'stock-msg error'; return; }
+  if(btnEl){ btnEl.classList.remove('trade-clicked'); void btnEl.offsetWidth; btnEl.classList.add('trade-clicked'); }
   try{
     const { error } = await sb.rpc('buy_stock', { p_player_rk: rk, p_shares: qty });
     if(error) throw error;
@@ -2007,11 +2117,12 @@ async function buySharesDetail(rk){
   }
 }
 
-async function sellSharesDetail(rk){
+async function sellSharesDetail(rk, btnEl){
   const input = document.getElementById('detail-sellqty-'+rk);
   const qty = Number(input.value);
   const msgEl = document.getElementById('stockMsg');
   if(!qty || qty <= 0){ msgEl.textContent = 'Enter a valid share amount.'; msgEl.className = 'stock-msg error'; return; }
+  if(btnEl){ btnEl.classList.remove('trade-clicked'); void btnEl.offsetWidth; btnEl.classList.add('trade-clicked'); }
   try{
     const { error } = await sb.rpc('sell_stock', { p_player_rk: rk, p_shares: qty });
     if(error) throw error;
