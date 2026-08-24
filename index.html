@@ -630,20 +630,22 @@
     .acct-btn{font-size:.6rem; padding:8px 10px; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
     .burger{display:block;}
     .hero-inner{grid-template-columns:1fr;}
-    .fan{
-      height:auto; margin-top:20px; display:flex; overflow-x:auto; overflow-y:visible;
-      scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; gap:16px; padding:10px 30px 20px;
-      justify-content:flex-start;
-    }
-    .fan::-webkit-scrollbar{display:none;}
-    .pcard{
-      position:relative; width:78%; max-width:260px; height:210px; flex:0 0 auto;
-      scroll-snap-align:center; transform:none !important;
-    }
-    .pcard .mono{width:64px; height:64px; font-size:1.3rem; margin:0 auto 12px;}
+    .fan{height:280px; margin-top:20px; touch-action:pan-y;}
+    .pcard{width:132px; height:180px; padding:14px;}
+    .pcard .mono{width:66px; height:66px; font-size:1.4rem; margin:-6px auto 12px;}
+    .fan .p1{transform:rotate(-8deg) translate(-72px,6px); z-index:1;}
+    .fan .p2{transform:rotate(-3deg) translate(-26px,-8px); z-index:2;}
+    .fan .p3{transform:rotate(3deg) translate(26px,-8px); z-index:2;}
+    .fan .p4{transform:rotate(8deg) translate(72px,6px); z-index:1;}
+    .fan .p1.mobile-front{transform:rotate(-8deg) translate(-72px,6px) translateY(-16px) scale(1.08); z-index:10;}
+    .fan .p2.mobile-front{transform:rotate(-3deg) translate(-26px,-8px) translateY(-16px) scale(1.08); z-index:10;}
+    .fan .p3.mobile-front{transform:rotate(3deg) translate(26px,-8px) translateY(-16px) scale(1.08); z-index:10;}
+    .fan .p4.mobile-front{transform:rotate(8deg) translate(72px,6px) translateY(-16px) scale(1.08); z-index:10;}
     .player-card .avatar{width:64px; height:64px; font-size:1.3rem;}
+    .slideshow{touch-action:pan-y;}
     .slide{grid-template-columns:1fr;}
     .slide-visual{display:none;}
+    .header-row{margin-bottom:16px;}
     .player-grid{grid-template-columns:repeat(2,1fr);}
     .article-grid{grid-template-columns:1fr;}
     .article-card.feature{min-height:280px;}
@@ -1642,12 +1644,39 @@ function renderFan(){
   const top4 = players.slice(0,4);
   const classes = ["p1","p2","p3","p4"];
   document.getElementById('heroFan').innerHTML = top4.map((p,i)=>`
-    <div class="pcard ${classes[i]}" onclick="openProfile(${i})">
+    <div class="pcard ${classes[i]} ${i===0?'mobile-front':''}" onclick="openProfile(${i})">
       <div class="num">#${p.rk}</div>
       <div class="mono">${initials(p.name)}</div>
       <div class="pname">${p.name}</div>
       <div class="pschool">${schoolBadge(p.school)}${p.school} · ${p.pos} · ${p.cls}</div>
     </div>`).join("");
+  mobileFanFront = 0;
+  setupFanSwipe();
+}
+
+let mobileFanFront = 0;
+function setupFanSwipe(){
+  const fan = document.getElementById('heroFan');
+  if(!fan || fan.dataset.swipeBound) return;
+  fan.dataset.swipeBound = '1';
+  let startX = 0, startY = 0, moved = false;
+  fan.addEventListener('touchstart', (e)=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    moved = false;
+  }, {passive:true});
+  fan.addEventListener('touchmove', ()=>{ moved = true; }, {passive:true});
+  fan.addEventListener('touchend', (e)=>{
+    if(!moved) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) < 35 || Math.abs(dx) < Math.abs(dy)) return; // ignore small or mostly-vertical swipes
+    const cards = fan.querySelectorAll('.pcard');
+    if(cards.length === 0) return;
+    if(dx < 0){ mobileFanFront = (mobileFanFront + 1) % cards.length; }
+    else { mobileFanFront = (mobileFanFront - 1 + cards.length) % cards.length; }
+    cards.forEach((c,i)=> c.classList.toggle('mobile-front', i === mobileFanFront));
+  }, {passive:true});
 }
 
 /* ================= RENDER: SLIDESHOW ================= */
@@ -1670,11 +1699,34 @@ function renderSlideshow(){
   });
   document.getElementById('slideDots').innerHTML = slides.map((_,i)=>`<button class="${i===0?'active':''}" onclick="goSlide(${i})"></button>`).join("");
   slideTimer = setInterval(()=>goSlide((slideIdx+1)%slides.length), 5000);
+  setupSlideSwipe();
 }
 function goSlide(i){
   slideIdx = i;
   document.querySelectorAll('.slide').forEach((el,idx)=>el.classList.toggle('active', idx===i));
   document.querySelectorAll('.dots button').forEach((el,idx)=>el.classList.toggle('active', idx===i));
+}
+function setupSlideSwipe(){
+  const ss = document.getElementById('slideshow');
+  if(!ss || ss.dataset.swipeBound) return;
+  ss.dataset.swipeBound = '1';
+  let startX = 0, startY = 0, moved = false;
+  ss.addEventListener('touchstart', (e)=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    moved = false;
+  }, {passive:true});
+  ss.addEventListener('touchmove', ()=>{ moved = true; }, {passive:true});
+  ss.addEventListener('touchend', (e)=>{
+    if(!moved) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) < 35 || Math.abs(dx) < Math.abs(dy)) return;
+    clearInterval(slideTimer);
+    if(dx < 0){ goSlide((slideIdx+1)%slides.length); }
+    else { goSlide((slideIdx-1+slides.length)%slides.length); }
+    slideTimer = setInterval(()=>goSlide((slideIdx+1)%slides.length), 5000);
+  }, {passive:true});
 }
 
 /* ================= RENDER: PLAYER GRID ================= */
