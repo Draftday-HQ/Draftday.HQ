@@ -268,8 +268,8 @@
   .pcard:hover{box-shadow:0 40px 70px -20px rgba(0,0,0,.85);}
   .pcard .num{position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:.65rem; color:var(--gold); letter-spacing:.1em;}
   .pcard .mono{
-    width:96px; height:96px; border-radius:50%; margin:-10px auto 14px;
-    display:flex; align-items:center; justify-content:center;
+    width:96px; height:96px; min-width:96px; max-width:96px; flex-shrink:0; border-radius:50%; margin:-10px auto 14px;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
     font-family:var(--display); font-weight:400; font-size:2.1rem; color:var(--gold);
     border:1px solid var(--gold); background:rgba(198,161,91,.08);
   }
@@ -291,9 +291,14 @@
   }
   .slide{
     position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr;
-    opacity:0; transition:opacity .7s ease; pointer-events:none;
+    opacity:0; pointer-events:none; z-index:1;
+    transition:transform .45s cubic-bezier(.22,.61,.36,1), opacity .4s ease;
   }
-  .slide.active{opacity:1; pointer-events:auto;}
+  .slide.active{opacity:1; transform:translateX(0); pointer-events:auto; z-index:2;}
+  .slide.enter-right{opacity:0; transform:translateX(46px); transition:none;}
+  .slide.enter-left{opacity:0; transform:translateX(-46px); transition:none;}
+  .slide.exit-left{opacity:0; transform:translateX(-46px);}
+  .slide.exit-right{opacity:0; transform:translateX(46px);}
   .slide-visual{
     background:linear-gradient(155deg, var(--panel-2), var(--void));
     display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
@@ -454,7 +459,7 @@
   .rank-table .rknum{font-family:var(--display); font-weight:400; font-size:1.4rem; color:var(--gold);}
   .rank-table .pname{font-family:var(--display); font-weight:400; font-size:1.1rem; display:flex; align-items:center; gap:14px; padding-left:0;}
   .rank-avatar{
-    width:54px; height:54px; min-width:54px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    width:54px; height:54px; min-width:54px; max-width:54px; flex-shrink:0; border-radius:50%; display:flex; align-items:center; justify-content:center;
     font-family:var(--display); font-weight:400; font-size:1.15rem; color:var(--gold);
     border:1px solid var(--steel-soft); background:var(--void); margin-left:-14px;
   }
@@ -632,7 +637,7 @@
     .hero-inner{grid-template-columns:1fr;}
     .fan{height:280px; margin-top:20px; touch-action:pan-y;}
     .pcard{width:132px; height:180px; padding:14px;}
-    .pcard .mono{width:66px; height:66px; font-size:1.4rem; margin:-6px auto 12px;}
+    .pcard .mono{width:66px; height:66px; min-width:66px; max-width:66px; flex-shrink:0; font-size:1.4rem; margin:-6px auto 12px;}
     .fan .p1{transform:rotate(-8deg) translate(-72px,6px); z-index:1;}
     .fan .p2{transform:rotate(-3deg) translate(-26px,-8px); z-index:2;}
     .fan .p3{transform:rotate(3deg) translate(26px,-8px); z-index:2;}
@@ -817,12 +822,14 @@
       <button class="chip" id="rankSubMock" onclick="showRankingsSub('mock')">Mock Draft</button>
     </div>
     <div id="rankBoardPanel">
-      <table class="rank-table">
+      <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+      <table class="rank-table" style="min-width:560px;">
         <thead>
           <tr><th>Rk</th><th>Prospect</th><th>Pos</th><th>School</th><th>Class</th></tr>
         </thead>
         <tbody id="rankTableBody"></tbody>
       </table>
+      </div>
     </div>
     <div id="rankMockPanel" style="display:none; min-height:40vh; align-items:center; justify-content:center; text-align:center;">
       <div>
@@ -1701,9 +1708,27 @@ function renderSlideshow(){
   slideTimer = setInterval(()=>goSlide((slideIdx+1)%slides.length), 5000);
   setupSlideSwipe();
 }
-function goSlide(i){
+function goSlide(i, dir){
+  if(dir === undefined){
+    // infer forward/backward, treating wrap-around correctly
+    dir = (i === (slideIdx+1)%slides.length) ? 1 : (i === (slideIdx-1+slides.length)%slides.length) ? -1 : (i > slideIdx ? 1 : -1);
+  }
+  const prevIdx = slideIdx;
   slideIdx = i;
-  document.querySelectorAll('.slide').forEach((el,idx)=>el.classList.toggle('active', idx===i));
+  document.querySelectorAll('.slide').forEach((el, idx)=>{
+    el.classList.remove('active','exit-left','exit-right','enter-left','enter-right');
+    if(idx === i){
+      el.classList.add(dir === 1 ? 'enter-right' : 'enter-left');
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+          el.classList.remove('enter-right','enter-left');
+          el.classList.add('active');
+        });
+      });
+    } else if(idx === prevIdx){
+      el.classList.add(dir === 1 ? 'exit-left' : 'exit-right');
+    }
+  });
   document.querySelectorAll('.dots button').forEach((el,idx)=>el.classList.toggle('active', idx===i));
 }
 function setupSlideSwipe(){
@@ -1723,9 +1748,9 @@ function setupSlideSwipe(){
     const dy = e.changedTouches[0].clientY - startY;
     if(Math.abs(dx) < 35 || Math.abs(dx) < Math.abs(dy)) return;
     clearInterval(slideTimer);
-    if(dx < 0){ goSlide((slideIdx+1)%slides.length); }
-    else { goSlide((slideIdx-1+slides.length)%slides.length); }
-    slideTimer = setInterval(()=>goSlide((slideIdx+1)%slides.length), 5000);
+    if(dx < 0){ goSlide((slideIdx+1)%slides.length, 1); }
+    else { goSlide((slideIdx-1+slides.length)%slides.length, -1); }
+    slideTimer = setInterval(()=>goSlide((slideIdx+1)%slides.length, 1), 5000);
   }, {passive:true});
 }
 
