@@ -183,6 +183,19 @@
   }
   .comment-delete:hover{color:var(--signal);}
   .comment-body{font-family:var(--serif); font-size:.95rem; line-height:1.6; color:#cfc9bc;}
+  .comment-reply-btn{
+    background:none; border:none; color:var(--paper-dim); font-family:var(--mono); font-size:.65rem;
+    text-transform:uppercase; letter-spacing:.05em; cursor:pointer; margin-top:8px; padding:0;
+  }
+  .comment-reply-btn:hover{color:var(--gold);}
+  .comment-reply-form{margin-top:12px;}
+  .comment-reply-form textarea{
+    width:100%; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper);
+    font-family:var(--serif); font-size:.9rem; padding:10px; margin-bottom:8px; outline:none; resize:vertical;
+  }
+  .comment-reply-form textarea:focus{border-color:var(--gold);}
+  .comment-reply-form-btns{display:flex; gap:8px;}
+  .comment-replies{margin-top:16px; padding-left:20px; border-left:1px solid var(--steel); display:flex; flex-direction:column; gap:16px;}
   .comment-team-tag{
     font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; text-transform:uppercase;
     color:var(--gold); border:1px solid var(--steel-soft); padding:2px 8px;
@@ -208,7 +221,7 @@
   .username-edit-row{display:flex; gap:8px; margin-top:8px; align-items:center;}
   .username-edit-row input{
     background:var(--void); border:1px solid var(--steel-soft); color:var(--paper);
-    font-family:var(--display); font-weight:400; font-size:1rem; padding:8px 12px; outline:none;
+    font-family:var(--display); font-weight:400; font-size:16px; padding:8px 12px; outline:none;
   }
   .username-edit-row input:focus{border-color:var(--gold);}
   .primary-star{cursor:pointer; color:var(--gold); margin-right:4px; font-size:.9rem;}
@@ -257,12 +270,22 @@
   }
   .team-chip button{background:none; border:none; color:var(--paper-dim); cursor:pointer; font-size:.9rem; line-height:1; padding:0;}
   .team-chip button:hover{color:var(--signal);}
-  .team-add-row{display:flex; gap:8px;}
+  .team-add-row{display:flex; gap:8px; position:relative;}
   .team-add-row select, .team-add-row input{
     flex:1; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper);
-    font-family:var(--serif); font-size:.9rem; padding:10px 12px; outline:none;
+    font-family:var(--serif); font-size:16px; padding:10px 12px; outline:none;
   }
   .team-add-row button{padding:10px 16px; white-space:nowrap;}
+  .autocomplete-suggestions{
+    position:absolute; top:100%; left:0; right:0; background:var(--panel); border:1px solid var(--steel-soft);
+    max-height:220px; overflow-y:auto; z-index:100; margin-top:2px;
+  }
+  .autocomplete-item{
+    padding:11px 14px; font-family:var(--serif); font-size:.9rem; color:var(--paper); cursor:pointer;
+    border-bottom:1px solid var(--steel);
+  }
+  .autocomplete-item:last-child{border-bottom:none;}
+  .autocomplete-item:hover{background:var(--void); color:var(--gold);}
   .profile-stat-box{display:flex; justify-content:space-between; border:1px solid var(--steel); padding:16px 18px; margin-bottom:26px;}
   .profile-stat-box div{text-align:center; flex:1;}
   .profile-stat-box .lbl{margin-bottom:6px;}
@@ -785,6 +808,14 @@
 
   /* ================= RESPONSIVE ================= */
   @media (max-width:980px){
+    input, select, textarea{font-size:16px !important;}
+    .profile-modal-box{max-width:94vw; width:94vw;}
+    .profile-header{flex-direction:column; align-items:center; text-align:center; padding-right:0; gap:14px;}
+    .profile-avatar-circle{width:110px; height:110px; min-width:110px;}
+    .weekly-claim-box{margin-top:6px;}
+    .weekly-claim-btn{padding:7px 12px !important; font-size:.68rem !important; white-space:nowrap;}
+    .weekly-claim-note{display:none;}
+    .weekly-claim-pending{padding:5px 10px; font-size:.62rem;}
     nav.links{display:none;}
     .nav-social{display:none;}
     .acct-btn{font-size:.6rem; padding:8px 10px; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
@@ -1673,7 +1704,6 @@ function openProfile(idx, fromHistory){
   if(!fromHistory){
     history.pushState({view:'profile', idx}, '', '#profile-'+idx);
   }
-  window.scrollTo({top:0, behavior:'smooth'});
   if(isDemoMode){
     fetchPriceHistory(p.id).then(history => {
       const canvas = document.getElementById('profileStockChart-'+p.id);
@@ -1757,7 +1787,6 @@ function openArticleDetail(idx, fromRefresh){
   if(!fromRefresh){
     showView('article-detail', true);
     history.pushState({view:'article-detail', articleIdx:idx}, '', '#article-'+idx);
-    window.scrollTo({top:0, behavior:'smooth'});
   }
   loadComments('article', idx);
 }
@@ -1796,9 +1825,9 @@ function renderPodcasts(){
 function showView(name, skipNav, fromHistory){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
+  window.scrollTo(0, 0);
   if(!skipNav){
     document.querySelectorAll('nav.links button').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
-    window.scrollTo({top:0, behavior:'smooth'});
   } else {
     document.querySelectorAll('nav.links button').forEach(b=>b.classList.remove('active'));
   }
@@ -2475,7 +2504,7 @@ function renderWeeklyClaimHTML(lastClaim){
   const alreadyClaimed = lastClaim && new Date(lastClaim) >= resetBoundary;
   const scheduleNote = `<div class="weekly-claim-note">Resets every Saturday at 1pm ET</div>`;
   if(!alreadyClaimed){
-    return `<button class="btn btn-solid weekly-claim-btn" onclick="claimWeeklyBonus()">Claim Your $100 This Week</button>${scheduleNote}`;
+    return `<button class="btn btn-solid weekly-claim-btn" onclick="claimWeeklyBonus()">Claim $100 Weekly</button>${scheduleNote}`;
   }
   const nextReset = new Date(resetBoundary.getTime() + 7*24*60*60*1000);
   const localStr = nextReset.toLocaleString(undefined, { weekday:'long', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZoneName:'short' });
@@ -2543,10 +2572,9 @@ async function loadComments(targetType, targetId){
   }
 }
 
-function renderComments(containerId, targetType, targetId, comments){
-  const el = document.getElementById(containerId);
-  if(!el) return;
-  const listHtml = comments.length ? comments.map(c => `
+function renderOneComment(c, targetType, targetId, replies){
+  const childReplies = replies.filter(r => r.parent_id === c.id);
+  return `
     <div class="comment-row">
       <div class="comment-meta">
         <span class="comment-user">${c.username || 'Anonymous'}</span>
@@ -2557,7 +2585,26 @@ function renderComments(containerId, targetType, targetId, comments){
         ${currentUser && c.user_id === currentUser.id ? `<button class="comment-delete" onclick="deleteComment(${c.id}, '${targetType}', ${targetId})">Delete</button>` : ''}
       </div>
       <p class="comment-body">${c.body}</p>
-    </div>`).join("") : `<p class="profile-empty">No comments yet. Be the first to say something.</p>`;
+      ${currentUser ? `<button class="comment-reply-btn" onclick="toggleReplyForm(${c.id})">Reply</button>` : ''}
+      <div class="comment-reply-form" id="replyForm-${c.id}" style="display:none;">
+        <textarea id="replyInput-${c.id}" placeholder="Write a reply..." rows="2"></textarea>
+        <div class="comment-reply-form-btns">
+          <button class="btn btn-solid" onclick="submitComment('${targetType}', ${targetId}, ${c.id})">Post Reply</button>
+          <button class="btn btn-ghost" onclick="toggleReplyForm(${c.id})">Cancel</button>
+        </div>
+      </div>
+      ${childReplies.length ? `<div class="comment-replies">${childReplies.map(r => renderOneComment(r, targetType, targetId, replies)).join("")}</div>` : ''}
+    </div>`;
+}
+
+function renderComments(containerId, targetType, targetId, comments){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  const topLevel = comments.filter(c => !c.parent_id);
+  const replies = comments.filter(c => c.parent_id);
+  const listHtml = topLevel.length
+    ? topLevel.map(c => renderOneComment(c, targetType, targetId, replies)).join("")
+    : `<p class="profile-empty">No comments yet. Be the first to say something.</p>`;
 
   const formHtml = currentUser ? `
     <div class="comment-form">
@@ -2572,9 +2619,16 @@ function renderComments(containerId, targetType, targetId, comments){
   el.innerHTML = formHtml + `<div class="comment-list">${listHtml}</div>`;
 }
 
-async function submitComment(targetType, targetId){
+function toggleReplyForm(commentId){
+  const form = document.getElementById(`replyForm-${commentId}`);
+  if(form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function submitComment(targetType, targetId, parentId){
   if(!currentUser || !currentProfile) { openAuthModal(); return; }
-  const input = document.getElementById(`commentInput-${targetType}-${targetId}`);
+  const input = parentId
+    ? document.getElementById(`replyInput-${parentId}`)
+    : document.getElementById(`commentInput-${targetType}-${targetId}`);
   const body = input.value.trim();
   if(!body) return;
   try{
@@ -2586,7 +2640,8 @@ async function submitComment(targetType, targetId){
       body: body,
       nba_team: currentProfile.nba_team || null,
       college_team: currentProfile.primary_college_team || null,
-      is_founder: isFounder(currentUser.email)
+      is_founder: isFounder(currentUser.email),
+      parent_id: parentId || null
     });
     if(error) throw error;
     loadComments(targetType, targetId);
@@ -2675,7 +2730,7 @@ function renderProfileModal(savedBoard, holdings, prices){
       <div>
         <h2 id="usernameDisplay">${p.username}${isFounder(currentUser.email) ? ' <span class="founder-tag">Founder</span>' : ''} <button class="username-edit-btn" onclick="toggleUsernameEdit()">Edit</button></h2>
         <div class="username-edit-row" id="usernameEditRow" style="display:none;">
-          <input type="text" id="usernameInput" value="${p.username}" maxlength="30">
+          <input type="text" id="usernameInput" value="${p.username}" maxlength="30" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
           <button class="btn btn-solid" onclick="saveUsername()">Save</button>
           <button class="btn btn-ghost" onclick="toggleUsernameEdit()">Cancel</button>
         </div>
@@ -2718,11 +2773,9 @@ function renderProfileModal(savedBoard, holdings, prices){
       <p class="profile-empty" style="margin-bottom:10px;">Click the star to choose which one shows on your comments.</p>
       <div class="team-chip-row">${collegeChips || '<span class="profile-empty">None selected</span>'}</div>
       ${collegeTeams.length < 3 ? `
-      <div class="team-add-row">
-        <input type="text" id="collegeTeamInput" list="collegeTeamOptions" placeholder="Start typing a school...">
-        <datalist id="collegeTeamOptions">
-          ${D1_COLLEGE_TEAMS.map(t=>`<option value="${t}">`).join("")}
-        </datalist>
+      <div class="team-add-row" style="position:relative;">
+        <input type="text" id="collegeTeamInput" placeholder="Type a school..." autocomplete="off" oninput="renderCollegeTeamSuggestions()" onfocus="renderCollegeTeamSuggestions()" onblur="setTimeout(()=>{const b=document.getElementById('collegeTeamSuggestions'); if(b) b.style.display='none';}, 150)">
+        <div id="collegeTeamSuggestions" class="autocomplete-suggestions" style="display:none;"></div>
         <button class="btn btn-solid" onclick="addCollegeTeam()">Add</button>
       </div>` : ''}
     </div>
@@ -2815,6 +2868,26 @@ async function removeNbaTeam(){
     currentProfile.nba_team = null;
     openProfileModal();
   } catch(e){ console.error('Failed to remove NBA team', e); }
+}
+
+function renderCollegeTeamSuggestions(){
+  const input = document.getElementById('collegeTeamInput');
+  const box = document.getElementById('collegeTeamSuggestions');
+  if(!input || !box) return;
+  const term = input.value.trim().toLowerCase();
+  if(!term){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  const matches = D1_COLLEGE_TEAMS.filter(t => t.toLowerCase().includes(term)).slice(0, 8);
+  if(matches.length === 0){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.innerHTML = matches.map(t => `<div class="autocomplete-item" onpointerdown="selectCollegeTeamSuggestion('${t.replace(/'/g,"\\'")}')">${t}</div>`).join("");
+  box.style.display = 'block';
+}
+
+function selectCollegeTeamSuggestion(name){
+  const input = document.getElementById('collegeTeamInput');
+  const box = document.getElementById('collegeTeamSuggestions');
+  input.value = name;
+  box.style.display = 'none';
+  box.innerHTML = '';
 }
 
 async function addCollegeTeam(){
