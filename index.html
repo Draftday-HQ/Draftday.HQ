@@ -1078,11 +1078,7 @@
       </div>
     </div>
     <div id="rankWatchPanel" style="display:none;">
-      <div id="rankWatchLocked" style="display:none; min-height:40vh; align-items:center; justify-content:center; text-align:center;">
-        <div>
-          <p class="section-sub" style="margin:0 auto;">Our rankings-over-time tracker launches November 1st, using that date as the true preseason baseline rather than offseason noise.</p>
-        </div>
-      </div>
+      <div id="rankWatchLocked" style="display:none; min-height:20vh;"></div>
       <div id="rankWatchUnlocked" style="display:none;">
       <div class="rank-watch-controls">
         <div class="filter-row" style="margin-bottom:0;">
@@ -1963,14 +1959,14 @@ function showRankingsSub(which){
   document.getElementById('rankSubWatch').classList.toggle('active', which==='watch');
 
   const h = RANKINGS_HEADLINES[which];
+  const watchLocked = which === 'watch' && new Date() < new Date('2026-11-01T00:00:00');
   document.getElementById('rankingsHeadline').textContent = h.title;
-  document.getElementById('rankingsSubhead').textContent = h.sub;
-  document.getElementById('rankingsEyebrow').textContent =
-    (which === 'watch' && new Date() < new Date('2026-11-01T00:00:00')) ? 'Coming November 1' : h.eyebrow;
+  document.getElementById('rankingsSubhead').textContent = watchLocked ? 'Opens November 1st.' : h.sub;
+  document.getElementById('rankingsEyebrow').textContent = watchLocked ? 'Coming November 1' : h.eyebrow;
 
   if(which === 'watch'){
-    const isUnlocked = new Date() >= new Date('2026-11-01T00:00:00');
-    document.getElementById('rankWatchLocked').style.display = isUnlocked ? 'none' : 'flex';
+    const isUnlocked = !watchLocked;
+    document.getElementById('rankWatchLocked').style.display = isUnlocked ? 'none' : 'block';
     document.getElementById('rankWatchUnlocked').style.display = isUnlocked ? 'block' : 'none';
     if(isUnlocked){
       populateRankWatchPlayerOptions();
@@ -2801,9 +2797,9 @@ async function uploadAvatar(event){
   try{
     const ext = file.name.split('.').pop();
     const path = `${currentUser.id}/avatar.${ext}`;
-    const { error: uploadError } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+    const { error: uploadError } = await sb.storage.from('avatar').upload(path, file, { upsert: true });
     if(uploadError) throw uploadError;
-    const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+    const { data: urlData } = sb.storage.from('avatar').getPublicUrl(path);
     const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
     const { error: updateError } = await sb.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
     if(updateError) throw updateError;
