@@ -218,10 +218,11 @@
     text-transform:uppercase; letter-spacing:.05em; cursor:pointer; margin-left:8px; vertical-align:middle;
   }
   .username-edit-btn:hover{color:var(--gold);}
-  .username-edit-row{display:flex; gap:8px; margin-top:8px; align-items:center;}
+  .username-edit-row{display:flex; flex-direction:column; gap:10px; margin-top:10px; width:100%; max-width:360px;}
+  .username-edit-btns{display:flex; gap:8px;}
   .username-edit-row input{
-    background:var(--void); border:1px solid var(--steel-soft); color:var(--paper);
-    font-family:var(--display); font-weight:400; font-size:16px; padding:8px 12px; outline:none;
+    width:100%; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper);
+    font-family:var(--display); font-weight:400; font-size:16px; padding:10px 14px; outline:none; box-sizing:border-box;
   }
   .username-edit-row input:focus{border-color:var(--gold);}
   .primary-star{cursor:pointer; color:var(--gold); margin-right:4px; font-size:.9rem;}
@@ -315,7 +316,7 @@
     display:flex; flex-direction:column; background:var(--panel); border-bottom:0 solid var(--steel);
     max-height:0; overflow:hidden; transition:max-height .3s ease;
   }
-  .mobile-nav.open{max-height:600px; border-bottom:1px solid var(--steel);}
+  .mobile-nav.open{max-height:calc(100vh - 70px); overflow-y:auto; border-bottom:1px solid var(--steel);}
   .mobile-nav button{
     background:none; border:none; border-bottom:1px solid var(--steel); color:var(--paper);
     font-family:var(--mono); font-size:.85rem; letter-spacing:.1em; text-transform:uppercase;
@@ -1230,9 +1231,9 @@
       <div class="foot-col">
         <div class="lbl">Draft Day HQ</div>
         <a onclick="showView('customboard')" href="javascript:void(0)">Custom Board</a>
-        <a href="javascript:void(0)">About</a>
-        <a href="javascript:void(0)">Contact</a>
-        <a href="javascript:void(0)">Advertise</a>
+        <a href="https://www.instagram.com/draftday.hq/" target="_blank" rel="noopener">About</a>
+        <a href="mailto:draftdayhq1@gmail.com">Contact</a>
+        <a href="mailto:draftdayhq1@gmail.com?subject=Advertising%20Inquiry">Advertise</a>
       </div>
       <div class="foot-col">
         <div class="lbl">Make It Yours</div>
@@ -2731,8 +2732,10 @@ function renderProfileModal(savedBoard, holdings, prices){
         <h2 id="usernameDisplay">${p.username}${isFounder(currentUser.email) ? ' <span class="founder-tag">Founder</span>' : ''} <button class="username-edit-btn" onclick="toggleUsernameEdit()">Edit</button></h2>
         <div class="username-edit-row" id="usernameEditRow" style="display:none;">
           <input type="text" id="usernameInput" value="${p.username}" maxlength="30" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-          <button class="btn btn-solid" onclick="saveUsername()">Save</button>
-          <button class="btn btn-ghost" onclick="toggleUsernameEdit()">Cancel</button>
+          <div class="username-edit-btns">
+            <button class="btn btn-solid" onclick="saveUsername()">Save</button>
+            <button class="btn btn-ghost" onclick="toggleUsernameEdit()">Cancel</button>
+          </div>
         </div>
         <div class="modal-msg" id="usernameMsg"></div>
         <div class="profile-balance">Cash Balance: <b>$${Number(p.balance).toLocaleString()}</b></div>
@@ -2808,7 +2811,8 @@ async function uploadAvatar(event){
     msgEl.textContent = '';
     openProfileModal();
   } catch(e){
-    msgEl.textContent = 'Upload failed, please try again.';
+    console.error('Avatar upload error:', e);
+    msgEl.textContent = e.message ? `Upload failed: ${e.message}` : 'Upload failed, please try again.';
     msgEl.className = 'modal-msg error';
   }
 }
