@@ -2576,6 +2576,7 @@ function renderOneComment(c, targetType, targetId, replies){
       <div class="comment-meta">
         <span class="comment-user">${c.username || 'Anonymous'}</span>
         ${c.is_founder ? `<span class="founder-tag">Founder</span>` : ''}
+        ${c.is_analyst ? `<span class="founder-tag">Analyst</span>` : ''}
         ${c.nba_team ? `<span class="comment-team-tag">${c.nba_team}</span>` : ''}
         ${c.college_team ? `<span class="comment-team-tag">${c.college_team}</span>` : ''}
         <span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}</span>
@@ -2638,6 +2639,7 @@ async function submitComment(targetType, targetId, parentId){
       nba_team: currentProfile.nba_team || null,
       college_team: currentProfile.primary_college_team || null,
       is_founder: isFounder(currentUser.email),
+      is_analyst: isAnalyst(currentUser.email),
       parent_id: parentId || null
     });
     if(error) throw error;
@@ -2725,7 +2727,7 @@ function renderProfileModal(savedBoard, holdings, prices){
         <div class="modal-msg" id="avatarMsg"></div>
       </div>
       <div>
-        <h2 id="usernameDisplay">${p.username}${isFounder(currentUser.email) ? ' <span class="founder-tag">Founder</span>' : ''} <button class="username-edit-btn" onclick="toggleUsernameEdit()">Edit</button></h2>
+        <h2 id="usernameDisplay">${p.username}${isFounder(currentUser.email) ? ' <span class="founder-tag">Founder</span>' : isAnalyst(currentUser.email) ? ' <span class="founder-tag">Analyst</span>' : ''} <button class="username-edit-btn" onclick="toggleUsernameEdit()">Edit</button></h2>
         <div class="username-edit-row" id="usernameEditRow" style="display:none;">
           <input type="text" id="usernameInput" value="${p.username}" maxlength="30" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
           <div class="username-edit-btns">
@@ -2952,11 +2954,15 @@ const FOUNDER_EMAILS = ["shaan.lakhani@gmail.com", "julianifarber@icloud.com"];
 function isFounder(email){
   return !!email && FOUNDER_EMAILS.includes(email.toLowerCase());
 }
+const ANALYST_EMAILS = ["brady_itzkowitz@hotmail.com"];
+function isAnalyst(email){
+  return !!email && ANALYST_EMAILS.includes(email.toLowerCase());
+}
 
 function updateAcctUI(){
   const btn = document.getElementById('acctBtn');
   if(currentUser && currentProfile){
-    const founderTag = isFounder(currentUser.email) ? ' · Founder' : '';
+    const founderTag = isFounder(currentUser.email) ? ' · Founder' : isAnalyst(currentUser.email) ? ' · Analyst' : '';
     const avatarHTML = currentProfile.avatar_url
       ? `<img src="${currentProfile.avatar_url}" alt="">`
       : SILHOUETTE_SVG;
