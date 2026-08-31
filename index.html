@@ -175,7 +175,19 @@
   .comment-list{display:flex; flex-direction:column; gap:20px;}
   .comment-row{border-bottom:1px solid var(--steel); padding-bottom:18px;}
   .comment-meta{display:flex; align-items:center; gap:12px; margin-bottom:8px;}
-  .comment-user{font-family:var(--display); font-weight:400; font-size:.95rem; color:var(--gold);}
+  .comment-user{font-family:var(--display); font-weight:400; font-size:.95rem; color:var(--gold); cursor:pointer;}
+  .comment-user:hover{text-decoration:underline;}
+  .comment-avatar-mini{
+    width:26px; height:26px; min-width:26px; border-radius:50%; overflow:hidden; border:1px solid var(--steel-soft);
+    display:flex; align-items:center; justify-content:center; background:var(--void); cursor:pointer;
+  }
+  .comment-avatar-mini img{width:100%; height:100%; object-fit:cover;}
+  .comment-avatar-mini .silhouette-icon{width:65%; height:65%;}
+  .profile-search-row{
+    display:flex; align-items:center; gap:12px; padding:12px 4px; border-bottom:1px solid var(--steel);
+    cursor:pointer; font-family:var(--serif); font-size:.92rem; color:var(--paper);
+  }
+  .profile-search-row:hover{color:var(--gold);}
   .comment-date{font-family:var(--mono); font-size:.68rem; color:var(--paper-dim); text-transform:uppercase;}
   .comment-delete{
     margin-left:auto; background:none; border:none; color:var(--paper-dim); font-family:var(--mono);
@@ -746,12 +758,25 @@
   .cb-msg{font-family:var(--mono); font-size:.75rem; color:var(--signal-up); min-height:18px;}
   .cb-msg.error{color:var(--signal);}
   .cb-row{
-    display:grid; grid-template-columns:60px 1fr 90px; gap:16px; align-items:center;
+    display:grid; grid-template-columns:60px 1fr 90px 36px; gap:16px; align-items:center;
     padding:14px 4px; border-bottom:1px solid var(--steel);
   }
   .cb-row .cb-rk{font-family:var(--display); font-weight:400; font-size:1.3rem; color:var(--gold); text-align:center;}
   .cb-row .cb-name{font-family:var(--display); font-weight:400; font-size:1.05rem;}
   .cb-row .cb-meta{font-family:var(--mono); font-size:.68rem; color:var(--paper-dim); text-transform:uppercase; margin-top:2px;}
+  .cb-remove-btn{
+    background:none; border:1px solid var(--steel-soft); color:var(--paper-dim); cursor:pointer;
+    font-size:1.1rem; line-height:1; padding:6px 10px; transition:all .2s;
+  }
+  .cb-remove-btn:hover{border-color:var(--signal); color:var(--signal);}
+  .cb-my-board-section{margin-bottom:44px;}
+  .cb-pool-section{border-top:1px solid var(--steel); padding-top:34px;}
+  .cb-pool-row{
+    display:grid; grid-template-columns:60px 1fr 90px; gap:16px; align-items:center;
+    padding:14px 4px; border-bottom:1px solid var(--steel);
+  }
+  .cb-rk-static{font-family:var(--mono); font-size:.75rem; color:var(--paper-dim); text-align:center;}
+  .cb-add-btn{white-space:nowrap; padding:8px 16px !important; font-size:.72rem !important;}
   .cb-move-btns{display:flex; flex-direction:column; gap:4px;}
   .cb-move-btns button{
     background:none; border:1px solid var(--steel-soft); color:var(--paper-dim); cursor:pointer;
@@ -982,6 +1007,14 @@
   </div>
 </div>
 
+<!-- ============ PUBLIC PROFILE MODAL ============ -->
+<div class="modal-overlay" id="publicProfileModal">
+  <div class="modal-box profile-modal-box">
+    <button class="modal-close" onclick="closePublicProfile()">&times;</button>
+    <div id="publicProfileContent"></div>
+  </div>
+</div>
+
 <!-- ============ HOME VIEW ============ -->
 <div class="view active" id="view-home">
 
@@ -1176,23 +1209,33 @@
       <button class="request-player-btn" onclick="openRequestPlayerModal()">+ Request Player</button>
     </div>
     <h2 class="section-title">Custom Board</h2>
-    <p class="section-sub">Reorder every prospect into your own personal big board. Sign in free to save it.</p>
+    <p class="section-sub">Build your own personal big board from scratch, add players from the pool below. Sign in free to save it.</p>
     <div class="filter-row" style="margin-bottom:34px;">
       <button class="chip active" id="cbSubBigBoard" onclick="showCustomBoardSub('board')">Big Board</button>
       <button class="chip" id="cbSubMock" onclick="showCustomBoardSub('mock')">Mock Draft</button>
     </div>
     <div id="cbBoardPanel">
-      <input type="text" id="cbSearch" class="cb-search" placeholder="Search for a player..." oninput="renderCustomBoardList()">
-      <div class="filter-row" id="cbPosFilterRow" style="margin-bottom:14px;"></div>
-      <div class="filter-row" id="cbClsFilterRow" style="margin-bottom:34px;"></div>
       <div class="cb-toolbar">
         <div class="cb-msg" id="cbMsg"></div>
         <div class="cb-toolbar-btns">
-          <button class="btn btn-ghost" onclick="resetCustomBoard()">Reset to Default</button>
+          <button class="btn btn-ghost" onclick="resetCustomBoard()">Clear My Board</button>
           <button class="btn btn-solid" id="cbSaveBtn" onclick="saveCustomBoard()">Save My Board</button>
         </div>
       </div>
-      <div id="cbList"></div>
+
+      <div class="cb-my-board-section">
+        <div class="lbl" id="cbMyBoardCount">My Board (0 players)</div>
+        <div id="cbList"></div>
+      </div>
+
+      <div class="cb-pool-section">
+        <div class="lbl">Player Pool</div>
+        <p class="section-sub" style="margin:0 0 18px;">Add anyone from the full board to your list above.</p>
+        <input type="text" id="cbSearch" class="cb-search" placeholder="Search for a player..." oninput="renderCustomBoardList()">
+        <div class="filter-row" id="cbPosFilterRow" style="margin-bottom:14px;"></div>
+        <div class="filter-row" id="cbClsFilterRow" style="margin-bottom:24px;"></div>
+        <div id="cbPoolList"></div>
+      </div>
     </div>
     <div id="cbMockPanel" style="display:none; min-height:40vh; align-items:center; justify-content:center; text-align:center;">
       <div>
@@ -1983,23 +2026,23 @@ function closeMobileNav(){
 }
 
 /* ================= CUSTOM BOARD ================= */
-let customBoardOrder = [];      // array of player ranks, in the user's custom order (ground truth, full 58)
+let customBoardOrder = [];      // array of player ids the user has added, in their chosen order
 let customBoardActiveTab = 'board';
 let customBoardLoaded = false;
 let cbPosFilter = 'All';
 let cbClsFilter = 'All';
 const cbClsMap = {FR:"Freshman", SO:"Sophomore", JR:"Junior", SR:"Senior", INT:"International"};
-let cbDragFullIdx = null;
+let cbDragIdx = null;
 
 function defaultBoardOrder(){
-  return players.slice().sort((a,b)=>a.rk-b.rk).map(p => p.id);
+  return [];   // custom boards now start empty, built up from the player pool
 }
 
 async function loadCustomBoard(){
   if(currentUser){
     try{
       const { data, error } = await sb.from('custom_boards').select('*').eq('user_id', currentUser.id).single();
-      if(!error && data && Array.isArray(data.player_order) && data.player_order.length === players.length){
+      if(!error && data && Array.isArray(data.player_order)){
         customBoardOrder = data.player_order;
       } else {
         customBoardOrder = defaultBoardOrder();
@@ -2049,81 +2092,106 @@ function cbSetClsFilter(cls, btnEl){
   renderCustomBoardList();
 }
 
-// Returns the list of {fullIdx, rk, player} currently visible, given active filters/search, in customBoardOrder's order
-function getVisibleBoardEntries(){
-  const search = (document.getElementById('cbSearch')?.value || '').trim().toLowerCase();
-  const entries = [];
-  customBoardOrder.forEach((id, fullIdx) => {
-    const p = players.find(x => x.id === id);
-    if(!p) return;
-    if(cbPosFilter !== 'All' && !p.pos.split('/').includes(cbPosFilter)) return;
-    if(cbClsFilter !== 'All' && p.cls !== cbClsMap[cbClsFilter]) return;
-    if(search && !p.name.toLowerCase().includes(search)) return;
-    entries.push({fullIdx, rk:id, player:p});
-  });
-  return entries;
-}
-
 function renderCustomBoardList(){
   const listEl = document.getElementById('cbList');
-  if(!listEl) return;
+  const poolEl = document.getElementById('cbPoolList');
+  const countEl = document.getElementById('cbMyBoardCount');
+  if(!listEl || !poolEl) return;
   if(!customBoardLoaded){
     loadCustomBoard();
     return;
   }
-  const visible = getVisibleBoardEntries();
-  if(visible.length === 0){
-    listEl.innerHTML = `<div class="cb-empty">No players match your search or filters.</div>`;
-    return;
+
+  if(countEl) countEl.textContent = `My Board (${customBoardOrder.length} player${customBoardOrder.length===1?'':'s'})`;
+
+  // --- My Board (unfiltered, in the user's chosen order) ---
+  if(customBoardOrder.length === 0){
+    listEl.innerHTML = `<div class="cb-empty">Your board is empty. Add players from the pool below to get started.</div>`;
+  } else {
+    listEl.innerHTML = customBoardOrder.map((id, idx) => {
+      const p = players.find(x => x.id === id);
+      if(!p) return '';
+      return `
+      <div class="cb-row" draggable="true" data-idx="${idx}"
+           ondragstart="cbDragStart(event, ${idx})"
+           ondragover="cbDragOver(event)"
+           ondragleave="cbDragLeave(event)"
+           ondrop="cbDrop(event, ${idx})"
+           ondragend="cbDragEnd(event)">
+        <div class="cb-rk">
+          <input type="number" class="cb-rank-input" value="${idx+1}" min="1" max="${customBoardOrder.length}"
+                 onclick="event.stopPropagation()" onchange="cbTypeRank(${idx}, this.value)">
+        </div>
+        <div>
+          <div class="cb-name">${p.name}</div>
+          <div class="cb-meta">${p.pos} · ${p.school} · ${p.cls}</div>
+        </div>
+        <div class="cb-move-btns">
+          <button onclick="cbMoveIdx(${idx}, -1)" ${idx===0?'disabled':''}>▲ Up</button>
+          <button onclick="cbMoveIdx(${idx}, 1)" ${idx===customBoardOrder.length-1?'disabled':''}>▼ Down</button>
+        </div>
+        <button class="cb-remove-btn" onclick="removePlayerFromBoard(${id})" title="Remove from my board">&times;</button>
+      </div>`;
+    }).join("");
   }
-  listEl.innerHTML = visible.map((entry, visIdx) => {
-    const p = entry.player;
-    return `
-    <div class="cb-row" draggable="true" data-fullidx="${entry.fullIdx}"
-         ondragstart="cbDragStart(event, ${entry.fullIdx})"
-         ondragover="cbDragOver(event)"
-         ondragleave="cbDragLeave(event)"
-         ondrop="cbDrop(event, ${entry.fullIdx})"
-         ondragend="cbDragEnd(event)">
-      <div class="cb-rk">
-        <input type="number" class="cb-rank-input" value="${entry.fullIdx+1}" min="1" max="${customBoardOrder.length}"
-               onclick="event.stopPropagation()" onchange="cbTypeRank(${entry.fullIdx}, this.value)">
-      </div>
-      <div>
-        <div class="cb-name">${p.name}</div>
-        <div class="cb-meta">${p.pos} · ${p.school} · ${p.cls}</div>
-      </div>
-      <div class="cb-move-btns">
-        <button onclick="cbMoveVisible(${visIdx}, -1)" ${visIdx===0?'disabled':''}>▲ Up</button>
-        <button onclick="cbMoveVisible(${visIdx}, 1)" ${visIdx===visible.length-1?'disabled':''}>▼ Down</button>
-      </div>
-    </div>`;
-  }).join("");
+
+  // --- Player Pool (everyone NOT yet added, filtered by search/pos/cls) ---
+  const search = (document.getElementById('cbSearch')?.value || '').trim().toLowerCase();
+  const onBoard = new Set(customBoardOrder);
+  const pool = players.filter(p => {
+    if(onBoard.has(p.id)) return false;
+    if(cbPosFilter !== 'All' && !p.pos.split('/').includes(cbPosFilter)) return false;
+    if(cbClsFilter !== 'All' && p.cls !== cbClsMap[cbClsFilter]) return false;
+    if(search && !p.name.toLowerCase().includes(search)) return false;
+    return true;
+  }).sort((a,b) => a.rk - b.rk);
+
+  if(pool.length === 0){
+    poolEl.innerHTML = `<div class="cb-empty">No players match, or everyone matching is already on your board.</div>`;
+  } else {
+    poolEl.innerHTML = pool.map(p => `
+      <div class="cb-pool-row">
+        <div class="cb-rk-static">#${p.rk}</div>
+        <div>
+          <div class="cb-name">${p.name}</div>
+          <div class="cb-meta">${p.pos} · ${p.school} · ${p.cls}</div>
+        </div>
+        <button class="btn btn-ghost cb-add-btn" onclick="addPlayerToBoard(${p.id})">+ Add</button>
+      </div>`).join("");
+  }
 }
 
-// Move an item up/down relative to its VISIBLE neighbors, swapping their true positions in the full order
-function cbMoveVisible(visIdx, dir){
-  const visible = getVisibleBoardEntries();
-  const targetVis = visIdx + dir;
-  if(targetVis < 0 || targetVis >= visible.length) return;
-  const a = visible[visIdx].fullIdx;
-  const b = visible[targetVis].fullIdx;
-  const tmp = customBoardOrder[a];
-  customBoardOrder[a] = customBoardOrder[b];
-  customBoardOrder[b] = tmp;
+function addPlayerToBoard(id){
+  if(customBoardOrder.includes(id)) return;
+  customBoardOrder.push(id);
   renderCustomBoardList();
   document.getElementById('cbMsg').textContent = '';
 }
 
-// Type a specific absolute rank number for a player, shifting everyone else accordingly
-function cbTypeRank(fullIdx, newValueRaw){
+function removePlayerFromBoard(id){
+  customBoardOrder = customBoardOrder.filter(x => x !== id);
+  renderCustomBoardList();
+  document.getElementById('cbMsg').textContent = '';
+}
+
+function cbMoveIdx(idx, dir){
+  const target = idx + dir;
+  if(target < 0 || target >= customBoardOrder.length) return;
+  const tmp = customBoardOrder[idx];
+  customBoardOrder[idx] = customBoardOrder[target];
+  customBoardOrder[target] = tmp;
+  renderCustomBoardList();
+  document.getElementById('cbMsg').textContent = '';
+}
+
+function cbTypeRank(idx, newValueRaw){
   let newPos = parseInt(newValueRaw, 10);
   if(isNaN(newPos)) { renderCustomBoardList(); return; }
-  newPos = Math.max(1, Math.min(customBoardOrder.length, newPos)) - 1; // to 0-indexed
-  if(newPos === fullIdx){ renderCustomBoardList(); return; }
-  const rk = customBoardOrder[fullIdx];
-  customBoardOrder.splice(fullIdx, 1);
-  customBoardOrder.splice(newPos, 0, rk);
+  newPos = Math.max(1, Math.min(customBoardOrder.length, newPos)) - 1;
+  if(newPos === idx){ renderCustomBoardList(); return; }
+  const id = customBoardOrder[idx];
+  customBoardOrder.splice(idx, 1);
+  customBoardOrder.splice(newPos, 0, id);
   renderCustomBoardList();
   document.getElementById('cbMsg').textContent = '';
 }
@@ -2134,8 +2202,8 @@ let cbLastDragOverEl = null;
 const cbAutoScrollZone = 120;    // px from edge of viewport that triggers scrolling
 const cbAutoScrollSpeed = 12;    // px per frame at full speed
 
-function cbDragStart(e, fullIdx){
-  cbDragFullIdx = fullIdx;
+function cbDragStart(e, idx){
+  cbDragIdx = idx;
   e.currentTarget.classList.add('cb-dragging');
   e.dataTransfer.effectAllowed = 'move';
 }
@@ -2187,28 +2255,28 @@ function cbDragEnd(e){
   }
   cbStopAutoScroll();
 }
-function cbDrop(e, targetFullIdx){
+function cbDrop(e, targetIdx){
   e.preventDefault();
   if(cbLastDragOverEl){
     cbLastDragOverEl.classList.remove('cb-drag-over');
     cbLastDragOverEl = null;
   }
   cbStopAutoScroll();
-  if(cbDragFullIdx === null || cbDragFullIdx === targetFullIdx) return;
-  const rk = customBoardOrder[cbDragFullIdx];
-  customBoardOrder.splice(cbDragFullIdx, 1);
-  const insertAt = cbDragFullIdx < targetFullIdx ? targetFullIdx - 1 : targetFullIdx;
-  customBoardOrder.splice(insertAt, 0, rk);
-  cbDragFullIdx = null;
+  if(cbDragIdx === null || cbDragIdx === targetIdx) return;
+  const id = customBoardOrder[cbDragIdx];
+  customBoardOrder.splice(cbDragIdx, 1);
+  const insertAt = cbDragIdx < targetIdx ? targetIdx - 1 : targetIdx;
+  customBoardOrder.splice(insertAt, 0, id);
+  cbDragIdx = null;
   renderCustomBoardList();
   document.getElementById('cbMsg').textContent = '';
 }
 
 function resetCustomBoard(){
-  customBoardOrder = defaultBoardOrder();
+  customBoardOrder = [];
   renderCustomBoardList();
   const msgEl = document.getElementById('cbMsg');
-  msgEl.textContent = 'Reset to default order.';
+  msgEl.textContent = 'Your board has been cleared.';
   msgEl.className = 'cb-msg';
 }
 
@@ -2571,10 +2639,12 @@ async function loadComments(targetType, targetId){
 
 function renderOneComment(c, targetType, targetId, replies){
   const childReplies = replies.filter(r => r.parent_id === c.id);
+  const avatarHTML = c.avatar_url ? `<img src="${c.avatar_url}" alt="">` : SILHOUETTE_SVG;
   return `
     <div class="comment-row">
       <div class="comment-meta">
-        <span class="comment-user">${c.username || 'Anonymous'}</span>
+        <span class="comment-avatar-mini" onclick="openPublicProfile(${c.user_id ? `'${c.user_id}'` : 'null'})">${avatarHTML}</span>
+        <span class="comment-user" onclick="openPublicProfile(${c.user_id ? `'${c.user_id}'` : 'null'})">${c.username || 'Anonymous'}</span>
         ${c.is_founder ? `<span class="founder-tag">Founder</span>` : ''}
         ${c.is_analyst ? `<span class="founder-tag">Analyst</span>` : ''}
         ${c.nba_team ? `<span class="comment-team-tag">${c.nba_team}</span>` : ''}
@@ -2640,6 +2710,7 @@ async function submitComment(targetType, targetId, parentId){
       college_team: currentProfile.primary_college_team || null,
       is_founder: isFounder(currentUser.email),
       is_analyst: isAnalyst(currentUser.email),
+      avatar_url: currentProfile.avatar_url || null,
       parent_id: parentId || null
     });
     if(error) throw error;
@@ -2661,6 +2732,87 @@ async function deleteComment(commentId, targetType, targetId){
 
 function closeProfileModal(){
   document.getElementById('profileModal').classList.remove('open');
+}
+
+function closePublicProfile(){
+  document.getElementById('publicProfileModal').classList.remove('open');
+}
+
+async function openPublicProfile(userId){
+  if(!userId) return;
+  if(currentUser && userId === currentUser.id){
+    openProfileModal();
+    return;
+  }
+  document.getElementById('publicProfileModal').classList.add('open');
+  document.getElementById('publicProfileContent').innerHTML = `<p class="profile-empty">Loading...</p>`;
+  try{
+    const { data, error } = await sb.from('public_profiles').select('*').eq('id', userId).single();
+    if(error || !data) throw error || new Error('Not found');
+
+    const avatarHTML = data.avatar_url ? `<img src="${data.avatar_url}" alt="">` : SILHOUETTE_SVG;
+    const collegeTeams = Array.isArray(data.college_teams) ? data.college_teams : [];
+    const collegeChips = collegeTeams.map(t => {
+      const isPrimary = t === data.primary_college_team;
+      return `<div class="team-chip ${isPrimary?'is-primary':''}">${isPrimary?'★ ':''}${t}</div>`;
+    }).join("");
+
+    document.getElementById('publicProfileContent').innerHTML = `
+      <div class="profile-header">
+        <div class="profile-avatar-upload-wrap">
+          <div class="profile-avatar-circle" style="cursor:default;">${avatarHTML}</div>
+        </div>
+        <div>
+          <h2>${data.username}</h2>
+        </div>
+      </div>
+      <div class="profile-section">
+        <div class="lbl">NBA Team</div>
+        ${data.nba_team ? `<div class="team-chip-row"><div class="team-chip">${data.nba_team}</div></div>` : '<p class="profile-empty">No NBA team selected.</p>'}
+      </div>
+      <div class="profile-section">
+        <div class="lbl">College Teams</div>
+        ${collegeChips ? `<div class="team-chip-row">${collegeChips}</div>` : '<p class="profile-empty">No college teams selected.</p>'}
+      </div>
+    `;
+  } catch(e){
+    document.getElementById('publicProfileContent').innerHTML = `<p class="profile-empty">Couldn't load this profile.</p>`;
+  }
+}
+
+let publicSearchTimeout = null;
+function handlePublicProfileSearch(){
+  clearTimeout(publicSearchTimeout);
+  publicSearchTimeout = setTimeout(runPublicProfileSearch, 300);
+}
+
+async function runPublicProfileSearch(){
+  const query = document.getElementById('profileSearchInput').value.trim();
+  const resultsEl = document.getElementById('profileSearchResults');
+  if(!resultsEl) return;
+  if(!query){
+    resultsEl.innerHTML = '';
+    return;
+  }
+  try{
+    const { data, error } = await sb.from('public_profiles').select('*').ilike('username', `%${query}%`).limit(15);
+    if(error) throw error;
+    const results = (data || []).filter(p => !currentUser || p.id !== currentUser.id);
+    if(results.length === 0){
+      resultsEl.innerHTML = `<p class="profile-empty">No fans found with that name.</p>`;
+      return;
+    }
+    resultsEl.innerHTML = results.map(p => {
+      const avatarHTML = p.avatar_url ? `<img src="${p.avatar_url}" alt="">` : SILHOUETTE_SVG;
+      return `
+      <div class="profile-search-row" onclick="openPublicProfile('${p.id}')">
+        <span class="acct-avatar-mini">${avatarHTML}</span>
+        <span>${p.username}</span>
+      </div>`;
+    }).join("");
+  } catch(e){
+    resultsEl.innerHTML = `<p class="profile-empty">Search isn't available right now.</p>`;
+  }
 }
 
 async function openProfileModal(){
@@ -2696,7 +2848,7 @@ function renderProfileModal(savedBoard, holdings, prices){
 
   const portfolioValue = holdings.reduce((sum,h) => sum + (Number(h.shares) * (prices[h.player_rk]||0)), 0);
 
-  const boardHtml = savedBoard ? savedBoard.slice(0,5).map((id,i) => {
+  const boardHtml = (savedBoard && savedBoard.length > 0) ? savedBoard.slice(0,5).map((id,i) => {
     const player = players.find(x => x.id === id);
     return `<div class="profile-board-row"><span><span class="prk">#${i+1}</span>${player ? player.name : 'Unknown'}</span></div>`;
   }).join("") : `<p class="profile-empty">You haven't created a custom board yet. <a href="javascript:void(0)" onclick="closeProfileModal(); showView('customboard');" style="color:var(--gold);">Build one →</a></p>`;
@@ -2779,6 +2931,12 @@ function renderProfileModal(savedBoard, holdings, prices){
         <div id="collegeTeamSuggestions" class="autocomplete-suggestions" style="display:none;"></div>
         <button class="btn btn-solid" onclick="addCollegeTeam()">Add</button>
       </div>` : ''}
+    </div>
+
+    <div class="profile-section">
+      <div class="lbl">Find Other Fans</div>
+      <input type="text" id="profileSearchInput" class="cb-search" placeholder="Search by username..." oninput="handlePublicProfileSearch()">
+      <div id="profileSearchResults"></div>
     </div>
 
     <button class="btn btn-ghost" style="width:100%; margin-top:10px;" onclick="signOutUser()">Log Out</button>
