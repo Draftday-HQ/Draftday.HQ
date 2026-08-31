@@ -2797,9 +2797,9 @@ async function uploadAvatar(event){
   try{
     const ext = file.name.split('.').pop();
     const path = `${currentUser.id}/avatar.${ext}`;
-    const { error: uploadError } = await sb.storage.from('avatar').upload(path, file, { upsert: true });
+    const { error: uploadError } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
     if(uploadError) throw uploadError;
-    const { data: urlData } = sb.storage.from('avatar').getPublicUrl(path);
+    const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
     const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
     const { error: updateError } = await sb.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
     if(updateError) throw updateError;
