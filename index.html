@@ -275,6 +275,14 @@
   .profile-balance{font-family:var(--serif); font-size:.85rem; color:var(--paper-dim); margin-top:6px;}
   .public-follow-counts{display:flex; gap:16px; margin-top:8px; font-family:var(--mono); font-size:.75rem; color:var(--paper-dim);}
   .public-follow-counts b{color:var(--paper); font-family:var(--display); font-weight:400;}
+  .social-edit-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .social-edit-label{font-family:var(--mono); font-size:.7rem; text-transform:uppercase; color:var(--paper-dim); width:90px; flex-shrink:0;}
+  .social-edit-row input{
+    flex:1; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper);
+    font-family:var(--serif); font-size:16px; padding:9px 12px; outline:none;
+  }
+  .social-links-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .social-links-row a{text-decoration:none;}
   .profile-balance b{color:var(--gold); font-size:1.1rem; font-family:var(--display); font-weight:400;}
   .profile-section{margin-bottom:26px;}
   .profile-section .lbl{margin-bottom:12px;}
@@ -2826,6 +2834,15 @@ async function openPublicProfile(userId){
       ? `<button class="btn ${isFollowingThem?'btn-ghost':'btn-solid'}" id="publicFollowBtn" onclick="toggleFollow('${userId}', this)">${isFollowingThem ? 'Following' : '+ Follow'}</button>`
       : `<button class="btn btn-solid" onclick="closePublicProfile(); openAuthModal();">Sign In to Follow</button>`;
 
+    const socialLinksHTML = (data.staff_tag && (data.social_twitter || data.social_instagram)) ? `
+      <div class="profile-section">
+        <div class="lbl">Social Media</div>
+        <div class="social-links-row">
+          ${data.social_twitter ? `<a href="${data.social_twitter}" target="_blank" rel="noopener" class="btn btn-ghost">Twitter / X</a>` : ''}
+          ${data.social_instagram ? `<a href="${data.social_instagram}" target="_blank" rel="noopener" class="btn btn-ghost">Instagram</a>` : ''}
+        </div>
+      </div>` : '';
+
     const mediaTabHTML = data.staff_tag ? `
       <div class="profile-section">
         <div class="lbl">Published on Draft Day HQ</div>
@@ -2860,6 +2877,7 @@ async function openPublicProfile(userId){
         <div class="lbl">College Teams</div>
         ${collegeChips ? `<div class="team-chip-row">${collegeChips}</div>` : '<p class="profile-empty">No college teams selected.</p>'}
       </div>
+      ${socialLinksHTML}
       ${mediaTabHTML}
     `;
   } catch(e){
@@ -2936,10 +2954,18 @@ async function openProfileModal(){
     holdings = (holdRows || []).filter(h => Number(h.shares) > 0);
   } catch(e){ /* stock tables may not exist yet, fine */ }
 
-  renderProfileModal(savedBoard, holdings, prices);
+  let ownFollowerCount = 0, ownFollowingCount = 0;
+  try{
+    const { count: fc } = await sb.from('follows').select('*', {count:'exact', head:true}).eq('followed_id', currentUser.id);
+    ownFollowerCount = fc || 0;
+    const { count: gc } = await sb.from('follows').select('*', {count:'exact', head:true}).eq('follower_id', currentUser.id);
+    ownFollowingCount = gc || 0;
+  } catch(e){ /* follows table may not exist yet, fine */ }
+
+  renderProfileModal(savedBoard, holdings, prices, ownFollowerCount, ownFollowingCount);
 }
 
-function renderProfileModal(savedBoard, holdings, prices){
+function renderProfileModal(savedBoard, holdings, prices, ownFollowerCount, ownFollowingCount){
   const p = currentProfile;
   const nbaTeam = p.nba_team || null;
   const collegeTeams = Array.isArray(p.college_teams) ? p.college_teams : [];
@@ -2990,6 +3016,10 @@ function renderProfileModal(savedBoard, holdings, prices){
         <div class="modal-msg" id="usernameMsg"></div>
         <div class="profile-balance">Cash Balance: <b>$${Number(p.balance).toLocaleString()}</b></div>
         <div class="weekly-claim-box">${renderWeeklyClaimHTML(p.last_weekly_claim)}</div>
+        <div class="public-follow-counts">
+          <span><b>${ownFollowerCount||0}</b> follower${ownFollowerCount===1?'':'s'}</span>
+          <span><b>${ownFollowingCount||0}</b> following</span>
+        </div>
       </div>
     </div>
 
@@ -3038,6 +3068,21 @@ function renderProfileModal(savedBoard, holdings, prices){
         <button class="btn btn-solid" onclick="addCollegeTeam()">Add</button>
       </div>` : ''}
     </div>
+
+    ${p.staff_tag ? `
+    <div class="profile-section">
+      <div class="lbl">Social Media (shown on your public profile)</div>
+      <div class="social-edit-row">
+        <span class="social-edit-label">Twitter / X</span>
+        <input type="text" id="socialTwitterInput" placeholder="https://x.com/yourhandle" value="${p.social_twitter || ''}">
+      </div>
+      <div class="social-edit-row">
+        <span class="social-edit-label">Instagram</span>
+        <input type="text" id="socialInstagramInput" placeholder="https://instagram.com/yourhandle" value="${p.social_instagram || ''}">
+      </div>
+      <button class="btn btn-solid" style="margin-top:10px;" onclick="saveSocialLinks()">Save Links</button>
+      <div class="modal-msg" id="socialLinksMsg"></div>
+    </div>` : ''}
 
     <button class="adv-toggle" id="myCommentsToggle" onclick="toggleMyComments()">
       <span>My Comment History</span><span class="arrow">▾</span>
@@ -3089,6 +3134,26 @@ function toggleUsernameEdit(){
   row.style.display = isOpen ? 'none' : 'flex';
   display.style.display = isOpen ? 'block' : 'none';
   document.getElementById('usernameMsg').textContent = '';
+}
+
+async function saveSocialLinks(){
+  const twitter = document.getElementById('socialTwitterInput').value.trim();
+  const instagram = document.getElementById('socialInstagramInput').value.trim();
+  const msgEl = document.getElementById('socialLinksMsg');
+  try{
+    const { error } = await sb.from('profiles').update({
+      social_twitter: twitter || null,
+      social_instagram: instagram || null
+    }).eq('id', currentUser.id);
+    if(error) throw error;
+    currentProfile.social_twitter = twitter || null;
+    currentProfile.social_instagram = instagram || null;
+    msgEl.textContent = 'Social links saved.';
+    msgEl.className = 'modal-msg';
+  } catch(e){
+    msgEl.textContent = 'Could not save links.';
+    msgEl.className = 'modal-msg error';
+  }
 }
 
 async function saveUsername(){
