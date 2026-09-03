@@ -380,6 +380,7 @@
     border:1px solid var(--steel-soft); font-family:var(--mono); font-size:.62rem;
     letter-spacing:.04em; color:var(--gold); border-radius:2px; margin-right:6px; vertical-align:middle;
   }
+  .school-logo-badge{width:20px; height:20px; object-fit:contain; vertical-align:middle; margin-right:6px; display:inline-block;}
   .flag{margin-right:6px; font-size:.95rem; vertical-align:middle;}
 
   /* ================= VIEWS ================= */
@@ -1314,7 +1315,7 @@ const players = [
   {rk:5, id:5, name:"Bruce Branch III", school:"BYU", pos:"SF/SG", cls:"Freshman", hs:"6'7\"", wt:190, age:17, hometown:"Gilbert, AZ", summary:"Branch was the No. 1 player in the 2027 class before reclassifying to 2026 and picking BYU over Kansas, Kentucky, Louisville, USC and Arizona, becoming Kevin Young's third straight five-star signee after Egor Demin and AJ Dybantsa, both of whom Young built winning, NBA-caliber rosters around rather than just handing them the ball and hoping. He's a big wing who leans back into his jumper rather than rising into it, which gives the shot a slightly unorthodox look but hasn't stopped it from becoming a legitimate weapon (38-39% from three across multiple circuits this past year). Away from the three-point line, he attacks closeouts, shoots well off the catch, and is still learning to leverage his size against smaller defenders in the mid-range and at the rim.", strengths:["Big wing with legitimate secondary ball-handling upside","Shooting is a real, ascending weapon, 38-39% from three across multiple circuits","Attacks closeouts confidently and gets to his pull-up or the rim off one or two dribbles"], weaknesses:["Needs to better leverage his frame against smaller, quicker defenders","Still projects more as a play-finisher than primary shot creator right now"], comps:["Big wing with shot-making and secondary ball-handling upside"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26 HS", videoId:"iDpxwCk2oVk"}], enteringDraft:true},
   {rk:6, id:6, name:"Abdou Toure", school:"Arkansas", pos:"SG/SF", cls:"Freshman", hs:"6'5\"", wt:200, age:18, hometown:"New Haven, CT", summary:"Toure chose Arkansas over Providence and UConn, drawn in part by John Calipari's track record developing NBA talent. His game is defined by length: a 6'5\" frame that plays much bigger, capable of switching onto forwards and erasing shots at the rim, which showed up immediately in his Razorback debut, a 16-point, 10-rebound double-double against the Bahamas national team with 4 blocks, then 15 more points and 3 blocks against Carleton. Across the Bahamas trip he blocked 7 shots and shot a strong percentage inside the arc, exactly the two-way profile scouts have flagged.", strengths:["Excellent length and shot-blocking instincts for a wing, 7 blocks across his first four college exhibitions","Efficient scorer inside the arc, opened his college career with a double-double","International experience representing Guinea at multiple FIBA tournaments"], weaknesses:["Shot mechanics still inconsistent release to release","Overshadowed in his own recruiting class, needs a featured role to show full range"], comps:["Long, defense-first wing with real shot-blocking upside"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26 HS", videoId:"4G1uYGAbi7w"}], enteringDraft:true},
   {rk:7, id:7, name:"Alex Wilkins", school:"Kentucky", pos:"PG/SG", cls:"Sophomore", hs:"6'5\"", wt:170, age:19, hometown:"Mattapan, MA", summary:"He was Furman's only All-SoCon selection, was named the conference tournament's MVP after a 34-point outburst over UNC-Greensboro, and then, as a 15-seed, nearly knocked off eventual national runner-up UConn in the NCAA Tournament, scoring 21 points on 8-of-15 shooting in an 82-71 loss. His game is built on heavy ball-screen usage: he's a fluid, low-release shooter who can pull up off the dribble or knock down catch-and-shoot threes (he shot 39% in that mode down the stretch), and scouts have compared his profile to Illinois' Keaton Wagler, who went from unheralded freshman to the No. 5 overall pick in this year's draft.", strengths:["Elite pick-and-roll operator, comfortable scoring or creating out of ball screens","Complete shooting package: pull-up, catch-and-shoot (39% by season's end), floater range","Proven big-stage performer, 21 points against a UConn team that reached the title game"], weaknesses:["Slight frame for a 6'5\" guard who's often the ball-handler against physical defenses","Jump from SoCon competition to the SEC is a real, unproven leap"], comps:["Ball-screen guard, Keaton Wagler-style breakout profile"], stats:{ppg:"17.7", rpg:"2.0", apg:"4.7", fg:"45.8%"}, seasons:[{yr:"Freshman", ppg:17.7, rpg:2, apg:4.7, stl:0.8, blk:0.1, to:3.8, min:29.6, fg:45.8, tpt:32.1, tpa:5.6, ft:83.5, fta:4.1}], advanced:[{yr:"Freshman", ortg:114, usg:26, bpm:9.2, efg:52, ts:58, asttoRatio:"1.2"}], highlights:[{yr:"25-26", videoId:"ApAAMLJ5O4Q", start:2}], enteringDraft:true},
-  {rk:8, id:20, name:"Brandon McCoy", school:"Michigan", pos:"SG/PG", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Oakland, CA", summary:"McCoy is part of a talented Michigan freshman class joining a program that just won a national title and has a real track record developing guards under Dusty May, including returning sophomore sharpshooter Trey McKenney. At 6'5\" he has good size for a combo guard, comfortable putting the ball on the floor and getting into the mid-range rather than just shooting from range, and his physical tools should let him defend either backcourt spot once he adjusts to the speed of the college game.", strengths:["Good size for a combo guard at 6'5\"","Comfortable creating and scoring off the dribble","Joins a Michigan program with a track record developing guards under Dusty May"], weaknesses:["No college production yet to evaluate against","Role and consistency still to be determined in a deep Michigan backcourt"], comps:["Combo guard, size at the position"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26 HS", videoId:"OJ8C3ACEavo"}], enteringDraft:true},
+  {rk:8, id:20, name:"Brandon McCoy Jr.", school:"Michigan", pos:"SG/PG", cls:"Freshman", hs:"6'6\"", wt:190, age:18, hometown:"Chatsworth, CA", summary:"McCoy Jr. will miss the entire 2026-27 season after tearing the ACL in his right knee just 20 seconds into Michigan's final European exhibition game on August 27th, a brutal blow for a five-star freshman who was drawing first-round buzz before he'd even played a real college game. He'd flashed exactly why in two exhibition outings in Lithuania, averaging 14.5 points, 5.0 rebounds and 4.0 steals, with head coach Mike Boynton Jr. calling his blend of size and athleticism unlike anything the program has had in years. He's expected to have surgery and begin a long recovery, with no return timetable announced yet.", strengths:["Elite combination of size (6'6\" with a 7-foot wingspan) and athleticism for a guard", "Flashed real two-way ability in his brief exhibition run before the injury", "Regarded as a potential one-and-done, first-round-caliber talent"], weaknesses:["Will miss the entire 2026-27 season recovering from a torn ACL", "No real college evaluation window this cycle, teams will be working off a tiny exhibition sample and pre-injury tape", "Recovery timeline and how he looks physically upon return are now the central questions in his evaluation"], comps:["Athletic, versatile combo guard"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26 HS", videoId:"OJ8C3ACEavo"}], enteringDraft:true},
   {rk:9, id:8, name:"Dylan Mingo", school:"Baylor", pos:"PG/SG", cls:"Freshman", hs:"6'5\"", wt:190, age:18, hometown:"Farmingdale, NY", summary:"Mingo was actually committed to North Carolina before reopening his recruitment and choosing Baylor, reuniting him with older brother Kayden, who transferred there from Penn State. Adam Finkelstein calls him a big guard with natural feel who can get wherever he wants with the ball, at his best working off two-man actions with a screener, reading the defense a beat ahead and either turning the corner himself or hitting the roll man. A significant injury cost him most of his senior season, and it's a real question how much of his freshman year at Baylor, if any, he'll be available for while he works back to full strength.", strengths:["Advanced pull-up scoring package, 19.3 points on the EYBL circuit","Reads ball-screen coverages well, natural table-setting feel","6'10\" wingspan gives him real positional size for a lead guard"], weaknesses:["Significant senior-year injury, health and availability for his freshman season are real open questions","Needs to add strength to finish through contact once healthy"], comps:["Scoring combo guard, mid-range-heavy profile"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26 HS", videoId:"y-0XzuPgCaM", start:99}], enteringDraft:true},
   {rk:10, id:9, name:"Sayon Keita", school:"North Carolina", pos:"C", cls:"Freshman", hs:"7'0\"", wt:215, age:18, hometown:"Bamako, Mali", summary:"Keita was the top-ranked 2027 international prospect before reclassifying and choosing North Carolina over Duke and Kentucky. He's a mobile, rangy rim protector first: a 7-foot-5 wingspan that covers enormous ground defensively, timing that let him put up seven blocks in a single EuroLeague youth game, and enough foot speed to hedge or switch onto smaller players. Offensively he's still more finisher than shot creator, catching lobs and cleaning up misses, though DraftExpress has already flagged real long-term passing and face-up potential.", strengths:["Elite shot-blocking timing, 7 blocks in a single EuroLeague youth game","7-foot-5 wingspan, covers immense ground defensively","DraftExpress projects him as a 2027 lottery talent as a finisher, passer and rebounder"], weaknesses:["Offensive skill package still raw relative to his physical tools","Needs to add strength to hold position against physical post players"], comps:["Rim-running, shot-blocking center"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26", videoId:"PuCOE3A-Rjw"}], enteringDraft:true},
   {rk:11, id:10, name:"Bryson Howard", school:"Duke", pos:"SG/SF", cls:"Freshman", hs:"6'5\"", wt:180, age:17, hometown:"Frisco, TX", summary:"Howard is the son of former NBA All-Star Josh Howard, and gave Jon Scheyer his first commitment of the 2026 class, picking Duke over North Carolina and Kentucky. The bigger story is the path there: just months before his commitment, Howard was an unranked prospect, and an explosive EYBL summer with Pro Skills rocketed him all the way to a five-star ranking, one of the fastest recruiting risers in the country. He's a smooth, left-handed wing whose game leans on shot-making, on and off the ball, paired with the length and physicality to guard multiple positions; he was also, notably, left off this year's McDonald's All-American Game, a snub he's carried into his freshman year as motivation.", strengths:["One of the premier shooters in his class per Jon Scheyer, comfortable on or off the ball","Complete two-way game: scoring versatility plus multi-position defense","Massive summer riser, went from unranked to five-star in a matter of months, proof of a real developmental jump"], weaknesses:["Was passed over for the McDonald's Game, still unproven against that top tier of competition","Frame still developing for physical ACC backcourt matchups"], comps:["Shifty scoring guard, movement shooter"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26 HS", videoId:"n74sfPNTHXw"}], enteringDraft:true},
@@ -1463,6 +1464,57 @@ const slides = [
 
 function initials(name){ return name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase(); }
 
+const schoolLogoMap = {
+  "Arkansas":"https://a.espncdn.com/i/teamlogos/ncaa/500/8.png",
+  "Kansas":"https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png",
+  "Arizona":"https://a.espncdn.com/i/teamlogos/ncaa/500/12.png",
+  "BYU":"https://a.espncdn.com/i/teamlogos/ncaa/500/252.png",
+  "Kentucky":"https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
+  "Michigan":"https://a.espncdn.com/i/teamlogos/ncaa/500/130.png",
+  "Baylor":"https://a.espncdn.com/i/teamlogos/ncaa/500/239.png",
+  "North Carolina":"https://a.espncdn.com/i/teamlogos/ncaa/500/153.png",
+  "Duke":"https://a.espncdn.com/i/teamlogos/ncaa/500/150.png",
+  "Florida":"https://a.espncdn.com/i/teamlogos/ncaa/500/57.png",
+  "Villanova":"https://a.espncdn.com/i/teamlogos/ncaa/500/222.png",
+  "Missouri":"https://a.espncdn.com/i/teamlogos/ncaa/500/142.png",
+  "Alabama":"https://a.espncdn.com/i/teamlogos/ncaa/500/333.png",
+  "Maryland":"https://a.espncdn.com/i/teamlogos/ncaa/500/120.png",
+  "UConn":"https://a.espncdn.com/i/teamlogos/ncaa/500/41.png",
+  "Illinois":"https://a.espncdn.com/i/teamlogos/ncaa/500/356.png",
+  "USC":"https://a.espncdn.com/i/teamlogos/ncaa/500/30.png",
+  "Miami":"https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png",
+  "St. John's":"https://a.espncdn.com/i/teamlogos/ncaa/500/2599.png",
+  "Ohio State":"https://a.espncdn.com/i/teamlogos/ncaa/500/194.png",
+  "Texas":"https://a.espncdn.com/i/teamlogos/ncaa/500/251.png",
+  "Tennessee":"https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png",
+  "Louisville":"https://a.espncdn.com/i/teamlogos/ncaa/500/97.png",
+  "Texas Tech":"https://a.espncdn.com/i/teamlogos/ncaa/500/2641.png",
+  "Gonzaga":"https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+  "Vanderbilt":"https://a.espncdn.com/i/teamlogos/ncaa/500/238.png",
+  "Iowa State":"https://a.espncdn.com/i/teamlogos/ncaa/500/66.png",
+  "Georgia":"https://a.espncdn.com/i/teamlogos/ncaa/500/61.png",
+  "Nebraska":"https://a.espncdn.com/i/teamlogos/ncaa/500/158.png",
+  "Houston":"https://a.espncdn.com/i/teamlogos/ncaa/500/248.png",
+  "Utah State":"https://a.espncdn.com/i/teamlogos/ncaa/500/328.png",
+  "Michigan State":"https://a.espncdn.com/i/teamlogos/ncaa/500/127.png",
+  "NC State":"https://a.espncdn.com/i/teamlogos/ncaa/500/152.png",
+  "Providence":"https://a.espncdn.com/i/teamlogos/ncaa/500/2507.png",
+  "Texas A&M":"https://a.espncdn.com/i/teamlogos/ncaa/500/245.png",
+  "Auburn":"https://a.espncdn.com/i/teamlogos/ncaa/500/2.png",
+  "Mississippi State":"https://a.espncdn.com/i/teamlogos/ncaa/500/344.png",
+  "Wisconsin":"https://a.espncdn.com/i/teamlogos/ncaa/500/275.png",
+  "Pittsburgh":"https://a.espncdn.com/i/teamlogos/ncaa/500/221.png",
+  "Cal Poly":"https://a.espncdn.com/i/teamlogos/ncaa/500/13.png"
+};
+function schoolLogo(school, className="school-logo"){
+  const url = schoolLogoMap[school];
+  return url ? `<img class="${className}" src="${url}" alt="${school} logo" loading="lazy" onerror="this.style.display='none'">` : "";
+}
+function playerAvatar(p, className="school-logo"){
+  const logo = schoolLogo(p.school, className);
+  return logo || initials(p.name);
+}
+
 const schoolAbbr = {
   "Kansas":"KU","Arizona":"ARIZ","Arkansas":"ARK","BYU":"BYU","Baylor":"BAY","Kentucky":"UK",
   "North Carolina":"UNC","Duke":"DUKE","Florida":"FLA","Illinois":"ILL","Maryland":"MD",
@@ -1478,6 +1530,7 @@ const schoolColor = {
 function accentFor(school){ return schoolColor[school] || "#c6a15b"; }
 const flagMap = { "Baskonia (Spain)":"🇸🇮", "Nanterre 92 (France)":"🇫🇷", "Cedevita Olimpija (Slovenia)":"🇫🇷" };
 function schoolBadge(school, colored){
+  if(schoolLogoMap[school]) return schoolLogo(school, "school-logo-badge");
   if(flagMap[school]) return `<span class="flag" title="${school}">${flagMap[school]}</span>`;
   const label = schoolAbbr[school] || school.replace(/\(.*?\)/g,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,4).toUpperCase();
   const style = colored ? ` style="border-color:${accentFor(school)}; color:${accentFor(school)};"` : "";
