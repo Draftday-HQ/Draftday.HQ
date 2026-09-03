@@ -1775,6 +1775,24 @@ function openProfile(idx, fromHistory){
           </div>
         </div>
         <button class="btn btn-ghost" style="width:100%; margin-top:20px;" onclick="showView('customboard')">Add ${p.name.split(' ')[0]} to My Board</button>
+        ${COMBINE_2026[p.id] ? `
+        <button class="adv-toggle" id="combineToggle2026" onclick="toggleCombine('2026')">
+          <span>2026 Combine</span><span class="arrow">▾</span>
+        </button>
+        <div class="adv-panel" id="combinePanel2026">
+          <div class="adv-panel-inner">
+            ${renderCombineRows(COMBINE_2026[p.id])}
+          </div>
+        </div>` : ''}
+        ${COMBINE_2025[p.id] ? `
+        <button class="adv-toggle" id="combineToggle2025" onclick="toggleCombine('2025')">
+          <span>2025 Combine</span><span class="arrow">▾</span>
+        </button>
+        <div class="adv-panel" id="combinePanel2025">
+          <div class="adv-panel-inner">
+            ${renderCombine2025Rows(COMBINE_2025[p.id])}
+          </div>
+        </div>` : ''}
         ${p.advanced && p.advanced.length ? `
         <button class="adv-toggle" id="advToggle" onclick="toggleAdvancedStats()">
           <span>Advanced Stats</span><span class="arrow">▾</span>
@@ -2011,6 +2029,36 @@ async function toggleMyComments(){
       document.getElementById('myCommentsInner').innerHTML = `<p class="profile-empty">Couldn't load your comments.</p>`;
     }
   }
+}
+
+const COMBINE_LABELS = {
+  height: "Height (No Shoes)", weight: "Weight", bmi: "Body Mass Index",
+  wingspan: "Wingspan", standingReach: "Standing Reach",
+  noStepVert: "Vertical Leap (No Step)", maxVert: "Vertical Leap (Max)",
+  laneAgility: "Lane Agility", shuttleRun: "Shuttle Run", sprint: "Sprint (3/4 Court)",
+  wingspanRatio: "Wingspan-to-Height Ratio", maxTouchStanding: "Max Touch (Standing)",
+  maxTouchRunning: "Max Touch (Running)"
+};
+function renderCombineRows(data){
+  return Object.keys(COMBINE_LABELS).map(key => {
+    const val = data[key];
+    return `<div class="comp-row"><span>${COMBINE_LABELS[key]}</span><span>${val !== null ? val : 'N/A'}</span></div>`;
+  }).join("");
+}
+const COMBINE_2025_LABELS = {
+  height: "Height", weight: "Weight", noStepVert: "Vertical Leap (No Step)",
+  maxVert: "Vertical Leap (Max)", sprint: "Sprint (3/4 Court)", laneAgility: "Lane Agility",
+  drafted: "Drafted That Year?"
+};
+function renderCombine2025Rows(data){
+  return Object.keys(COMBINE_2025_LABELS).map(key => {
+    const val = data[key];
+    return `<div class="comp-row"><span>${COMBINE_2025_LABELS[key]}</span><span>${val !== null && val !== undefined ? val : 'N/A'}</span></div>`;
+  }).join("");
+}
+function toggleCombine(year){
+  document.getElementById('combinePanel'+year).classList.toggle('open');
+  document.getElementById('combineToggle'+year).classList.toggle('open');
 }
 
 function toggleAdvancedStats(){
@@ -2571,6 +2619,31 @@ async function signOutUser(){
 }
 
 const SILHOUETTE_SVG = `<svg viewBox="0 0 100 100" class="silhouette-icon"><circle cx="50" cy="36" r="18"/><path d="M50 58c-22 0-38 14-38 32v10h76V90c0-18-16-32-38-32Z"/></svg>`;
+
+const COMBINE_2026 = {
+  17: {height:"7'2.75\"", weight:"289.0 lbs", bmi:27.0, wingspan:"7'5.5\"", standingReach:"9'6.0\"", noStepVert:null, maxVert:null, laneAgility:null, shuttleRun:null, sprint:null, wingspanRatio:"103.2%", maxTouchStanding:null, maxTouchRunning:null},
+  21: {height:"6'5.25\"", weight:"204.6 lbs", bmi:24.1, wingspan:"6'8.0\"", standingReach:"8'3.5\"", noStepVert:"34.5\"", maxVert:"42.5\"", laneAgility:"10.72s", shuttleRun:"2.94s", sprint:"3.19s", wingspanRatio:"103.6%", maxTouchStanding:"11'2.0\"", maxTouchRunning:"11'10.0\""},
+  28: {height:"6'8.0\"", weight:"218.2 lbs", bmi:24.0, wingspan:"6'9.25\"", standingReach:"8'6.5\"", noStepVert:"27.5\"", maxVert:"32.0\"", laneAgility:"11.22s", shuttleRun:"2.95s", sprint:"3.47s", wingspanRatio:"101.6%", maxTouchStanding:"10'10.0\"", maxTouchRunning:"11'2.5\""},
+  30: {height:"6'11.25\"", weight:"242.8 lbs", bmi:24.6, wingspan:"7'1.5\"", standingReach:"9'3.5\"", noStepVert:"25.5\"", maxVert:"29.0\"", laneAgility:"11.62s", shuttleRun:"3.11s", sprint:"3.52s", wingspanRatio:"102.7%", maxTouchStanding:"11'5.0\"", maxTouchRunning:"11'8.5\""},
+  32: {height:"6'9.25\"", weight:"259.4 lbs", bmi:27.6, wingspan:"7'7.5\"", standingReach:"9'3.5\"", noStepVert:"30.5\"", maxVert:"33.0\"", laneAgility:"11.21s", shuttleRun:"2.85s", sprint:"3.25s", wingspanRatio:"112.6%", maxTouchStanding:"11'10.0\"", maxTouchRunning:"12'0.5\""},
+  34: {height:"6'4.25\"", weight:"219.8 lbs", bmi:26.6, wingspan:"6'10.0\"", standingReach:"8'7.0\"", noStepVert:"34.0\"", maxVert:"38.0\"", laneAgility:"11.09s", shuttleRun:"2.75s", sprint:"3.17s", wingspanRatio:"107.5%", maxTouchStanding:"11'5.0\"", maxTouchRunning:"11'9.0\""},
+  36: {height:"6'5.75\"", weight:"195.4 lbs", bmi:22.7, wingspan:"6'8.0\"", standingReach:"8'5.0\"", noStepVert:"32.5\"", maxVert:"41.0\"", laneAgility:"10.23s", shuttleRun:"2.82s", sprint:"3.06s", wingspanRatio:"102.9%", maxTouchStanding:"11'1.5\"", maxTouchRunning:"11'10.0\""},
+  40: {height:"6'7.75\"", weight:"228.6 lbs", bmi:25.3, wingspan:"7'3.25\"", standingReach:"8'10.5\"", noStepVert:"34.0\"", maxVert:"40.5\"", laneAgility:"11.24s", shuttleRun:"2.78s", sprint:"3.19s", wingspanRatio:"109.4%", maxTouchStanding:"11'8.5\"", maxTouchRunning:"12'3.0\""},
+  43: {height:"6'3.75\"", weight:"195.8 lbs", bmi:24.0, wingspan:"6'8.25\"", standingReach:"8'7.0\"", noStepVert:"27.5\"", maxVert:"34.0\"", laneAgility:"11.08s", shuttleRun:"2.86s", sprint:"3.29s", wingspanRatio:"105.9%", maxTouchStanding:"10'10.5\"", maxTouchRunning:"11'5.0\""},
+  45: {height:"5'10.75\"", weight:"166.8 lbs", bmi:23.4, wingspan:"6'4.25\"", standingReach:"7'9.0\"", noStepVert:"32.0\"", maxVert:"39.0\"", laneAgility:"10.88s", shuttleRun:"2.92s", sprint:"3.23s", wingspanRatio:"107.8%", maxTouchStanding:"10'5.0\"", maxTouchRunning:"11'0.0\""},
+  53: {height:"6'3.25\"", weight:"199.6 lbs", bmi:24.8, wingspan:"6'2.25\"", standingReach:"8'2.0\"", noStepVert:"28.0\"", maxVert:"35.5\"", laneAgility:"11.23s", shuttleRun:"3.08s", sprint:"3.17s", wingspanRatio:"98.7%", maxTouchStanding:"10'6.0\"", maxTouchRunning:"11'1.5\""},
+  59: {height:"6'0.0\"", weight:"196.2 lbs", bmi:26.6, wingspan:"6'4.0\"", standingReach:"8'1.5\"", noStepVert:"32.0\"", maxVert:"39.0\"", laneAgility:"10.62s", shuttleRun:"3.1s", sprint:"3.11s", wingspanRatio:"105.6%", maxTouchStanding:"10'9.5\"", maxTouchRunning:"11'4.5\""},
+  60: {height:"6'8.5\"", weight:"232.0 lbs", bmi:25.2, wingspan:"7'0.0\"", standingReach:"8'11.0\"", noStepVert:"29.5\"", maxVert:"36.0\"", laneAgility:"11.3s", shuttleRun:"2.92s", sprint:"3.07s", wingspanRatio:"104.3%", maxTouchStanding:"11'4.5\"", maxTouchRunning:"11'11.0\""},
+  64: {height:"6'5.5\"", weight:"206.0 lbs", bmi:24.1, wingspan:"6'8.25\"", standingReach:"8'4.0\"", noStepVert:"32.0\"", maxVert:"41.5\"", laneAgility:"10.97s", shuttleRun:"2.89s", sprint:"3.32s", wingspanRatio:"103.5%", maxTouchStanding:"11'0.0\"", maxTouchRunning:"11'9.5\""}
+};
+
+const COMBINE_2025 = {
+  25: {height:"6'8\"", weight:"197.8 lbs", noStepVert:"27.0\"", maxVert:"33.5\"", sprint:"3.2s", laneAgility:"11.0s", drafted:"No"},
+  61: {height:"6'5\"", weight:"182.0 lbs", noStepVert:"32.0\"", maxVert:"36.0\"", sprint:"3.0s", laneAgility:"11.0s", drafted:"No"},
+  46: {height:"6'11\"", weight:"222.0 lbs", noStepVert:"30.0\"", maxVert:"35.0\"", sprint:"3.0s", laneAgility:"12.0s", drafted:"No"},
+  67: {height:"6'2\"", weight:"189.0 lbs", noStepVert:"28.0\"", maxVert:"32.0\"", sprint:"3.0s", laneAgility:"12.0s", drafted:"No"},
+  78: {height:"6'0\"", weight:"168.8 lbs", noStepVert:"31.0\"", maxVert:"42.0\"", sprint:"3.2s", laneAgility:"10.6s", drafted:"No"}
+};
 
 const NBA_TEAMS = ["Atlanta Hawks","Boston Celtics","Brooklyn Nets","Charlotte Hornets","Chicago Bulls",
   "Cleveland Cavaliers","Dallas Mavericks","Denver Nuggets","Detroit Pistons","Golden State Warriors",
