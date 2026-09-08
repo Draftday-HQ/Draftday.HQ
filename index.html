@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Draft Day HQ | NBA Draft Coverage</title>
@@ -98,7 +99,7 @@
     display:flex; align-items:center; justify-content:space-between; gap:20px;
   }
   .logo{
-    font-family:var(--display); font-weight:400; font-size:1.5rem;
+    font-family:var(--display); font-weight:900; font-size:1.5rem;
     letter-spacing:.01em; display:flex; align-items:center; gap:8px; cursor:pointer;
   }
   .logo .dot{color:var(--gold);}
@@ -407,7 +408,8 @@
   .mock-picks-table{min-width:0; width:100%;}
   @media (max-width:800px){
     .mock-layout{flex-direction:column;}
-    .mock-picks-col{flex:1 1 auto; max-width:100%; width:100%;}
+    .mock-picks-col{flex:1 1 auto; max-width:100%; width:100%; order:2;}
+    .mock-settings-col{order:1;}
   }
   .mock-coop-section{margin-top:28px; padding-top:20px; border-top:1px solid var(--steel);}
   .mock-coop-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
@@ -445,6 +447,12 @@
   .trade-receive-header{display:flex; align-items:center; gap:8px; margin-bottom:10px; font-family:var(--serif); font-size:.95rem;}
   .trade-asset-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--steel); font-family:var(--serif); font-size:.85rem;}
   .trade-asset-btn{flex-shrink:0; min-width:110px; text-align:center; padding:6px 12px; font-size:.7rem;}
+  .depth-columns{display:flex; gap:16px; overflow-x:auto; padding-bottom:8px;}
+  .depth-col{flex:0 0 180px; border-right:1px solid var(--steel); padding-right:16px;}
+  .depth-col:last-child{border-right:none;}
+  .depth-player{padding:10px 0; border-bottom:1px solid var(--steel); text-align:center;}
+  .depth-player-name{font-family:var(--display); font-weight:400; font-size:.95rem; color:var(--paper);}
+  .depth-player-pos{font-family:var(--mono); font-size:.65rem; color:var(--gold); margin-top:2px;}
   @media (max-width:800px){.trade-columns{grid-template-columns:1fr;}}
   .mock-move-up{color:#4caf6a; font-family:var(--mono); font-size:.72rem; margin-left:8px;}
   .mock-move-down{color:#d9534f; font-family:var(--mono); font-size:.72rem; margin-left:8px;}
@@ -477,7 +485,12 @@
   .mock-strip-item.current{opacity:1; transform:scale(1.3); transform-origin:top center; box-shadow:0 0 16px rgba(198,161,91,.5);}
   .mock-strip-num{font-family:var(--mono); font-size:.65rem; color:var(--paper-dim); font-weight:600; margin-bottom:-2px;}
   .mock-strip-logo{width:40px; height:40px; object-fit:contain; display:block;}
-  .mock-onclock-header{display:flex; align-items:center; gap:20px; margin-bottom:20px;}
+  .mock-onclock-header{display:flex; align-items:center; gap:20px; margin-bottom:20px; flex-wrap:wrap;}
+  @media (max-width:600px){
+    .mock-onclock-header{gap:12px;}
+    .mock-onclock-header .mock-timer-badge{margin-left:0 !important;}
+    .mock-onclock-header .btn{flex:1 1 auto; font-size:.65rem; padding:10px 8px;}
+  }
   .mock-onclock-logo{
     width:96px; height:96px; border-radius:50%; border:2px solid var(--gold); display:flex;
     align-items:center; justify-content:center; font-family:var(--mono); font-size:1.1rem;
@@ -1378,6 +1391,7 @@
       <div class="mock-timer-badge" id="mockTimerDisplay" style="margin-left:auto;">Unlimited</div>
       <button class="btn btn-ghost" onclick="showMockPicksOverview(false)">View Picks</button>
       <button class="btn btn-ghost" onclick="openTradeModal()">Trade</button>
+      <button class="btn btn-ghost" onclick="showDepthChartPopup()">Depth Chart</button>
       <button class="btn btn-ghost mock-quit-btn" onclick="quitMockDraft()">Quit Mock Draft</button>
     </div>
 
@@ -1418,7 +1432,9 @@
         <input type="text" id="cbSearch" class="cb-search" placeholder="Search for a player..." oninput="renderCustomBoardList()">
         <div class="filter-row" id="cbPosFilterRow" style="margin-bottom:14px;"></div>
         <div class="filter-row" id="cbClsFilterRow" style="margin-bottom:24px;"></div>
-        <div id="cbPoolList"></div>
+        <table class="rank-table" style="width:100%;">
+          <tbody id="cbPoolList"></tbody>
+        </table>
       </div>
     </div>
     <div id="cbMockPanel" style="display:none;">
@@ -2461,7 +2477,7 @@ function showRankingsSub(which){
   document.querySelector('.request-player-btn').style.display = which==='mock' ? 'none' : '';
 
   const h = RANKINGS_HEADLINES[which];
-  const watchLocked = which === 'watch' && new Date() < new Date('2026-11-01T00:00:00');
+  const watchLocked = which === 'watch' && !isDemoMode && new Date() < new Date('2026-11-01T00:00:00');
   document.getElementById('rankingsHeadline').textContent = h.title;
   document.getElementById('rankingsSubhead').textContent = watchLocked ? 'Opens November 1st.' : h.sub;
   document.getElementById('rankingsEyebrow').textContent = watchLocked ? 'Coming November 1' : h.eyebrow;
@@ -2525,6 +2541,10 @@ function showCustomBoardSub(which){
   document.getElementById('cbSubBigBoard').classList.toggle('active', which==='board');
   document.getElementById('cbSubMock').classList.toggle('active', which==='mock');
   if(which==='mock'){
+    if(!draftSimActive){
+      for(let i=0; i<mockDraftPicksBaseline.length; i++) mockDraftPicks[i] = mockDraftPicksBaseline[i];
+      lotteryHasRun = false;
+    }
     renderCustomMockDraft();
     const startBtn = document.getElementById('startDraftBtn');
     if(draftSimActive){
@@ -2716,6 +2736,117 @@ async function runCoopUserSearch(){
     resultsEl.innerHTML = '<p class="profile-empty">Search failed.</p>';
   }
 }
+
+let coopRoomChannel = null;
+let coopHostTimerInterval = null;
+let coopCurrentRoom = null;
+
+function subscribeToRoomUpdates(roomId){
+  if(coopRoomChannel) sb.removeChannel(coopRoomChannel);
+  coopRoomChannel = sb.channel('room-' + roomId)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'mock_draft_rooms', filter: `id=eq.${roomId}` },
+      payload => renderCoopDraftUI(payload.new))
+    .subscribe();
+  sb.from('mock_draft_rooms').select('*').eq('id', roomId).single().then(({data}) => { if(data) renderCoopDraftUI(data); });
+}
+
+function renderCoopDraftUI(room){
+  coopCurrentRoom = room;
+  clearInterval(coopHostTimerInterval);
+  renderMockPickStrip();
+  document.getElementById('mockPickNumLabel').textContent = `Pick ${room.current_pick_index + 1}`;
+
+  if(room.current_pick_index >= room.pick_order.length){
+    document.getElementById('mockAvailablePlayersTable').style.display = 'none';
+    document.getElementById('mockOnClockTeamBig').textContent = 'Draft Complete';
+    draftSimResults = room.picks_made.map(p => ({ pick: p.pick, team: p.team, player: players.find(pl => pl.id === p.playerId), automated: p.automated }));
+    finishMockDraftSimulation();
+    return;
+  }
+
+  const team = room.pick_order[room.current_pick_index];
+  const teamName = team.split(" (from")[0].trim();
+  const color = NBA_TEAM_COLOR[teamName] || "#c6a15b";
+  const logoEl = document.getElementById('mockOnClockLogoBig');
+  logoEl.style.borderColor = color;
+  logoEl.innerHTML = `<img src="${getNbaLogoUrl(teamName)}" alt="${teamName} logo">`;
+  document.getElementById('mockOnClockTeamBig').innerHTML = team;
+
+  const controller = room.participants.find(p => p.team_indices.includes(room.current_pick_index));
+  const pickedIds = new Set(room.picks_made.map(p => p.playerId));
+  const sourcePlayers = getBoardSourcePlayers().filter(p => !pickedIds.has(p.id));
+
+  const isMyTurn = controller && currentUser && controller.user_id === currentUser.id;
+  const isHost = currentUser && room.host_user_id === currentUser.id;
+
+  if(!controller){
+    document.getElementById('mockTimerDisplay').textContent = 'Unclaimed';
+  } else if(isMyTurn){
+    document.getElementById('mockTimerDisplay').textContent = 'Your Pick';
+  } else {
+    document.getElementById('mockTimerDisplay').textContent = `Waiting on ${controller.username}`;
+  }
+
+  document.getElementById('mockAvailablePlayersTable').style.display = '';
+  const canPickNow = isMyTurn || (!controller && isHost && !room.automate_unclaimed);
+  document.getElementById('mockAvailablePlayers').innerHTML = sourcePlayers.map((p, i) => `
+    <tr>
+      <td class="rknum">${i+1}</td>
+      <td class="pname" style="cursor:pointer;" onclick="showPlayerQuickView(${p.id})"><span class="rank-avatar">${initials(p.name)}</span><span class="quick-view-name">${p.name}</span> <span style="color:var(--paper-dim); font-size:.75rem;">${schoolBadge(p.school)}${p.school} · ${p.pos}</span></td>
+      <td style="text-align:right;">${canPickNow ? `<button class="btn btn-solid" onclick="makeCoopPick(${p.id})">Select</button>` : ''}</td>
+    </tr>`).join("");
+
+  if(isHost && controller && room.timer_seconds !== 'unlimited'){
+    let timeLeft = parseInt(room.timer_seconds);
+    document.getElementById('mockTimerDisplay').textContent = `${timeLeft}s (${controller.username})`;
+    coopHostTimerInterval = setInterval(() => {
+      timeLeft--;
+      if(document.getElementById('mockTimerDisplay')) document.getElementById('mockTimerDisplay').textContent = `${timeLeft}s (${controller.username})`;
+      if(timeLeft <= 0){
+        clearInterval(coopHostTimerInterval);
+        autoPickForCoopRoom(room, sourcePlayers);
+      }
+    }, 1000);
+  }
+  if(isHost && !controller && room.automate_unclaimed){
+    autoPickForCoopRoom(room, sourcePlayers);
+  }
+}
+
+async function makeCoopPick(playerId){
+  const room = coopCurrentRoom;
+  if(!room) return;
+  const team = room.pick_order[room.current_pick_index];
+  const player = players.find(p => p.id === playerId);
+  const newPicksMade = [...room.picks_made, { pick: room.current_pick_index + 1, team, playerId, playerName: player.name, automated: false }];
+  await sb.from('mock_draft_rooms').update({ picks_made: newPicksMade, current_pick_index: room.current_pick_index + 1, updated_at: new Date().toISOString() }).eq('id', room.id);
+}
+
+async function autoPickForCoopRoom(room, sourcePlayers){
+  const sorted = sourcePlayers.slice().sort((a,b)=>a.rk-b.rk);
+  const top = sorted[0];
+  if(!top) return;
+  const team = room.pick_order[room.current_pick_index];
+  const newPicksMade = [...room.picks_made, { pick: room.current_pick_index + 1, team, playerId: top.id, playerName: top.name, automated: true }];
+  await sb.from('mock_draft_rooms').update({ picks_made: newPicksMade, current_pick_index: room.current_pick_index + 1, updated_at: new Date().toISOString() }).eq('id', room.id);
+}
+
+let coopRoomId = null;
+async function ensureCoopRoom(){
+  if(coopRoomId) return coopRoomId;
+  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const { data, error } = await sb.from('mock_draft_rooms').insert({
+    host_user_id: currentUser.id, host_username: currentProfile.username,
+    participants: [{ user_id: currentUser.id, username: currentProfile.username, team_indices: Array.from(coopControlledTeams) }],
+    draft_length: draftLength, board_source: mockBoardSource,
+    pick_order: visiblePicks, automate_unclaimed: document.getElementById('coopAutoUnclaimedToggle').checked,
+    timer_seconds: String(coopTimerSeconds), status: 'waiting'
+  }).select().single();
+  if(error){ console.error('Could not create room', error); return null; }
+  coopRoomId = data.id;
+  return coopRoomId;
+}
+
 async function sendCoopInvite(userId, username){
   const msgEl = document.getElementById('coopInviteMsg');
   if(!currentUser){
@@ -2724,9 +2855,11 @@ async function sendCoopInvite(userId, username){
     return;
   }
   try{
+    const roomId = await ensureCoopRoom();
+    if(!roomId) throw new Error('room creation failed');
     const { error } = await sb.from('mock_draft_invites').insert({
       from_user_id: currentUser.id, from_username: currentProfile.username,
-      to_user_id: userId, to_username: username, status: 'pending'
+      to_user_id: userId, to_username: username, status: 'pending', room_id: roomId
     });
     if(error) throw error;
     coopInvitedUsers.push(username);
@@ -2765,21 +2898,55 @@ function showMockInvitePopup(invite){
     <div class="modal-box" style="text-align:center;">
       <h2 style="margin-bottom:20px;">${invite.from_username} has invited you to participate in a mock draft</h2>
       <div style="display:flex; gap:12px; justify-content:center;">
-        <button class="btn btn-solid" onclick="respondMockInvite('${invite.id}', 'accepted')">Accept</button>
-        <button class="btn btn-ghost" onclick="respondMockInvite('${invite.id}', 'declined')">Decline</button>
+        <button class="btn btn-solid" onclick="respondMockInvite('${invite.id}', 'accepted', '${invite.room_id}')">Accept</button>
+        <button class="btn btn-ghost" onclick="respondMockInvite('${invite.id}', 'declined', '${invite.room_id}')">Decline</button>
       </div>
     </div>`;
   document.body.appendChild(popup);
 }
-async function respondMockInvite(inviteId, response){
+async function respondMockInvite(inviteId, response, roomId){
   try{
     await sb.from('mock_draft_invites').update({ status: response }).eq('id', inviteId);
   } catch(e){ /* non-critical */ }
   document.getElementById('mockInvitePopup')?.remove();
-  if(response === 'accepted'){
-    showView('customboard');
-    showCustomBoardSub('mock');
+  if(response === 'accepted' && roomId){
+    showJoinCoopRoomModal(roomId);
   }
+}
+
+async function showJoinCoopRoomModal(roomId){
+  const { data: room, error } = await sb.from('mock_draft_rooms').select('*').eq('id', roomId).single();
+  if(error || !room){ alert('This draft room could not be found.'); return; }
+  const claimedIndices = new Set(room.participants.flatMap(p => p.team_indices));
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  overlay.id = 'joinRoomModal';
+  overlay.innerHTML = `
+    <div class="modal-box profile-modal-box" style="max-width:600px; width:90vw;">
+      <h2 style="margin-bottom:10px;">Join ${room.host_username}'s Mock Draft</h2>
+      <p class="profile-empty">Pick which team(s) you want to control. Already-claimed teams aren't shown.</p>
+      <div class="mock-team-select-grid" id="joinRoomTeamGrid" style="margin-top:14px;">
+        ${room.pick_order.map((team, i) => claimedIndices.has(i) ? '' : `
+          <label class="mock-team-checkbox">
+            <input type="checkbox" value="${i}" class="join-room-team-cb">
+            ${nbaTeamBadge(team)}${team}
+          </label>`).join("")}
+      </div>
+      <button class="btn btn-solid" style="width:100%; margin-top:16px;" onclick="joinCoopRoom('${roomId}')">Join Draft</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function joinCoopRoom(roomId){
+  const checked = Array.from(document.querySelectorAll('.join-room-team-cb:checked')).map(cb => parseInt(cb.value));
+  const { data: room, error } = await sb.from('mock_draft_rooms').select('*').eq('id', roomId).single();
+  if(error || !room) return;
+  const newParticipants = [...room.participants, { user_id: currentUser.id, username: currentProfile.username, team_indices: checked }];
+  await sb.from('mock_draft_rooms').update({ participants: newParticipants }).eq('id', roomId);
+  document.getElementById('joinRoomModal')?.remove();
+  coopRoomId = roomId;
+  showView('mockdraftsim', true);
+  subscribeToRoomUpdates(roomId);
 }
 
 let draftSimActive = false;
@@ -2799,7 +2966,22 @@ function getBoardSourcePlayers(){
   return players.filter(p => p.enteringDraft).sort((a,b)=>a.rk-b.rk);
 }
 
-function startMockDraftSimulation(){
+async function startMockDraftSimulation(){
+  for(let i=0; i<mockDraftPicksBaseline.length; i++) mockDraftPicks[i] = mockDraftPicksBaseline[i];
+  lotteryHasRun = false;
+  mockTradeLog = [];
+  if(coopEnabled){
+    const roomId = await ensureCoopRoom();
+    if(!roomId){ alert('Could not start the co-op room.'); return; }
+    await sb.from('mock_draft_rooms').update({
+      status: 'active', pick_order: mockDraftPicks.slice(0, Math.min(draftLength, 30)),
+      current_pick_index: 0, picks_made: []
+    }).eq('id', roomId);
+    coopRoomId = roomId;
+    showView('mockdraftsim', true);
+    subscribeToRoomUpdates(roomId);
+    return;
+  }
   draftSimActive = true;
   draftSimPickIndex = 0;
   draftSimResults = [];
@@ -2859,12 +3041,11 @@ function renderMockPickStrip(){
   const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
   strip.innerHTML = visiblePicks.map((team, i) => {
     const teamName = team.split(" (from")[0].trim();
-    const abbr = (NBA_TEAM_ABBR[teamName] || teamName.slice(0,3)).toLowerCase();
     const color = NBA_TEAM_COLOR[teamName] || "#c6a15b";
     return `
     <div class="mock-strip-item ${i===draftSimPickIndex?'current':''} ${i<draftSimPickIndex?'done':''}" id="mockStripItem${i}" style="border-color:${color}; background:${color}55;">
       <div class="mock-strip-num">${i+1}</div>
-      <img class="mock-strip-logo" src="https://a.espncdn.com/i/teamlogos/nba/500/${abbr}.png" alt="${teamName} logo" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<span style=\\'color:${color}; font-family:var(--mono); font-size:.7rem;\\'>${(NBA_TEAM_ABBR[teamName]||'').toUpperCase()}</span>')">
+      <img class="mock-strip-logo" src="${getNbaLogoUrl(teamName)}" alt="${teamName} logo" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<span style=\\'color:${color}; font-family:var(--mono); font-size:.7rem;\\'>${(NBA_TEAM_ABBR[teamName]||'').toUpperCase()}</span>')">
     </div>`;
   }).join("");
 }
@@ -2882,12 +3063,11 @@ function renderDraftSimUI(team){
   renderMockPickStrip();
   slideMockStripToCurrent();
   const teamName = team.split(" (from")[0].trim();
-  const abbr = (NBA_TEAM_ABBR[teamName] || teamName.slice(0,3)).toLowerCase();
   const color = NBA_TEAM_COLOR[teamName] || "#c6a15b";
   const logoEl = document.getElementById('mockOnClockLogoBig');
   logoEl.classList.remove('pulse');
   logoEl.style.borderColor = color;
-  logoEl.innerHTML = `<img src="https://a.espncdn.com/i/teamlogos/nba/500/${abbr}.png" alt="${teamName} logo" onerror="this.style.display='none'; this.parentElement.textContent='${(NBA_TEAM_ABBR[teamName] || '').toUpperCase()}'; this.parentElement.style.color='${color}';">`;
+  logoEl.innerHTML = `<img src="${getNbaLogoUrl(teamName)}" alt="${teamName} logo" onerror="this.style.display='none'; this.parentElement.textContent='${(NBA_TEAM_ABBR[teamName] || '').toUpperCase()}'; this.parentElement.style.color='${color}';">`;
   void logoEl.offsetWidth; // restart animation
   logoEl.classList.add('pulse');
 
@@ -2895,9 +3075,9 @@ function renderDraftSimUI(team){
   document.getElementById('mockPickNumLabel').textContent = `Pick ${draftSimPickIndex + 1}`;
 
   const availablePlayers = draftSimAvailableIds.map(id => players.find(p => p.id === id)).filter(Boolean).sort((a,b)=>a.rk-b.rk);
-  document.getElementById('mockAvailablePlayers').innerHTML = availablePlayers.map(p => `
+  document.getElementById('mockAvailablePlayers').innerHTML = availablePlayers.map((p, i) => `
     <tr>
-      <td class="rknum">${p.rk}</td>
+      <td class="rknum">${i+1}</td>
       <td class="pname" style="cursor:pointer;" onclick="showPlayerQuickView(${p.id})"><span class="rank-avatar">${initials(p.name)}</span><span class="quick-view-name">${p.name}</span> <span style="color:var(--paper-dim); font-size:.75rem;">${schoolBadge(p.school)}${p.school} · ${p.pos}</span></td>
       <td style="text-align:right;"><button class="btn btn-solid" onclick="selectPlayerForCurrentPick(${p.id})">Select</button></td>
     </tr>`).join("");
@@ -2960,6 +3140,37 @@ function autoPickForCurrentTeam(){
   draftSimPickIndex++;
   saveMockDraftProgress();
   processMockDraftPick();
+}
+
+function showDepthChartPopup(){
+  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const teamRaw = draftSimActive ? visiblePicks[draftSimPickIndex] : visiblePicks[0];
+  const teamName = teamRaw.split(" (from")[0].trim();
+  const chart = NBA_DEPTH_CHARTS[teamName];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  overlay.id = 'depthChartModal';
+  const posOrder = {PG:0, SG:1, SF:2, PF:3, C:4};
+  const sortByPos = (list) => list.slice().sort((a,b) => (posOrder[a.pos.split('/')[0]]??5) - (posOrder[b.pos.split('/')[0]]??5));
+  const unitColumn = (label, list) => `
+    <div class="depth-col">
+      <div class="lbl" style="text-align:center; margin-bottom:10px;">${label}</div>
+      ${sortByPos(list).map(p => `<div class="depth-player"><div class="depth-player-name">${p.n}</div><div class="depth-player-pos">${p.pos}</div></div>`).join("")}
+    </div>`;
+  overlay.innerHTML = `
+    <div class="modal-box profile-modal-box" style="max-width:900px; width:92vw; position:relative;">
+      <button class="quick-view-close" onclick="document.getElementById('depthChartModal').remove()">×</button>
+      <h2 style="margin-bottom:16px;">${nbaTeamBadge(teamName)}${teamName} Depth Chart</h2>
+      ${chart ? `
+        <div class="depth-columns">
+          ${unitColumn("Starters", chart.starters)}
+          ${unitColumn("2nd String", chart.second)}
+          ${unitColumn("3rd String", chart.third)}
+          ${chart.twoway && chart.twoway.length ? unitColumn("Two-Way", chart.twoway) : ''}
+        </div>
+      ` : `<p class="profile-empty" style="margin-top:16px;">Depth chart not available for this team yet.</p>`}
+    </div>`;
+  document.body.appendChild(overlay);
 }
 
 function showPlayerQuickView(playerId){
@@ -3041,20 +3252,30 @@ function showMockPicksOverview(isFinished){
       <td style="width:60px; vertical-align:middle;">${nbaTeamBadge(r.team)}</td>
       <td style="vertical-align:middle; font-family:var(--display); font-weight:400; color:var(--gold);">${r.player.name}${r.automated ? ' <span style="color:var(--paper-dim); font-size:.7rem; font-family:var(--mono);">(auto)</span>' : ''}</td>
     </tr>`).join("");
+  const tradesHtml = mockTradeLog.length ? `
+    <div class="lbl" style="margin-top:20px;">Trades Made</div>
+    ${mockTradeLog.map(t => `
+      <div style="border:1px solid var(--steel-soft); padding:14px; margin-top:10px;">
+        <div style="margin-bottom:8px;"><b>${nbaTeamBadge(t.team2)}${t.team2} Receive:</b> ${t.team1Receives.join(", ") || "Nothing"}</div>
+        <div><b>${nbaTeamBadge(t.team1)}${t.team1} Receive:</b> ${t.team2Receives.join(", ") || "Nothing"}</div>
+      </div>`).join("")}` : '';
   overlay.innerHTML = `
     <div class="modal-box profile-modal-box" style="max-width:700px; width:90vw; position:relative;">
       <button class="quick-view-close" onclick="document.getElementById('mockPicksOverviewModal').remove()">×</button>
-      <h2 style="margin-bottom:16px;">${isFinished ? 'Draft Complete' : 'Picks So Far'}</h2>
       ${isFinished ? `
       <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
         <button class="btn btn-ghost" onclick="resetMockDraft()">Reset</button>
         <button class="btn btn-solid" onclick="saveMockDraft()">Save to My Profile</button>
-        <button class="btn btn-ghost" onclick="downloadMockDraft()">Download</button>
+        <button class="btn btn-ghost" onclick="downloadMockDraft()">Download as Image</button>
       </div>
       <div id="mockDraftSaveMsg" class="modal-msg"></div>` : ''}
-      <table class="rank-table" style="width:100%; border-collapse:collapse;">
-        <tbody>${rows || '<tr><td class="profile-empty">No picks yet.</td></tr>'}</tbody>
-      </table>
+      <div id="mockDraftCaptureArea" style="background:var(--panel); padding:4px;">
+        <h2 style="margin-bottom:16px;">${isFinished ? 'Draft Complete' : 'Picks So Far'}</h2>
+        <table class="rank-table" style="width:100%; border-collapse:collapse;">
+          <tbody>${rows || '<tr><td class="profile-empty">No picks yet.</td></tr>'}</tbody>
+        </table>
+        ${isFinished ? tradesHtml : ''}
+      </div>
     </div>`;
   document.body.appendChild(overlay);
 }
@@ -3078,6 +3299,10 @@ function resetMockDraft(){
 
 function quitMockDraft(){
   clearInterval(draftSimTimerInterval);
+  clearInterval(coopHostTimerInterval);
+  if(coopRoomChannel){ sb.removeChannel(coopRoomChannel); coopRoomChannel = null; }
+  coopRoomId = null;
+  coopCurrentRoom = null;
   draftSimActive = false;
   draftSimResults = [];
   draftSimPickIndex = 0;
@@ -3113,17 +3338,29 @@ async function saveMockDraft(){
 }
 
 function downloadMockDraft(){
-  const lines = draftSimResults.map(r => `${r.pick}. ${r.team} — ${r.player.name}${r.automated ? ' (auto)' : ''}`);
-  const text = `Draft Day HQ — Mock Draft Results\n${new Date().toLocaleDateString()}\n\n${lines.join("\n")}`;
-  const blob = new Blob([text], {type:'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `mock-draft-${Date.now()}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  const captureEl = document.getElementById('mockDraftCaptureArea');
+  if(!captureEl || typeof html2canvas === 'undefined'){
+    const lines = draftSimResults.map(r => `${r.pick}. ${r.team} — ${r.player.name}${r.automated ? ' (auto)' : ''}`);
+    const text = `Draft Day HQ — Mock Draft Results\n${new Date().toLocaleDateString()}\n\n${lines.join("\n")}`;
+    const blob = new Blob([text], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mock-draft-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    return;
+  }
+  html2canvas(captureEl, { backgroundColor: '#0a0a0c', scale: 2 }).then(canvas => {
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `mock-draft-${Date.now()}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
 }
 
 
@@ -3207,17 +3444,14 @@ function renderCustomBoardList(){
   }).sort((a,b) => a.rk - b.rk);
 
   if(pool.length === 0){
-    poolEl.innerHTML = `<div class="cb-empty">No players match, or everyone matching is already on your board.</div>`;
+    poolEl.innerHTML = `<tr><td class="cb-empty">No players match, or everyone matching is already on your board.</td></tr>`;
   } else {
     poolEl.innerHTML = pool.map(p => `
-      <div class="cb-pool-row">
-        <div class="cb-rk-static">#${p.rk}</div>
-        <div>
-          <div class="cb-name">${p.name}</div>
-          <div class="cb-meta">${p.pos} · ${p.school} · ${p.cls}</div>
-        </div>
-        <button class="btn btn-ghost cb-add-btn" onclick="addPlayerToBoard(${p.id})">+ Add</button>
-      </div>`).join("");
+      <tr>
+        <td class="rknum">${p.rk}</td>
+        <td class="pname" style="cursor:pointer;" onclick="showPlayerQuickView(${p.id})"><span class="rank-avatar">${initials(p.name)}</span><span class="quick-view-name">${p.name}</span> <span style="color:var(--paper-dim); font-size:.75rem;">${schoolBadge(p.school)}${p.school} · ${p.pos}</span></td>
+        <td style="text-align:right;"><button class="btn btn-solid" onclick="addPlayerToBoard(${p.id})">+ Add</button></td>
+      </tr>`).join("");
   }
 }
 
@@ -3659,6 +3893,10 @@ const mockDraftPicksRound2 = [
 
 const PLACEHOLDER_FIRST_NAMES = ["Marcus","Devon","Tyler","Jalen","Isaiah","Malik","Xavier","Cameron","Elijah","Andre","Trey","Darius","Jordan","Bryce","Miles"];
 const PLACEHOLDER_LAST_NAMES = ["Carter","Reeves","Holloway","Bennett","Simmons","Whitfield","Morrow","Lang","Booker","Ellis","Dawkins","Franklin","Marsh","Osei","Ridley"];
+function getTeamShortName(fullName){
+  return Object.keys(NBA_TEAM_ABBR).find(short => fullName.endsWith(short)) || fullName.split(" ").pop();
+}
+
 function generatePlaceholderRoster(teamName){
   const seed = NBA_TEAMS.findIndex(t => t.includes(teamName)) + teamName.length;
   const roster = [];
@@ -3670,22 +3908,107 @@ function generatePlaceholderRoster(teamName){
   return roster;
 }
 function getTeamPicksForTrade(teamName){
-  const baseIndex = mockDraftPicksBaseline.indexOf(teamName);
-  const thisYearFirst = baseIndex !== -1 ? `Pick #${baseIndex + 1}` : "1st Round Pick";
+  const liveIndex = mockDraftPicks.findIndex(t => t === teamName || t.startsWith(teamName + " ("));
+  const thisYearFirst = liveIndex !== -1 ? `Pick #${liveIndex + 1}` : "1st Round Pick";
+  const r2Index = mockDraftPicksRound2.findIndex(t => t === teamName || t.startsWith(teamName + " ("));
+  const thisYearSecond = r2Index !== -1 ? `Pick #${r2Index + 31}` : "Unnumbered";
   const currentYear = new Date().getFullYear() + 1;
+  const notes = TEAM_PICK_NOTES[teamName];
   const picks = [
-    { label: `${currentYear} 1st Round Pick`, detail: thisYearFirst, group: 'current' },
-    { label: `${currentYear} 2nd Round Pick`, detail: "Unnumbered", group: 'current' },
+    { label: `${currentYear} 1st Round Pick`, detail: thisYearFirst },
+    { label: `${currentYear} 2nd Round Pick`, detail: thisYearSecond },
   ];
   for(let y=1; y<=3; y++){
-    picks.push({ label: `${currentYear + y} 1st Round Pick`, detail: "", group: 'future' });
-    picks.push({ label: `${currentYear + y} 2nd Round Pick`, detail: "", group: 'future' });
+    const yr = String(currentYear + y);
+    const yrNotes = notes ? notes[yr] : null;
+    if(yrNotes){
+      if(/^own/i.test(yrNotes.first.trim())) picks.push({ label: `${yr} 1st Round Pick`, detail: yrNotes.first });
+      if(/^own/i.test(yrNotes.second.trim())) picks.push({ label: `${yr} 2nd Round Pick`, detail: yrNotes.second });
+    } else {
+      picks.push({ label: `${yr} 1st Round Pick`, detail: "No data yet" });
+      picks.push({ label: `${yr} 2nd Round Pick`, detail: "No data yet" });
+    }
   }
+  // Add picks cleanly traded in from other teams
+  const incoming = TEAM_INCOMING_PICKS[teamName] || [];
+  incoming.forEach(inc => {
+    const roundLabel = inc.round === 'first' ? '1st' : '2nd';
+    const originalText = TEAM_PICK_NOTES[inc.fromTeam][inc.year][inc.round];
+    picks.push({ label: `${inc.year} ${roundLabel} Round Pick (from ${inc.fromTeam})`, detail: originalText });
+  });
   return picks;
 }
 
 let tradePickView = { left: 'current', right: 'current' };
+const TEAM_PICK_NOTES = {
+  "Heat": {2027:{first:"Conditional (Charlotte): sent to CHA if it falls outside the lottery (15-30); Miami keeps it if lottery (1-14).", second:"Traded (Swap): Miami gets least favorable of 5-team swap (OKC/SAS/HOU/IND/MIA); effectively gone."}, 2028:{first:"Conditional Own: Miami keeps it unless 2027 pick didn\'t convey to Charlotte, then unprotected to Charlotte.", second:"Traded: sent to Detroit or Charlotte depending on a separate Dallas conditional trade."}, 2029:{first:"Own.", second:"Traded (Swap): Charlotte gets more favorable of ATL/MIA 2nd; OKC gets less favorable."}, 2030:{first:"Swap Rights (MIL/POR): Portland can swap with Milwaukee; Milwaukee then can swap the less favorable for Miami\'s pick.", second:"Traded: Memphis gets most favorable of DEN/HOU/MIA 2nd; OKC gets rest."}, 2031:{first:"Traded: sent unprotected to Milwaukee (Giannis trade).", second:"Swap Rights (WAS): Washington/Memphis hold complex swap rights; Indiana gets least favorable."}, 2032:{first:"Own.", second:"Traded: sent completely unprotected to Brooklyn."}, 2033:{first:"Traded: sent unprotected to Milwaukee (Giannis trade).", second:"Traded: sent to Milwaukee (Giannis trade)."}},
+  "Hornets": {2027:{first:"Own + DAL (Top-2 protected) + MIA (Top-14 protected).", second:"MEM via HOU + POR/NOP (more favorable); own sent to SAC/OKC."}, 2028:{first:"Own (right to swap with MIN) + MIA (if not settled in 2027).", second:"HOU + ORL + LAC/CHA (more favorable)."}, 2029:{first:"Own + least favorable of UTH/CLE/MIN (Top-5 protected).", second:"More favorable of ATL/MIA."}, 2030:{first:"Own (right to swap for MIN, SAS, or DAL).", second:"Own sent to BOS (Top-55 protected)."}, 2031:{first:"Own.", second:"Own."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own + MIN + PHX.", second:"HOU."}},
+  "Hawks": {2027:{first:"Conditional (NOP/MIL): gets less favorable of NOP/MIL (Top-4 protected); own sent unprotected to San Antonio.", second:"Own sent to Dallas."}, 2028:{first:"Conditional Swap: more favorable of own pick and worse of UTH/CLE picks.", second:"Own sent to Brooklyn."}, 2029:{first:"Own + CLE (unprotected).", second:"Own sent to Charlotte/OKC."}, 2030:{first:"Own.", second:"NYK\'s pick; own sent to OKC."}, 2031:{first:"Own.", second:"Conditional swap right with Houston (protected 56-60); own sent to OKC."}, 2032:{first:"Own.", second:"Own sent to OKC."}, 2033:{first:"Own.", second:"SAC\'s pick + own."}},
+  "Magic": {2027:{first:"Own.", second:"Traded: more favorable of BOS/ORL to UTH; worse to PHX."}, 2028:{first:"Traded: sent to Portland (via Memphis).", second:"LAL/WAS most favorable; own sent to Charlotte."}, 2029:{first:"Conditional Swap: Memphis has swap rights (Top-2 protected).", second:"Conditional: goes to MEM if 1st lands Top-2."}, 2030:{first:"Traded: sent to Memphis.", second:"MIL + own (right to swap for NOP)."}, 2031:{first:"Own.", second:"Conditional swap: more favorable of ORL/NOP; less favorable to OKC."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Wizards": {2027:{first:"Own (cannot be #1 overall).", second:"BRK/DAL (more favorable) + GOS/PHX (less favorable) + multi-team swap pool; own sent to NYK."}, 2028:{first:"Complex swap rights across MIL/POR/PHX/PHL/BRK depending on records.", second:"DEN\'s pick."}, 2029:{first:"Own + BOS/MIL/POR (2nd most favorable).", second:"Own."}, 2030:{first:"Swap rights (Phoenix), subject to further multi-team obligations with Memphis.", second:"PHX/POR (less favorable)."}, 2031:{first:"Own.", second:"IND/MIA (more favorable)."}, 2032:{first:"Own.", second:"MEM/PHL/UTH (most favorable)."}, 2033:{first:"Own.", second:"DAL + own."}},
+  "76ers": {2027:{first:"Own.", second:"Own + GSW/PHX (more favorable) + OKC/HOU/IND/MIA (most favorable); 2nd most favorable of pool goes to WAS."}, 2028:{first:"Conditional (BRK): sent to Brooklyn (Harden trade) if falls 1-8; stays with PHI if outside top 8.", second:"LAC\'s pick (received) + own + DET (protected 31-55)."}, 2029:{first:"Own (right to swap for LAC 1st, Top-3 protected).", second:"Own."}, 2030:{first:"Own.", second:"Own sent to NYK (via DAL) + less favorable of PHX/POR pool."}, 2031:{first:"Own.", second:"Own."}, 2032:{first:"Own.", second:"Less favorable of PHI/MEM."}, 2033:{first:"Own.", second:"Own."}},
+  "Celtics": {2027:{first:"Own.", second:"Traded: more favorable of BOS/ORL to UTH; less favorable to PHX."}, 2028:{first:"Conditional (LAC/PHI): receives LAC 1st (protected 1-16); can swap for LAC or PHI 1st (protected 9-30); SAS has top-1 swap rights on Boston\'s own pick.", second:"Traded: sent to New York (protected 31-45)."}, 2029:{first:"Traded: sent to Portland or Washington (most/least favorable to POR; 2nd most to WAS).", second:"Traded: sent completely to Oklahoma City."}, 2030:{first:"Own.", second:"Traded: sent to Brooklyn."}, 2031:{first:"Own + PHL (unprotected, Jaylen Brown trade).", second:"Conditional swap: less favorable of BOS/CLE to Boston; more favorable to UTH."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Knicks": {2027:{first:"Own.", second:"WAS + 3rd most favorable of OKC/HOU/IND/MIA; own sent to CHA."}, 2028:{first:"Traded: sent to Brooklyn (unprotected).", second:"Own."}, 2029:{first:"Traded: sent to Brooklyn (unprotected).", second:"Own sent to DET (conditional)."}, 2030:{first:"Own (right to swap with BRK).", second:"Own sent to DET."}, 2031:{first:"Traded: sent to Brooklyn (unprotected).", second:"Own."}, 2032:{first:"Own (right to swap with BRK).", second:"Own."}, 2033:{first:"Traded: sent to Brooklyn (unprotected).", second:"Own."}},
+  "Raptors": {2027:{first:"Conditional swap (LAC): Clippers can swap own, OKC\'s, or DEN\'s pick (Top-5 protected) for Toronto\'s.", second:"Own."}, 2028:{first:"Own.", second:"Own."}, 2029:{first:"Own.", second:"Own."}, 2030:{first:"Own.", second:"Traded: sent to LA Clippers."}, 2031:{first:"Traded: sent to LA Clippers.", second:"Own."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Nets": {2027:{first:"Own (Houston holds swap rights) + NYK (unprotected).", second:"More favorable of BRK/DAL to WAS; less favorable to MIL + LAL (conditional)."}, 2028:{first:"Conditional own/PHL/NYK/PHX swap depending on slotting.", second:"Own + ATL + MEM + PHL (conditional)."}, 2029:{first:"Own + NYK (unprotected) + least favorable of DAL/PHX/HOU.", second:"Own + DAL + GOS + MEM."}, 2030:{first:"Own.", second:"Own + BOS + DAL + LAL."}, 2031:{first:"Own + NYK (unprotected).", second:"Own + LAL."}, 2032:{first:"Own + DEN.", second:"Own + DEN + MIA + TOR."}, 2033:{first:"Own.", second:"Own."}},
+  "Pacers": {2027:{first:"Own.", second:"UTH\'s pick; own sent to complex multi-team tiered swap (PHL/NOP/NYK/SAS/MIA)."}, 2028:{first:"Own.", second:"Less favorable of (more favorable of IND/PHX) and CHI; own subject to Chicago swap rights."}, 2029:{first:"Traded: sent to LA Clippers (Zubac/Kobe Brown deal).", second:"More favorable of IND/WAS; less favorable to POR."}, 2030:{first:"Own.", second:"Own subject to a Chicago swap right."}, 2031:{first:"Own (retained via 2026 Clippers pick conveyance).", second:"Least favorable of IND/MIA/MEM; more favorable of IND/MIA to WAS."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Bulls": {2027:{first:"Own.", second:"CLE\'s pick; own sent to OKC (via WAS/NOP/DAL)."}, 2028:{first:"Own.", second:"Most favorable of CHI/IND/PHX."}, 2029:{first:"Own.", second:"Own + least favorable of DET/MIL/NYK."}, 2030:{first:"Own.", second:"Own or right to swap for IND."}, 2031:{first:"Own.", second:"DEN + NYK + more favorable of MIN/GSW."}, 2032:{first:"Own.", second:"More favorable of HOU/PHX."}, 2033:{first:"Own.", second:"Own."}},
+  "Bucks": {2027:{first:"Traded: sent to NOP/ATL (NOP more favorable; ATL less favorable, protected 1-4).", second:"Incoming swap: receives less favorable of BRK/DAL; own sent to DET via PHL."}, 2028:{first:"Conditional swap: complex multi-team layout with POR and WAS.", second:"Traded: sent to Boston or Philadelphia."}, 2029:{first:"Traded: sent to Portland or Washington (POR most/least favorable; WAS 2nd most).", second:"Traded: sent to Detroit or Chicago."}, 2030:{first:"Conditional swap: Portland can swap with MIL; MIL can then swap worse for Miami\'s 1st.", second:"Own sent to Orlando."}, 2031:{first:"Own + MIA (unprotected, Giannis trade).", second:"Own."}, 2032:{first:"Own.", second:"Traded: sent to Charlotte."}, 2033:{first:"Own + MIA (unprotected, Giannis trade).", second:"Own + MIA (Giannis trade)."}},
+  "Pistons": {2027:{first:"Own.", second:"Own."}, 2028:{first:"Own.", second:"Own (protected 31-55; 56-60 to PHL) + less favorable of CHA/LAC + MIA (conditional) + NYK; least favorable of group to UTH."}, 2029:{first:"Own.", second:"Two most favorable of DET/MIL/NYK; least favorable to CHI."}, 2030:{first:"Own.", second:"Own."}, 2031:{first:"Own.", second:"DAL + less favorable of GOS/MIN; own sent to OKC."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own (heavily protected, sent to LAC)."}},
+  "Cavaliers": {2027:{first:"Traded: sent to Memphis, Utah, or Phoenix (MEM most favorable of UTH/CLE/MIN; UTH 2nd; PHX least).", second:"Traded: sent to Chicago via Atlanta/Minnesota."}, 2028:{first:"Traded: sent to Utah.", second:"Complex multi-team swap involving UTH and ATL."}, 2029:{first:"Traded: sent to Utah or Charlotte (most/two most favorable of CLE/UTH/MIN to UTH; least/less to CHA).", second:"Traded: sent to Atlanta."}, 2030:{first:"Own.", second:"Traded: sent to New York."}, 2031:{first:"Own.", second:"Conditional swap right with Boston."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Clippers": {2027:{first:"Own (Oklahoma City holds swap rights).", second:"Traded: sent to Detroit."}, 2028:{first:"Traded: sent unprotected to Philadelphia (Harden trade).", second:"Traded: sent to Philadelphia."}, 2029:{first:"Forfeited: stripped by NBA; Philadelphia retains swap right.", second:"Own."}, 2030:{first:"Forfeited: stripped by NBA.", second:"Incoming: receives Toronto\'s 2nd."}, 2031:{first:"Forfeited: stripped by NBA + receives Toronto\'s 1st.", second:"Own."}, 2032:{first:"Forfeited: stripped by NBA.", second:"Own."}, 2033:{first:"Forfeited: stripped by NBA + receives Toronto\'s 1st.", second:"Incoming: receives Toronto\'s 2nd."}},
+  "Warriors": {2027:{first:"Own.", second:"Traded: more favorable of GOS/PHX to PHL; other to WAS."}, 2028:{first:"Own.", second:"Traded: most favorable of GOS/MIL/OKC to BOS; others to PHL."}, 2029:{first:"Own.", second:"Traded: sent completely to Brooklyn."}, 2030:{first:"Conditional own: sent to Memphis if falls 21-30; top-20 protected.", second:"Traded: sent to Memphis if 1st doesn\'t convey."}, 2031:{first:"Own.", second:"Traded: more favorable of MIN/GOS to CHI; less to DET."}, 2032:{first:"Own.", second:"Conditional own: picks 31-50 owned; 51-60 to Memphis."}, 2033:{first:"Own.", second:"Own."}},
+  "Kings": {2027:{first:"Own + SAN (protected 1-16).", second:"Traded: goes to OKC or Charlotte depending on San Antonio\'s pick."}, 2028:{first:"Own.", second:"Traded: sent to Portland."}, 2029:{first:"Own.", second:"Traded: sent to New York."}, 2030:{first:"Own.", second:"Traded: sent to San Antonio."}, 2031:{first:"Own (San Antonio holds swap rights) + MIN (via SAN).", second:"Traded: sent to Denver."}, 2032:{first:"Own.", second:"Traded: sent to Denver."}, 2033:{first:"Own.", second:"Own."}},
+  "Rockets": {2027:{first:"Own (right to swap for BRK) + PHX (via BRK).", second:"Conditional swap pool: complex tiered allocation between PHL/NOP/NYK/MIA."}, 2028:{first:"Own.", second:"Traded to Charlotte."}, 2029:{first:"Own/DAL/PHX allocation: two most favorable of HOU/DAL/PHX; remaining to Brooklyn.", second:"Traded to Memphis."}, 2030:{first:"Own.", second:"Conditional pool: most favorable of HOU/DEN/MIA to Memphis; others to OKC."}, 2031:{first:"Own.", second:"Conditional swap (ATL): less favorable of HOU (31-55) and ATL to OKC; 56-60 to BOS."}, 2032:{first:"Own.", second:"Traded to Phoenix or Chicago."}, 2033:{first:"Own.", second:"Traded to Charlotte."}},
+  "Mavericks": {2027:{first:"Conditional own: stays with Dallas if top-2; sent to Charlotte if picks 3-30.", second:"Traded: more favorable of DAL/BRK to Washington; less to Milwaukee + ATL (56-60)."}, 2028:{first:"Own (Oklahoma City holds swap rights).", second:"Traded to LA Clippers."}, 2029:{first:"Traded (swap pool): HOU/DAL/PHX pool, least favorable to Brooklyn; also holds incoming LAL pick.", second:"Traded to Brooklyn."}, 2030:{first:"Conditional swap (SAS/MIN): subject to San Antonio swap right and multi-team layout with Minnesota.", second:"Traded to New York via original Dallas trade."}, 2031:{first:"Own.", second:"Traded to Detroit."}, 2032:{first:"Own.", second:"Traded to New York."}, 2033:{first:"Own.", second:"Traded to Washington."}},
+  "Pelicans": {2027:{first:"Conditional (ATL): receives more favorable of NOP/MIL; less favorable to Atlanta (top-4 protected).", second:"Conditional: more favorable of NOP/POR to CHA; less to POR; also 2nd most favorable of OKC/HOU/IND/MIA pool."}, 2028:{first:"Own.", second:"Traded to San Antonio."}, 2029:{first:"Own.", second:"Traded to San Antonio."}, 2030:{first:"Own.", second:"Own (Orlando holds swap rights)."}, 2031:{first:"Own.", second:"Conditional swap: more favorable of NOP/ORL to Orlando; less to OKC; also holds incoming TOR pick."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Spurs": {2027:{first:"Traded: sent to Sacramento (picks 1-16) or OKC (17-30) + holds unprotected incoming ATL pick.", second:"Conditional swap: more favorable of own and least favorable of OKC/HOU/IND/MIA pool; remaining to Miami."}, 2028:{first:"Own (subject to pick swaps with Boston).", second:"Incoming: guaranteed selections from NOP and CHI."}, 2029:{first:"Own.", second:"Incoming: guaranteed selections from NOP and LAC."}, 2030:{first:"Own (right to swap with Dallas).", second:"Incoming: unprotected SAC selection."}, 2031:{first:"Own (right to swap with Sacramento).", second:"Own."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Grizzlies": {2027:{first:"Own (holds conditional tier assets from LAL trade).", second:"Incoming: own pool + guaranteed MIN pick."}, 2028:{first:"Own.", second:"Incoming: selections from HOU and TOR."}, 2029:{first:"Own (subject to top-2 protected swap right held by Orlando).", second:"Incoming: picks from HOU and MIL."}, 2030:{first:"Own + ORL + worse of WAS/MEM/PHX.", second:"Incoming: most favorable of HOU/DEN/MIA pool."}, 2031:{first:"Own + PHX (unprotected).", second:"Traded to OKC."}, 2032:{first:"Own.", second:"Conditional swap: less favorable of PHI/MEM to Brooklyn."}, 2033:{first:"Own.", second:"Own."}},
+  "Nuggets": {2027:{first:"Conditional (OKC/ORL): sent to OKC if falls 6-30; stays with Denver if 1-5.", second:"Traded: sent to Cleveland."}, 2028:{first:"Conditional own: Denver keeps unless 2027 pick didn\'t convey, then top-5 protected to OKC.", second:"Traded: sent to Washington."}, 2029:{first:"Conditional (OKC): sent to OKC if not yet conveyed (top-5 protected); otherwise Denver keeps.", second:"Own."}, 2030:{first:"Own.", second:"Traded: multi-team conditional pool (Memphis/OKC)."}, 2031:{first:"Own.", second:"Own."}, 2032:{first:"Traded: sent unprotected to Brooklyn.", second:"Traded: sent to Sacramento."}, 2033:{first:"Own.", second:"Traded: sent to Sacramento."}},
+  "Timberwolves": {2027:{first:"Traded: sent unprotected to Utah (Gobert trade).", second:"Traded: sent to Memphis."}, 2028:{first:"Own (Charlotte holds right to swap).", second:"Traded: sent to Detroit."}, 2029:{first:"Traded: sent unprotected to Utah (Gobert trade).", second:"Traded: sent to Charlotte."}, 2030:{first:"Conditional swap (DAL/SAS): multi-team tiered protection layout with Dallas and San Antonio.", second:"Own."}, 2031:{first:"Traded: sent unprotected to San Antonio.", second:"Traded: sent to Chicago."}, 2032:{first:"Own.", second:"Incoming: receives Phoenix\'s 2nd."}, 2033:{first:"Traded: sent completely to Charlotte.", second:"Own."}},
+  "Thunder": {2027:{first:"Own (right to swap for LAC) + DEN (protected 1-5) + MIA (if not conveyed by 2026) + SAC/SAN (conditional).", second:"Incoming: picks from MIA pool, DET/SAC pool, and ATL (less favorable)."}, 2028:{first:"Own (right to swap for DAL) + DEN (if not conveyed in 2027).", second:"Own."}, 2029:{first:"Own + DEN (if not conveyed by 2028).", second:"Incoming: picks from MIA, ATL/CHI pool, and BOS."}, 2030:{first:"Own.", second:"Incoming: picks from HOU/DEN/MIA pool, ATL, and NYK."}, 2031:{first:"Own.", second:"Incoming: picks from DET, ORL/NOP pool, and MEM."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Trail Blazers": {2027:{first:"Own.", second:"Incoming: less favorable of NOP/POR."}, 2028:{first:"Incoming: receives ORL\'s 1st (via Memphis) + complex multi-team swap rights with MIL/WAS.", second:"Incoming: receives SAC\'s 2nd."}, 2029:{first:"Incoming: most or least favorable of BOS/MIL/POR pool.", second:"Incoming: less favorable of IND/WAS pool."}, 2030:{first:"Conditional swap (MIL): right to swap with Milwaukee.", second:"Traded: sent to Phoenix or Washington."}, 2031:{first:"Own.", second:"Own."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Jazz": {2027:{first:"Own + MIN (unprotected via Gobert trade) + CLE/MEM/PHX pool (2nd most favorable).", second:"Incoming: more favorable of BOS/ORL pool."}, 2028:{first:"Incoming: receives CLE unprotected + better of LAL/UTH pool (complex conditions).", second:"Incoming: least favorable of DET/MIA/NYK/LAC group."}, 2029:{first:"Own + MIN (unprotected via Gobert trade) + CLE/MIN pool (most or two most favorable).", second:"Traded: sent to Indiana."}, 2030:{first:"Own (right to swap for LAL 1st).", second:"Own."}, 2031:{first:"Own.", second:"Incoming: more favorable of BOS/CLE pool; own sent to MEM/PHL pool."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}},
+  "Suns": {2027:{first:"Traded: sent to Houston + receives least favorable of UTH/CLE/MIN.", second:"Traded: sent to Washington or Philadelphia + receives less favorable of BOS/ORL."}, 2028:{first:"Traded (swap): least favorable of PHX/PHL/WAS/BRK goes to Brooklyn.", second:"Traded: sent to Chicago, Indiana, or New York."}, 2029:{first:"Traded: less favorable of PHX/DAL to Houston; other to Brooklyn.", second:"Traded: sent to New York."}, 2030:{first:"Traded (swap): least favorable of WAS/MEM/PHX to Washington/Memphis.", second:"Traded: sent to Boston, Philadelphia, or Washington."}, 2031:{first:"Traded: sent completely to Memphis.", second:"Traded: sent to Charlotte."}, 2032:{first:"Own (subject to multi-team swaps).", second:"Traded: sent to Minnesota."}, 2033:{first:"Traded: sent completely to Charlotte.", second:"Traded: sent to New York."}},
+  "Lakers": {2027:{first:"Conditional own: Miami/Memphis bound if picks 5-30; top-4 protected.", second:"Traded: sent to Brooklyn or Memphis."}, 2028:{first:"Conditional swap: least favorable of LAL or better of UTH/CLE goes to Utah.", second:"Traded: sent to Orlando or Washington."}, 2029:{first:"Traded: sent completely to Dallas.", second:"Traded: sent to Memphis."}, 2030:{first:"Own (Utah holds swap rights).", second:"Traded: sent to Brooklyn."}, 2031:{first:"Own.", second:"Traded: sent to Brooklyn."}, 2032:{first:"Own.", second:"Own."}, 2033:{first:"Own.", second:"Own."}}
+};
+
+const CITY_TO_TEAM = {
+  "Atlanta":"Hawks","Boston":"Celtics","Brooklyn":"Nets","Charlotte":"Hornets","Chicago":"Bulls",
+  "Cleveland":"Cavaliers","Dallas":"Mavericks","Denver":"Nuggets","Detroit":"Pistons","Golden State":"Warriors",
+  "Houston":"Rockets","Indiana":"Pacers","LA Clippers":"Clippers","Los Angeles Clippers":"Clippers","Clippers":"Clippers",
+  "Los Angeles Lakers":"Lakers","Lakers":"Lakers","Memphis":"Grizzlies","Miami":"Heat","Milwaukee":"Bucks",
+  "Minnesota":"Timberwolves","New Orleans":"Pelicans","New York":"Knicks","Oklahoma City":"Thunder","Orlando":"Magic",
+  "Philadelphia":"76ers","Phoenix":"Suns","Portland":"Trail Blazers","Sacramento":"Kings","San Antonio":"Spurs",
+  "Toronto":"Raptors","Utah":"Jazz","Washington":"Wizards"
+};
+function resolveSimpleDestination(text){
+  const m = text.match(/[Ss]ent\s+(?:completely\s+|unprotected\s+)?to\s+([A-Za-z ]+?)(\.|,|\s*\(|$)/);
+  if(!m) return null;
+  const raw = m[1].trim();
+  if(raw.includes(" or ") || raw.includes("/")) return null; // ambiguous, multiple possible destinations
+  return CITY_TO_TEAM[raw] || null;
+}
+// Build a reverse index: team -> [{fromTeam, year, round}] for cleanly-resolved incoming picks
+const TEAM_INCOMING_PICKS = {};
+Object.keys(TEAM_PICK_NOTES).forEach(fromTeam => {
+  const years = TEAM_PICK_NOTES[fromTeam];
+  Object.keys(years).forEach(year => {
+    ["first","second"].forEach(round => {
+      const text = years[year][round];
+      if(/^traded/i.test(text.trim())){
+        const dest = resolveSimpleDestination(text);
+        if(dest){
+          TEAM_INCOMING_PICKS[dest] = TEAM_INCOMING_PICKS[dest] || [];
+          TEAM_INCOMING_PICKS[dest].push({ fromTeam, year, round });
+        }
+      }
+    });
+  });
+});
+
 let tradeTeams = { left: null, right: null };
+let mockTradeLog = [];
 let tradeSelections = { left: new Set(), right: new Set() };
 
 function openTradeModal(){
@@ -3716,6 +4039,15 @@ function openTradeModal(){
   renderTradeSummary();
 }
 
+function buildTradeTeamOptions(selectedTeam){
+  const optsWithPick = NBA_TEAMS.map(t => {
+    const short = getTeamShortName(t);
+    const idx = mockDraftPicks.findIndex(p => p === short || p.startsWith(short + " ("));
+    return { short, full: t, pick: idx !== -1 ? idx + 1 : 999 };
+  }).sort((a,b) => a.pick - b.pick);
+  return optsWithPick.map(o => `<option value="${o.short}" ${o.short===selectedTeam?'selected':''}>${o.pick <= 30 ? 'Pick ' + o.pick + ' - ' : ''}${o.full}</option>`).join("");
+}
+
 function renderTradeSide(side, teamName){
   tradeTeams[side] = teamName;
   const el = document.getElementById('tradeSide' + (side==='left'?'Left':'Right'));
@@ -3723,37 +4055,32 @@ function renderTradeSide(side, teamName){
     el.innerHTML = `
       <select class="mock-source-btn" style="width:100%;" onchange="renderTradeSide('${side}', this.value); renderTradeSummary();">
         <option value="">Select a team...</option>
-        ${NBA_TEAMS.map(t => `<option value="${t.split(" ").pop()}">${t}</option>`).join("")}
+        ${buildTradeTeamOptions(null)}
       </select>`;
     return;
   }
-  const roster = generatePlaceholderRoster(teamName);
+  const chart = NBA_DEPTH_CHARTS[teamName];
+  const roster = chart ? [...chart.starters, ...chart.second, ...chart.third, ...(chart.twoway||[])].map(p => p.n) : generatePlaceholderRoster(teamName);
   const picks = getTeamPicksForTrade(teamName);
-  const view = tradePickView[side];
-  const visiblePicks = picks.filter(p => p.group === view);
   el.innerHTML = `
     <select class="mock-source-btn" style="width:100%; margin-bottom:14px;" onchange="renderTradeSide('${side}', this.value); renderTradeSummary();">
       <option value="">Select a team...</option>
-      ${NBA_TEAMS.map(t => {
-        const short = t.split(" ").pop();
-        return `<option value="${short}" ${short===teamName?'selected':''}>${t}</option>`;
-      }).join("")}
+      ${buildTradeTeamOptions(teamName)}
     </select>
-    <div class="mock-source-row" style="margin-bottom:14px;">
-      <button class="mock-timer-btn ${view==='current'?'active':''}" onclick="setTradePickView('${side}', 'current', '${teamName}')">This Year</button>
-      <button class="mock-timer-btn ${view==='future'?'active':''}" onclick="setTradePickView('${side}', 'future', '${teamName}')">Future Picks</button>
-    </div>
     <div class="lbl">Draft Picks</div>
-    ${visiblePicks.map(p => {
+    ${picks.map(p => {
       const key = 'pick:' + p.label;
       const active = tradeSelections[side].has(key);
-      return `<div class="trade-asset-row">
-        <span>${p.label} <span style="color:var(--gold);">${p.detail}</span></span>
-        <button class="btn ${active?'btn-solid':'btn-ghost'} trade-asset-btn" onclick="toggleTradeAsset('${side}', '${key.replace(/'/g,"\\'")}')">${active?'Selected':'Trade Asset'}</button>
+      return `<div class="trade-asset-row" style="align-items:flex-start; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <span style="font-weight:600;">${p.label}</span>
+          <button class="btn ${active?'btn-solid':'btn-ghost'} trade-asset-btn" onclick="toggleTradeAsset('${side}', '${key.replace(/'/g,"\\'")}')">${active?'Selected':'Trade Asset'}</button>
+        </div>
+        <span style="color:var(--gold); font-size:.78rem; line-height:1.4;">${p.detail}</span>
       </div>`;
     }).join("")}
     <div class="lbl" style="margin-top:16px;">Roster</div>
-    <div style="max-height:220px; overflow-y:auto;">
+    <div style="max-height:480px; overflow-y:auto;">
       ${roster.map(name => {
         const key = 'player:' + name;
         const active = tradeSelections[side].has(key);
@@ -3813,6 +4140,44 @@ function completeTrade(){
     return;
   }
   const currentYear = new Date().getFullYear() + 1;
+  const trackedYears = [currentYear, currentYear+1, currentYear+2, currentYear+3];
+  const exemptYears = [currentYear, currentYear+1]; // this year and next year are exempt from the back-to-back rule
+
+  function ownsFirstRound(teamName, year){
+    if(year === currentYear) return true; // everyone has this year's own slot in the live board
+    const notes = TEAM_PICK_NOTES[teamName];
+    if(!notes || !notes[year]) return true; // no data on file, don't block on an assumption
+    return notes[year].first.trim().toLowerCase().startsWith('own');
+  }
+
+  function wouldMissBackToBack(teamName, tradedAwayYear){
+    const ownership = {};
+    trackedYears.forEach(y => { ownership[y] = ownsFirstRound(teamName, y); });
+    ownership[tradedAwayYear] = false;
+    for(let i=0; i<trackedYears.length-1; i++){
+      const y1 = trackedYears[i], y2 = trackedYears[i+1];
+      const bothExempt = exemptYears.includes(y1) && exemptYears.includes(y2);
+      if(!ownership[y1] && !ownership[y2] && !bothExempt) return `${y1} and ${y2}`;
+    }
+    return null;
+  }
+
+  for(const side of ['left','right']){
+    const otherSide = side === 'left' ? 'right' : 'left';
+    for(const key of tradeSelections[side]){
+      const m = key.match(/^pick:(\d{4}) 1st Round Pick$/);
+      if(m){
+        const year = parseInt(m[1]);
+        const gap = wouldMissBackToBack(tradeTeams[side], year);
+        if(gap){
+          msgEl.textContent = `${tradeTeams[side]} can't make this trade, they'd be left without a first-round pick in ${gap}.`;
+          msgEl.className = 'modal-msg error';
+          return;
+        }
+      }
+    }
+  }
+
   const thisYearFirstKey = `pick:${currentYear} 1st Round Pick`;
 
   function moveFirstRoundPick(fromTeam, toTeam){
@@ -3822,6 +4187,11 @@ function completeTrade(){
   if(tradeSelections.left.has(thisYearFirstKey)) moveFirstRoundPick(tradeTeams.left, tradeTeams.right);
   if(tradeSelections.right.has(thisYearFirstKey)) moveFirstRoundPick(tradeTeams.right, tradeTeams.left);
 
+  mockTradeLog.push({
+    team1: tradeTeams.left, team1Receives: Array.from(tradeSelections.right).map(formatAssetLabel),
+    team2: tradeTeams.right, team2Receives: Array.from(tradeSelections.left).map(formatAssetLabel)
+  });
+
   renderCustomMockDraft();
   if(draftSimActive) renderMockPickStrip();
   saveMockDraftProgress();
@@ -3829,6 +4199,39 @@ function completeTrade(){
   msgEl.textContent = 'Trade completed. This year\'s draft order has been updated where applicable. Future picks and roster players are tracked here for reference but don\'t yet move between teams elsewhere on the site.';
   msgEl.className = 'modal-msg';
 }
+
+const NBA_DEPTH_CHARTS = {
+  "Hawks": {starters:[{n:"Onyeka Okongwu", pos:"C/PF"}, {n:"Jalen Johnson", pos:"PF/SF"}, {n:"Dyson Daniels", pos:"SF/SG/PG"}, {n:"Nickeil Alexander-Walker", pos:"SG"}, {n:"CJ McCollum", pos:"PG/SG"}], second:[{n:"Jock Landale", pos:"C"}, {n:"Mouhamed Gueye", pos:"PF/C"}, {n:"Luguentz Dort", pos:"SG/SF"}, {n:"Aaron Wiggins", pos:"SG"}, {n:"Kingston Fleming", pos:"PG"}], third:[{n:"Zuby Ejiofor", pos:"PF/C"}, {n:"Asa Newell", pos:"SF"}, {n:"Buddy Hield", pos:"SG/SF"}, {n:"Corey Kispert", pos:"SG/SF"}, {n:"Devin Carter", pos:"PG"}], twoway:[{n:"Henri Veesaar", pos:"C"}, {n:"Jalen Wilson", pos:"SF/PF"}, {n:"Keshon Gilbert", pos:"SG/PG"}, {n:"Rayj Dennis", pos:"PG"}, {n:"Ryan Nembhard", pos:"PG"}]},
+  "Celtics": {starters:[{n:"Neemias Queta", pos:"C"}, {n:"Jayson Tatum", pos:"PF/SF"}, {n:"Paul George", pos:"SF/SG"}, {n:"Derrick White", pos:"SG/PG"}, {n:"Payton Pritchard", pos:"PG"}], second:[{n:"Mitchell Robinson", pos:"C"}, {n:"Sam Hauser", pos:"SF/PF"}, {n:"Jordan Walsh", pos:"SF/PF"}, {n:"Hugo Gonzalez", pos:"SG/PG"}, {n:"Mike Conley", pos:"PG"}], third:[{n:"Luka Garza", pos:"C"}, {n:"Chris Cenac", pos:"C"}, {n:"Ron Harper Jr.", pos:"SF"}, {n:"Baylor Scheierman", pos:"SG"}], twoway:[{n:"Amari Williams", pos:"C/PF"}, {n:"Dillon Mitchell", pos:"SF"}]},
+  "Nets": {starters:[{n:"Day\'Ron Sharpe", pos:"C"}, {n:"Julius Randle", pos:"PF/C"}, {n:"Michael Porter Jr.", pos:"SF/PF"}, {n:"Egor Demin", pos:"SG/PG"}, {n:"Mikel Brown Jr.", pos:"PG"}], second:[{n:"Moritz Wagner", pos:"C"}, {n:"Noah Clowney", pos:"PF/C"}, {n:"Terance Mann", pos:"SG/SF/PG"}, {n:"Keon Ellis", pos:"SG/SF/PG"}, {n:"Nolan Traore", pos:"PG"}], third:[{n:"Danny Wolf", pos:"C/PF"}, {n:"Joshua Jefferson", pos:"PF"}, {n:"Josh Minott", pos:"PF/SF"}, {n:"Drake Powell", pos:"SG"}, {n:"Ben Saraf", pos:"PG"}], twoway:[{n:"Elson", pos:"PF/C"}, {n:"Tyler Bilodeau", pos:"PF/SF"}, {n:"Chaney Johnson", pos:"PF/SF"}]},
+  "Hornets": {starters:[{n:"Moussa Diabate", pos:"C"}, {n:"Naz Reid", pos:"PF"}, {n:"Brandon Miller", pos:"SF"}, {n:"Kon Knueppel", pos:"SG/SF"}, {n:"Coby White", pos:"SG/PG"}], second:[{n:"Ryan Kalkbrenner", pos:"C"}, {n:"Hannes Steinbach", pos:"C/PF"}, {n:"Grant Williams", pos:"PF"}, {n:"Grayson Allen", pos:"SG/SF"}, {n:"Dennis Schroder", pos:"PG"}], third:[{n:"Tidjane Salaun", pos:"PF/C"}, {n:"Royce O\'Neale", pos:"PF/SF"}, {n:"Pat Connaughton", pos:"SF"}, {n:"Sion James", pos:"SG/SF"}, {n:"Christian Anderson", pos:"PG"}], twoway:[{n:"PJ Hall", pos:"C"}, {n:"Michael Ajayi", pos:"PF/SF"}, {n:"Dorian Finney-Smith", pos:"PF/SF"}, {n:"Liam McNeeley", pos:"SF"}, {n:"Kylan Boswell", pos:"PG"}]},
+  "Bulls": {starters:[{n:"Nic Claxton", pos:"C"}, {n:"Caleb Wilson", pos:"PF/C"}, {n:"Matas Buzelis", pos:"PF/SF"}, {n:"Norman Powell", pos:"SG/PG"}, {n:"Josh Giddey", pos:"PG/SG"}], second:[{n:"Jalen Smith", pos:"C/PF"}, {n:"Isaac Okoro", pos:"SF/SG"}, {n:"Leonard Miller", pos:"SF/PF"}, {n:"Dailyn Swain", pos:"SG/SF"}, {n:"Tre Jones", pos:"PG"}], third:[{n:"Zach Collins", pos:"C/PF"}, {n:"Patrick Williams", pos:"SF/SG"}, {n:"Noa Essengue", pos:"SF/PF"}, {n:"Rob Dillingham", pos:"PG/SG"}], twoway:[{n:"Tobe Awaka", pos:"PF"}, {n:"Jaylin Sellers", pos:"SG"}]},
+  "Cavaliers": {starters:[{n:"Jarrett Allen", pos:"C"}, {n:"Evan Mobley", pos:"C/PF"}, {n:"Peyton Watson", pos:"SF/PF"}, {n:"Donovan Mitchell", pos:"SG/PG"}, {n:"James Harden", pos:"PG/SG"}], second:[{n:"Thomas Bryant", pos:"C"}, {n:"Mario Hezonja", pos:"PF/SF"}, {n:"Jaylon Tyson", pos:"SF/SG"}, {n:"Sam Merrill", pos:"SF/PF"}, {n:"Meleek Thomas", pos:"PG"}], third:[{n:"Khalifa Diop", pos:"C"}, {n:"Nae\'qwan Tomlin", pos:"PF"}, {n:"Craig Porter Jr.", pos:"SG/PG"}, {n:"Tyrese Proctor", pos:"PG"}], twoway:[{n:"Ernest Udeh", pos:"C"}, {n:"Tristan Enaruna", pos:"SF"}, {n:"Riley Minix", pos:"SF"}]},
+  "Mavericks": {starters:[{n:"Daniel Gafford", pos:"C"}, {n:"P.J. Washington", pos:"PF/C"}, {n:"Cooper Flagg", pos:"SF/PG"}, {n:"Max Christie", pos:"SG"}, {n:"Kyrie Irving", pos:"PG"}], second:[{n:"Dereck Lively II", pos:"C"}, {n:"Morez Johnson", pos:"PF/C"}, {n:"Santi Aldama", pos:"PF/SF"}, {n:"Zaccharie Risacher", pos:"SF"}, {n:"Naji Marshall", pos:"SG/SF"}], third:[{n:"Moussa Cisse", pos:"C"}, {n:"Tarik Biberovic", pos:"PF/SF"}, {n:"Caleb Martin", pos:"SF/SG"}, {n:"Marcus Sasser", pos:"PG"}, {n:"Sergio De Larrea", pos:"PG"}], twoway:[{n:"Toibu Lawal", pos:"PF"}, {n:"Jett Howard", pos:"SG/SF"}, {n:"John Poulakidas", pos:"SG"}]},
+  "Nuggets": {starters:[{n:"Nikola Jokic", pos:"C"}, {n:"Aaron Gordon", pos:"PF/SF"}, {n:"Cameron Johnson", pos:"SF"}, {n:"DeMar DeRozan", pos:"SG/PG"}, {n:"Jamal Murray", pos:"PG"}], second:[{n:"Marvin Bagley III", pos:"C/PF"}, {n:"Spencer Jones", pos:"SG/SF"}, {n:"Julian Strawther", pos:"SG"}, {n:"Christian Braun", pos:"SG"}, {n:"Tyus Jones", pos:"PG"}], third:[{n:"Zeke Nnaji", pos:"C/PF"}, {n:"DaRon Holmes", pos:"PF/C"}, {n:"Trevon Brazile", pos:"SF"}, {n:"Alpha Diallo", pos:"SF"}, {n:"Lonnie Walker IV", pos:"SG"}], twoway:[{n:"Bryce Hopkins", pos:"SF/PF"}, {n:"KJ Simpson", pos:"PG"}]},
+  "Pistons": {starters:[{n:"John Collins", pos:"C/PF"}, {n:"Ron Holland", pos:"SF/PF"}, {n:"Ausar Thompson", pos:"SF/SG"}, {n:"Duncan Robinson", pos:"SG"}, {n:"Cade Cunningham", pos:"PG/SG"}], second:[{n:"Paul Reed", pos:"C/PF"}, {n:"Kevin Huerter", pos:"SG/SF"}, {n:"Isaiah Joe", pos:"SG"}, {n:"Ebuka Okorie", pos:"PF"}, {n:"Daniss Jenkins", pos:"PG"}], third:[{n:"Tolu Smith", pos:"C/PF"}, {n:"Taurean Prince", pos:"SF/PF"}, {n:"Javonte Green", pos:"SF/SG"}, {n:"Chaz Lanier", pos:"SG"}, {n:"Gary Harris", pos:"PG"}], twoway:[{n:"Ugonna Onyenso", pos:"C"}, {n:"Isaac Jones", pos:"PF/C"}, {n:"Elijah Harkless", pos:"SG/PG"}]},
+  "Warriors": {starters:[{n:"Al Horford", pos:"C/PF"}, {n:"Draymond Green", pos:"PF/C"}, {n:"Jimmy Butler", pos:"SG/SF"}, {n:"Brandin Podziemski", pos:"SG/PG"}, {n:"Stephen Curry", pos:"PG"}], second:[{n:"Kristaps Porzingis", pos:"C"}, {n:"Yaxel Lendeborg", pos:"PF"}, {n:"Gui Santos", pos:"PF/SF"}, {n:"Moses Moody", pos:"SG/SF"}, {n:"De\'Anthony Melton", pos:"SG/PG"}], third:[{n:"Charles Bassey", pos:"C/PF"}, {n:"Georges Niang", pos:"SF/PF"}, {n:"Will Richard", pos:"SG/PG"}, {n:"Gary Payton II", pos:"PG/SG"}, {n:"Brandon Williams", pos:"PG"}], twoway:[{n:"Lajae Jones", pos:"SG"}, {n:"LJ Cryer", pos:"PG"}]},
+  "Rockets": {starters:[{n:"Alperen Sengun", pos:"C"}, {n:"Jabari Smith Jr.", pos:"PF/C"}, {n:"Kevin Durant", pos:"SF/PF"}, {n:"Amen Thompson", pos:"SG/PG"}, {n:"Fred VanVleet", pos:"PG"}], second:[{n:"Clint Capela", pos:"C"}, {n:"Tari Eason", pos:"PF/SF"}, {n:"Bogdan Bogdanovic", pos:"SG/PG"}, {n:"Marcus Smart", pos:"SG/PG"}, {n:"Reed Sheppard", pos:"PG/SG"}], third:[{n:"Steven Adams", pos:"C"}, {n:"Jae\'Sean Tate", pos:"SF/PF"}, {n:"Isaiah Crawford", pos:"SF"}, {n:"Bruce Thornton", pos:"PG"}], twoway:[{n:"Rafael Castro", pos:"PF/C"}, {n:"Quadir Copeland", pos:"PG/SG"}, {n:"Sean Pedulla", pos:"PG"}]},
+  "Pacers": {starters:[{n:"Ivica Zubac", pos:"C"}, {n:"Pascal Siakam", pos:"PF/C"}, {n:"Aaron Nesmith", pos:"SF/SG"}, {n:"Andrew Nembhard", pos:"SG/PG"}, {n:"Tyrese Haliburton", pos:"PG"}], second:[{n:"Jay Huff", pos:"C"}, {n:"Obi Toppin", pos:"PF"}, {n:"Jarace Walker", pos:"SF/SG"}, {n:"Kelly Oubre Jr.", pos:"SF"}, {n:"T.J. McConnell", pos:"PG"}], third:[{n:"Larry Nance Jr.", pos:"PF/C"}, {n:"Johnny Furphy", pos:"SF"}, {n:"Ben Sheppard", pos:"SG"}, {n:"Quenton Jackson", pos:"SG/PG"}], twoway:[{n:"Kobe Brown", pos:"PF"}, {n:"Jalen Slawson", pos:"SF"}, {n:"Braden Smith", pos:"PG"}]},
+  "Clippers": {starters:[{n:"Brook Lopez", pos:"C"}, {n:"Derrick Jones Jr.", pos:"SF/PF"}, {n:"Brandon Ingram", pos:"SF/SG/PF"}, {n:"Keaton Wagler", pos:"SG"}, {n:"Darius Garland", pos:"PG"}], second:[{n:"Isaiah Jackson", pos:"C"}, {n:"Rui Hachimura", pos:"PF"}, {n:"Max Strus", pos:"SF"}, {n:"Bradley Beal", pos:"SG/PG"}, {n:"Kris Dunn", pos:"PG"}], third:[{n:"Yanic Konan Niederhauser", pos:"C"}, {n:"Jordan Miller", pos:"SF"}, {n:"Kobe Sanders", pos:"SG/PG"}, {n:"Gradey Dick", pos:"SG/PG"}, {n:"Cam Christie", pos:"SG"}], twoway:[{n:"Jamarion Sharp", pos:"C"}, {n:"John Broome", pos:"PF/C"}, {n:"Baba Miller", pos:"PF/C"}, {n:"Nick Martinelli", pos:"PG"}, {n:"Jalen Pickett", pos:"SG"}]},
+  "Lakers": {starters:[{n:"Walker Kessler", pos:"C"}, {n:"Jake LaRavia", pos:"SF/PF"}, {n:"Quentin Grimes", pos:"SG"}, {n:"Austin Reaves", pos:"SG/PG"}, {n:"Luka Doncic", pos:"PG/SF"}], second:[{n:"Sandro Mamukelashvili", pos:"C/PF"}, {n:"Jarred Vanderbilt", pos:"PF/SF"}, {n:"Ziaire Williams", pos:"SF"}, {n:"Cameron Carr", pos:"SF/SG"}, {n:"Jaden Hardy", pos:"PG/SG"}], third:[{n:"Kevon Looney", pos:"C/PF"}, {n:"Adou Thiero", pos:"PF/SF"}, {n:"Dalton Knecht", pos:"SF"}, {n:"Matisse Thybulle", pos:"SG/PG"}, {n:"Chris Manon", pos:"SG/PG"}], twoway:[{n:"AK Okereke", pos:"SF/PF"}, {n:"Arthur Kaluma", pos:"SG"}, {n:"Bronny James", pos:"SG/PG"}]},
+  "Grizzlies": {starters:[{n:"Zach Edey", pos:"C"}, {n:"Cameron Boozer", pos:"PF"}, {n:"Jaylen Wells", pos:"SF"}, {n:"Cedric Coward", pos:"SG/SF"}, {n:"Ty Jerome", pos:"SG/PG"}], second:[{n:"Isaiah Stewart", pos:"C/PF"}, {n:"Taylor Hendricks", pos:"PF/SF"}, {n:"Jerami Grant", pos:"SF/PF"}, {n:"GG Jackson II", pos:"SG/SF"}, {n:"Scotty Pippen Jr.", pos:"PG"}], third:[{n:"Quinten Post", pos:"PF/C"}, {n:"Oliver-Maxence Prosper", pos:"PF/SF"}, {n:"Karim Lopez", pos:"SF"}, {n:"Walter Clayton", pos:"PG"}], twoway:[{n:"Taj Gibson", pos:"C"}, {n:"Carson Cooper", pos:"PF/C"}, {n:"Kris Murray", pos:"SF/PF"}, {n:"Richie Saunders", pos:"SG"}, {n:"Jahmal Mashack", pos:"PG/SG"}, {n:"AJ Johnson", pos:"PG"}, {n:"D\'Angelo Russell", pos:"PG"}, {n:"Javon Small", pos:"PG"}]},
+  "Heat": {starters:[{n:"Bam Adebayo", pos:"C/PF"}, {n:"Giannis Antetokounmpo", pos:"PF/C"}, {n:"Andrew Wiggins", pos:"SF/SG"}, {n:"Pelle Larsson", pos:"SG"}, {n:"Davion Mitchell", pos:"PG"}], second:[{n:"Bobby Portis", pos:"C/PF"}, {n:"Nikola Jovic", pos:"PF"}, {n:"Klay Thompson", pos:"SF/SG"}, {n:"Tim Hardaway Jr.", pos:"SG/PG"}, {n:"Dru Smith", pos:"PG"}], third:[{n:"Nick Richards", pos:"C"}, {n:"Myron Gardner", pos:"SF"}, {n:"Simone Fontecchio", pos:"SF/PF"}, {n:"Ryan Conwell", pos:"SG/PG"}], twoway:[{n:"Vladislav Goldin", pos:"C"}, {n:"Keshad Johnson", pos:"SF"}, {n:"Tre Donaldson", pos:"PG"}]},
+  "Bucks": {starters:[{n:"Myles Turner", pos:"C"}, {n:"Kel\'el Ware", pos:"C"}, {n:"Tyler Herro", pos:"SG/PG"}, {n:"Kevin Porter Jr.", pos:"SG/PG"}, {n:"Ryan Rollins", pos:"PG"}], second:[{n:"Kyle Kuzma", pos:"PF/SF"}, {n:"Jaime Jaquez Jr.", pos:"SF/PF"}, {n:"Gary Trent Jr.", pos:"SG"}, {n:"Caris LeVert", pos:"SG"}, {n:"Brayden Burries", pos:"SG/PG"}], third:[{n:"Jericho Sims", pos:"C/PF"}, {n:"Ousmane Dieng", pos:"PF"}, {n:"Nate Ament", pos:"SF/PF"}, {n:"A.J. Green", pos:"SG/PG"}, {n:"Kasparas Jakucionis", pos:"PG"}], twoway:[{n:"Rafael Castro", pos:"C"}, {n:"Bogoljub Markovic", pos:"PF"}, {n:"Cormac Ryan", pos:"SG"}, {n:"Kam Jones", pos:"SG"}]},
+  "Timberwolves": {starters:[{n:"Rudy Gobert", pos:"C"}, {n:"Jonathan Kuminga", pos:"PF"}, {n:"Jaden McDaniels", pos:"SF/PF"}, {n:"Anthony Edwards", pos:"SG/PG"}, {n:"LaMelo Ball", pos:"PG"}], second:[{n:"Joan Beringer", pos:"C"}, {n:"Terrence Shannon Jr.", pos:"SG/SF"}, {n:"Donte DiVincenzo", pos:"SG/PG"}, {n:"Bones Hyland", pos:"PG/SG"}], third:[{n:"Trey Lyles", pos:"PF/C"}, {n:"Cody Williams", pos:"PF/SF"}, {n:"John Konchar", pos:"SG/PG"}, {n:"Jaylen Clark", pos:"SG"}, {n:"Isaiah Evans", pos:"SG"}], twoway:[{n:"Rocco Zikarsky", pos:"C"}, {n:"Trey Kaufman-Renn", pos:"PF/C"}, {n:"Enrique Freeman", pos:"PF/C"}, {n:"Zyon Pullin", pos:"SG/PG"}]},
+  "Pelicans": {starters:[{n:"Yves Missi", pos:"C"}, {n:"Zion Williamson", pos:"PF"}, {n:"Trey Murphy III", pos:"SF"}, {n:"Herbert Jones", pos:"SG/SF"}, {n:"DeJounte Murray", pos:"PG"}], second:[{n:"Derik Queen", pos:"PF/C"}, {n:"Saddiq Bey", pos:"SF/PF"}, {n:"Bennedict Mathurin", pos:"SG/SF"}, {n:"Jordan Poole", pos:"SG/PG"}, {n:"Jeremiah Fears", pos:"PG"}], third:[{n:"Deandre Jordan", pos:"C"}, {n:"Karlo Matkovic", pos:"PF/C"}, {n:"Micah Peavy", pos:"SG/PG"}, {n:"Jordan Hawkins", pos:"SG"}, {n:"Bryce McGowens", pos:"PG"}], twoway:[{n:"Malik Dia", pos:"PF"}, {n:"Trendon Watford", pos:"PF"}, {n:"Jaron Pierre", pos:"SG"}]},
+  "Knicks": {starters:[{n:"Karl-Anthony Towns", pos:"C/PF"}, {n:"Josh Hart", pos:"PF/SF/SG"}, {n:"OG Anunoby", pos:"SF/SG/PF"}, {n:"Mikal Bridges", pos:"SG"}, {n:"Jalen Brunson", pos:"PG"}], second:[{n:"Andre Drummond", pos:"PF/SF"}, {n:"Mohamed Diawara", pos:"SF/PF"}, {n:"Miles McBride", pos:"SG/PG"}, {n:"Landry Shamet", pos:"SG"}, {n:"Jose Alvarado", pos:"PG"}], third:[{n:"Pacome Dadiet", pos:"SG/PF"}, {n:"Jordan Clarkson", pos:"SG"}, {n:"Tyler Kolek", pos:"PG"}], twoway:[{n:"Tyler Nickel", pos:"SF"}]},
+  "Thunder": {starters:[{n:"Isaiah Hartenstein", pos:"C"}, {n:"Chet Holmgren", pos:"C/PF"}, {n:"Jalen Williams", pos:"SF/SG"}, {n:"Ajay Mitchell", pos:"PG/SG/SF"}, {n:"Shai Gilgeous-Alexander", pos:"PG"}], second:[{n:"Jaylin Williams", pos:"C/PF"}, {n:"Alex Caruso", pos:"SF/SG/PG"}, {n:"Cason Wallace", pos:"SG/PG"}, {n:"Jared McCain", pos:"SG/PG"}, {n:"Nikola Topic", pos:"PG"}], third:[{n:"Aday Mara", pos:"C"}, {n:"Thomas Sorber", pos:"SF"}, {n:"Kenrick Williams", pos:"SG/PG"}, {n:"Nikola Topic", pos:"PG"}], twoway:[{n:"Ozan Owen", pos:"SG/SF"}, {n:"Josh Dix", pos:"SG"}, {n:"Brooks Barnhizer", pos:"SG"}]},
+  "Magic": {starters:[{n:"Wendell Carter Jr.", pos:"C"}, {n:"Paolo Banchero", pos:"PF"}, {n:"Franz Wagner", pos:"SF"}, {n:"Desmond Bane", pos:"SG/PG"}, {n:"Jalen Suggs", pos:"PG"}], second:[{n:"Nikola Vucevic", pos:"C"}, {n:"Jonathan Isaac", pos:"PF"}, {n:"Tristan da Silva", pos:"SF/PF"}, {n:"Jase Richardson", pos:"SG/PG"}, {n:"Anthony Black", pos:"PG"}], third:[{n:"Goga Bitadze", pos:"C"}, {n:"Jamal Cain", pos:"SF/PF"}, {n:"Noah Penda", pos:"SF"}, {n:"Jevon Carter", pos:"PG"}], twoway:[{n:"Izaiyah Nelson", pos:"C"}, {n:"Colin Castleton", pos:"C"}, {n:"Alex Morales", pos:"SG"}]},
+  "76ers": {starters:[{n:"Joel Embiid", pos:"C"}, {n:"LeBron James", pos:"PF/SF"}, {n:"Jaylen Brown", pos:"SF/SG"}, {n:"VJ Edgecombe", pos:"SG"}, {n:"Tyrese Maxey", pos:"PG/SG"}], second:[{n:"Adem Bona", pos:"C"}, {n:"Dominick Barlow", pos:"PF"}, {n:"Dean Wade", pos:"SF"}, {n:"Kentavious Caldwell-Pope", pos:"SG/SF"}, {n:"Anfernee Simons", pos:"SG/PG"}], third:[{n:"Ariel Hukporti", pos:"C"}, {n:"Jabari Walker", pos:"PF/SF"}, {n:"Justin Edwards", pos:"SG/SF"}, {n:"LaBaron Philon", pos:"PG"}], twoway:[{n:"Rayan Rupert", pos:"SG"}, {n:"Caleb Love", pos:"SG/PG"}]},
+  "Suns": {starters:[{n:"Mark Williams", pos:"C"}, {n:"Miles Bridges", pos:"PF"}, {n:"Dillon Brooks", pos:"SF/PG"}, {n:"Jalen Green", pos:"SG"}, {n:"Devin Booker", pos:"PG/SG"}], second:[{n:"Oso Ighodaro", pos:"PF/C"}, {n:"Ryan Dunn", pos:"SF/PF"}, {n:"Luke Kennard", pos:"SG/PG"}, {n:"Jordan Goodwin", pos:"PG/SG"}, {n:"Collin Gillespie", pos:"PG"}], third:[{n:"Khaman Maluach", pos:"C"}, {n:"Koa Peat", pos:"PF"}, {n:"Rasheer Fleming", pos:"PF"}, {n:"Haywood Highsmith", pos:"SF"}, {n:"Jamaree Bouyea", pos:"PG"}], twoway:[{n:"CJ Huntley", pos:"SF"}, {n:"Koby Brea", pos:"SG/PG"}, {n:"Pat Spencer", pos:"PG/SG"}]},
+  "Trail Blazers": {starters:[{n:"Donovan Clingan", pos:"C"}, {n:"Deni Avdija", pos:"PF/SF"}, {n:"Jrue Holiday", pos:"PG/SG"}, {n:"Ja Morant", pos:"PG"}, {n:"Damian Lillard", pos:"PG"}], second:[{n:"Robert Williams", pos:"C"}, {n:"Sidy Cissoko", pos:"PF/SF"}, {n:"Toumani Camara", pos:"SG/SF"}, {n:"Micah Potter", pos:"SF/SG"}, {n:"Scoot Henderson", pos:"PG"}], third:[{n:"Yang Hansen", pos:"C"}, {n:"Branden Carlson", pos:"PF/C"}, {n:"Shaedon Sharpe", pos:"SG"}, {n:"Jeremy Sochan", pos:"PF/SG"}, {n:"Vit Krejci", pos:"SG/PG"}], twoway:[{n:"Jayson Kent", pos:"SF"}, {n:"John Tonje", pos:"SG"}, {n:"Chris Youngblood", pos:"SG"}]},
+  "Jazz": {starters:[{n:"Jaren Jackson Jr.", pos:"C/PF"}, {n:"Lauri Markkanen", pos:"PF/SF"}, {n:"Ace Bailey", pos:"SG/SF"}, {n:"Darryn Peterson", pos:"SG/PG"}, {n:"Keyonte George", pos:"PG"}], second:[{n:"Jusuf Nurkic", pos:"C"}, {n:"Kyle Filipowski", pos:"PF/C"}, {n:"Svi Mykhailiuk", pos:"SG/SF"}, {n:"Brice Sensabaugh", pos:"SG/SF"}, {n:"Isaiah Collier", pos:"PG"}], third:[{n:"Jaxson Hayes", pos:"C"}, {n:"Mo Bamba", pos:"C/PF"}, {n:"Josh Green", pos:"SG/SF"}, {n:"Josh Okogie", pos:"SG/SF"}], twoway:[{n:"Blake Hinson", pos:"SF"}, {n:"Trey Alexander", pos:"SG"}, {n:"Tamar Bates", pos:"SG"}]},
+  "Wizards": {starters:[{n:"Alex Sarr", pos:"C"}, {n:"Anthony Davis", pos:"PF/C"}, {n:"AJ Dybantsa", pos:"SF/SG"}, {n:"Kyshawn George", pos:"SG/SF"}, {n:"Trae Young", pos:"PG"}], second:[{n:"Deandre Ayton", pos:"C"}, {n:"Khris Middleton", pos:"SG/SF"}, {n:"Bilal Coulibaly", pos:"SF/SG"}, {n:"Tre Johnson", pos:"SG"}, {n:"Bub Carrington", pos:"PG"}], third:[{n:"Tristan Vukcevic", pos:"C"}, {n:"Justin Champagnie", pos:"SF/PF"}, {n:"Will Riley", pos:"SF"}, {n:"Tre Mann", pos:"PG/SG"}], twoway:[{n:"Felix Okpara", pos:"C/PF"}, {n:"Jamir Watkins", pos:"SF"}]},
+  "Kings": {starters:[{n:"Domantas Sabonis", pos:"C/PF"}, {n:"Keegan Murray", pos:"SF"}, {n:"De\'Andre Hunter", pos:"SF/PF"}, {n:"Zach LaVine", pos:"SG"}, {n:"Darius Acuff", pos:"PG"}], second:[{n:"Maxime Raynaud", pos:"C"}, {n:"Precious Achiuwa", pos:"PF/C"}, {n:"Daeqwon Plowden", pos:"SG/SF"}, {n:"Nique Clifford", pos:"SG"}, {n:"Malik Monk", pos:"PG"}], third:[{n:"Dylan Cardwell", pos:"C"}, {n:"Alex Karaban", pos:"SF/PF"}, {n:"Emanuel Sharp", pos:"SG"}, {n:"Ben Simmons", pos:"PG/C"}], twoway:[{n:"Jonathan Mogbo", pos:"PF/C"}, {n:"Adam Flagler", pos:"SG"}]},
+  "Spurs": {starters:[{n:"Victor Wembanyama", pos:"C"}, {n:"Julian Champagnie", pos:"SF/PF"}, {n:"Devin Vassell", pos:"SG/SF"}, {n:"Stephon Castle", pos:"SG/PG"}, {n:"De\'Aaron Fox", pos:"PG"}], second:[{n:"Luke Kornet", pos:"C"}, {n:"Tobias Harris", pos:"PF"}, {n:"Harrison Barnes", pos:"SF"}, {n:"Keldon Johnson", pos:"SG"}, {n:"Dylan Harper", pos:"PG"}], third:[{n:"Tarris Reed Jr.", pos:"C"}, {n:"Carter Bryant", pos:"SF/PF"}, {n:"Jordan McLaughlin", pos:"PG"}], twoway:[{n:"Maliq Brown", pos:"PF"}, {n:"David Jones Garcia", pos:"SF"}, {n:"Ja\'Kobi Gillespie", pos:"PG"}]},
+  "Raptors": {starters:[{n:"Jakob Poeltl", pos:"C"}, {n:"Scottie Barnes", pos:"PF/SF/PG"}, {n:"Kawhi Leonard", pos:"SF"}, {n:"RJ Barrett", pos:"SG/SF"}, {n:"Immanuel Quickley", pos:"PG/SG"}], second:[{n:"Collin Murray-Boyles", pos:"PF/C"}, {n:"Allen Graves", pos:"PF"}, {n:"Kyle Anderson", pos:"SF/PF"}, {n:"Ja\'Kobe Walter", pos:"SG"}, {n:"Jamal Shead", pos:"PG"}], third:[{n:"Trayce Jackson-Davis", pos:"C"}, {n:"Jamison Battle", pos:"PF"}, {n:"Alijah Martin", pos:"SG"}], twoway:[{n:"Trey Jemison", pos:"C"}, {n:"Chucky Hepburn", pos:"PG"}, {n:"Jaden Bradley", pos:"PG"}]}
+};
 
 const NBA_TEAM_ABBR = {
   "Hawks":"ATL","Celtics":"BOS","Nets":"BKN","Hornets":"CHA","Bulls":"CHI","Cavaliers":"CLE",
@@ -3844,14 +4247,19 @@ const NBA_TEAM_COLOR = {
   "Pelicans":"#0C2340","Knicks":"#006BB6","Thunder":"#007AC1","Magic":"#0077C0","76ers":"#006BB6","Suns":"#1D1160",
   "Trail Blazers":"#E03A3E","Kings":"#5A2D81","Spurs":"#C4CED4","Raptors":"#CE1141","Jazz":"#002B5C","Wizards":"#002B5C"
 };
+const ESPN_LOGO_CODE_OVERRIDES = { "Jazz":"utah", "Pelicans":"no" }; // ESPN uses non-standard codes for these two teams
+function getNbaLogoUrl(teamName){
+  const abbr = ESPN_LOGO_CODE_OVERRIDES[teamName] || (NBA_TEAM_ABBR[teamName] || teamName.slice(0,3)).toLowerCase();
+  return `https://a.espncdn.com/i/teamlogos/nba/500/${abbr}.png`;
+}
+
 function nbaTeamBadge(pickLabel){
   // Use current official team marks via ESPN's NBA team-logo CDN.
   // This keeps every NBA placeholder consistent, including current Rockets and Magic logos.
   const teamName = pickLabel.split(" (from")[0].trim();
-  const abbr = (NBA_TEAM_ABBR[teamName] || teamName.slice(0,3)).toLowerCase();
   const fullName = Object.keys(NBA_TEAM_ABBR).find(k => k === teamName) || teamName;
   const alt = `${fullName} logo`;
-  return `<span class="nba-badge"><img src="https://a.espncdn.com/i/teamlogos/nba/500/${abbr}.png" alt="${alt}" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='${(NBA_TEAM_ABBR[teamName] || '').toUpperCase()}'"></span>`;
+  return `<span class="nba-badge"><img src="${getNbaLogoUrl(teamName)}" alt="${alt}" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='${(NBA_TEAM_ABBR[teamName] || '').toUpperCase()}'"></span>`;
 }
 
 const NBA_TEAMS = ["Atlanta Hawks","Boston Celtics","Brooklyn Nets","Charlotte Hornets","Chicago Bulls",
@@ -4922,14 +5330,23 @@ async function renderRankWatchChart(){
 }
 
 function drawRankWatchDatasets(canvas, targetPlayers, historyRows){
-  const allDates = [...new Set(historyRows.map(r => new Date(r.recorded_at).toISOString().slice(0,10)))].sort();
+  let allDates = [...new Set(historyRows.map(r => new Date(r.recorded_at).toISOString().slice(0,10)))].sort();
+  const usingCurrentOnly = allDates.length === 0;
+  if(usingCurrentOnly){
+    allDates = [new Date().toISOString().slice(0,10)];
+  }
   const labels = allDates.map(d => new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric'}));
 
   const datasets = targetPlayers.map((p, i) => {
-    const rows = historyRows.filter(r => r.player_id === p.id);
-    const byDate = {};
-    rows.forEach(r => { byDate[new Date(r.recorded_at).toISOString().slice(0,10)] = r.rk; });
-    const dataPoints = allDates.map(d => byDate[d] !== undefined ? byDate[d] : null);
+    let dataPoints;
+    if(usingCurrentOnly){
+      dataPoints = [p.rk];
+    } else {
+      const rows = historyRows.filter(r => r.player_id === p.id);
+      const byDate = {};
+      rows.forEach(r => { byDate[new Date(r.recorded_at).toISOString().slice(0,10)] = r.rk; });
+      dataPoints = allDates.map(d => byDate[d] !== undefined ? byDate[d] : null);
+    }
     const color = RANK_LINE_COLORS[i % RANK_LINE_COLORS.length];
     return {
       label: p.name,
