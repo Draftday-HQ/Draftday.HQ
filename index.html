@@ -153,6 +153,7 @@
   }
   .acct-avatar-mini img{width:100%; height:100%; object-fit:cover;}
   .acct-avatar-mini .silhouette-icon{width:65%; height:65%;}
+  .acct-btn-text{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;}
 
   /* ================= AUTH MODAL ================= */
   .modal-overlay{
@@ -490,11 +491,18 @@
   .mock-strip-item.current{opacity:1; transform:scale(1.3); transform-origin:top center; box-shadow:0 0 16px rgba(198,161,91,.5);}
   .mock-strip-num{font-family:var(--mono); font-size:.65rem; color:var(--paper-dim); font-weight:600; margin-bottom:-2px;}
   .mock-strip-logo{width:40px; height:40px; object-fit:contain; display:block;}
-  .mock-onclock-header{display:flex; align-items:center; gap:20px; margin-bottom:20px; flex-wrap:wrap;}
+  .mock-strip-pick-avatar{
+    width:22px; height:22px; border-radius:50%; background:var(--gold); color:var(--void);
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:.55rem;
+    font-weight:700; margin-top:4px; position:relative; z-index:2;
+  }
+  .mock-onclock-header{display:flex; align-items:center; gap:20px; margin-bottom:16px; flex-wrap:wrap;}
+  .mock-onclock-actions{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;}
   @media (max-width:600px){
     .mock-onclock-header{gap:12px;}
     .mock-onclock-header .mock-timer-badge{margin-left:0 !important;}
-    .mock-onclock-header .btn{flex:1 1 auto; font-size:.65rem; padding:10px 8px;}
+    .mock-onclock-actions{gap:8px;}
+    .mock-onclock-actions .btn{flex:1 1 calc(50% - 8px); min-width:0; font-size:.62rem; padding:10px 6px; text-align:center;}
   }
   .mock-onclock-logo{
     width:96px; height:96px; border-radius:50%; border:2px solid var(--gold); display:flex;
@@ -1024,7 +1032,7 @@
     .weekly-claim-pending{padding:5px 10px; font-size:.62rem;}
     nav.links{display:none;}
     .nav-social{display:none;}
-    .acct-btn{font-size:.6rem; padding:8px 10px; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .acct-btn{font-size:.6rem; padding:8px 10px; max-width:130px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
     .burger{display:block;}
     .hero-inner{grid-template-columns:1fr;}
     .fan{height:320px; margin-top:20px; touch-action:pan-y;}
@@ -1387,13 +1395,15 @@
     <div class="mock-strip-wrap">
       <div class="mock-strip" id="mockPickStrip"></div>
     </div>
-    <div class="mock-onclock-header">
+    <div class="mock-onclock-header" id="mockOnclockInfoRow">
       <div class="mock-onclock-logo" id="mockOnClockLogoBig"></div>
       <div>
         <div class="lbl" id="mockPickNumLabel" style="margin:0;">Pick 1</div>
         <div style="font-family:var(--display); font-size:1.6rem;" id="mockOnClockTeamBig"></div>
       </div>
       <div class="mock-timer-badge" id="mockTimerDisplay" style="margin-left:auto;">Unlimited</div>
+    </div>
+    <div class="mock-onclock-actions">
       <button class="btn btn-ghost" onclick="showMockPicksOverview(false)">View Picks</button>
       <button class="btn btn-ghost" onclick="openTradeModal()">Trade</button>
       <button class="btn btn-ghost" onclick="showDepthChartPopup()">Depth Chart</button>
@@ -1460,8 +1470,8 @@
 
           <div class="lbl" style="margin-top:20px; margin-bottom:10px;">Player Source</div>
           <div class="mock-source-row">
-            <button class="mock-source-btn active" onclick="setMockBoardSource('custom', this)">My Custom Board</button>
-            <button class="mock-source-btn stat-tooltip-label" data-tooltip="The 64 prospects actually entering this year's draft, ranked 1-64." onclick="setMockBoardSource('draftboard', this)">Draft Day HQ Draft Board</button>
+            <button class="mock-source-btn" onclick="setMockBoardSource('custom', this)">My Custom Board</button>
+            <button class="mock-source-btn stat-tooltip-label active" data-tooltip="The 64 prospects actually entering this year's draft, ranked 1-64." onclick="setMockBoardSource('draftboard', this)">Draft Day HQ Draft Board</button>
             <button class="mock-source-btn stat-tooltip-label" data-tooltip="Every prospect we track across all classes, ranked 1-93." onclick="setMockBoardSource('bigboard', this)">Draft Day HQ Big Board</button>
           </div>
           <p class="profile-empty" style="margin-top:12px;">Use the arrows next to each pick to reorder the draft.</p>
@@ -2215,6 +2225,12 @@ function renderPodcasts(){
 
 /* ================= VIEW SWITCHING ================= */
 function showView(name, skipNav, fromHistory){
+  const inActiveCoop = coopCurrentRoom && coopCurrentRoom.status === 'active';
+  const leavingDraftPage = document.getElementById('view-mockdraftsim')?.classList.contains('active') && name !== 'mockdraftsim';
+  if(inActiveCoop && leavingDraftPage){
+    showCoopNavBlockedPopup();
+    return;
+  }
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   window.scrollTo(0, 0);
@@ -2227,6 +2243,20 @@ function showView(name, skipNav, fromHistory){
   if(!fromHistory){
     history.pushState({view:name}, '', '#'+name);
   }
+}
+
+function showCoopNavBlockedPopup(){
+  if(document.getElementById('coopNavBlockedModal')) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  overlay.id = 'coopNavBlockedModal';
+  overlay.innerHTML = `
+    <div class="modal-box" style="max-width:420px; text-align:center;">
+      <h2 style="margin-bottom:14px;">You can't change tabs during a Co-Op mock draft</h2>
+      <p class="profile-empty">Quit the draft first if you want to leave this page.</p>
+      <button class="btn btn-solid" style="width:100%; margin-top:16px;" onclick="document.getElementById('coopNavBlockedModal').remove()">Got It</button>
+    </div>`;
+  document.body.appendChild(overlay);
 }
 
 function mobileNavigate(name){
@@ -2587,12 +2617,12 @@ function showCustomBoardSub(which){
   }
 }
 
-let mockBoardSource = "custom";
+let mockBoardSource = "draftboard";
 let lotteryHasRun = false;
 function renderCustomMockDraft(){
   const el = document.getElementById('cbMockTableBody');
   if(!el) return;
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = getVisiblePickOrder();
   let rows = visiblePicks.map((team, i) => {
     let moveIndicator = '';
     if(lotteryHasRun && i < 16){
@@ -2602,22 +2632,18 @@ function renderCustomMockDraft(){
       else if(delta < 0) moveIndicator = `<span class="mock-move-down">▼ ${Math.abs(delta)}</span>`;
       else moveIndicator = `<span class="mock-move-none">—</span>`;
     }
+    const isRound2 = i >= 30;
     return `
     <tr>
       <td class="rknum">${i+1}</td>
       <td class="pname">${nbaTeamBadge(team)}${team} ${moveIndicator}</td>
       <td style="text-align:right; white-space:nowrap;">
+        ${isRound2 ? '' : `
         <button class="mock-reorder-btn" onclick="moveMockPick(${i}, -1)" ${i===0?'disabled':''}>↑</button>
-        <button class="mock-reorder-btn" onclick="moveMockPick(${i}, 1)" ${i===mockDraftPicks.length-1?'disabled':''}>↓</button>
+        <button class="mock-reorder-btn" onclick="moveMockPick(${i}, 1)" ${i===29?'disabled':''}>↓</button>`}
       </td>
     </tr>`;
   }).join("");
-  if(draftLength === 60){
-    for(let i=31; i<=60; i++){
-      const team = mockDraftPicksRound2[i - 31];
-      rows += `<tr><td class="rknum">${i}</td><td class="pname">${nbaTeamBadge(team)}${team}</td><td></td></tr>`;
-    }
-  }
   el.innerHTML = rows;
 }
 function moveMockPick(index, direction){
@@ -2771,6 +2797,7 @@ let coopRoomChannel = null;
 let coopHostTimerInterval = null;
 let coopCurrentRoom = null;
 
+let coopPollInterval = null;
 function subscribeToCoopLobby(roomId){
   if(coopRoomChannel) sb.removeChannel(coopRoomChannel);
   coopRoomChannel = sb.channel('room-' + roomId)
@@ -2778,6 +2805,13 @@ function subscribeToCoopLobby(roomId){
       payload => routeCoopRoomUpdate(payload.new))
     .subscribe();
   sb.from('mock_draft_rooms').select('*').eq('id', roomId).single().then(({data}) => { if(data) routeCoopRoomUpdate(data); });
+
+  // Backup polling in case a Realtime update is ever missed or the connection drops
+  clearInterval(coopPollInterval);
+  coopPollInterval = setInterval(() => {
+    if(!coopRoomId) { clearInterval(coopPollInterval); return; }
+    sb.from('mock_draft_rooms').select('*').eq('id', roomId).single().then(({data}) => { if(data) routeCoopRoomUpdate(data); });
+  }, 3000);
 }
 // kept for compatibility with any older call sites
 function subscribeToRoomUpdates(roomId){ subscribeToCoopLobby(roomId); }
@@ -2790,6 +2824,7 @@ function routeCoopRoomUpdate(room){
     document.getElementById('coopLobbyOverlay')?.remove();
     renderCoopDraftUI(room);
   }
+  if(room.pending_trade) showCoopTradeOfferPopup(room);
 }
 
 function renderCoopLobbyUI(room){
@@ -2806,7 +2841,7 @@ function renderCoopLobbyUI(room){
     <div style="max-width:700px; margin:0 auto;">
       <h2 style="margin-bottom:6px;">Draft Room Lobby</h2>
       <p class="profile-empty">Teams are assigned automatically in alternating order. Click a team to claim it for yourself — everyone sees changes live.</p>
-      <div class="lbl" style="margin-top:20px;">Participants</div>
+      <div class="lbl" style="margin-top:20px;">Participants (${room.ready_user_ids.length} of ${room.participants.length} ready)</div>
       ${room.participants.map(p => `
         <div class="comp-row">
           <span>${p.username}${p.user_id === room.host_user_id ? ' (Host)' : ''}</span>
@@ -2823,7 +2858,7 @@ function renderCoopLobbyUI(room){
           </label>`;
         }).join("")}
       </div>
-      <button class="btn ${isReady?'btn-ghost':'btn-solid'}" style="width:100%; margin-top:20px;" onclick="markCoopReady('${room.id}')">${isReady ? 'Cancel Ready' : 'Ready Up'}</button>
+      <button class="btn ${isReady?'btn-ghost':'btn-solid'}" style="width:100%; margin-top:20px;" onclick="markCoopReady('${room.id}')">${isReady ? 'Cancel Ready' : 'Ready'}</button>
       ${allReady ? '<p class="profile-empty" style="color:var(--gold); text-align:center; margin-top:10px;">Everyone is ready, starting the draft...</p>' : ''}
       <button class="btn btn-ghost" style="width:100%; margin-top:10px;" onclick="quitMockDraft()">Leave Room</button>
     </div>`;
@@ -2857,7 +2892,8 @@ function renderCoopDraftUI(room){
   coopCurrentRoom = room;
   document.getElementById('undoPickBtn').style.display = 'none';
   clearInterval(coopHostTimerInterval);
-  renderMockPickStrip();
+  renderMockPickStrip(room.pick_order, room.current_pick_index, room.picks_made.map(p => ({pick: p.pick, playerName: p.playerName})));
+  slideMockStripToCurrent(room.current_pick_index);
   document.getElementById('mockPickNumLabel').textContent = `Pick ${room.current_pick_index + 1}`;
 
   if(room.current_pick_index >= room.pick_order.length){
@@ -2924,7 +2960,8 @@ async function makeCoopPick(playerId){
   const team = room.pick_order[room.current_pick_index];
   const player = players.find(p => p.id === playerId);
   const newPicksMade = [...room.picks_made, { pick: room.current_pick_index + 1, team, playerId, playerName: player.name, automated: false }];
-  await sb.from('mock_draft_rooms').update({ picks_made: newPicksMade, current_pick_index: room.current_pick_index + 1, updated_at: new Date().toISOString() }).eq('id', room.id);
+  const { error } = await sb.from('mock_draft_rooms').update({ picks_made: newPicksMade, current_pick_index: room.current_pick_index + 1, updated_at: new Date().toISOString() }).eq('id', room.id);
+  if(error){ console.error('Co-op pick failed to save:', error); alert('That pick did not save, check your connection and try again.'); }
 }
 
 async function autoPickForCoopRoom(room, sourcePlayers){
@@ -2933,13 +2970,14 @@ async function autoPickForCoopRoom(room, sourcePlayers){
   if(!top) return;
   const team = room.pick_order[room.current_pick_index];
   const newPicksMade = [...room.picks_made, { pick: room.current_pick_index + 1, team, playerId: top.id, playerName: top.name, automated: true }];
-  await sb.from('mock_draft_rooms').update({ picks_made: newPicksMade, current_pick_index: room.current_pick_index + 1, updated_at: new Date().toISOString() }).eq('id', room.id);
+  const { error } = await sb.from('mock_draft_rooms').update({ picks_made: newPicksMade, current_pick_index: room.current_pick_index + 1, updated_at: new Date().toISOString() }).eq('id', room.id);
+  if(error) console.error('Co-op auto-pick failed to save:', error);
 }
 
 let coopRoomId = null;
 async function ensureCoopRoom(){
   if(coopRoomId) return coopRoomId;
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = getVisiblePickOrder();
   const poolIds = getBoardSourcePlayers().map(p => p.id);
   const { data, error } = await sb.from('mock_draft_rooms').insert({
     host_user_id: currentUser.id, host_username: currentProfile.username,
@@ -3074,7 +3112,7 @@ async function startMockDraftSimulation(){
   if(coopEnabled){
     const roomId = await ensureCoopRoom();
     if(!roomId){ alert('Could not start the co-op room.'); return; }
-    const pickOrder = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+    const pickOrder = getVisiblePickOrder();
     const { data: room } = await sb.from('mock_draft_rooms').select('*').eq('id', roomId).single();
     const participants = room ? room.participants : [{ user_id: currentUser.id, username: currentProfile.username, team_indices: [] }];
     const assignment = computeRoundRobinAssignment(participants.length, pickOrder.length);
@@ -3109,7 +3147,7 @@ function isTeamAutomated(pickIdx){
 
 function processMockDraftPick(){
   clearInterval(draftSimTimerInterval);
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = getVisiblePickOrder();
   if(draftSimPickIndex >= visiblePicks.length){
     finishMockDraftSimulation();
     return;
@@ -3142,27 +3180,36 @@ function updateTimerDisplay(){
   if(el) el.textContent = `${draftSimTimeLeft}s`;
 }
 
-function renderMockPickStrip(){
+function renderMockPickStrip(overridePicks, overrideIndex, picksMade){
   const strip = document.getElementById('mockPickStrip');
   if(!strip) return;
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = overridePicks || getVisiblePickOrder();
+  const currentIdx = overrideIndex !== undefined ? overrideIndex : draftSimPickIndex;
+  const madeList = picksMade || draftSimResults.map(r => ({pick: r.pick, playerName: r.player.name}));
   strip.innerHTML = visiblePicks.map((team, i) => {
     const teamName = team.split(" (from")[0].trim();
     const color = NBA_TEAM_COLOR[teamName] || "#c6a15b";
+    const made = madeList.find(p => p.pick === i + 1);
+    const pickedBadge = made ? `<div class="mock-strip-pick-avatar" title="${made.playerName}">${initials(made.playerName)}</div>` : '';
     return `
-    <div class="mock-strip-item ${i===draftSimPickIndex?'current':''} ${i<draftSimPickIndex?'done':''}" id="mockStripItem${i}" style="border-color:${color}; background:${color}55;">
+    <div class="mock-strip-item ${i===currentIdx?'current':''} ${i<currentIdx?'done':''}" id="mockStripItem${i}" style="border-color:${color}; background:${color}55;">
       <div class="mock-strip-num">${i+1}</div>
       <img class="mock-strip-logo" src="${getNbaLogoUrl(teamName)}" alt="${teamName} logo" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<span style=\\'color:${color}; font-family:var(--mono); font-size:.7rem;\\'>${(NBA_TEAM_ABBR[teamName]||'').toUpperCase()}</span>')">
+      ${pickedBadge}
     </div>`;
   }).join("");
 }
 
-function slideMockStripToCurrent(){
+function slideMockStripToCurrent(overrideIndex){
   const strip = document.getElementById('mockPickStrip');
-  const current = document.getElementById('mockStripItem' + draftSimPickIndex);
-  if(strip && current){
-    const offset = current.offsetLeft - (strip.clientWidth/2) + (current.clientWidth/2);
-    strip.scrollTo({ left: offset, behavior: 'smooth' });
+  const wrap = strip ? strip.parentElement : null; // the actual scrollable element is the wrapper, not the inner content div
+  const idx = overrideIndex !== undefined ? overrideIndex : draftSimPickIndex;
+  const current = document.getElementById('mockStripItem' + idx);
+  if(wrap && current){
+    const wrapRect = wrap.getBoundingClientRect();
+    const currentRect = current.getBoundingClientRect();
+    const offset = wrap.scrollLeft + (currentRect.left - wrapRect.left) - (wrap.clientWidth/2) + (currentRect.width/2);
+    wrap.scrollTo({ left: offset, behavior: 'smooth' });
   }
 }
 
@@ -3235,7 +3282,7 @@ function undoLastPick(){
 
 function selectPlayerForCurrentPick(playerId){
   clearInterval(draftSimTimerInterval);
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = getVisiblePickOrder();
   const team = visiblePicks[draftSimPickIndex];
   const player = players.find(p => p.id === playerId);
   draftSimResults.push({ pick: draftSimPickIndex + 1, team, player });
@@ -3246,7 +3293,7 @@ function selectPlayerForCurrentPick(playerId){
 }
 
 function autoPickForCurrentTeam(){
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = getVisiblePickOrder();
   const team = visiblePicks[draftSimPickIndex];
   const availablePlayers = draftSimAvailableIds.map(id => players.find(p => p.id === id)).filter(Boolean).sort((a,b)=>a.rk-b.rk);
   const topPlayer = availablePlayers[0];
@@ -3260,7 +3307,7 @@ function autoPickForCurrentTeam(){
 }
 
 function showDepthChartPopup(){
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = getVisiblePickOrder();
   const teamRaw = draftSimActive ? visiblePicks[draftSimPickIndex] : visiblePicks[0];
   const teamName = teamRaw.split(" (from")[0].trim();
   const chart = NBA_DEPTH_CHARTS[teamName];
@@ -3363,7 +3410,10 @@ function showMockPicksOverview(isFinished){
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay open';
   overlay.id = 'mockPicksOverviewModal';
-  const rows = draftSimResults.map(r => `
+  const resultsSource = coopCurrentRoom
+    ? coopCurrentRoom.picks_made.map(p => ({ pick: p.pick, team: p.team, player: { name: p.playerName }, automated: p.automated }))
+    : draftSimResults;
+  const rows = resultsSource.map(r => `
     <tr>
       <td class="rknum" style="width:50px; vertical-align:middle;">${r.pick}</td>
       <td style="width:60px; vertical-align:middle;">${nbaTeamBadge(r.team)}</td>
@@ -3421,6 +3471,7 @@ function quitMockDraft(){
   lotteryHasRun = false;
   clearInterval(draftSimTimerInterval);
   clearInterval(coopHostTimerInterval);
+  clearInterval(coopPollInterval);
   if(coopRoomChannel){ sb.removeChannel(coopRoomChannel); coopRoomChannel = null; }
   document.getElementById('coopLobbyOverlay')?.remove();
   coopRoomId = null;
@@ -3980,6 +4031,10 @@ const mockDraftPicksBaseline = [
   "Raptors (from Thunder)"
 ];
 const mockDraftPicks = mockDraftPicksBaseline.slice();
+function getVisiblePickOrder(){
+  if(draftLength === 60) return mockDraftPicks.concat(mockDraftPicksRound2);
+  return mockDraftPicks.slice(0, Math.min(draftLength, 30));
+}
 const mockDraftPicksRound2 = [
   "76ers (from Pacers)",
   "Wizards (from Warriors)",
@@ -4153,7 +4208,7 @@ let mockTradeLog = [];
 let tradeSelections = { left: new Set(), right: new Set() };
 
 function openTradeModal(){
-  const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+  const visiblePicks = getVisiblePickOrder();
   const onClockTeamRaw = draftSimActive ? visiblePicks[draftSimPickIndex] : mockDraftPicks[0];
   const onClockTeam = onClockTeamRaw.split(" (from")[0].trim();
   tradeTeams = { left: onClockTeam, right: null };
@@ -4353,11 +4408,85 @@ function confirmTradeBeforeCompleting(){
         <b>${tradeTeams.right} receive:</b> ${rightGets.join(", ") || "Nothing"}
       </div>
       <div style="display:flex; gap:12px; margin-top:20px;">
-        <button class="btn btn-solid" style="flex:1;" onclick="document.getElementById('confirmTradeModal').remove(); executeTrade();">Yes, Make the Trade</button>
+        <button class="btn btn-solid" style="flex:1;" onclick="document.getElementById('confirmTradeModal').remove(); handleTradeConfirmed();">Yes, Make the Trade</button>
         <button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('confirmTradeModal').remove();">No, Go Back</button>
       </div>
     </div>`;
   document.body.appendChild(overlay);
+}
+
+function getCoopTeamController(teamName){
+  if(!coopCurrentRoom) return null;
+  const idx = coopCurrentRoom.pick_order.findIndex(t => t === teamName || t.startsWith(teamName + " ("));
+  if(idx === -1) return null;
+  return coopCurrentRoom.participants.find(p => p.team_indices.includes(idx)) || null;
+}
+
+async function handleTradeConfirmed(){
+  const controller = getCoopTeamController(tradeTeams.right);
+  const inActiveCoop = coopCurrentRoom && coopCurrentRoom.status === 'active';
+  if(inActiveCoop && controller && currentUser && controller.user_id !== currentUser.id){
+    // Trading with a team controlled by a different real person — send an offer instead of executing directly
+    const offer = {
+      fromUserId: currentUser.id, fromUsername: currentProfile.username,
+      toUserId: controller.user_id, toUsername: controller.username,
+      team1: tradeTeams.left, team1Receives: Array.from(tradeSelections.right).map(formatAssetLabel),
+      team2: tradeTeams.right, team2Receives: Array.from(tradeSelections.left).map(formatAssetLabel),
+      leftSelections: Array.from(tradeSelections.left), rightSelections: Array.from(tradeSelections.right)
+    };
+    await sb.from('mock_draft_rooms').update({ pending_trade: offer }).eq('id', coopCurrentRoom.id);
+    alert(`Trade offer sent to ${controller.username}. Waiting for them to respond.`);
+    document.getElementById('tradeModal')?.remove();
+    return;
+  }
+  executeTrade();
+}
+
+function showCoopTradeOfferPopup(room){
+  if(document.getElementById('coopTradeOfferModal')) return;
+  const offer = room.pending_trade;
+  if(!offer || !currentUser || offer.toUserId !== currentUser.id) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  overlay.id = 'coopTradeOfferModal';
+  overlay.innerHTML = `
+    <div class="modal-box" style="max-width:480px;">
+      <h2 style="margin-bottom:16px;">${offer.fromUsername} has offered you a trade</h2>
+      <div class="comp-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <b>${offer.team2} receive:</b> ${offer.team1Receives.join(", ") || "Nothing"}
+      </div>
+      <div class="comp-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <b>${offer.team1} receive:</b> ${offer.team2Receives.join(", ") || "Nothing"}
+      </div>
+      <div style="display:flex; gap:12px; margin-top:20px;">
+        <button class="btn btn-solid" style="flex:1;" onclick="respondToCoopTradeOffer(true)">Accept</button>
+        <button class="btn btn-ghost" style="flex:1;" onclick="respondToCoopTradeOffer(false)">Decline</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function respondToCoopTradeOffer(accepted){
+  document.getElementById('coopTradeOfferModal')?.remove();
+  const room = coopCurrentRoom;
+  const offer = room?.pending_trade;
+  if(!room || !offer) return;
+  if(accepted){
+    function applyPickMoves(selections, fromTeam, toTeam, pickOrder){
+      selections.forEach(key => {
+        const m = key.match(/^pick:(r1|r2):(\d+)$/);
+        if(!m) return;
+        const idx = parseInt(m[2]);
+        if(m[1] === 'r1') pickOrder[idx] = `${toTeam} (from ${fromTeam})`;
+      });
+    }
+    const newPickOrder = room.pick_order.slice();
+    applyPickMoves(offer.leftSelections, offer.team1, offer.team2, newPickOrder);
+    applyPickMoves(offer.rightSelections, offer.team2, offer.team1, newPickOrder);
+    await sb.from('mock_draft_rooms').update({ pick_order: newPickOrder, pending_trade: null }).eq('id', room.id);
+  } else {
+    await sb.from('mock_draft_rooms').update({ pending_trade: null }).eq('id', room.id);
+  }
 }
 
 function executeTrade(){
@@ -4382,7 +4511,7 @@ function executeTrade(){
   if(draftSimActive){
     renderMockPickStrip();
     // Refresh the on-clock logo/team name too, in case the trade changed who's currently picking
-    const visiblePicks = mockDraftPicks.slice(0, Math.min(draftLength, 30));
+    const visiblePicks = getVisiblePickOrder();
     const currentTeam = visiblePicks[draftSimPickIndex];
     if(currentTeam) renderDraftSimUI(currentTeam);
   }
@@ -5012,7 +5141,6 @@ function renderProfileModal(savedBoard, holdings, prices, ownFollowerCount, ownF
           <option value="">Select your team...</option>
           ${NBA_TEAMS.map(t=>`<option value="${t}">${t}</option>`).join("")}
         </select>
-        <button class="btn btn-solid" onclick="saveNbaTeam()">Add</button>
       </div>` : ''}
     </div>
 
@@ -5024,8 +5152,8 @@ function renderProfileModal(savedBoard, holdings, prices, ownFollowerCount, ownF
       <div class="team-add-row" style="position:relative;">
         <input type="text" id="collegeTeamInput" placeholder="Type a school..." autocomplete="off" oninput="renderCollegeTeamSuggestions()" onfocus="renderCollegeTeamSuggestions()" onblur="setTimeout(()=>{const b=document.getElementById('collegeTeamSuggestions'); if(b) b.style.display='none';}, 150)">
         <div id="collegeTeamSuggestions" class="autocomplete-suggestions" style="display:none;"></div>
-        <button class="btn btn-solid" onclick="addCollegeTeam()">Add</button>
       </div>` : ''}
+      ${(!nbaTeam || collegeTeams.length < 3) ? `<button class="btn btn-solid" style="width:100%; margin-top:12px;" onclick="saveTeamSelections()">${(!nbaTeam && collegeTeams.length===0) ? 'Add' : 'Update'}</button>` : ''}
     </div>
 
     ${p.staff_tag ? `
@@ -5151,6 +5279,33 @@ async function setPrimaryCollegeTeam(team){
   } catch(e){ console.error('Failed to set primary college team', e); }
 }
 
+async function saveTeamSelections(){
+  const nbaSelect = document.getElementById('nbaTeamSelect');
+  const collegeInput = document.getElementById('collegeTeamInput');
+  const updates = {};
+  let newCollegeTeams = null;
+
+  if(nbaSelect && nbaSelect.value){
+    updates.nba_team = nbaSelect.value;
+  }
+  if(collegeInput && collegeInput.value.trim()){
+    const team = collegeInput.value.trim();
+    const current = Array.isArray(currentProfile.college_teams) ? currentProfile.college_teams : [];
+    if(current.length < 3 && !current.includes(team)){
+      newCollegeTeams = [...current, team];
+      updates.college_teams = newCollegeTeams;
+    }
+  }
+  if(Object.keys(updates).length === 0) return;
+  try{
+    const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
+    if(error) throw error;
+    if(updates.nba_team) currentProfile.nba_team = updates.nba_team;
+    if(newCollegeTeams) currentProfile.college_teams = newCollegeTeams;
+    openProfileModal();
+  } catch(e){ console.error('Failed to save team selections', e); }
+}
+
 async function saveNbaTeam(){
   const select = document.getElementById('nbaTeamSelect');
   const team = select.value;
@@ -5269,7 +5424,7 @@ function updateAcctUI(){
     const avatarHTML = currentProfile.avatar_url
       ? `<img src="${currentProfile.avatar_url}" alt="">`
       : SILHOUETTE_SVG;
-    btn.innerHTML = `<span class="acct-avatar-mini">${avatarHTML}</span><span>${currentProfile.username} · $${Number(currentProfile.balance).toLocaleString()}${founderTag}</span>`;
+    btn.innerHTML = `<span class="acct-avatar-mini">${avatarHTML}</span><span class="acct-btn-text">${currentProfile.username} · $${Number(currentProfile.balance).toLocaleString()}${founderTag}</span>`;
     btn.classList.add('logged-in');
     btn.onclick = openProfileModal;
     btn.title = 'View your profile';
