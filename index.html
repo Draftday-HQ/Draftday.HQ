@@ -634,6 +634,54 @@
 
   /* ================= RECENT SLIDESHOW ================= */
   .recent-wrap{position:relative;}
+  /* ================= UPCOMING PROSPECT GAMES ================= */
+  #upcoming-games-wrap{padding:90px 40px; border-top:1px solid var(--steel); background:var(--void);}
+  .upcoming-games-rail{
+    display:flex; gap:22px; overflow-x:auto; padding:10px 4px 20px; margin-top:40px;
+    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  }
+  .upcoming-games-rail::-webkit-scrollbar{height:6px;}
+  .upcoming-games-rail::-webkit-scrollbar-thumb{background:var(--steel-soft);}
+  .game-card{
+    flex:0 0 340px; scroll-snap-align:start; background:var(--panel); border:1px solid var(--steel);
+    position:relative; overflow:hidden; transition:border-color .2s, transform .2s;
+  }
+  .game-card:hover{border-color:var(--gold); transform:translateY(-3px);}
+  .game-card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, var(--gold), transparent);
+  }
+  .game-card-date{
+    font-family:var(--mono); font-size:.65rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--gold); padding:18px 20px 0;
+  }
+  .game-card-matchup{
+    display:flex; align-items:center; justify-content:space-between; padding:16px 20px 20px;
+    border-bottom:1px solid var(--steel);
+  }
+  .game-card-team{display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; text-align:center;}
+  .game-card-team img, .game-card-team .school-logo-badge{width:36px; height:36px; object-fit:contain; margin:0;}
+  .game-card-team .sbadge{font-size:.85rem; padding:6px 10px;}
+  .game-card-team-name{font-family:var(--serif); font-size:.82rem; color:var(--paper); margin-top:2px;}
+  .game-card-vs{font-family:var(--display); font-size:.9rem; color:var(--paper-dim); padding:0 10px;}
+  .game-card-score{font-family:var(--mono); font-size:1.1rem; color:var(--paper); font-weight:700;}
+  .game-card-prospects{padding:16px 20px 20px;}
+  .game-card-prospects-label{
+    font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--paper-dim); margin-bottom:12px;
+  }
+  .prospect-chip{
+    display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; transition:opacity .15s;
+  }
+  .prospect-chip:hover{opacity:.7;}
+  .prospect-chip .rank-avatar{width:34px; height:34px; flex-shrink:0;}
+  .prospect-chip-info{display:flex; flex-direction:column; min-width:0;}
+  .prospect-chip-name{font-family:var(--serif); font-size:.85rem; color:var(--paper); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .prospect-chip-rank{font-family:var(--mono); font-size:.6rem; color:var(--gold); letter-spacing:.05em;}
+  .upcoming-games-empty{
+    border:1px dashed var(--steel-soft); padding:60px 40px; text-align:center; margin-top:40px;
+  }
+  .upcoming-games-empty p{font-family:var(--serif); color:var(--paper-dim); font-size:1rem;}
   .slideshow{
     position:relative; height:420px; border:1px solid var(--steel); overflow:hidden; background:var(--panel);
   }
@@ -732,6 +780,86 @@
   .vitals div b{font-family:var(--display); font-weight:400; font-size:1.3rem;}
 
   .profile-grid{display:grid; grid-template-columns:2fr 1fr; gap:56px;}
+  .profile-view-toggle{
+    display:flex; align-items:center; gap:16px; margin-bottom:28px; padding-bottom:24px;
+    border-bottom:1px solid var(--steel);
+  }
+  .pv-label{font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--paper-dim);}
+  .pv-switch{display:flex; gap:0; border:1px solid var(--steel-soft);}
+  .pv-option{
+    background:var(--void); border:none; cursor:pointer; padding:10px 22px;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--paper-dim); transition:color .2s, background .2s;
+  }
+  .pv-option:first-child{border-right:1px solid var(--steel-soft);}
+  .pv-option.pv-active{background:var(--gold); color:var(--void); font-weight:700;}
+  .pv-option:not(.pv-active):hover{color:var(--paper);}
+
+  .profile-condensed-only{display:none;}
+  [data-profile-view="condensed"] .profile-condensed-only{display:block;}
+  [data-profile-view="condensed"] .profile-complex-only{display:none;}
+
+  .condensed-summary-block{
+    border:1px solid var(--steel-soft); background:linear-gradient(165deg, var(--panel), var(--void));
+    padding:0; margin-bottom:10px; overflow:hidden;
+  }
+  .condensed-playstyle{padding:30px 32px 26px; border-bottom:1px solid var(--steel);}
+  .condensed-playstyle-label{
+    font-family:var(--mono); font-size:.6rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:12px;
+  }
+  .condensed-archetype-tag{
+    display:inline-block; font-family:var(--display); font-weight:700; font-size:1.15rem;
+    color:var(--gold); border:1px solid var(--gold); padding:8px 18px; margin-bottom:16px;
+    letter-spacing:.01em;
+  }
+
+  .condensed-stat-row{
+    display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--steel);
+  }
+  .condensed-stat-row div{text-align:center; padding:18px 6px; border-right:1px solid var(--steel);}
+  .condensed-stat-row div:last-child{border-right:none;}
+  .condensed-prior-seasons{padding:16px 32px 18px; border-bottom:1px solid var(--steel);}
+  .condensed-prior-label{
+    font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--paper-dim); margin-bottom:10px;
+  }
+  .condensed-prior-row{
+    display:flex; gap:16px; font-family:var(--mono); font-size:.74rem; color:var(--paper-dim);
+    padding:5px 0;
+  }
+  .condensed-prior-row span{min-width:fit-content;}
+  .condensed-prior-yr{color:#9b9183; font-family:var(--serif); min-width:110px;}
+  @media (max-width:500px){
+    .condensed-prior-row{flex-wrap:wrap; gap:4px 14px;}
+    .condensed-prior-yr{width:100%; margin-bottom:2px;}
+  }
+  .condensed-stat-row span{display:block; font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--paper-dim); margin-bottom:8px;}
+  .condensed-stat-row b{font-family:var(--display); font-size:1.5rem; color:var(--gold);}
+  .condensed-sw-grid{display:grid; grid-template-columns:1fr 1fr; gap:0;}
+  .condensed-sw-col{padding:24px 28px;}
+  .condensed-sw-col:first-child{border-right:1px solid var(--steel);}
+  .condensed-sw-label{
+    font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+    margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--steel-soft);
+  }
+  .condensed-sw-label.strength{color:#9fd8a8;}
+  .condensed-sw-label.weakness{color:#e0a46a;}
+  .condensed-chip{
+    font-family:var(--serif); font-size:.88rem; line-height:1.5; padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+  }
+  .condensed-chip:last-child{border-bottom:none;}
+  .condensed-chip.strength{color:#cfc9bc;}
+  .condensed-chip.strength::before{content:"+ "; color:#9fd8a8; font-weight:700;}
+  .condensed-chip.weakness{color:#cfc9bc;}
+  .condensed-chip.weakness::before{content:"– "; color:#e0a46a; font-weight:700;}
+  @media (max-width:700px){
+    .condensed-sw-grid{grid-template-columns:1fr;}
+    .condensed-sw-col:first-child{border-right:none; border-bottom:1px solid var(--steel);}
+    .condensed-stat-row{grid-template-columns:repeat(2,1fr);}
+    .condensed-stat-row div:nth-child(2){border-right:none;}
+  }
   .profile-grid > div{min-width:0;}
   .profile-grid h3{font-family:var(--display); font-weight:400; font-size:1.4rem; margin-bottom:16px; margin-top:36px;}
   .profile-grid h3:first-child{margin-top:0;}
@@ -759,12 +887,20 @@
   .hl-cover:hover .hl-play-btn{background:var(--gold); color:var(--void); transform:scale(1.1);}
   .hl-cover-text{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--paper); text-align:center; padding:0 20px;}
   .hl-cover-text span{display:block; color:var(--gold); font-size:.65rem; margin-top:6px; letter-spacing:.1em;}
-  .sw-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:16px;}
-  .sw-box{border:1px solid var(--steel); padding:20px;}
-  .sw-box .lbl{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:10px;}
+  .sw-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:16px; background:var(--steel); border:1px solid var(--steel);}
+  .sw-box{background:var(--panel); padding:24px; position:relative;}
+  .sw-box::before{content:''; position:absolute; top:0; left:0; right:0; height:2px;}
+  .sw-box.strength::before{background:var(--signal-up);}
+  .sw-box.weakness::before{background:var(--signal);}
+  .sw-box .lbl{font-family:var(--mono); font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--steel-soft);}
   .sw-box.strength .lbl{color:var(--signal-up);}
   .sw-box.weakness .lbl{color:var(--signal);}
-  .sw-box ul{padding-left:18px; color:#cfc9bc; font-size:.92rem; line-height:1.7;}
+  .sw-box ul{list-style:none; padding:0; color:#cfc9bc; font-size:.92rem; line-height:1.6;}
+  .sw-box li{padding:9px 0; border-bottom:1px solid rgba(255,255,255,.05);}
+  .sw-box li:last-child{border-bottom:none;}
+  .sw-box.strength li::before{content:"+ "; color:var(--signal-up); font-weight:700;}
+  .sw-box.weakness li::before{content:"– "; color:var(--signal); font-weight:700;}
+  @media (max-width:700px){ .sw-grid{grid-template-columns:1fr;} }
   .highlight-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
   .highlight-embed{position:relative; aspect-ratio:16/9; border:1px solid var(--steel); background:var(--void); overflow:hidden;}
   .highlight-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
@@ -1341,6 +1477,13 @@
     <div class="dots" id="slideDots"></div>
   </section>
 
+  <section id="upcoming-games-wrap">
+    <div class="eyebrow">Mark Your Calendar</div>
+    <h2 class="section-title">Upcoming Prospect Games</h2>
+    <p class="section-sub">Matchups worth watching — games where two of our tracked prospects are sharing the floor.</p>
+    <div class="upcoming-games-rail" id="upcomingGamesRail"></div>
+  </section>
+
   <section id="home-players-preview">
     <div class="eyebrow">The Board</div>
     <h2 class="section-title">Featured Player Profiles</h2>
@@ -1358,6 +1501,10 @@
     <div class="eyebrow">2027 Big Board</div>
     <h2 class="section-title">Player Profiles</h2>
     <p class="section-sub">Every prospect we're tracking, ranked and updated weekly. Click a name for the full profile.</p>
+    <div id="profileViewToggleMount"></div>
+    <div class="player-search-row">
+      <input type="text" id="playerGridSearchInput" placeholder="Search players by name..." oninput="handlePlayerGridSearch()">
+    </div>
     <div class="filter-row" id="filterRow" style="margin-bottom:14px;"></div>
     <div class="filter-row" id="classFilterRow"></div>
     <div class="player-grid" id="fullPlayerGrid"></div>
@@ -2353,6 +2500,18 @@ function renderFilters(){
   document.getElementById('classFilterRow').innerHTML = classes.map((c,i)=>
     `<button class="chip ${i===0?'active':''}" onclick="filterPlayers('cls','${c}', this)">${c}</button>`).join("");
 }
+let playerGridSearchTerm = "";
+function applyPlayerGridFilters(){
+  let filtered = players;
+  if(posFilter !== 'All') filtered = filtered.filter(p=>p.pos.split('/').includes(posFilter));
+  if(clsFilter !== 'All') filtered = filtered.filter(p=>p.cls === clsMap[clsFilter]);
+  const term = playerGridSearchTerm.trim().toLowerCase();
+  if(term) filtered = filtered.filter(p=>p.name.toLowerCase().includes(term));
+  const grid = document.getElementById('fullPlayerGrid');
+  grid.innerHTML = filtered.length
+    ? filtered.map(p=>playerCardHTML(p, players.indexOf(p))).join("")
+    : `<p class="profile-empty" style="grid-column:1/-1; text-align:center; padding:40px 0;">No players match "${playerGridSearchTerm}".</p>`;
+}
 function filterPlayers(group, value, btn){
   if(group==='pos'){
     posFilter = value;
@@ -2362,15 +2521,113 @@ function filterPlayers(group, value, btn){
     document.querySelectorAll('#classFilterRow .chip').forEach(c=>c.classList.remove('active'));
   }
   btn.classList.add('active');
-  let filtered = players;
-  if(posFilter !== 'All') filtered = filtered.filter(p=>p.pos.split('/').includes(posFilter));
-  if(clsFilter !== 'All') filtered = filtered.filter(p=>p.cls === clsMap[clsFilter]);
-  document.getElementById('fullPlayerGrid').innerHTML = filtered.map(p=>playerCardHTML(p, players.indexOf(p))).join("");
+  applyPlayerGridFilters();
+}
+function handlePlayerGridSearch(){
+  const input = document.getElementById('playerGridSearchInput');
+  playerGridSearchTerm = input ? input.value : "";
+  applyPlayerGridFilters();
 }
 
 /* ================= PLAYER PROFILE DETAIL ================= */
 let preProfileScrollView = null;
 let preProfileScrollPlayerId = null;
+// Profile detail level: "complex" (everything) or "condensed" (just the essentials).
+// This is a standalone display preference (not tied to login), saved locally so it applies
+// consistently everywhere a player profile can be opened: the full profile page, and the
+// quick-view popup used from mock drafts, articles, the custom board, etc. Rather than
+// building two separate HTML templates, the shared chrome (photo/vitals) always renders
+// once, and the heavier sections are simply marked so CSS can show/hide them based on this.
+let profileViewMode = localStorage.getItem('profileViewMode') || 'complex';
+function setProfileViewMode(mode){
+  profileViewMode = mode;
+  localStorage.setItem('profileViewMode', mode);
+  document.documentElement.setAttribute('data-profile-view', mode);
+  renderProfileViewToggle();
+}
+// This mounts once, on the Player Profiles page itself, rather than inside each individual
+// profile — it's a single site-wide setting, so it belongs somewhere the person visits once,
+// not repeated on every profile they open.
+function renderProfileViewToggle(){
+  const mount = document.getElementById('profileViewToggleMount');
+  if(!mount) return;
+  mount.innerHTML = `
+    <div class="profile-view-toggle">
+      <span class="pv-label">Profile Detail</span>
+      <div class="pv-switch">
+        <button class="pv-option ${profileViewMode === 'complex' ? 'pv-active' : ''}" onclick="setProfileViewMode('complex')">Full</button>
+        <button class="pv-option ${profileViewMode === 'condensed' ? 'pv-active' : ''}" onclick="setProfileViewMode('condensed')">Condensed</button>
+      </div>
+    </div>`;
+}
+// The condensed view's description is always about HOW the player plays, never their bio,
+// recruiting history, injuries, etc. — that's exactly what `comps` already is (a pure
+// playstyle line), so condensed mode leans on that instead of trimming the full scouting
+// report, which mixes in background detail that doesn't belong in a quick summary.
+// Derives a short, few-word archetype tag from a player's full playstyle line — cutting at
+// the first "who"/"with"/"that" clause (where the sentence usually shifts from the core
+// identity into elaboration), or at a comma / word-count fallback for lines that don't have
+// one of those.
+function shortArchetype(text){
+  const cutters = [' who ', ' with ', ' that ', ' whose '];
+  let cut = -1;
+  cutters.forEach(c => {
+    const i = text.indexOf(c);
+    if(i > -1 && (cut === -1 || i < cut)) cut = i;
+  });
+  if(cut > -1 && cut > 8) return text.slice(0, cut);
+  if(text.length > 45){
+    const commaIdx = text.indexOf(', ');
+    if(commaIdx > 10) return text.slice(0, commaIdx);
+    return text.split(' ').slice(0, 6).join(' ');
+  }
+  return text;
+}
+function condensedProfileBlockHTML(p){
+  // The big numbers up top are specifically the 2026-27 season — which hasn't happened yet,
+  // so they show N/A for everyone until the live stats sync (built separately) starts
+  // populating real current-season numbers as games are played. Every season already on
+  // file is real, completed data, so all of it moves into "Previous Seasons" below — small
+  // and secondary, never competing with the (currently blank) headline numbers.
+  const liveCurrentStats = (typeof liveStatsMap !== 'undefined' && liveStatsMap[p.id]) || null;
+  const currentPpg = liveCurrentStats ? liveCurrentStats.ppg : 'N/A';
+  const currentRpg = liveCurrentStats ? liveCurrentStats.rpg : 'N/A';
+  const currentApg = liveCurrentStats ? liveCurrentStats.apg : 'N/A';
+  const currentFg = liveCurrentStats ? liveCurrentStats.fg + '%' : 'N/A';
+  const priorSeasons = (p.seasons && p.seasons.length > 0) ? seasonsMostRecentFirst(p.seasons) : [];
+  return `
+    <div class="profile-condensed-only condensed-summary-block">
+      <div class="condensed-playstyle">
+        <div class="condensed-playstyle-label">Archetype</div>
+        <div class="condensed-archetype-tag">${shortArchetype(p.comps[0])}</div>
+      </div>
+      <div class="condensed-stat-row">
+        <div><span>PPG (26-27)</span><b>${currentPpg}</b></div>
+        <div><span>RPG (26-27)</span><b>${currentRpg}</b></div>
+        <div><span>APG (26-27)</span><b>${currentApg}</b></div>
+        <div><span>FG% (26-27)</span><b>${currentFg}</b></div>
+      </div>
+      ${priorSeasons.length ? `
+      <div class="condensed-prior-seasons">
+        <div class="condensed-prior-label">Previous Seasons</div>
+        ${priorSeasons.map(s => `
+          <div class="condensed-prior-row">
+            <span class="condensed-prior-yr">${s.yr}</span>
+            <span>${s.ppg} ppg</span><span>${s.rpg} rpg</span><span>${s.apg} apg</span><span>${s.fg}% fg</span>
+          </div>`).join("")}
+      </div>` : ''}
+      <div class="condensed-sw-grid">
+        <div class="condensed-sw-col">
+          <div class="condensed-sw-label strength">Strengths</div>
+          ${p.strengths.slice(0, 2).map(s => `<div class="condensed-chip strength">${s}</div>`).join("")}
+        </div>
+        <div class="condensed-sw-col">
+          <div class="condensed-sw-label weakness">Areas to Watch</div>
+          ${p.weaknesses.map(s => `<div class="condensed-chip weakness">${s}</div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+}
 function openProfile(idx, fromHistory){
   if(!fromHistory){
     // Remember where we're coming from and which player's row/card we came from, so going
@@ -2382,6 +2639,7 @@ function openProfile(idx, fromHistory){
   const p = players[idx];
   document.getElementById('profileContent').innerHTML = `
     <div class="profile-back" onclick="history.back()">← Back</div>
+    ${isContentEditor() ? `<button class="btn btn-ghost" style="float:right; margin-bottom:12px;" onclick="openPlayerEditor(${p.id})">Edit Profile</button>` : ''}
     <div class="profile-head">
       <div class="profile-avatar" style="border-top:4px solid ${accentFor(p.school)};">
         <div class="rankbadge">RANK #${p.rk}</div>
@@ -2400,30 +2658,33 @@ function openProfile(idx, fromHistory){
         </div>
       </div>
     </div>
+    ${condensedProfileBlockHTML(p)}
     <div class="profile-grid">
       <div>
-        <h3>Scouting Report</h3>
-        <p>${p.summary}</p>
-        ${hiddenRewardButtonForPlayer(p.name)}
-        <div class="sw-grid">
-          <div class="sw-box strength"><div class="lbl">Strengths</div><ul>${p.strengths.map(s=>`<li>${s}</li>`).join("")}</ul></div>
-          <div class="sw-box weakness"><div class="lbl">Areas to Watch</div><ul>${p.weaknesses.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+        <div class="profile-complex-only">
+          <h3>Scouting Report</h3>
+          <p>${p.summary}</p>
+          ${hiddenRewardButtonForPlayer(p.name)}
+          <div class="sw-grid">
+            <div class="sw-box strength"><div class="lbl">Strengths</div><ul>${p.strengths.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+            <div class="sw-box weakness"><div class="lbl">Areas to Watch</div><ul>${p.weaknesses.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+          </div>
+          <div id="mobileSidePanelAnchor"></div>
+          <h3>Season Stats</h3>
+          ${p.seasons && p.seasons.length ? `
+          <div style="overflow-x:auto;">
+          <table class="season-table" style="min-width:820px;">
+            <thead><tr><th>Season</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>STL</th><th>BLK</th><th>TO</th><th>MIN</th><th>FG%</th><th>3PT%</th><th>3PA</th><th>FT%</th><th>FTA</th></tr></thead>
+            <tbody>
+            ${seasonsMostRecentFirst(p.seasons).map(s=>`<tr><td style="text-align:left;">${s.yr}</td><td>${s.gp!==undefined?s.gp:'N/A'}</td><td>${s.ppg}</td><td>${s.rpg}</td><td>${s.apg}</td><td>${s.stl}</td><td>${s.blk}</td><td>${s.to}</td><td>${s.min}</td><td>${s.fg}%</td><td>${s.tpt}%</td><td>${s.tpa}</td><td>${s.ft}%</td><td>${s.fta}</td></tr>`).join("")}
+            </tbody>
+          </table>
+          </div>` : `
+          <table class="season-table">
+            <thead><tr><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th></tr></thead>
+            <tbody><tr><td>${p.stats.ppg}</td><td>${p.stats.rpg}</td><td>${p.stats.apg}</td><td>${p.stats.fg}</td></tr></tbody>
+          </table>`}
         </div>
-        <div id="mobileSidePanelAnchor"></div>
-        <h3>Season Stats</h3>
-        ${p.seasons && p.seasons.length ? `
-        <div style="overflow-x:auto;">
-        <table class="season-table" style="min-width:820px;">
-          <thead><tr><th>Season</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>STL</th><th>BLK</th><th>TO</th><th>MIN</th><th>FG%</th><th>3PT%</th><th>3PA</th><th>FT%</th><th>FTA</th></tr></thead>
-          <tbody>
-          ${seasonsMostRecentFirst(p.seasons).map(s=>`<tr><td style="text-align:left;">${s.yr}</td><td>${s.gp!==undefined?s.gp:'N/A'}</td><td>${s.ppg}</td><td>${s.rpg}</td><td>${s.apg}</td><td>${s.stl}</td><td>${s.blk}</td><td>${s.to}</td><td>${s.min}</td><td>${s.fg}%</td><td>${s.tpt}%</td><td>${s.tpa}</td><td>${s.ft}%</td><td>${s.fta}</td></tr>`).join("")}
-          </tbody>
-        </table>
-        </div>` : `
-        <table class="season-table">
-          <thead><tr><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th></tr></thead>
-          <tbody><tr><td>${p.stats.ppg}</td><td>${p.stats.rpg}</td><td>${p.stats.apg}</td><td>${p.stats.fg}</td></tr></tbody>
-        </table>`}
         ${p.highlights && p.highlights.length ? `
         <h3>Highlights</h3>
         <div class="hl-tabs">
@@ -2442,11 +2703,12 @@ function openProfile(idx, fromHistory){
         <div id="commentsArea-player-${p.id}"><p class="profile-empty">Loading comments...</p></div>
       </div>
       <div class="side-panel">
-        <div class="lbl">Player Archetype</div>
-        ${p.comps.map(c=>`<div class="comp-row"><span>${c}</span></div>`).join("")}
-        <div class="lbl" style="margin-top:24px;">Rankings Context</div>
+        <div class="lbl">Rankings Context</div>
         <div class="comp-row"><span>Consensus Rank</span><span>#${p.rk}</span></div>
         <div class="comp-row"><span>Position Rank</span><span>${primaryPosition(p.pos)} · #${positionRank(p)}</span></div>
+        <div class="profile-complex-only">
+        <div class="lbl" style="margin-top:24px;">Player Archetype</div>
+        ${p.comps.map(c=>`<div class="comp-row"><span>${c}</span></div>`).join("")}
         <button class="adv-toggle" id="rankHistoryToggle" onclick="toggleRankHistory(${p.id}, '${p.name.replace(/'/g,"\\'")}')">
           <span>Ranking History</span><span class="arrow">▾</span>
         </button>
@@ -2492,6 +2754,7 @@ function openProfile(idx, fromHistory){
             <canvas id="profileStockChart-${p.id}"></canvas>
           </div>
         </div>` : ""}
+        </div>
       </div>
     </div>
   `;
@@ -2604,6 +2867,74 @@ function autoLinkPlayerNamesInArticle(text, seen){
 // Article edits (only the master account can invoke this) are persisted to a small
 // `article_overrides` table keyed by article index, so they apply for every visitor,
 // not just locally in this browser, and survive refreshes.
+// Player profile text edits (open to founders/analysts, same as article editing) are stored
+// in `player_overrides`, keyed by the player's stable id (not array index, since players can
+// be added/reordered). Applied on load before any rendering, so every visitor sees the edited
+// version, not just the account that made the change.
+async function loadAndApplyPlayerOverrides(){
+  try{
+    const { data, error } = await sb.from('player_overrides').select('*');
+    if(error){ console.error('Could not load player overrides', error); return; }
+    (data || []).forEach(row => {
+      const p = players.find(pl => pl.id === row.player_id) || hiddenPlayers.find(pl => pl.id === row.player_id);
+      if(!p) return;
+      if(row.summary) p.summary = row.summary;
+      if(row.strengths) p.strengths = row.strengths;
+      if(row.weaknesses) p.weaknesses = row.weaknesses;
+      if(row.comps) p.comps = row.comps;
+    });
+  } catch(e){ console.error('Could not load player overrides', e); }
+}
+function openPlayerEditor(playerId){
+  const p = players.find(pl => pl.id === playerId);
+  if(!p) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  overlay.id = 'playerEditorModal';
+  overlay.innerHTML = `
+    <div class="modal-box profile-modal-box" style="max-width:700px;">
+      <button class="modal-close" onclick="document.getElementById('playerEditorModal').remove()">&times;</button>
+      <h2 style="margin-bottom:16px;">Edit ${p.name}</h2>
+      <div class="lbl">Scouting Report</div>
+      <textarea id="playerEditSummary" rows="8" style="width:100%; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--serif); font-size:.95rem; padding:12px; margin-bottom:20px;">${p.summary}</textarea>
+      <div class="lbl">Strengths (one per line)</div>
+      <textarea id="playerEditStrengths" rows="4" style="width:100%; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--serif); font-size:.9rem; padding:12px; margin-bottom:20px;">${p.strengths.join('\n')}</textarea>
+      <div class="lbl">Areas to Watch (one per line)</div>
+      <textarea id="playerEditWeaknesses" rows="4" style="width:100%; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--serif); font-size:.9rem; padding:12px; margin-bottom:20px;">${p.weaknesses.join('\n')}</textarea>
+      <div class="lbl">Archetype (one per line)</div>
+      <textarea id="playerEditComps" rows="2" style="width:100%; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--serif); font-size:.9rem; padding:12px;">${p.comps.join('\n')}</textarea>
+      <div id="playerEditMsg" class="modal-msg"></div>
+      <button class="btn btn-solid" style="width:100%; margin-top:16px;" onclick="savePlayerEdit(${playerId})">Save Changes</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  bringModalToFront(overlay);
+}
+async function savePlayerEdit(playerId){
+  const p = players.find(pl => pl.id === playerId);
+  const msgEl = document.getElementById('playerEditMsg');
+  const newSummary = document.getElementById('playerEditSummary').value.trim();
+  const newStrengths = document.getElementById('playerEditStrengths').value.split('\n').map(s => s.trim()).filter(s => s.length);
+  const newWeaknesses = document.getElementById('playerEditWeaknesses').value.split('\n').map(s => s.trim()).filter(s => s.length);
+  const newComps = document.getElementById('playerEditComps').value.split('\n').map(s => s.trim()).filter(s => s.length);
+  p.summary = newSummary;
+  p.strengths = newStrengths;
+  p.weaknesses = newWeaknesses;
+  p.comps = newComps;
+  try{
+    const { error } = await sb.from('player_overrides').upsert({
+      player_id: playerId, summary: newSummary, strengths: newStrengths, weaknesses: newWeaknesses, comps: newComps
+    }, { onConflict: 'player_id' });
+    if(error) throw error;
+    if(msgEl) msgEl.textContent = 'Saved.';
+    const idx = players.indexOf(p);
+    openProfile(idx, true);
+    setTimeout(() => document.getElementById('playerEditorModal')?.remove(), 400);
+  } catch(e){
+    console.error('Failed to save player edit', e);
+    if(msgEl){ msgEl.textContent = e.message || 'Could not save changes.'; msgEl.className = 'modal-msg error'; }
+  }
+}
+
 async function loadAndApplyArticleOverrides(){
   try{
     const { data, error } = await sb.from('article_overrides').select('article_idx, title, body');
@@ -2708,6 +3039,84 @@ function showArticlesSub(which){
   document.getElementById('articlesMainPanel').style.display = 'block';
 }
 
+// Pulls from the `tracked_games` table (populated by the daily stats sync once the season
+// starts) and shows only games involving at least one tracked prospect's school, with those
+// prospects' photos/ranks right on the card so a visitor can jump straight to a profile.
+async function loadUpcomingGames(){
+  const rail = document.getElementById('upcomingGamesRail');
+  if(!rail) return;
+  try{
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: games, error } = await sb
+      .from('tracked_games')
+      .select('*')
+      .gte('game_date', today)
+      .order('game_date', { ascending: true })
+      .limit(12);
+    if(error) throw error;
+
+    if(!games || games.length === 0){
+      rail.outerHTML = `<div class="upcoming-games-empty" id="upcomingGamesRail">
+        <p>The season hasn't tipped off yet — check back in November for real matchups between our tracked prospects.</p>
+      </div>`;
+      return;
+    }
+
+    rail.innerHTML = games.map(g => {
+      const homeProspects = players.filter(p => p.school === g.home_school);
+      const awayProspects = players.filter(p => p.school === g.away_school);
+      const allProspects = [...homeProspects, ...awayProspects].sort((a,b) => a.rk - b.rk);
+      if(allProspects.length === 0) return '';
+
+      const dateObj = new Date(g.game_date + 'T00:00:00');
+      const dateLabel = dateObj.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+      const isFinal = g.status === 'final' || g.status === 'F';
+
+      return `
+      <div class="game-card">
+        <div class="game-card-date">${dateLabel}</div>
+        <div class="game-card-matchup">
+          <div class="game-card-team">
+            ${schoolBadge(g.away_school)}
+            <div class="game-card-team-name">${g.away_school}</div>
+            ${isFinal && g.away_score !== null ? `<div class="game-card-score">${g.away_score}</div>` : ''}
+          </div>
+          <div class="game-card-vs">${isFinal ? 'FINAL' : '@'}</div>
+          <div class="game-card-team">
+            ${schoolBadge(g.home_school)}
+            <div class="game-card-team-name">${g.home_school}</div>
+            ${isFinal && g.home_score !== null ? `<div class="game-card-score">${g.home_score}</div>` : ''}
+          </div>
+        </div>
+        <div class="game-card-prospects">
+          <div class="game-card-prospects-label">Prospects Playing</div>
+          ${allProspects.map(p => {
+            const idx = players.indexOf(p);
+            return `<div class="prospect-chip" onclick="showPlayerQuickView(${p.id})">
+              <span class="rank-avatar">${playerAvatarHTML(p.name)}</span>
+              <div class="prospect-chip-info">
+                <span class="prospect-chip-name">${p.name}</span>
+                <span class="prospect-chip-rank">RANK #${p.rk} · ${p.school}</span>
+              </div>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>`;
+    }).join("");
+
+    if(rail.innerHTML.trim() === ''){
+      rail.outerHTML = `<div class="upcoming-games-empty" id="upcomingGamesRail">
+        <p>The season hasn't tipped off yet — check back in November for real matchups between our tracked prospects.</p>
+      </div>`;
+    }
+  } catch(e){
+    console.error('Could not load upcoming games', e);
+    rail.outerHTML = `<div class="upcoming-games-empty" id="upcomingGamesRail">
+      <p>The season hasn't tipped off yet — check back in November for real matchups between our tracked prospects.</p>
+    </div>`;
+  }
+}
+
 function formatArticleByline(a){
   // Articles with a `date` field show that date instead of an estimated reading time;
   // older articles without one keep showing the original "X min read" byline unchanged.
@@ -2750,6 +3159,7 @@ function showView(name, skipNav, fromHistory){
   }
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
+  if(name === 'players') renderProfileViewToggle();
   // Explicit 'instant' behavior overrides the global scroll-behavior:smooth CSS, which on
   // mobile can otherwise animate this reset and get interrupted by the new view's reflow,
   // leaving the page scrolled partway down instead of at the top.
@@ -4088,6 +4498,8 @@ function showPlayerQuickView(playerId){
           </div>
         </div>
       </div>
+      ${condensedProfileBlockHTML(p)}
+      <div class="profile-complex-only">
       <h3>Scouting Report</h3>
       <p>${p.summary}</p>
       <div class="sw-grid">
@@ -4108,6 +4520,7 @@ function showPlayerQuickView(playerId){
         <thead><tr><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th></tr></thead>
         <tbody><tr><td>${p.stats.ppg}</td><td>${p.stats.rpg}</td><td>${p.stats.apg}</td><td>${p.stats.fg}</td></tr></tbody>
       </table>`}
+      </div>
       ${p.highlights && p.highlights.length ? `
       <h3>Highlights</h3>
       <div class="hl-tabs">
@@ -7540,6 +7953,10 @@ loadSession();
 loadAndApplyMasterBoardRanking();
 loadAndApplyDraftBoardFlags();
 loadAndApplyArticleOverrides();
+loadAndApplyPlayerOverrides();
+document.documentElement.setAttribute('data-profile-view', profileViewMode);
+renderProfileViewToggle();
+loadUpcomingGames();
 
 
 </script>
