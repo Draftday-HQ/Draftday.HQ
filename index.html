@@ -47,47 +47,6 @@
   ::-webkit-scrollbar-track{background:var(--void);}
   ::-webkit-scrollbar-thumb{background:var(--steel-soft); border-radius:0;}
 
-  /* ================= LOADER ================= */
-  #loader{
-    position:fixed; inset:0; z-index:9999;
-    background:var(--void);
-    display:flex; align-items:center; justify-content:center; flex-direction:column;
-    transition:opacity .7s ease, visibility .7s ease;
-  }
-  #loader.hide{opacity:0; visibility:hidden; pointer-events:none;}
-  .loader-mark{
-    font-family:var(--display);
-    font-weight:900;
-    font-size:clamp(2.5rem, 8vw, 5rem);
-    letter-spacing:.02em;
-    color:var(--paper);
-    display:flex;
-    overflow:hidden;
-  }
-  .loader-mark span{
-    display:inline-block;
-    transform:translateY(110%);
-    animation:riseUp .7s cubic-bezier(.2,.9,.25,1) forwards;
-  }
-  .loader-mark .gold{color:var(--gold);}
-  @keyframes riseUp{ to{ transform:translateY(0); } }
-  .loader-bar{
-    margin-top:22px; width:220px; height:2px; background:var(--steel);
-    position:relative; overflow:hidden;
-  }
-  .loader-bar::after{
-    content:''; position:absolute; left:-100%; top:0; bottom:0; width:100%;
-    background:var(--gold);
-    animation:loadSweep 1.5s ease-in-out forwards .3s;
-  }
-  @keyframes loadSweep{ to{ left:0%; } }
-  .loader-tag{
-    margin-top:14px; font-family:var(--mono); font-size:.65rem; letter-spacing:.25em;
-    text-transform:uppercase; color:var(--paper-dim); opacity:0;
-    animation:fadeIn .6s ease forwards 1.6s;
-  }
-  @keyframes fadeIn{ to{ opacity:1; } }
-
   /* ================= NAV ================= */
   header{
     position:sticky; top:0; z-index:500;
@@ -334,12 +293,39 @@
   }
   .modal-close:hover{color:var(--paper);}
   .modal-tabs{display:flex; gap:0; margin-bottom:26px; border-bottom:1px solid var(--steel);}
+  .google-signin-btn{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+    background:#fff; color:#3c4043; border:1px solid #dadce0; border-radius:4px;
+    font-family:'Roboto',Arial,sans-serif; font-size:.95rem; font-weight:500;
+    padding:11px 12px; cursor:pointer; margin-bottom:16px; transition:box-shadow .15s;
+  }
+  .google-signin-btn:hover{box-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .auth-divider{display:flex; align-items:center; text-align:center; margin:4px 0 18px; color:var(--paper-dim); font-family:var(--mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.08em;}
+  .auth-divider::before, .auth-divider::after{content:''; flex:1; border-bottom:1px solid var(--steel);}
+  .auth-divider span{padding:0 12px;}
   .modal-tab{
     flex:1; background:none; border:none; color:var(--paper-dim); font-family:var(--mono);
     font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; padding:12px 0; cursor:pointer;
     border-bottom:2px solid transparent; margin-bottom:-1px;
   }
   .modal-tab.active{color:var(--gold); border-bottom-color:var(--gold);}
+  .auth-modal-box{
+    max-width:420px; padding-top:40px; border-top:3px solid var(--gold);
+    background:linear-gradient(180deg, rgba(212,175,55,.06), transparent 120px), var(--panel);
+  }
+  .auth-modal-header{text-align:center; margin-bottom:26px;}
+  .auth-modal-mark{font-family:var(--display); font-weight:900; font-size:1.5rem; color:var(--paper); letter-spacing:.01em;}
+  .auth-modal-mark .gold{color:var(--gold);}
+  .auth-modal-sub{font-family:var(--serif); font-size:.86rem; color:var(--paper-dim); margin-top:8px;}
+  .auth-pill-tabs{
+    display:flex; gap:6px; background:var(--void); border:1px solid var(--steel-soft);
+    padding:4px; margin-bottom:24px;
+  }
+  .auth-pill-tab{
+    flex:1; background:none; border:none; color:var(--paper-dim); font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; padding:10px 0; cursor:pointer;
+  }
+  .auth-pill-tab.active{background:var(--panel); color:var(--gold); border:1px solid var(--steel-soft);}
   .modal-box input{
     width:100%; background:var(--void); border:1px solid var(--steel-soft); color:var(--paper);
     font-family:var(--mono); font-size:.85rem; padding:13px 14px; margin-bottom:14px; outline:none;
@@ -998,11 +984,6 @@
 
   /* ================= ARTICLES ================= */
   .article-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:1px; background:var(--steel); border:1px solid var(--steel);}
-  .beehiiv-embed-wrap{
-    max-width:480px; margin:0 auto; background:#fff; border:1px solid var(--steel-soft);
-    padding:22px; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,.35);
-  }
-  .beehiiv-embed-wrap iframe{width:100% !important; border:none !important; display:block;}
   .article-card{background:var(--panel); padding:30px; display:flex; flex-direction:column; cursor:pointer; transition:background .2s;}
   .article-card:hover{background:var(--panel-2);}
   .article-card.feature{grid-row:span 2; justify-content:flex-end; min-height:440px; position:relative;}
@@ -1032,7 +1013,11 @@
   .article-inline-media img{display:block; width:100%; aspect-ratio:1/1; object-fit:cover; object-position:center top;}
   .article-inline-media figcaption{font-family:var(--mono); font-size:.58rem; line-height:1.35; color:var(--paper-dim); padding:8px 2px 2px; text-transform:uppercase; letter-spacing:.04em;}
   .article-body::after{content:""; display:block; clear:both;}
-  @media (max-width:700px){.article-inline-media{float:none; width:min(100%,360px); margin:4px auto 24px;}}
+  @media (max-width:700px){
+    .article-inline-media{float:right; width:38vw; max-width:150px; margin:2px 0 14px 14px; padding:5px;}
+    .article-inline-media figcaption{font-size:.52rem; padding:5px 1px 1px;}
+    .article-body p{font-size:1rem; line-height:1.7;}
+  }
   .article-gate-wrap{position:relative; margin-top:-40px;}
   .article-gate-fade{height:140px; background:linear-gradient(180deg, transparent, var(--void)); pointer-events:none;}
   .article-gate-box{
@@ -1045,7 +1030,6 @@
   .article-gate-box h3{font-family:var(--display); font-weight:400; font-size:1.5rem; margin-bottom:10px;}
   .article-gate-box p{font-family:var(--serif); color:var(--paper-dim); font-size:.98rem; margin-bottom:22px;}
 
-  /* ================= NEWSLETTER ================= */
   /* ================= CUSTOM BOARD ================= */
   .cb-toolbar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:26px;}
   .cb-toolbar-btns{display:flex; gap:12px;}
@@ -1189,16 +1173,6 @@
 </head>
 <body>
 
-<!-- ============ LOADER ============ -->
-<div id="loader">
-  <div class="loader-mark">
-    <span style="animation-delay:.05s">D</span><span style="animation-delay:.08s">r</span><span style="animation-delay:.11s">a</span><span style="animation-delay:.14s">f</span><span style="animation-delay:.17s">t</span><span style="animation-delay:.2s">d</span><span style="animation-delay:.23s">a</span><span style="animation-delay:.26s">y</span>
-    <span class="gold" style="animation-delay:.34s">&nbsp;HQ</span>
-  </div>
-  <div class="loader-bar"></div>
-  <div class="loader-tag">Loading the board&nbsp;&nbsp;·&nbsp;&nbsp;HQ</div>
-</div>
-
 <!-- ============ NAV ============ -->
 <header>
   <div class="nav-wrap">
@@ -1222,7 +1196,6 @@
         <button data-view="articles" onclick="showView('articles')">Articles</button>
         <div class="nav-dropdown-menu">
           <a href="javascript:void(0)" onclick="showView('articles'); showArticlesSub('articles');">Articles</a>
-          <a href="javascript:void(0)" onclick="showView('articles'); showArticlesSub('newsletter');">Newsletter</a>
         </div>
       </div>
       <button data-view="podcasts" onclick="showView('podcasts')">Podcasts</button>
@@ -1261,7 +1234,6 @@
     <button onclick="toggleMobileSubmenu('articlesSubmenu')">Articles</button>
     <div class="mobile-submenu" id="articlesSubmenu" style="display:none;">
       <a href="javascript:void(0)" onclick="closeMobileNav(); showView('articles'); showArticlesSub('articles');">Articles</a>
-      <a href="javascript:void(0)" onclick="closeMobileNav(); showView('articles'); showArticlesSub('newsletter');">Newsletter</a>
     </div>
     <button data-view="podcasts" onclick="mobileNavigate('podcasts')">Podcasts</button>
     <button onclick="toggleMobileSubmenu('customboardSubmenu')">Custom Board</button>
@@ -1279,12 +1251,26 @@
 
 <!-- ============ AUTH MODAL ============ -->
 <div class="modal-overlay" id="authModal">
-  <div class="modal-box">
+  <div class="modal-box auth-modal-box">
     <button class="modal-close" onclick="closeAuthModal()">&times;</button>
-    <div class="modal-tabs">
-      <button class="modal-tab active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
-      <button class="modal-tab" id="tabSignUp" onclick="switchAuthTab('signup')">Sign Up</button>
+    <div class="auth-modal-header">
+      <div class="auth-modal-mark">Draftday<span class="gold">&nbsp;HQ</span></div>
+      <p class="auth-modal-sub" id="authModalSub">Sign in to save boards, comment, and more.</p>
     </div>
+    <div class="auth-pill-tabs">
+      <button class="auth-pill-tab active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
+      <button class="auth-pill-tab" id="tabSignUp" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <button type="button" class="google-signin-btn" onclick="signInWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/>
+        <path fill="#FBBC05" d="M3.97 10.73A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.19.29-1.73V4.94H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.06l3.01-2.33z"/>
+        <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
+      </svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
     <form id="authForm" onsubmit="handleAuthSubmit(event)">
       <input type="email" id="authEmail" placeholder="Email address" required>
       <input type="password" id="authPassword" placeholder="Password" required minlength="6">
@@ -1488,22 +1474,8 @@
     <div class="eyebrow">Reporting &amp; Analysis</div>
     <h2 class="section-title">Articles</h2>
     <p class="section-sub">Scouting breakdowns, draft-night mechanics, and the stories behind the stock watch.</p>
-    <div class="filter-row" style="margin-bottom:34px;">
-      <button class="chip active" id="articlesSubMain" onclick="showArticlesSub('articles')">Articles</button>
-      <button class="chip" id="articlesSubNewsletter" onclick="showArticlesSub('newsletter')">Newsletter</button>
-    </div>
     <div id="articlesMainPanel">
       <div class="article-grid" id="articleGrid"></div>
-    </div>
-    <div id="articlesNewsletterPanel" style="display:none; min-height:50vh; align-items:center; justify-content:center; text-align:center;">
-      <div style="max-width:520px; margin:0 auto; padding:48px 32px; border:1px solid var(--steel-soft); background:var(--panel);">
-        <div class="eyebrow" style="justify-content:center;">Stay in the Loop</div>
-        <h2 class="section-title">The Newsletter</h2>
-        <p class="section-sub" style="margin:0 auto 28px;">Rankings movement, scouting notes and what we're seeing each week, sent straight to your inbox.</p>
-        <div class="beehiiv-embed-wrap">
-          <script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" data-beehiiv-form="d45b0a25-d481-42a8-a600-5065132fb9a9"></script>
-        </div>
-      </div>
     </div>
   </section>
 </div>
@@ -1686,7 +1658,7 @@
     <div class="foot-top">
       <div>
         <div class="foot-logo">DRAFT<span class="gold">•</span>DAY <span class="gold">HQ</span></div>
-        <p class="foot-desc">Independent NBA draft coverage: player profiles, rankings, reporting and the pod. Built from @Draftday.HQ.</p>
+        <p class="foot-desc">Independent NBA draft coverage: player profiles, rankings, reporting and the pod.</p>
         <div class="foot-social">
           <a href="https://x.com/Draftdayhq" target="_blank" rel="noopener" style="width:34px;height:34px;border:1px solid var(--steel);display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.5 8.6L23.3 22h-6.9l-5.4-7-6.2 7H1.7l8-9.2L1 2h7l4.9 6.4L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/></svg></a>
           <a href="https://www.instagram.com/draftday.hq/" target="_blank" rel="noopener" style="width:34px;height:34px;border:1px solid var(--steel);display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.7 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.16.56.55.9 1.11 1.16 1.77.25.64.42 1.37.47 2.43.05 1.06.06 1.42.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.16 1.77 4.9 4.9 0 0 1-1.77 1.16c-.64.25-1.37.42-2.43.47-1.06.05-1.42.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.16 4.9 4.9 0 0 1-1.16-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.7 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.16-1.77A4.9 4.9 0 0 1 5.46 2.53c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.3 2 12 2Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4ZM17.4 6.6a1.17 1.17 0 1 0 0-2.34 1.17 1.17 0 0 0 0 2.34Z"/></svg></a>
@@ -1718,7 +1690,6 @@
     </div>
     <div class="foot-bottom" style="border-top:1px solid var(--steel); margin-top:20px; padding-top:20px;">
       <span>© 2026 Draft Day HQ. All rights reserved.</span>
-      <span>Built from @Draftday.HQ</span>
     </div>
   </div>
 </footer>
@@ -1799,7 +1770,7 @@ const players = [
 {rk:71, id:89, name:"Kanon Catchings", school:"Georgia", pos:"PF/SF", cls:"Junior", hs:"6'9\"", wt:190, age:21, hometown:"Brownsburg, IN", summary:"Catchings began his career at BYU, helping the Cougars reach the Sweet 16 as a freshman while averaging 7.2 points and 2.2 rebounds, before transferring to Georgia and breaking out as a sophomore with 11.6 points and 4.8 rebounds a game. He's a genuine hit-or-miss type of prospect: the frame and mobility are exactly what you want in a modern forward, long enough to switch across multiple positions and mobile enough to guard on the perimeter, and there are real flashes of shot-making and rim pressure in the tape. But the actual production hasn't caught up to those tools yet, he's still not a featured option in Georgia's offense, and it's fair to wonder whether the physical upside ever translates into a featured role or whether he settles in as a solid complementary piece. He announced his return to Georgia for a third season, giving the Bulldogs frontcourt continuity alongside fellow forward Somto Cyril.", strengths:["Good size and mobility for a modern forward, switchable across multiple positions", "Proven, improving production two straight seasons, from a Sweet 16 role player to a double-digit scorer", "Winning pedigree from his BYU tournament run"], weaknesses:["Physical tools and upside still outpace his actual on-court production", "Still not a featured, high-usage option at this point in his career", "Efficiency and physicality need to keep climbing against SEC frontcourts"], comps:["Improving, mobile forward"], stats:{ppg:"11.6", rpg:"4.8", apg:"N/A", fg:"N/A"}, seasons:[{yr:"Freshman", ppg:7.3, rpg:2.2, gp:30, apg:0.7, stl:0.6, blk:0.4, to:0.8, min:17.9, fg:41.2, tpt:35.5, tpa:4, ft:58.7, fta:1.5}, {yr:"Sophomore", ppg:12, rpg:4.8, gp:31, apg:1.2, stl:0.8, blk:0.4, to:1.2, min:23.5, fg:43.8, tpt:38.6, tpa:5.7, ft:65.1, fta:2}], highlights:[{yr:"25-26", videoId:"ybey61IWfv8"}]},
 {rk:72, id:94, name:"Sam Orme", school:"Nebraska", pos:"PF/SF", cls:"Junior", hs:"6'9\"", wt:220, age:21, hometown:"Carmel, IN", summary:"Orme redshirted his first year at Belmont, then broke out over two seasons as one of the Missouri Valley Conference's better shooting forwards, earning second-team All-MVC honors as a sophomore. Nebraska coach Fred Hoiberg identified him as an early transfer target specifically for his shooting touch at 6-foot-9 and his defensive versatility, and Orme now steps up from a mid-major into the Big Ten, where he's already spoken candidly about adjusting to the size, speed, and physicality jump.", strengths:["Genuine floor-spacing shooter for his size, hitting nearly 40% from three on real volume as a sophomore", "Long, versatile defender who Hoiberg specifically praised for moving his feet and getting hands in passing lanes", "Comes from a winning Belmont program with a track record of developing high-major transfers (Will Richard, Ja'Kobi Gillespie, Cade Tyson among recent examples)"], weaknesses:["Has already acknowledged in his own words the jump from the Missouri Valley to the Big Ten is a real adjustment in size and physicality", "Modest rebounding and playmaking numbers for a forward", "Unproven yet against high-major frontcourts on a game-to-game basis"], comps:["Floor-spacing forward who shoots off movement and steps in against bigger, slower matchups"], stats:{ppg:"12.7", rpg:"5.0", apg:"1.8", fg:"55.9"}, highlights:[{yr:"Preseason 26-27", videoId:"9e9DJnDdWBI"}], seasons:[{yr:"Sophomore", gp:29, ppg:12.7, rpg:5, apg:1.8, stl:0.9, blk:0.7, to:1.1, min:25.7, fg:55.9, tpt:39.7, tpa:4.2, ft:63.6, fta:1.5}, {yr:"Freshman", gp:27, ppg:9.5, rpg:4.3, apg:1.1, stl:0.8, blk:0.9, to:0.9, min:21.2, fg:50.3, tpt:37.5, tpa:3.6, ft:79.4, fta:1.3}], enteringDraft:false},
 {rk:73, id:55, name:"Tomislav Ivisic", school:"Illinois", pos:"C", cls:"Junior", hs:"7'1\"", wt:255, age:23, hometown:"Vodice, Croatia", summary:"Ivisic played professionally for SC Derby in Montenegro's Adriatic League before joining Illinois, where he helped lead the Illini to the 2026 Final Four alongside his twin brother Zvonimir, reunited for the first time in three years after both played apart at Kentucky and Arkansas. His game is built around face-up skill rather than back-to-the-basket post play, he steps beyond the arc and shoots it with real confidence for a seven-footer, he can put the ball on the floor for a dribble or two into a jumper, and he's shown legitimate touch on floaters and runners in the lane rather than just relying on size to score. He averaged 13.0 points and 7.7 rebounds last season and hit a signature three-pointer in Illinois' Elite Eight win over Iowa, the kind of shot that captures exactly how comfortable he is operating away from the rim for a player his size.", strengths:["Skilled shooting big man, comfortable stretching the floor from the perimeter", "Face-up scorer with real touch on floaters and pull-up jumpers, not just a standstill shooter", "Physical, experienced interior scorer from years of professional ball in Europe", "Chemistry with twin brother Zvonimir creates a unique two-big frontcourt dynamic"], weaknesses:["Mobility and lateral quickness are limited defensively", "Missed time last season with tonsil surgery and a knee bruise"], comps:["Skilled, floor-spacing European center"], stats:{ppg:"10.4", rpg:"5.6", apg:"1.6", fg:"N/A"}, seasons:[{yr:"Sophomore", ppg:13, rpg:7.7, apg:2.2, stl:0.5, blk:1.1, to:1.6, min:26.6, fg:49.7, tpt:35.2, tpa:4.6, ft:75.4, fta:2}, {yr:"Junior", ppg:10.2, rpg:5.6, apg:1.6, stl:0.3, blk:0.6, to:1.3, min:25.2, fg:38.8, tpt:31.4, tpa:4.6, ft:75, fta:1.5}], advanced:[{yr:"Junior", ortg:119, usg:20.1, bpm:8.1, efg:55, ts:59.7, asttoRatio:"0.9"}], highlights:[{yr:"25-26", videoId:"HENaYrDSW1w"}], enteringDraft:true},
-{rk:74, id:104, name:"Mark Mitchell", school:"Missouri", pos:"PF/SF", cls:"Senior", hs:"6'8\"", wt:220, age:23, hometown:"Kansas City, KS", summary:"Mitchell was a five-star recruit and McDonald's All-American who started 67 of 68 games across two seasons at Duke, helping the Blue Devils win an ACC Tournament title and reach the 2024 Elite Eight. He transferred home to Missouri, where his game steadily grew each year, capped by a true breakout senior season: 18.3 points, 5.2 rebounds, and 3.6 assists per game on career-best shooting splits, earning Second-Team All-SEC honors. He briefly committed to Kentucky for a fifth season, but SEC intraconference transfer rules blocked the move; he decommitted and returned to Missouri, where his fifth-year eligibility remains subject to a legal appeal.", strengths:["Legitimate five-star pedigree with winning experience at the highest level, including an Elite Eight run at Duke", "Real statistical progression every single season, all the way through a breakout, award-winning senior year", "Versatile frontcourt scorer who improved as a passer and rebounder as his role expanded"], weaknesses:["Three-point shooting has been genuinely inconsistent year to year, from 35.2% to 27.5% to 26.0% to a strong 35.6% as a senior", "His fifth season is the subject of an ongoing, unresolved NCAA eligibility dispute", "Older prospect who will have played five college seasons by the time he's draft-eligible"], comps:["Versatile forward who scores from all three levels and passes out of the post"], stats:{ppg:"18.3", rpg:"5.3", apg:"3.6", fg:"55.1"}, highlights:[{yr:"25-26", videoId:"TvlH-5eWI0g"}], seasons:[{yr:"Senior", gp:32, ppg:18.3, rpg:5.3, apg:3.6, stl:0.7, blk:0.4, to:2, min:33.7, fg:55.1, tpt:35.6, tpa:1.4, ft:66.4, fta:8}, {yr:"Junior", gp:32, ppg:14.1, rpg:4.6, apg:1.9, stl:1, blk:0.8, to:1.6, min:27.6, fg:51.2, tpt:26, tpa:1.6, ft:66.7, fta:6.5}, {yr:"Sophomore", gp:33, ppg:11.6, rpg:6, apg:1.1, stl:0.8, blk:0.7, to:1.2, min:28.7, fg:54, tpt:27.5, tpa:1.2, ft:62.3, fta:4.8}, {yr:"Freshman", gp:35, ppg:9.1, rpg:4.5, apg:1.2, stl:0.6, blk:0.5, to:2.3, min:27.1, fg:46.9, tpt:35.2, tpa:1.5, ft:76.3, fta:2.7}], enteringDraft:true},
+{rk:74, id:104, name:"Mark Mitchell", school:"Missouri", pos:"PF/SF", cls:"Senior", hs:"6'8\"", wt:220, age:23, hometown:"Kansas City, KS", summary:"Mitchell was a five-star recruit and McDonald's All-American who started 67 of 68 games across two seasons at Duke, helping the Blue Devils win an ACC Tournament title and reach the 2024 Elite Eight. He transferred home to Missouri, where his game steadily grew each year, capped by a true breakout senior season: 18.3 points, 5.2 rebounds, and 3.6 assists per game on career-best shooting splits, earning Second-Team All-SEC honors. He briefly committed to Kentucky for a fifth season, but SEC intraconference transfer rules blocked the move; he decommitted and returned to Missouri, where his fifth-year eligibility remains subject to a legal appeal.", strengths:["Legitimate five-star pedigree with winning experience at the highest level, including an Elite Eight run at Duke", "Real statistical progression every single season, all the way through a breakout, award-winning senior year", "Versatile frontcourt scorer who improved as a passer and rebounder as his role expanded"], weaknesses:["Three-point shooting has been genuinely inconsistent year to year, from 35.2% to 27.5% to 26.0% to a strong 35.6% as a senior", "His fifth season is the subject of an ongoing, unresolved NCAA eligibility dispute", "Older prospect who will have played five college seasons by the time he's draft-eligible"], comps:["Versatile forward who scores from all three levels and passes out of the post"], stats:{ppg:"18.3", rpg:"5.3", apg:"3.6", fg:"55.1"}, highlights:[{yr:"25-26", videoId:"TvlH-5eWI0g"}], seasons:[{yr:"Senior", gp:32, ppg:18.3, rpg:5.3, apg:3.6, stl:0.7, blk:0.4, to:2, min:33.7, fg:55.1, tpt:35.6, tpa:1.4, ft:66.4, fta:8}, {yr:"Junior", gp:32, ppg:14.1, rpg:4.6, apg:1.9, stl:1, blk:0.8, to:1.6, min:27.6, fg:51.2, tpt:26, tpa:1.6, ft:66.7, fta:6.5}, {yr:"Sophomore", gp:33, ppg:11.6, rpg:6, apg:1.1, stl:0.8, blk:0.7, to:1.2, min:28.7, fg:54, tpt:27.5, tpa:1.2, ft:62.3, fta:4.8}, {yr:"Freshman", gp:35, ppg:9.1, rpg:4.5, apg:1.2, stl:0.6, blk:0.5, to:2.3, min:27.1, fg:46.9, tpt:35.2, tpa:1.5, ft:76.3, fta:2.7}], enteringDraft:true, hidden:true},
 {rk:75, id:56, name:"Zvonimir Ivisic", school:"Illinois", pos:"C", cls:"Senior", hs:"7'2\"", wt:245, age:23, hometown:"Vodice, Croatia", summary:"Zvonimir followed John Calipari from Kentucky to Arkansas before transferring again to reunite with twin brother Tomislav at Illinois for the Illini's 2026 Final Four run. His game is almost entirely face-up rather than post-oriented for a player his size, he pick-and-pops as comfortably as he rolls, spots up in the corner off penetration, and does most of his scoring from mid-range or beyond the arc rather than working with his back to the basket. A career 37.6% three-point shooter, that shooting touch is genuinely rare for a 7-foot-2 center, and it lets Illinois play him alongside his brother without the frontcourt getting clogged, since at least one of the two Ivisic twins is always spacing the floor rather than both camping in the paint.", strengths:["Excellent shooting touch for his size, career 37.6% from three", "Face-up game with real range, comfortable in pick-and-pop or spot-up situations rather than the post", "Interchangeable with his brother as a stretch-five or pick-and-pop threat", "Well-rounded, European-style frontcourt skill set"], weaknesses:["Limited rim protection and post defense for his size", "Has bounced between three programs, still building program continuity"], comps:["Stretch-five, shooting touch over physicality"], stats:{ppg:"6.6", rpg:"4.6", apg:"0.3", fg:"N/A"}, seasons:[{yr:"Freshman", ppg:5.5, rpg:3.3, apg:0.6, stl:0.3, blk:1.3, to:1, min:11.7, fg:57.7, tpt:37.5, tpa:1.1, ft:77.3, fta:1.5, gp:15}, {yr:"Sophomore", ppg:8.8, rpg:4.3, apg:0.6, stl:0.6, blk:1.9, to:1.4, min:19.3, fg:47.5, tpt:37.9, tpa:3.6, ft:72.4, fta:1.8}, {yr:"Junior", ppg:6.6, rpg:4.6, apg:0.3, stl:0.2, blk:2, to:0.5, min:17.5, fg:51.2, tpt:28.3, tpa:2.8, ft:69.2, fta:1.4}], advanced:[{yr:"Junior", ortg:120, usg:17, bpm:10.3, efg:56, ts:60.8, asttoRatio:"0.5"}, {yr:"Freshman", ortg:108, usg:16.4, bpm:7.7, efg:57, ts:62.3, asttoRatio:"0.5"}], highlights:[{yr:"25-26", videoId:"0bYkZIgMMxc"}], enteringDraft:true},
 {rk:76, id:110, name:"Obinna Ekezie Jr.", school:"Louisville", pos:"C", cls:"Freshman", hs:"7'0\"", wt:220, age:18, hometown:"Lagos, Nigeria", summary:"Ekezie is the son of Obinna Ekezie Sr., a former Maryland standout and 1999 second-round NBA pick, and reclassified from the 2027 class to enroll at Louisville as the highest-rated recruit in the modern history of the program, surpassing even Samardo Samuels. Born and trained in Nigeria before his father founded a basketball academy in Lagos, Ekezie brings a rare combination of size and skill for a true seven-footer. He'll pair with fellow five-star transfer Flory Bidunga in what one national scout called a potential double-big, dominant defensive frontcourt tandem for Louisville.", strengths:["Rare combination of size and touch for a true seven-footer, with real face-up and passing skill for his position", "Elite production in his final prep season: 17.1 points, 7.8 rebounds, and 1.8 blocks on 60.2% shooting", "Strong basketball bloodline and real polish for his age"], weaknesses:["Reclassified up a class, meaning he's facing college competition earlier than originally expected", "Coming from a Nigeria-to-prep-school path with less exposure to elite competition than some peers", "Shares the frontcourt with another five-star big in Bidunga, which could limit his own touches early"], comps:["Skilled, high-upside seven-foot big man"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26", videoId:"0uGbCnz8wwg"}], seasons:[], enteringDraft:true},
 {rk:77, id:82, name:"Arafan Diane", school:"Houston", pos:"C", cls:"Freshman", hs:"7'0\"", wt:240, age:18, hometown:"Conakry, Guinea", summary:"Diane, the No. 2-ranked center prospect in the 2026 class, committed to Houston over a final five that included Indiana, Arkansas, Kentucky and Virginia, citing Kelvin Sampson's tough-love coaching style and defensive reputation. He led Guinea to a FIBA U16 AfroBasket championship, putting up staggering rebounding numbers internationally, including a 21-point, 23-rebound outing in a quarterfinal win over Ivory Coast. He gives Houston's frontcourt a physical post presence it lacked the year before.", strengths:["Dominant, physical rebounder, led all players at U16 AfroBasket with 17.3 boards a game", "Real defensive upside fitting Kelvin Sampson's system", "Chose Houston specifically for its defensive coaching and family-oriented culture"], weaknesses:["No college minutes yet, profile is entirely built on international youth competition", "Offensive polish still developing"], comps:["Physical, rebounding-first freshman center"], stats:{ppg:"N/A", rpg:"N/A", apg:"N/A", fg:"N/A"}, highlights:[{yr:"25-26 HS", videoId:"yMsOyPtwjDU"}]},
@@ -1846,8 +1817,85 @@ const players = [
 {rk:118, id:75, name:"Nolan Winter", school:"Wisconsin", pos:"PF/C", cls:"Senior", hs:"7'0\"", wt:220, age:20, hometown:"Lakeville, MN", summary:"Winter comes from an NBA bloodline: his father Trevor played in the NBA after a career at Minnesota, and Nolan grew up in nearby Lakeville, Minnesota, winning the state's Mr. Basketball award before developing into the best rebounder in the Big Ten. He turned down real NBA interest to return to Wisconsin alongside John Blackwell, and this season he shifts full-time to center after playing some stretch-four in past years, with the frontcourt addition of Austin Rapp freeing him up to play his natural position. Scouts have consistently flagged the same traits: a legitimate seven-footer who is surprisingly light on his feet with real defensive versatility to switch onto the perimeter, and his physical transformation, he's added real strength and weight every offseason since arriving as a 190-pound recruit, has tracked with his rise up draft boards.", strengths:["Best rebounder in the Big Ten, elite feel and positioning on the glass at both ends", "Surprisingly light on his feet for a true seven-footer, capable of switching onto smaller, faster players", "Has steadily added strength and physicality every offseason since arriving at 190 pounds as a recruit"], weaknesses:["Offensive consistency and shot creation are still a work in progress, more of a play-finisher than a shot-maker right now", "Full-time move to center this season means a real jump in physicality demands against Big Ten bigs"], comps:["Mobile seven-footer who rebounds at an elite level and switches capably onto the perimeter"], stats:{ppg:"13.1", rpg:"8.5", apg:"1.5", fg:"56.9%"}, seasons:[{yr:"Freshman", ppg:2.4, rpg:1.8, apg:0.3, stl:0.2, blk:0, to:0.3, min:9.4, fg:42.3, tpt:30.8, tpa:1.1, ft:69.6, fta:0.6, gp:36}, {yr:"Sophomore", ppg:9.4, rpg:5.8, apg:1.1, stl:0.4, blk:0.8, to:1.3, min:21.1, fg:56.4, tpt:35.8, tpa:2.6, ft:76.9, fta:2.1, gp:37}, {yr:"Junior", ppg:13.1, rpg:8.5, apg:1.5, stl:0.5, blk:1.2, to:0.8, min:30.7, fg:56.9, tpt:32.6, tpa:3.1, ft:74.2, fta:3, gp:31}], highlights:[{yr:"25-26", videoId:"Ll6HAENAeW8"}], enteringDraft:true},
 {rk:119, id:76, name:"Baye Ndongo", school:"Pittsburgh", pos:"PF/C", cls:"Senior", hs:"6'9\"", wt:235, age:23, hometown:"Mbour, Senegal", summary:"Ndongo didn't start playing organized basketball until he was 14, growing up in Mbour, Senegal, and by his freshman year at Georgia Tech he was arguably the best player on the team: an ACC All-Rookie selection who led the Yellow Jackets in scoring 10 times and rebounding 18 times, the first Tech freshman to make that team since Josh Okogie. He tested the NBA Draft waters as both a freshman and a sophomore, withdrawing both times to keep developing rather than leave early as a fringe second-round projection, before transferring to Pittsburgh for his senior season. Scouts consistently point to the same traits: a high-motor, gifted athlete who finishes strong around the rim, rebounds at a high level, and has flashed real defensive versatility in ball-screen coverages, with his outside shot and shot creation as the swing skills that will decide how high he ultimately goes.", strengths:["High-motor, gifted athlete who finishes strong around the rim and on the offensive glass", "Reliable double-double threat, ranked among the ACC's best rebounders every season", "Flashed real defensive versatility in ball-screen coverages, capable of more than a traditional drop-big"], weaknesses:["Offensive game stays limited to close-range finishing, hasn't proven a jump shot at real volume", "Didn't start playing organized basketball until age 14, still has real room to refine feel and skill"], comps:["High-motor finisher who rebounds at a high level and defends multiple coverages"], stats:{ppg:"11.8", rpg:"8.1", apg:"2.4", fg:"55.6%"}, seasons:[{yr:"Freshman", ppg:12.4, rpg:8.2, apg:1, stl:0.8, blk:1.1, to:2.6, min:27.8, fg:55.8, tpt:33.3, tpa:0.4, ft:67, fta:3, gp:29}, {yr:"Sophomore", ppg:13.7, rpg:9.1, apg:1.5, stl:1, blk:1.1, to:2.5, min:30.1, fg:54.5, tpt:36.8, tpa:0.6, ft:66.4, fta:4.3, gp:33}, {yr:"Junior", ppg:11.8, rpg:8.1, apg:2.4, stl:0.8, blk:1, to:2.4, min:27.2, fg:55.6, tpt:35.7, tpa:0.5, ft:71.6, fta:3.3, gp:27}], highlights:[{yr:"25-26", videoId:"1QLlEXL_vro"}], enteringDraft:true},
 {rk:120, id:93, name:"Hamad Mousa", school:"Cal Poly", pos:"SG/SF", cls:"Junior", hs:"6'8\"", wt:200, age:20, hometown:"Doha, Qatar", summary:"Mousa played sparingly as a freshman at Dayton, averaging just 1.3 points a game, before transferring to Cal Poly and turning into one of the best mid-major scorers in the country as a sophomore: 20.4 points, 6.3 rebounds, 2.0 assists and 1.0 steals a game on 44.3% shooting, leading the Big West in scoring outright. He's a Qatari national team player who came up through the NBA Global Academy in Australia and played professionally for Al-Rayyan before college, the son of former Qatari basketball star Yaseen Musa. His breakout was significant enough that Cal Poly's coaching staff reportedly kept his commitment to return quiet to protect the program's leverage in scheduling paid non-conference games against high-major opponents.", strengths:["Elite, proven scoring breakout, led the Big West outright as a sophomore", "Excellent size and shot-making versatility at 6'8\"", "International pro experience and Qatar national team pedigree"], weaknesses:["Freshman season was essentially a non-factor, still building a longer track record", "Jump in competition level testing whether the production holds against higher-major defenses"], comps:["Breakout mid-major scoring wing"], stats:{ppg:"20.4", rpg:"6.3", apg:"2.0", fg:"44.3%"}, seasons:[{yr:"Freshman", ppg:1.3, gp:20, rpg:0.5, apg:0.4, stl:0.2, blk:0, to:0.6, min:7.8, fg:30.4, tpt:7.7, tpa:0.7, ft:68.8, fta:0.8}, {yr:"Sophomore", ppg:20.4, rpg:6.3, apg:2, stl:1, min:31.3, fg:44.3, gp:32, blk:0.4, to:2.5, tpt:37.2, tpa:7.1, ft:87.8, fta:6.4}], highlights:[{yr:"25-26", videoId:"iPV4nwKPXyA"}]},
-{rk:121, id:121, name:"Money Williams", school:"Boston College", pos:"PG/SG", cls:"Senior", hs:"6'4\"", wt:211, age:22, hometown:"Oakland, CA", summary:"Williams spent three seasons at Montana before transferring to Boston College and new head coach Luke Murray for his final year of eligibility. His junior season was one of the best in program history: a unanimous All-Big Sky First Team pick who led the conference in scoring outright, the first Grizzly to do that since 2008-09, with 699 total points that rank third-most in a single season in school history and the only top-10 assist, top-10 scoring season in the same year the program has ever had. He hit 30-plus points seven times, including a 40-point outburst against Northern Colorado, and was named Big Sky Tournament MVP despite Montana losing in the semifinals, only the fourth player ever to win the award from the losing team, after he averaged 30.3 points a game across the tournament. He now brings that scoring punch to a Boston College team that went 11-20 last season and is rebuilding around him under its first-time head coach.", strengths:["Proven, high-volume shot-maker who led his conference in scoring outright as a junior", "Combo guard who can score and distribute, the only player in Montana history with a top-10 scoring and top-10 assist season together", "Delivered his best performances in the biggest moments, a 30.3-point tournament scoring average and an MVP award from the losing team"], weaknesses:["Turnover rate has climbed as his usage has grown, needs to tighten decision-making with a bigger role", "Jump from the Big Sky to the ACC is a significant, unproven leap in competition level"], comps:["High-volume scoring combo guard"], stats:{ppg:"20.6", rpg:"4.3", apg:"4.7", fg:"49.3%"}, seasons:[{yr:"Freshman", gp:12, ppg:13.4, rpg:3.9, apg:3.3, stl:0.5, blk:0.1, to:2.2, min:20.6, fg:46.5, tpt:29.4, tpa:2.8, ft:88.2, fta:4.3}, {yr:"Sophomore", gp:35, ppg:13.2, rpg:3.5, apg:3.1, stl:1.1, blk:0.3, to:2.5, min:27.1, fg:39.9, tpt:34.1, tpa:4.7, ft:80.1, fta:4.0}, {yr:"Junior", gp:34, ppg:20.6, rpg:4.3, apg:4.7, stl:0.9, blk:0.3, to:4.1, min:31.2, fg:49.3, tpt:34.0, tpa:4.2, ft:85.5, fta:6.9}], highlights:[{yr:"25-26", videoId:"0X0deg48z-I"}], enteringDraft:true}
+{rk:121, id:121, name:"Money Williams", school:"Boston College", pos:"PG/SG", cls:"Senior", hs:"6'4\"", wt:211, age:22, hometown:"Oakland, CA", summary:"Williams spent three seasons at Montana before transferring to Boston College and new head coach Luke Murray for his final year of eligibility. His junior season was one of the best in program history: a unanimous All-Big Sky First Team pick who led the conference in scoring outright, the first Grizzly to do that since 2008-09, with 699 total points that rank third-most in a single season in school history and the only top-10 assist, top-10 scoring season in the same year the program has ever had. He hit 30-plus points seven times, including a 40-point outburst against Northern Colorado, and was named Big Sky Tournament MVP despite Montana losing in the semifinals, only the fourth player ever to win the award from the losing team, after he averaged 30.3 points a game across the tournament. He now brings that scoring punch to a Boston College team that went 11-20 last season and is rebuilding around him under its first-time head coach.", strengths:["Proven, high-volume shot-maker who led his conference in scoring outright as a junior", "Combo guard who can score and distribute, the only player in Montana history with a top-10 scoring and top-10 assist season together", "Delivered his best performances in the biggest moments, a 30.3-point tournament scoring average and an MVP award from the losing team"], weaknesses:["Turnover rate has climbed as his usage has grown, needs to tighten decision-making with a bigger role", "Jump from the Big Sky to the ACC is a significant, unproven leap in competition level"], comps:["High-volume scoring combo guard"], stats:{ppg:"20.6", rpg:"4.3", apg:"4.7", fg:"49.3%"}, seasons:[{yr:"Freshman", gp:12, ppg:13.4, rpg:3.9, apg:3.3, stl:0.5, blk:0.1, to:2.2, min:20.6, fg:46.5, tpt:29.4, tpa:2.8, ft:88.2, fta:4.3}, {yr:"Sophomore", gp:35, ppg:13.2, rpg:3.5, apg:3.1, stl:1.1, blk:0.3, to:2.5, min:27.1, fg:39.9, tpt:34.1, tpa:4.7, ft:80.1, fta:4.0}, {yr:"Junior", gp:34, ppg:20.6, rpg:4.3, apg:4.7, stl:0.9, blk:0.3, to:4.1, min:31.2, fg:49.3, tpt:34.0, tpa:4.2, ft:85.5, fta:6.9}], highlights:[{yr:"25-26", videoId:"0X0deg48z-I"}], enteringDraft:true},
+{
+  "rk": 122, "id": 122, "name": "Kam Williams", "school": "Kentucky", "pos": "SG/SF", "cls": "Junior",
+  "hs": "6'8\"", "wt": 190, "age": 20, "hometown": "Lafayette, LA",
+  "summary": "Williams arrived at Kentucky as a three-star Tulane transfer who'd quietly flashed real shooting touch as a freshman, then saw his sophomore season cut short by a broken foot in January before fighting his way back for Kentucky's NCAA Tournament run off the bench. He's announced he's running it back in Lexington for a junior season, giving Mark Pope a 6'8\" wing who can shoot it at a high level and defend multiple positions once healthy.",
+  "strengths": [
+    "Efficient catch-and-shoot threat at 6'8\", graded in elite percentiles for catch-and-shoot efficiency as a freshman",
+    "Size and length for the position let him guard multiple spots on the perimeter",
+    "Fought back from a broken foot to contribute in Kentucky's NCAA Tournament run, showing real toughness"
+  ],
+  "weaknesses": [
+    "Limited self-creation or shot-making off the dribble so far, mostly a play-finisher",
+    "Lost development time to the foot injury during his one season at Kentucky"
+  ],
+  "comps": ["Long, high-percentage catch-and-shoot wing who can guard multiple positions"],
+  "stats": {"ppg":"6.1","rpg":"2.2","apg":"0.9","fg":"44.8%"},
+  "seasons": [
+    {"yr":"Freshman","gp":33,"ppg":9.3,"rpg":4.5,"apg":1.3,"stl":1.4,"blk":1.1,"to":0.8,"min":32.3,"fg":48.5,"tpt":41.2,"tpa":4.6,"ft":76.0,"fta":0.8},
+    {"yr":"Sophomore","gp":23,"ppg":6.1,"rpg":2.2,"apg":0.9,"stl":0.6,"blk":0.3,"to":0.6,"min":18.5,"fg":44.8,"tpt":35.5,"tpa":3.3,"ft":95.0,"fta":0.9}
+  ],
+  "highlights": [],
+  "enteringDraft": false
+},
+{
+  "rk": 123, "id": 123, "name": "Jeremiah Wilkinson", "school": "Arkansas", "pos": "PG/SG", "cls": "Junior",
+  "hs": "6'1\"", "wt": 185, "age": 20, "hometown": "Powder Springs, GA",
+  "summary": "Wilkinson has been a high-volume scoring guard everywhere he's played, from a strong freshman year at Cal to a breakout sophomore season at Georgia where he started 21 games and put together three 30-point outbursts, including one against Arkansas itself. He chose the Razorbacks over Kentucky, Oklahoma, Oklahoma State and LSU to help replace SEC Player of the Year Darius Acuff, giving John Calipari a proven high-major scorer to pair with a loaded freshman class.",
+  "strengths": [
+    "Proven high-volume scorer at the high-major level, with three 30-point games last season",
+    "Improved his defensive activity and steal numbers in each of his first two college seasons",
+    "Battle-tested in the SEC, has already scored against the very team he's now joining"
+  ],
+  "weaknesses": [
+    "Scoring has outpaced his playmaking so far, assist numbers remain modest for a lead guard",
+    "Undersized at 6'1\" for a primary scoring guard against bigger high-major backcourts"
+  ],
+  "comps": ["High-volume scoring guard who can get hot in bunches and create his own shot"],
+  "stats": {"ppg":"17.0","rpg":"2.0","apg":"1.8","fg":"40.9%"},
+  "seasons": [
+    {"yr":"Freshman","gp":32,"ppg":15.1,"rpg":1.9,"apg":1.5,"stl":0.8,"blk":0.1,"to":1.6,"min":27.4,"fg":39.9,"tpt":32.1,"tpa":5.8,"ft":78.6,"fta":4.4},
+    {"yr":"Sophomore","gp":30,"ppg":17.0,"rpg":2.0,"apg":1.8,"stl":1.6,"blk":0.3,"to":1.4,"min":25.6,"fg":40.9,"tpt":35.0,"tpa":6.9,"ft":77.9,"fta":5.1}
+  ],
+  "highlights": [],
+  "enteringDraft": false
+},
+{
+  "rk": 124, "id": 124, "name": "Tre White", "school": "Kansas", "pos": "SF", "cls": "5th Year",
+  "hs": "6'6\"", "wt": 210, "age": 23, "hometown": "Milwaukee, WI",
+  "summary": "White has already been to USC, Louisville, Illinois and Kansas, and put together a career year at KU last season as a 3-and-D wing, averaging a career-high 13.8 points and 6.7 rebounds. After going undrafted and testing the pros with the Miami Heat's Summer League team, White joined the group of players suing the NCAA over the 5-in-5 eligibility rule, won a preliminary injunction, and is now back in Lawrence practicing for a fifth and final college season.",
+  "strengths": [
+    "Experienced 3-and-D wing who posted career-highs across the board as a fifth-year veteran at Kansas",
+    "Best rebounding season of his career last year at 6.7 a game, gives up little size for his position",
+    "Draws from stops at four different high-major programs, battle-tested against elite competition"
+  ],
+  "weaknesses": [
+    "Will be one of the oldest prospects in his class given the unusual fifth-year path to get here",
+    "Playmaking stayed limited even in his best season, more of a complementary scorer than a creator"
+  ],
+  "comps": ["Experienced 3-and-D wing who rebounds well for his position"],
+  "stats": {"ppg":"13.8","rpg":"6.7","apg":"1.7","fg":"45.2%"},
+  "seasons": [
+    {"yr":"Freshman","gp":33,"ppg":9.0,"rpg":5.1,"apg":1.0,"stl":0.5,"blk":0.3,"to":1.2,"min":26.7,"fg":47.4,"tpt":26.5,"tpa":1.5,"ft":69.0,"fta":2.2},
+    {"yr":"Sophomore","gp":29,"ppg":12.3,"rpg":5.9,"apg":1.3,"stl":0.8,"blk":0.4,"to":1.8,"min":31.2,"fg":45.6,"tpt":29.9,"tpa":2.7,"ft":75.2,"fta":3.5},
+    {"yr":"Junior","gp":32,"ppg":10.5,"rpg":5.5,"apg":0.8,"stl":0.4,"blk":0.4,"to":1.0,"min":23.4,"fg":50.7,"tpt":32.9,"tpa":2.2,"ft":82.4,"fta":3.2},
+    {"yr":"Senior","gp":34,"ppg":13.8,"rpg":6.7,"apg":1.7,"stl":0.6,"blk":0.4,"to":1.8,"min":31.4,"fg":45.2,"tpt":40.9,"tpa":4.0,"ft":87.2,"fta":4.1}
+  ],
+  "highlights": [],
+  "enteringDraft": false
+}
+
 ];
+
+// Players flagged `hidden:true` (e.g. ruled ineligible, pending a legal/eligibility appeal)
+// stay fully in the data below — full bio, stats, everything — but are pulled out of the
+// live `players` array at load so every feature (rankings, search, draft board, consensus
+// board, mock draft pool, etc.) automatically excludes them with no other code changes.
+// To bring someone back, just remove their `hidden:true` flag — no need to re-enter anything.
+const hiddenPlayers = players.filter(p => p.hidden);
+players.splice(0, players.length, ...players.filter(p => !p.hidden));
 
 // The site-wide "official" ranking can be driven live by one account's saved custom board
 // (see MASTER_BOARD_EMAIL below). STATIC_RANK_ORDER is a frozen snapshot of the hand-set
@@ -2657,10 +2705,7 @@ function openArticleDetail(idx, fromRefresh){
 }
 
 function showArticlesSub(which){
-  document.getElementById('articlesMainPanel').style.display = which==='articles' ? 'block' : 'none';
-  document.getElementById('articlesNewsletterPanel').style.display = which==='newsletter' ? 'flex' : 'none';
-  document.getElementById('articlesSubMain').classList.toggle('active', which==='articles');
-  document.getElementById('articlesSubNewsletter').classList.toggle('active', which==='newsletter');
+  document.getElementById('articlesMainPanel').style.display = 'block';
 }
 
 function formatArticleByline(a){
@@ -3226,22 +3271,46 @@ function defaultBoardOrder(){
   return [];   // custom boards now start empty, built up from the player pool
 }
 
+// CRITICAL: a failed fetch here must never be treated the same as "this user has no board
+// yet." Supabase's .single() returns a specific "no rows" error (PGRST116) when a user
+// genuinely has nothing saved — that's the ONLY case where falling back to the default
+// order is safe. Any other error (network blip, timeout, server hiccup) must leave
+// customBoardOrder and customBoardLoaded untouched and retry, because saveCustomBoard()
+// upserts unconditionally: if a transient failure here silently reset a real saved board
+// to the default, the next Save click would permanently overwrite and destroy it.
 async function loadCustomBoard(){
   if(currentUser){
     try{
       const { data, error } = await sb.from('custom_boards').select('*').eq('user_id', currentUser.id).single();
       if(!error && data && Array.isArray(data.player_order)){
         customBoardOrder = data.player_order;
-      } else {
+        customBoardLoaded = true;
+      } else if(error && error.code === 'PGRST116'){
+        // Confirmed no saved row exists for this user yet — safe to start from the default.
         customBoardOrder = defaultBoardOrder();
+        customBoardLoaded = true;
+      } else {
+        console.error('Could not load custom board, will retry without touching local state', error);
+        customBoardLoaded = false;
+        renderCustomBoardFilters();
+        renderCustomBoardList();
+        updateSaveButtonState();
+        setTimeout(loadCustomBoard, 2500);
+        return;
       }
     } catch(e){
-      customBoardOrder = defaultBoardOrder();
+      console.error('Could not load custom board (exception), will retry without touching local state', e);
+      customBoardLoaded = false;
+      renderCustomBoardFilters();
+      renderCustomBoardList();
+      updateSaveButtonState();
+      setTimeout(loadCustomBoard, 2500);
+      return;
     }
   } else {
     customBoardOrder = defaultBoardOrder();
+    customBoardLoaded = true;
   }
-  customBoardLoaded = true;
   renderCustomBoardFilters();
   renderCustomBoardList();
   updateSaveButtonState();
@@ -4484,12 +4553,17 @@ function resetCustomBoard(){
 function updateSaveButtonState(){
   const btn = document.getElementById('cbSaveBtn');
   if(!btn) return;
-  if(currentUser){
-    btn.disabled = false;
-    btn.textContent = 'Save My Board';
-  } else {
+  if(!currentUser){
     btn.disabled = true;
     btn.textContent = 'Sign In to Save';
+  } else if(!customBoardLoaded){
+    // Disabled while a (re)load is in flight or retrying after a failure, so a save can
+    // never fire before we know what the user's real saved board actually contains.
+    btn.disabled = true;
+    btn.textContent = 'Loading Your Board...';
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'Save My Board';
   }
 }
 
@@ -4608,6 +4682,20 @@ async function saveCustomBoard(){
     openAuthModal();
     return;
   }
+  // Never let a save go through before we've actually loaded this user's existing board —
+  // without this, a transient load failure followed by a Save click would upsert over
+  // (and permanently destroy) whatever they'd already saved.
+  if(!customBoardLoaded){
+    msgEl.textContent = 'Still loading your board — please wait a moment and try again.';
+    msgEl.className = 'cb-msg error';
+    return;
+  }
+  // A save that would wipe an existing board down to nothing needs explicit confirmation —
+  // this is almost never intentional and should never happen silently.
+  if(customBoardOrder.length === 0){
+    const confirmed = confirm('Your board is currently empty. Save anyway? This will erase any previously saved board.');
+    if(!confirmed) return;
+  }
   try{
     const { error } = await sb.from('custom_boards').upsert({
       user_id: currentUser.id,
@@ -4654,6 +4742,17 @@ async function saveCustomBoard(){
 }
 
 /* ================= BROWSER BACK/FORWARD SUPPORT ================= */
+// Some mobile browsers (notably iOS Safari) fail to repaint the viewport after a
+// JS-driven view swap triggered from a popstate (back/forward) event, leaving a blank
+// screen until a touch forces a reflow. Forcing a tiny synchronous reflow right after
+// the swap works around it reliably.
+function forceRepaint(){
+  const el = document.body;
+  const prev = el.style.transform;
+  el.style.transform = 'translateZ(0)';
+  void el.offsetHeight;
+  requestAnimationFrame(() => { el.style.transform = prev; });
+}
 window.addEventListener('popstate', (e)=>{
   const state = e.state;
   if(state && state.view === 'profile' && typeof state.idx === 'number'){
@@ -4665,17 +4764,27 @@ window.addEventListener('popstate', (e)=>{
     showView(state.view, false, true);
     // Coming back from a player profile: scroll that exact player's row/card back into
     // view instead of leaving the page reset to the top from showView's tab-switch behavior.
+    // showView() forces its own scroll-to-top synchronously, and this view's list may still
+    // be re-rendering (master board order, search filter, etc.), so this has to run after
+    // the current paint cycle rather than immediately, or the top-of-page position wins.
     if(preProfileScrollView === state.view && preProfileScrollPlayerId !== null){
-      const targetEl = document.querySelector(`[data-player-id="${preProfileScrollPlayerId}"]`);
-      if(targetEl){
-        targetEl.scrollIntoView({block: 'center', behavior: 'instant'});
-      }
+      const targetId = preProfileScrollPlayerId;
       preProfileScrollView = null;
       preProfileScrollPlayerId = null;
+      const scrollToTarget = (attemptsLeft) => {
+        const targetEl = document.querySelector(`[data-player-id="${targetId}"]`);
+        if(targetEl){
+          targetEl.scrollIntoView({block: 'center', behavior: 'instant'});
+        } else if(attemptsLeft > 0){
+          setTimeout(() => scrollToTarget(attemptsLeft - 1), 100);
+        }
+      };
+      requestAnimationFrame(() => requestAnimationFrame(() => scrollToTarget(5)));
     }
   } else {
     showView('home', false, true);
   }
+  forceRepaint();
 });
 
 /* ================= AUTH (SUPABASE) ================= */
@@ -4761,6 +4870,7 @@ function switchAuthTab(mode){
   document.getElementById('tabSignIn').classList.toggle('active', mode==='signin');
   document.getElementById('tabSignUp').classList.toggle('active', mode==='signup');
   document.getElementById('authSubmitBtn').textContent = mode==='signin' ? 'Sign In' : 'Create Account';
+  document.getElementById('authModalSub').textContent = mode==='signin' ? 'Sign in to save boards, comment, and more.' : 'Create a free account to get started.';
   document.getElementById('authMsg').textContent = '';
   document.getElementById('authMsg').className = 'modal-msg';
 }
@@ -4805,6 +4915,19 @@ async function handleAuthSubmit(e){
   }
 }
 
+async function signInWithGoogle(){
+  // Hands off to Google's own account-chooser screen (Supabase's OAuth redirect flow) rather
+  // than a custom in-page form — this requires the Google provider to be configured under
+  // Authentication > Providers in the Supabase dashboard, with a Google Cloud OAuth client.
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+  if(error){
+    const msgEl = document.getElementById('authMsg');
+    if(msgEl){ msgEl.textContent = error.message || 'Could not start Google sign-in.'; msgEl.className = 'modal-msg error'; }
+  }
+}
 async function signOutUser(){
   await sb.auth.signOut();
   currentUser = null;
@@ -7418,11 +7541,7 @@ loadAndApplyMasterBoardRanking();
 loadAndApplyDraftBoardFlags();
 loadAndApplyArticleOverrides();
 
-window.addEventListener('load', ()=>{
-  setTimeout(()=>{ document.getElementById('loader').classList.add('hide'); }, 1900);
-});
-// fallback in case load already fired
-setTimeout(()=>{ document.getElementById('loader').classList.add('hide'); }, 2600);
+
 </script>
 </body>
 </html>
