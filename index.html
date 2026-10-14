@@ -1467,6 +1467,21 @@
     border:1px solid var(--steel-soft); border-radius:6px; font-family:var(--mono); font-size:.8rem; -moz-appearance:textfield;}
   .cart-qty-input::-webkit-outer-spin-button,.cart-qty-input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
   .cart-qty-each{font-family:var(--mono); font-size:.66rem; color:var(--paper-dim); flex-basis:100%; margin-top:2px;}
+
+  /* Mobile hero: drop Joksimovic and enlarge the other three */
+  @media (max-width:700px){
+    #heroFan .fp-jok{display:none;}
+    #heroFan.fan{--H:640px; --U:min(calc(var(--H) * .82), 118vw); padding-bottom:44px;}
+    #heroFan .fp{margin-left:calc(var(--U) * -.16);}
+    #heroFan .fp-cap b{font-size:.85rem;}
+    #heroFan .fp-cap i{font-size:.58rem;}
+  }
+  @media (max-width:420px){
+    #heroFan.fan{--H:620px; --U:min(calc(var(--H) * .82), 118vw);}
+    #heroFan .fp{margin-left:calc(var(--U) * -.16);}
+    #heroFan .fp-cap b{font-size:.78rem; letter-spacing:.03em;}
+    #heroFan .fp-cap i{font-size:.54rem;}
+  }
 </style>
 </head>
 <body>
