@@ -1482,6 +1482,11 @@
     #heroFan .fp-cap b{font-size:.78rem; letter-spacing:.03em;}
     #heroFan .fp-cap i{font-size:.54rem;}
   }
+
+  /* Mobile hero: tighten the gap above the players (keep a little breathing room) */
+  @media (max-width:700px){
+    #heroFan.fan{height:calc(var(--U) * 1.04 + 44px + 36px);}
+  }
 </style>
 </head>
 <body>
