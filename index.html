@@ -37,6 +37,7 @@
     color:var(--paper);
     font-family:var(--serif);
     overflow-x:hidden;
+    overflow-x:clip;
     -webkit-font-smoothing:antialiased;
   }
   a{color:inherit; text-decoration:none;}
@@ -49,7 +50,7 @@
 
   /* ================= NAV ================= */
   header{
-    position:sticky; top:0; z-index:500;
+    position:-webkit-sticky; position:sticky; top:0; z-index:500;
     background:rgba(10,10,12,.92); backdrop-filter:blur(8px);
     border-bottom:1px solid var(--steel);
   }
@@ -1487,6 +1488,17 @@
   @media (max-width:700px){
     #heroFan.fan{height:calc(var(--U) * 1.04 + 44px + 36px);}
   }
+
+  /* Ticker is driven by JS so it never stalls (reduced-motion / low-power / animation restarts) */
+  .ticker-track{animation:none !important; will-change:transform; transform:translate3d(0,0,0);}
+  /* Mobile hero spacing tweaks */
+  @media (max-width:700px){
+    #heroFan.fan{height:calc(var(--U) * 1.04 + 44px + 10px); margin-top:-14px; margin-bottom:-26px; padding-left:18px; padding-right:0;}
+  }
+
+  @media (max-width:700px){
+    .recent-wrap{margin-top:-52px;}
+  }
 </style>
 </head>
 <body>
@@ -2621,6 +2633,33 @@ function schoolBadge(school, colored){
 function renderTicker(){
   const items = players.slice(0,14).map(p => `<span class="tick"><b>#${p.rk} ${p.name}</b> <span style="color:var(--paper-dim)">${schoolBadge(p.school)}${p.school}</span></span>`).join("");
   document.getElementById('tickerTrack').innerHTML = items + items; // duplicate for seamless loop
+  startTicker();
+}
+
+let tickX = 0, tickLast = 0, tickPaused = false, tickRaf = null, tickBound = false;
+function startTicker(){
+  const track = document.getElementById('tickerTrack');
+  if(!track) return;
+  if(!tickBound){
+    tickBound = true;
+    const bar = track.parentElement;
+    bar.addEventListener('mouseenter', ()=>{ tickPaused = true; });
+    bar.addEventListener('mouseleave', ()=>{ tickPaused = false; });
+    document.addEventListener('visibilitychange', ()=>{ tickLast = 0; });
+  }
+  if(tickRaf) cancelAnimationFrame(tickRaf);
+  const SPEED = 0.08; // px per ms
+  const step = (ts)=>{
+    if(!tickLast) tickLast = ts;
+    const dt = Math.min(ts - tickLast, 60);
+    tickLast = ts;
+    if(!tickPaused) tickX += SPEED * dt;
+    const half = track.scrollWidth / 2;
+    if(half > 0 && tickX >= half) tickX -= half;
+    track.style.transform = `translate3d(${-tickX}px,0,0)`;
+    tickRaf = requestAnimationFrame(step);
+  };
+  tickRaf = requestAnimationFrame(step);
 }
 
 /* ================= RENDER: HERO FAN ================= */
