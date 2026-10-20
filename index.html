@@ -1852,7 +1852,21 @@
   #statsTip{position:fixed; z-index:6000; width:230px; padding:11px 13px; background:var(--void); border:1px solid var(--gold); color:var(--paper); font-family:var(--serif); font-size:.78rem; line-height:1.45; pointer-events:none; opacity:0; visibility:hidden; transition:opacity .12s;}
   #statsTip b{display:block; font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-bottom:5px;}
   #statsTip.on{opacity:1; visibility:visible;}
-  @media (max-width:640px){ .stats-table td.pn, .stats-table th.pn{min-width:150px; left:46px;} .stats-table td.rk, .stats-table th.rk{min-width:46px;} .stats-table td.pn .rank-avatar{display:none;} }
+  @media (max-width:640px){
+    .stats-table td.rk, .stats-table th.rk{min-width:30px; width:30px; padding:12px 3px; font-size:.95rem; text-align:center;}
+    .stats-table th.rk{font-size:.55rem; letter-spacing:0;}
+    .stats-table td.pn, .stats-table th.pn{min-width:98px; max-width:98px; width:98px; left:30px;}
+    .stats-table td.pn{padding:8px 8px;}
+    .stats-table th.pn{padding-left:8px;}
+    .stats-table td.pn .rank-avatar{display:none;}
+    .stats-table td.pn .pnin{font-size:.8rem; line-height:1.15; white-space:normal;}
+    .stats-table td.pn .pnin span{white-space:normal; word-break:normal; overflow-wrap:anywhere;}
+    .stats-table td.pn small{font-size:.5rem; letter-spacing:.04em; margin-top:2px;}
+    .stats-table td.sv{min-width:62px; padding:11px 6px 9px;}
+    .stats-table tr.cols th{padding:10px 4px; font-size:.56rem; letter-spacing:.03em;}
+    .stats-table th .q{margin-left:3px; width:12px; height:12px;}
+    .stats-scroll{max-height:75vh;}
+  }
 </style>
 </head>
 <body>
@@ -6351,113 +6365,173 @@ function openBoardSnapshotPicker(){
   document.body.appendChild(overlay);
 }
 
+const __bbsImgCache = {};
+function bbsLoadImg(src, cors){
+  if(!src) return Promise.resolve(null);
+  if(__bbsImgCache[src] !== undefined) return Promise.resolve(__bbsImgCache[src]);
+  return new Promise(resolve => {
+    const im = new Image();
+    if(cors) im.crossOrigin = 'anonymous';
+    const t = setTimeout(() => { im.onload = im.onerror = null; __bbsImgCache[src] = null; resolve(null); }, 4000);
+    im.onload = () => { clearTimeout(t); __bbsImgCache[src] = im; resolve(im); };
+    im.onerror = () => { clearTimeout(t); __bbsImgCache[src] = null; resolve(null); };
+    im.src = src;
+  });
+}
+function bbsRoundRect(g, x, y, w, h, r){
+  g.beginPath(); g.moveTo(x+r, y); g.arcTo(x+w, y, x+w, y+h, r); g.arcTo(x+w, y+h, x, y+h, r); g.arcTo(x, y+h, x, y, r); g.arcTo(x, y, x+w, y, r); g.closePath();
+}
+function bbsFit(g, text, maxW){
+  if(g.measureText(text).width <= maxW) return text;
+  let t = text; while(t.length > 1 && g.measureText(t + '…').width > maxW) t = t.slice(0, -1);
+  return t + '…';
+}
+
 async function downloadBoardSnapshot(count, src){
   const isDraft = src === 'draft';
   const goBtn = document.getElementById('boardSnapGo');
   const rows = (isDraft ? getMyDraftPlayers() : (customBoardOrder||[]).map(id => players.find(x => x.id === id)).filter(Boolean)).slice(0, count);
   if(!rows.length) return;
-  if(typeof html2canvas === 'undefined'){
-    const text = `Draft Day HQ — ${isDraft ? 'My Draft Board' : 'My Big Board'}\n${new Date().toLocaleDateString()}\n\n` + rows.map((p,i)=>`${i+1}. ${p.name} — ${p.pos}, ${p.school}`).join("\n");
-    const blob = new Blob([text], {type:'text/plain'}); const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `big-board-${Date.now()}.txt`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); return;
-  }
   if(goBtn){ goBtn.textContent = 'Building image...'; goBtn.disabled = true; }
   try{
     const n = rows.length;
-    const cols = n <= 30 ? 3 : n <= 45 ? 3 : n <= 60 ? 4 : n <= 90 ? 5 : 6;
-    const cardW = n <= 45 ? 500 : 440;
-    const photoSize = n > 90 ? 140 : 220;
-    const gap = 12, padX = 48;
-    const width = cols * cardW + (cols-1) * gap + padX * 2;
-    const schools = [...new Set(rows.map(p => p.school))];
-    const logoMap = {};
-    await Promise.all(schools.map(async sc => { logoMap[sc] = schoolLogoMap[sc] ? await loadImageDataUrl([schoolLogoMap[sc]]) : null; }));
-    const photoMap = {};
-    await Promise.all(rows.map(async p => { photoMap[p.name] = await squarePhotoData(PLAYER_PHOTOS[p.name], photoSize); }));
-    if(document.fonts && document.fonts.ready) { try{ await document.fonts.ready; }catch(_){} }
-    const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const cols = n <= 45 ? 3 : n <= 60 ? 4 : n <= 90 ? 5 : 6;
+    const cardW = n <= 45 ? 500 : 440, cardH = 96, gap = 12, padX = 48;
+    const W = cols * cardW + (cols-1) * gap + padX * 2;
+    const nRows = Math.ceil(n / cols);
+    const gridTop = 44 + 150 + 24;
+    const H = gridTop + nRows * cardH + (nRows-1) * gap + 30 + 18 + 14 + 36 + 8;
+    // keep the bitmap within what phones can handle
+    let S = n > 90 ? 1.5 : 2;
+    S = Math.min(S, Math.sqrt(14e6 / (W * H)));
     const username = (currentProfile && currentProfile.username) ? currentProfile.username : '';
     const dateStr = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
-    const cardHTML = (p, i) => {
-      const color = accentFor(p.school);
-      const photo = photoMap[p.name], logo = logoMap[p.school];
-      const abbr = (schoolAbbr[p.school] || p.school.replace(/\(.*?\)/g,'').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,4)).toUpperCase();
-      return `
-      <div class="bbs-card ${i < 3 ? 'bbs-top' : ''}" style="--tc:${color}; --tcg:${hexMix(color)};">
-        <div class="bbs-num">${i+1}</div>
-        <div class="bbs-photo">${photo ? `<img src="${photo}" alt="">` : `<span>${esc(initials(p.name))}</span>`}</div>
-        <div class="bbs-info">
-          <div class="bbs-name">${esc(p.name)}</div>
-          <div class="bbs-sub">${esc([p.pos, p.cls].filter(Boolean).join(' · '))}</div>
-          <div class="bbs-school">${esc(p.school)}</div>
-        </div>
-        <div class="bbs-logo">${logo ? `<img src="${logo}" alt="">` : `<span>${esc(abbr)}</span>`}</div>
-      </div>`;
+    // load everything in parallel
+    const schools = [...new Set(rows.map(p => p.school))];
+    const [ , , photoImgs, logoImgs ] = await Promise.all([
+      document.fonts && document.fonts.load ? document.fonts.load('30px Anton').catch(()=>{}) : null,
+      document.fonts && document.fonts.load ? document.fonts.load('14px "Space Mono"').catch(()=>{}) : null,
+      Promise.all(rows.map(p => bbsLoadImg(PLAYER_PHOTOS[p.name], false))),
+      Promise.all(schools.map(sc => bbsLoadImg(schoolLogoMap[sc], true)))
+    ]);
+    const logoBy = {}; schools.forEach((sc,i) => logoBy[sc] = logoImgs[i]);
+
+    const cv = document.createElement('canvas');
+    cv.width = Math.round(W * S); cv.height = Math.round(H * S);
+    const g = cv.getContext('2d');
+    g.scale(S, S);
+    const MONO = '"Space Mono", monospace', ANTON = 'Anton, "Arial Narrow", sans-serif';
+    const spaced = (txt, x, y, sp, align) => { // manual letter spacing (works in every browser)
+      let w = 0; for(const ch of txt) w += g.measureText(ch).width + sp; w -= sp;
+      let cx = align === 'right' ? x - w : x;
+      g.textAlign = 'left';
+      for(const ch of txt){ g.fillText(ch, cx, y); cx += g.measureText(ch).width + sp; }
+      return w;
     };
-    const section = () => `<div class="bbs-grid" style="margin-top:24px; grid-template-columns:repeat(${cols}, minmax(0,1fr)); grid-template-rows:repeat(${Math.ceil(rows.length / cols)}, auto); grid-auto-flow:column;">${rows.map((p,k)=>cardHTML(p,k)).join('')}</div>`;
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'position:fixed; left:-20000px; top:0; z-index:-1;';
-    wrap.innerHTML = `
-    <style>
-      .bbs{width:${width}px; box-sizing:border-box; padding:44px ${padX}px 36px; color:#f2efe8; background:
-        radial-gradient(900px 420px at 85% -5%, rgba(198,161,91,.22), transparent 70%),
-        radial-gradient(700px 400px at -5% 105%, rgba(198,161,91,.12), transparent 70%), #0a0a0c;
-        border:3px solid #c6a15b; outline:1px solid rgba(198,161,91,.35); outline-offset:-12px; font-family:'Space Mono', monospace;}
-      .bbs *{box-sizing:border-box;}
-      .bbs-head{display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:22px; border-bottom:1px solid rgba(198,161,91,.55); margin-bottom:6px;}
-      .bbs-brand{font-family:'Anton', sans-serif; font-size:30px; letter-spacing:.04em;}
-      .bbs-brand i{color:#c6a15b; font-style:normal;}
-      .bbs-brand small{font-family:'Space Mono', monospace; font-size:14px; color:#c6a15b; margin-left:6px; letter-spacing:.1em;}
-      .bbs-title{font-family:'Anton', sans-serif; font-size:64px; line-height:1; letter-spacing:.02em; margin-top:14px; text-transform:uppercase;}
-      .bbs-title span{color:#c6a15b;}
-      .bbs-meta{text-align:right; font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:#a8a39a; line-height:1.9;}
-      .bbs-meta b{color:#c6a15b; font-weight:400;}
-      .bbs-round{display:flex; align-items:center; gap:16px; margin:26px 0 14px; font-size:14px; letter-spacing:.3em; color:#c6a15b;}
-      .bbs-round:after{content:''; flex:1; height:1px; background:rgba(198,161,91,.4);}
-      .bbs-grid{display:grid; gap:${gap}px;}
-      .bbs-card{min-width:0; display:flex; align-items:center; gap:14px; padding:12px 14px 12px 12px; background:linear-gradient(100deg, var(--tcg), #121316 60%); border:1px solid rgba(255,255,255,.08); border-left:5px solid var(--tc); border-radius:6px; min-height:96px;}
-      .bbs-top{border-color:rgba(198,161,91,.5); border-left-color:var(--tc);}
-      .bbs-num{font-family:'Anton', sans-serif; font-size:34px; color:#c6a15b; width:54px; text-align:center; flex-shrink:0;}
-      .bbs-photo{width:70px; height:70px; border-radius:50%; overflow:hidden; flex-shrink:0; border:2px solid var(--tc); background:linear-gradient(160deg,#6a6f7a,#3f434c); display:flex; align-items:center; justify-content:center; font-size:16px; color:#c6a15b;}
-      .bbs-photo img{width:100%; height:100%; object-fit:cover; display:block;}
-      .bbs-info{flex:1; min-width:0; overflow:hidden;}
-      .bbs-name{font-family:'Anton', sans-serif; font-size:24px; line-height:1.1; letter-spacing:.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-      .bbs-sub{font-size:12px; color:#a8a39a; text-transform:uppercase; margin-top:5px; letter-spacing:.05em; white-space:nowrap;}
-      .bbs-school{font-size:12px; color:#c6a15b; text-transform:uppercase; margin-top:4px; letter-spacing:.08em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-      .bbs-logo{width:54px; height:54px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:#fff;}
-      .bbs-logo img{width:100%; height:100%; object-fit:contain;}
-      .bbs-foot{display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:18px; border-top:1px solid rgba(198,161,91,.55); font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:#a8a39a;}
-      .bbs-foot b{color:#c6a15b; font-weight:400;}
-    </style>
-    <div class="bbs" id="boardShareCard">
-      <div class="bbs-head">
-        <div>
-          <div class="bbs-brand">DRAFT <i>&bull;</i> DAY<small>HQ</small></div>
-          <div class="bbs-title">2027 NBA <span>${isDraft ? 'Draft Board' : 'Big Board'}</span></div>
-        </div>
-        <div class="bbs-meta">${esc(dateStr)}<br>${username ? `By <b>${esc(username)}</b><br>` : ''}${isDraft ? n + ' players' : 'Top ' + n}</div>
-      </div>
-      ${section()}
-      <div class="bbs-foot"><span>Build your own ${isDraft ? 'draft board' : 'big board'}</span><b>Draft Day HQ</b></div>
-    </div>`;
-    document.body.appendChild(wrap);
-    const el = wrap.querySelector('#boardShareCard');
-    const scale = n > 90 ? 1.5 : 2;
-    const canvas = await html2canvas(el, { backgroundColor: '#0a0a0c', scale, useCORS: true, allowTaint: false, width: el.offsetWidth, height: el.offsetHeight });
-    wrap.remove();
+    // background
+    g.fillStyle = '#0a0a0c'; g.fillRect(0, 0, W, H);
+    let rg = g.createRadialGradient(W*0.85, -H*0.01, 0, W*0.85, -H*0.01, 700);
+    rg.addColorStop(0, 'rgba(198,161,91,.22)'); rg.addColorStop(1, 'rgba(198,161,91,0)');
+    g.fillStyle = rg; g.fillRect(0, 0, W, H);
+    rg = g.createRadialGradient(-W*0.02, H*1.02, 0, -W*0.02, H*1.02, 600);
+    rg.addColorStop(0, 'rgba(198,161,91,.12)'); rg.addColorStop(1, 'rgba(198,161,91,0)');
+    g.fillStyle = rg; g.fillRect(0, 0, W, H);
+    g.strokeStyle = '#c6a15b'; g.lineWidth = 3; g.strokeRect(1.5, 1.5, W-3, H-3);
+    g.strokeStyle = 'rgba(198,161,91,.35)'; g.lineWidth = 1; g.strokeRect(12.5, 12.5, W-25, H-25);
+    // header
+    g.textBaseline = 'alphabetic';
+    g.font = `30px ${ANTON}`; g.fillStyle = '#f2efe8';
+    let x = padX + 0;
+    x += spaced('DRAFT', x, 44 + 30, 1.2) + 12;
+    g.fillStyle = '#c6a15b'; x += spaced('•', x, 44 + 30, 0) + 12;
+    g.fillStyle = '#f2efe8'; x += spaced('DAY', x, 44 + 30, 1.2) + 10;
+    g.font = `14px ${MONO}`; g.fillStyle = '#c6a15b'; spaced('HQ', x, 44 + 30, 1.4);
+    g.font = `64px ${ANTON}`; g.fillStyle = '#f2efe8';
+    const t1 = '2027 NBA';
+    const w1 = spaced(t1, padX, 44 + 30 + 14 + 58, 1.3);
+    g.fillStyle = '#c6a15b'; spaced(isDraft ? 'DRAFT BOARD' : 'BIG BOARD', padX + w1 + 20, 44 + 30 + 14 + 58, 1.3);
+    g.font = `14px ${MONO}`; g.fillStyle = '#a8a39a';
+    const mx = W - padX;
+    spaced(dateStr.toUpperCase(), mx, 44 + 82, 2, 'right');
+    let my = 44 + 82 + 27;
+    if(username){
+      const nm = username.toUpperCase();
+      g.fillStyle = '#c6a15b'; const wn = spaced(nm, mx, my, 2, 'right');
+      g.fillStyle = '#a8a39a'; spaced('BY ', mx - wn - 4, my, 2, 'right'); my += 27;
+    }
+    g.fillStyle = '#a8a39a'; spaced((isDraft ? n + ' PLAYERS' : 'TOP ' + n), mx, my, 2, 'right');
+    g.strokeStyle = 'rgba(198,161,91,.55)'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(padX, 44 + 150 - 1.5); g.lineTo(W - padX, 44 + 150 - 1.5); g.stroke();
+
+    // cards, flowing down each column
+    rows.forEach((p, i) => {
+      const col = Math.floor(i / nRows), row = i % nRows;
+      const cx = padX + col * (cardW + gap), cy = gridTop + row * (cardH + gap);
+      const color = accentFor(p.school);
+      const lg = g.createLinearGradient(cx, cy, cx + cardW, cy + cardH * 0.18);
+      lg.addColorStop(0, hexMix(color)); lg.addColorStop(0.6, '#121316'); lg.addColorStop(1, '#121316');
+      g.fillStyle = lg; bbsRoundRect(g, cx, cy, cardW, cardH, 6); g.fill();
+      g.strokeStyle = 'rgba(255,255,255,.08)'; g.lineWidth = 1; bbsRoundRect(g, cx+.5, cy+.5, cardW-1, cardH-1, 6); g.stroke();
+      g.save(); bbsRoundRect(g, cx, cy, cardW, cardH, 6); g.clip(); g.fillStyle = color; g.fillRect(cx, cy, 5, cardH); g.restore();
+      // rank number
+      g.font = `34px ${ANTON}`; g.fillStyle = '#c6a15b'; g.textAlign = 'center';
+      g.fillText(String(i + 1), cx + 5 + 12 + 27, cy + cardH/2 + 12);
+      // photo
+      const px = cx + 5 + 12 + 54 + 14, py = cy + (cardH - 70) / 2;
+      g.save(); g.beginPath(); g.arc(px + 35, py + 35, 35, 0, Math.PI*2); g.closePath(); g.clip();
+      const bgp = g.createLinearGradient(px, py, px + 70, py + 70); bgp.addColorStop(0, '#6a6f7a'); bgp.addColorStop(1, '#3f434c');
+      g.fillStyle = bgp; g.fillRect(px, py, 70, 70);
+      const im = photoImgs[i];
+      if(im){
+        const side = Math.min(im.naturalWidth, im.naturalHeight), crop = side * 0.84;
+        g.drawImage(im, (im.naturalWidth - crop) / 2, 0, crop, crop, px, py, 70, 70);
+      } else {
+        g.font = `16px ${MONO}`; g.fillStyle = '#c6a15b'; g.textAlign = 'center'; g.fillText(initials(p.name), px + 35, py + 40);
+      }
+      g.restore();
+      g.strokeStyle = color; g.lineWidth = 2; g.beginPath(); g.arc(px + 35, py + 35, 34, 0, Math.PI*2); g.stroke();
+      // logo
+      const lx = cx + cardW - 14 - 54;
+      const logo = logoBy[p.school];
+      if(logo){
+        const r = Math.min(54 / logo.naturalWidth, 54 / logo.naturalHeight);
+        const lw = logo.naturalWidth * r, lh = logo.naturalHeight * r;
+        g.drawImage(logo, lx + (54 - lw)/2, cy + (cardH - lh)/2, lw, lh);
+      } else {
+        const abbr = (schoolAbbr[p.school] || p.school.replace(/\(.*?\)/g,'').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,4)).toUpperCase();
+        g.font = `bold 15px ${MONO}`; g.fillStyle = '#fff'; g.textAlign = 'center'; g.fillText(abbr, lx + 27, cy + cardH/2 + 5);
+      }
+      // text
+      const tx = px + 70 + 14, tw = lx - 8 - tx;
+      g.textAlign = 'left';
+      g.font = `24px ${ANTON}`; g.fillStyle = '#f2efe8'; g.fillText(bbsFit(g, p.name, tw), tx, cy + 38);
+      g.font = `12px ${MONO}`; g.fillStyle = '#a8a39a';
+      spaced(bbsFit(g, [p.pos, p.cls].filter(Boolean).join(' · ').toUpperCase(), tw), tx, cy + 58, 0.6);
+      g.fillStyle = '#c6a15b';
+      spaced(bbsFit(g, p.school.toUpperCase(), tw), tx, cy + 76, 0.9);
+    });
+    // footer
+    const fy = H - 36 - 8;
+    g.strokeStyle = 'rgba(198,161,91,.55)'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(padX, fy - 30); g.lineTo(W - padX, fy - 30); g.stroke();
+    g.font = `13px ${MONO}`; g.fillStyle = '#a8a39a';
+    spaced(isDraft ? 'BUILD YOUR OWN DRAFT BOARD' : 'BUILD YOUR OWN BIG BOARD', padX, fy, 2);
+    g.fillStyle = '#c6a15b'; spaced('DRAFT DAY HQ', W - padX, fy, 2, 'right');
+
+    const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+    if(!blob) throw new Error('Could not create image');
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = canvas.toDataURL('image/png');
-    a.download = `${isDraft ? 'draft-board' : 'big-board-top'}-${n}-${Date.now()}.png`;
+    a.href = url; a.download = `${isDraft ? 'draft-board' : 'big-board-top'}-${n}-${Date.now()}.png`;
     document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 20000);
     const m = document.getElementById('boardSnapModal'); if(m) m.remove();
   } catch(e){
     console.error('Big board image failed', e);
-    document.querySelectorAll('body > div[style*="-20000px"]').forEach(x => x.remove());
     if(goBtn){ goBtn.textContent = 'Download Image'; goBtn.disabled = false; }
+    alert('Could not build the image. Please try again.');
   }
 }
-
 
 function renderCustomBoardFilters(){
   const posEl = document.getElementById('cbPosFilterRow');
@@ -7074,6 +7148,7 @@ async function handleAuthSubmit(e){
   const msgEl = document.getElementById('authMsg');
   const btn = document.getElementById('authSubmitBtn');
   btn.disabled = true;
+  btn.textContent = authMode === 'signup' ? 'Creating account...' : 'Signing in...';
   msgEl.textContent = '';
   msgEl.className = 'modal-msg';
 
@@ -7096,14 +7171,15 @@ async function handleAuthSubmit(e){
     } else {
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
       if(error) throw error;
-      await loadSession();
       closeAuthModal();
+      loadSession();
     }
   } catch(err){
     msgEl.textContent = err.message || 'Something went wrong.';
     msgEl.className = 'modal-msg error';
   } finally {
     btn.disabled = false;
+    btn.textContent = authMode === 'signup' ? 'Create Account' : 'Sign In';
   }
 }
 
@@ -9110,7 +9186,18 @@ async function trackArticleRead(idx){
   } catch(e){ console.error('Failed to track article read', e); }
 }
 
-async function loadSession(){
+let loadSessionRunning = null, loadSessionPending = false;
+function loadSession(){
+  // Coalesce overlapping calls (sign-in fires this directly AND via onAuthStateChange).
+  if(loadSessionRunning){ loadSessionPending = true; return loadSessionRunning; }
+  loadSessionRunning = (async () => {
+    try{ await loadSessionInner(); }
+    finally { loadSessionRunning = null; }
+    if(loadSessionPending){ loadSessionPending = false; return loadSession(); }
+  })();
+  return loadSessionRunning;
+}
+async function loadSessionInner(){
   const { data:{ session } } = await sb.auth.getSession();
   if(session && session.user){
     currentUser = session.user;
@@ -9120,14 +9207,18 @@ async function loadSession(){
     currentUser = null;
     currentProfile = null;
   }
-  if(stockMarketVisible) await loadStockData();
+  // Show the signed-in state right away; the heavier data loads continue in the background.
+  updateAcctBtn();
+  sessionLoaded = true;
   customBoardLoaded = false;
   myCommentsLoaded = false;
   myMockDraftsLoaded = false;
-  await loadCustomBoard();
+  await Promise.all([
+    stockMarketVisible ? loadStockData() : null,
+    loadCustomBoard()
+  ]);
   updateAcctUI();
   if(currentUser) startMockInvitePolling();
-  sessionLoaded = true;
 }
 
 const FOUNDER_EMAILS = ["shaan.lakhani@gmail.com", "julianifarber@icloud.com"];
@@ -9139,7 +9230,7 @@ function isAnalyst(email){
   return !!email && ANALYST_EMAILS.includes(email.toLowerCase());
 }
 
-function updateAcctUI(){
+function updateAcctBtn(){
   const btn = document.getElementById('acctBtn');
   if(currentUser && currentProfile){
     const founderTag = currentProfile.staff_tag ? ` · ${currentProfile.staff_tag}` : '';
@@ -9156,6 +9247,9 @@ function updateAcctUI(){
     btn.onclick = openAuthModal;
     btn.title = '';
   }
+}
+function updateAcctUI(){
+  updateAcctBtn();
   renderStockView();
   updateSaveButtonState();
   if(currentArticleIdx !== null && document.getElementById('view-article-detail').classList.contains('active')){
@@ -9647,7 +9741,6 @@ function renderStockView(){
     section.style.cssText = 'min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center;';
     el.style.maxWidth = '520px';
     el.innerHTML = `
-      <div class="eyebrow" style="justify-content:center;">Free Demo Mode &nbsp;·&nbsp; No Real Money</div>
       <h2 class="section-title">Sign In to Trade</h2>
       <p class="section-sub" style="margin:0 auto 24px;">100% free. Create a free account to get your starting balance and start trading prospect stock with virtual cash, no payment needed.</p>
       <button class="btn btn-solid" onclick="openAuthModal()">Create Free Account</button>`;
@@ -9664,7 +9757,6 @@ function renderStockView(){
   el.innerHTML = `
     <div class="stock-header">
       <div>
-        <div class="eyebrow">Free Demo Mode</div>
         <h2 class="section-title">Prospect Market</h2>
         <p class="stock-free-note">100% free &nbsp;·&nbsp; virtual cash only &nbsp;·&nbsp; no real money</p>
       </div>
