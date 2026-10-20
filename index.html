@@ -6479,14 +6479,21 @@ async function downloadBoardSnapshot(count, src){
       // photo
       const px = cx + 5 + 12 + 54 + 14, py = cy + (cardH - 70) / 2;
       g.save(); g.beginPath(); g.arc(px + 35, py + 35, 35, 0, Math.PI*2); g.closePath(); g.clip();
-      const bgp = g.createLinearGradient(px, py, px + 70, py + 70); bgp.addColorStop(0, '#6a6f7a'); bgp.addColorStop(1, '#3f434c');
+      // same look as the site's avatars: team-color gradient behind the photo / initials
+      const tcol = (typeof teamColorOfName === 'function' && teamColorOfName(p.name)) || color;
+      const gl = 70 * (0.259 + 0.966), gcx = px + 35, gcy = py + 35;
+      const bgp = g.createLinearGradient(gcx - 0.259 * gl / 2, gcy - 0.966 * gl / 2, gcx - 0.259 * gl / 2 + 0.259 * gl * 1.25, gcy - 0.966 * gl / 2 + 0.966 * gl * 1.25);
+      bgp.addColorStop(0, tcol); bgp.addColorStop(1, '#1b1c20');
       g.fillStyle = bgp; g.fillRect(px, py, 70, 70);
       const im = photoImgs[i];
       if(im){
-        const side = Math.min(im.naturalWidth, im.naturalHeight), crop = side * 0.84;
-        g.drawImage(im, (im.naturalWidth - crop) / 2, 0, crop, crop, px, py, 70, 70);
+        // same framing as the site thumbnails: full width, anchored to the top
+        const side = Math.min(im.naturalWidth, im.naturalHeight);
+        g.drawImage(im, (im.naturalWidth - side) / 2, 0, side, side, px, py, 70, 70);
       } else {
-        g.font = `16px ${MONO}`; g.fillStyle = '#c6a15b'; g.textAlign = 'center'; g.fillText(initials(p.name), px + 35, py + 40);
+        g.font = `31px ${ANTON}`; g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText(initials(p.name), px + 35, py + 37);
+        g.textBaseline = 'alphabetic';
       }
       g.restore();
       g.strokeStyle = color; g.lineWidth = 2; g.beginPath(); g.arc(px + 35, py + 35, 34, 0, Math.PI*2); g.stroke();
