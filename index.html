@@ -2161,7 +2161,7 @@
         <div class="team-chip-row" id="rankWatchCompareChips" style="margin-top:12px;"></div>
       </div>
       <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;"><div id="rankWatchChartWrap"><canvas id="rankWatchChart"></canvas></div></div>
-      <p class="profile-empty" style="margin-top:14px;" id="rankWatchNote">Rank history starts accumulating from October 15, so lines will fill in more as the board changes from that date forward.</p>
+      <p class="profile-empty" style="margin-top:14px;" id="rankWatchNote">Rank history starts accumulating from October 20, so lines will fill in more as the board changes from that date forward.</p>
       </div>
     </div>
   </section>
@@ -6915,7 +6915,7 @@ async function saveCustomBoard(){
 
     // If this account is one of the 5 analysts/founders, their save also changes the
     // consensus — recompute and push new Prospect Market prices right away (and log the
-    // change to price_history for the graph, which stays filtered out before Oct 15).
+    // change to price_history for the graph, which stays filtered out before Oct 20).
     if(currentUser.email && getConsensusBoardEmails().map(e => e.toLowerCase()).includes(currentUser.email.toLowerCase())){
       applyConsensusStockPrices().catch(e => console.error('Failed to auto-apply consensus stock prices', e));
     }
@@ -9222,7 +9222,7 @@ async function fetchPriceHistory(rk){
 }
 
 /* ================= RANK WATCH ================= */
-const HISTORY_CHART_START_DATE = '2026-10-15'; // rank/price history charts only show data from this date forward
+const HISTORY_CHART_START_DATE = '2026-10-20T00:00:00-05:00'; // rank/price history charts only show data from this date forward
 let rankWatchN = 10;   // "to" rank
 let rankWatchFrom = 1; // "from" rank
 let rankWatchSearchName = '';
@@ -9350,7 +9350,7 @@ async function renderRankWatchChart(){
     let historyRows = [];
     if(targetIds.length){
       try{
-        const { data, error } = await sb.from('custom_board_history').select('*').eq('user_id', currentUser.id).in('player_id', targetIds).order('recorded_at');
+        const { data, error } = await sb.from('custom_board_history').select('*').eq('user_id', currentUser.id).in('player_id', targetIds).gte('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at');
         if(error) throw error;
         historyRows = data || [];
       } catch(e){ console.error('Failed to load personal board history', e); return; }
@@ -9365,10 +9365,10 @@ async function renderRankWatchChart(){
     if(noteEl) noteEl.textContent = "Comparing the specific players you've added above.";
   } else if(rankWatchSearchName){
     targetPlayers = players.filter(p => p.name.toLowerCase().includes(rankWatchSearchName));
-    if(noteEl) noteEl.textContent = "Rank history starts accumulating from October 15, so lines will fill in more as the board changes from that date forward.";
+    if(noteEl) noteEl.textContent = "Rank history starts accumulating from October 20, so lines will fill in more as the board changes from that date forward.";
   } else {
     targetPlayers = players.slice().sort((a,b) => a.rk - b.rk).slice((rankWatchFrom || 1) - 1, rankWatchN);
-    if(noteEl) noteEl.textContent = "Rank history starts accumulating from October 15, so lines will fill in more as the board changes from that date forward.";
+    if(noteEl) noteEl.textContent = "Rank history starts accumulating from October 20, so lines will fill in more as the board changes from that date forward.";
   }
   if(targetPlayers.length === 0){
     if(rankWatchChartInstance) rankWatchChartInstance.destroy();
