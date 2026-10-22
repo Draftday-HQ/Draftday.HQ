@@ -1518,6 +1518,35 @@
   .player-card .avatar, .rank-avatar, .mock-strip-pick-avatar, .cart-item-avatar{background:var(--photo-bg);}
 
 
+
+  /* ===== Portfolio dashboard ===== */
+  .pf-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:22px;}
+  .pf-kpi{background:var(--panel); border:1px solid var(--steel); padding:14px 16px;}
+  .pf-kpi .k{font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--paper-dim);}
+  .pf-kpi .v{font-family:var(--display); font-size:1.7rem; margin-top:4px; color:var(--paper);}
+  .pf-kpi .d{font-family:var(--mono); font-size:.78rem; margin-top:2px; color:var(--paper-dim);}
+  .pf-up{color:var(--signal-up) !important;} .pf-down{color:var(--signal) !important;}
+  .pf-grid{display:grid; grid-template-columns:1.6fr 1fr; gap:16px; margin-bottom:16px;}
+  .pf-card{background:var(--panel); border:1px solid var(--steel); padding:18px 20px; min-width:0;}
+  .pf-card h4{font-family:var(--display); font-size:1.15rem; letter-spacing:.05em; margin:0 0 4px; font-weight:400;}
+  .pf-card .sub{font-family:var(--mono); font-size:.72rem; color:var(--paper-dim); margin-bottom:12px; line-height:1.5;}
+  .pf-chart{position:relative; height:240px;}
+  .pf-scen{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:14px;}
+  .pf-scen > div{border:1px solid var(--steel); padding:10px 6px; text-align:center; background:var(--void);}
+  .pf-scen .t{font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; color:var(--paper-dim);}
+  .pf-scen .a{font-family:var(--display); font-size:1.15rem; margin-top:3px;}
+  .pf-scen .p{font-family:var(--mono); font-size:.78rem; margin-top:1px;}
+  .pf-scen .now{border-color:var(--gold);}
+  .pf-bar{display:flex; align-items:center; gap:10px; margin:7px 0; font-family:var(--mono); font-size:.76rem;}
+  .pf-bar .n{width:96px; flex:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--paper);}
+  .pf-bar .tr{flex:1; height:10px; background:var(--steel);} .pf-bar .fl{height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-bright));}
+  .pf-bar .pc{width:44px; text-align:right; color:var(--paper-dim);}
+  .pf-tbl{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:.78rem;}
+  .pf-tbl th{font-weight:400; text-align:right; color:var(--paper-dim); padding:6px 8px; border-bottom:1px solid var(--steel); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;}
+  .pf-tbl td{text-align:right; padding:8px; border-bottom:1px solid var(--steel);}
+  .pf-tbl th:first-child,.pf-tbl td:first-child{text-align:left;}
+  @media (max-width:820px){ .pf-grid{grid-template-columns:1fr;} .pf-scen .a{font-size:.95rem;} .pf-scen .p{font-size:.68rem;} }
+
   /* ===== Prospect Market polish ===== */
   .stock-header{padding-bottom:6px;}
   .stock-balance-box{background:linear-gradient(160deg, rgba(198,161,91,.10), rgba(198,161,91,.02)); min-width:250px;}
@@ -8712,10 +8741,18 @@ async function openPublicProfile(userId){
       </div>` : '';
 
     // Portfolio value: fetch their holdings + current prices
-    let portfolioValue = 0;
+    let portfolioValue = 0, theirHoldingsHTML = '';
     try{
       const { data: holdings } = await sb.from('holdings').select('*').eq('user_id', userId);
       if(holdings && holdings.length){
+        const mk = {};
+        const { data: pr0 } = await sb.from('player_stocks').select('*');
+        (pr0||[]).forEach(p => mk[p.player_rk] = p.price);
+        const top = holdings.filter(h => Number(h.shares) > 0).map(h => ({ pid: h.player_rk, shares: Number(h.shares), value: Number(h.shares) * (mk[h.player_rk]||0) })).sort((a,b) => b.value - a.value);
+        if(top.length && canSeeInvestors()) theirHoldingsHTML = `<div class="profile-section"><div class="lbl">Invested In</div>` + top.slice(0, 8).map(h => {
+          const pl = players.find(x => x.id === h.pid);
+          return pl ? `<div class="profile-board-row"><span>${pl.name}</span><span style="color:var(--gold);">${h.shares} share${h.shares===1?'':'s'} · $${Math.round(h.value).toLocaleString()}</span></div>` : '';
+        }).join('') + (top.length > 8 ? `<p class="profile-empty">+${top.length - 8} more</p>` : '') + `</div>`;
         const { data: prices } = await sb.from('player_stocks').select('*');
         const priceMap = {};
         (prices||[]).forEach(p => priceMap[p.player_rk] = p.price);
@@ -8819,6 +8856,7 @@ async function openPublicProfile(userId){
         <div><div class="lbl" style="margin:0 0 4px;">Portfolio Value</div><div class="val">$${portfolioValue.toLocaleString()}</div></div>
         <div><div class="lbl" style="margin:0 0 4px;">Articles Read</div><div class="val">${articlesReadCount}</div></div>
       </div>
+      ${theirHoldingsHTML}
 
       <div class="profile-section">
         <div class="lbl">NBA Team</div>
@@ -9526,6 +9564,246 @@ async function loadStockData(){
   }
 }
 
+
+/* ================= WHO'S INVESTING IN WHO ================= */
+function canSeeInvestors(){ return !!(currentUser && currentUser.id === MASTER_BOARD_USER_ID); }
+let allHoldings = null;          // [{user_id, player_rk, shares}] for every user, once loaded
+let holderProfiles = {};         // user_id -> {username, avatar_url}
+let allHoldingsLoading = null;
+function loadAllHoldings(force){
+  if(!canSeeInvestors()) return Promise.resolve();
+  if(allHoldings && !force) return Promise.resolve();
+  if(allHoldingsLoading) return allHoldingsLoading;
+  allHoldingsLoading = (async () => {
+    try{
+      const { data, error } = await sb.from('holdings').select('user_id, player_rk, shares').gt('shares', 0).limit(20000);
+      if(error) throw error;
+      allHoldings = data || [];
+      const ids = [...new Set(allHoldings.map(h => h.user_id))];
+      holderProfiles = {};
+      for(let i = 0; i < ids.length; i += 150){
+        const { data: profs } = await sb.from('public_profiles').select('id, username, avatar_url').in('id', ids.slice(i, i + 150));
+        (profs || []).forEach(pr => { holderProfiles[pr.id] = pr; });
+      }
+    } catch(e){ console.error('Failed to load all holdings', e); allHoldings = allHoldings || []; }
+    allHoldingsLoading = null;
+  })();
+  return allHoldingsLoading;
+}
+function holderName(uid){
+  if(currentUser && uid === currentUser.id) return (holderProfiles[uid] && holderProfiles[uid].username) || 'You';
+  return (holderProfiles[uid] && holderProfiles[uid].username) || 'Anonymous';
+}
+function holderAvatar(uid, size){
+  const pr = holderProfiles[uid] || {};
+  const nm = pr.username || '?';
+  return `<span style="display:inline-flex; width:${size}px; height:${size}px; border-radius:50%; background:linear-gradient(165deg,#c6a15b,#1b1c20 130%); color:#0a0a0c; font-family:var(--display); font-size:${Math.round(size*.45)}px; align-items:center; justify-content:center; flex:none; overflow:hidden;">${pr.avatar_url ? `<img src="${pr.avatar_url}" alt="" style="width:100%;height:100%;object-fit:cover;">` : nm.slice(0,1).toUpperCase()}</span>`;
+}
+function ownerCountOf(pid){
+  if(!allHoldings || !canSeeInvestors()) return null;
+  const set = new Set(); allHoldings.forEach(h => { if(h.player_rk === pid) set.add(h.user_id); });
+  return set.size;
+}
+function renderInvestorsList(listEl){
+  if(!allHoldings){ listEl.innerHTML = '<div class="stock-empty">Loading investors...</div>'; return; }
+  const by = {};
+  allHoldings.forEach(h => { (by[h.user_id] = by[h.user_id] || []).push(h); });
+  let rows = Object.keys(by).map(uid => {
+    const hs = by[uid].map(h => ({ pid: h.player_rk, shares: Number(h.shares), value: Number(h.shares) * (stockPrices[h.player_rk] || 0) })).sort((a,b) => b.value - a.value);
+    return { uid, hs, total: hs.reduce((t,h) => t + h.value, 0) };
+  }).sort((a,b) => b.total - a.total);
+  rows = rows.filter(r => ddMatch(stockQuery, holderName(r.uid), ''));
+  if(!rows.length){ listEl.innerHTML = '<div class="stock-empty">No investors to show yet. Be the first to buy a stock.</div>'; return; }
+  listEl.innerHTML = rows.slice(0, 50).map((r, i) => {
+    const chips = r.hs.slice(0, 4).map(h => {
+      const pl = players.find(x => x.id === h.pid);
+      return pl ? `<span class="team-chip" style="cursor:pointer; margin:3px 6px 0 0;" onclick="event.stopPropagation(); openStockDetail(${h.pid})">${pl.name} · ${h.shares}</span>` : '';
+    }).join('');
+    const more = r.hs.length > 4 ? `<span style="font-size:.75rem; color:var(--paper-dim);">+${r.hs.length - 4} more</span>` : '';
+    const me = currentUser && r.uid === currentUser.id;
+    return `<div class="stock-row mkt${i<3?' top3':''}">
+      <div class="srk">${i+1}</div>
+      ${holderAvatar(r.uid, 44)}
+      <div class="sinfo" style="cursor:pointer;" onclick="openPublicProfile('${r.uid}')">
+        <div class="sname">${holderName(r.uid)}${me ? ' (you)' : ''}</div>
+        <div class="smeta" style="white-space:normal;">${r.hs.length} player${r.hs.length===1?'':'s'}</div>
+        <div>${chips}${more}</div>
+      </div>
+      <div class="sprice"><b>$${Math.round(r.total).toLocaleString()}</b><span>portfolio value</span></div>
+    </div>`;
+  }).join('');
+}
+function renderStockHoldersBox(pid){
+  const box = document.getElementById('stockHoldersBox');
+  if(!box) return;
+  if(!allHoldings || !canSeeInvestors()){ box.innerHTML = ''; return; }
+  const hs = allHoldings.filter(h => h.player_rk === pid).map(h => ({ uid: h.user_id, shares: Number(h.shares) })).sort((a,b) => b.shares - a.shares);
+  const total = hs.reduce((t,h) => t + h.shares, 0);
+  box.innerHTML = `<div style="margin-top:34px;">
+    <h3 style="font-family:var(--display); font-size:1.4rem; letter-spacing:.04em; margin:0 0 12px;">Who's Invested</h3>
+    ${hs.length ? `<p class="section-sub" style="margin:0 0 14px;">${hs.length} investor${hs.length===1?'':'s'} · ${total.toLocaleString()} total share${total===1?'':'s'}</p>` + hs.slice(0, 15).map(h => `
+      <div class="profile-board-row" style="cursor:pointer; display:flex; align-items:center; gap:12px; padding:10px 0;" onclick="openPublicProfile('${h.uid}')">
+        ${holderAvatar(h.uid, 32)}
+        <span style="flex:1;">${holderName(h.uid)}${currentUser && h.uid === currentUser.id ? ' (you)' : ''}</span>
+        <span style="color:var(--gold);">${h.shares.toLocaleString()} share${h.shares===1?'':'s'} · ${Math.round(h.shares/total*100)}%</span>
+      </div>`).join('') + (hs.length > 15 ? `<p class="profile-empty">+${hs.length - 15} more investors</p>` : '')
+      : '<p class="profile-empty">Nobody owns this player yet.</p>'}
+  </div>`;
+}
+
+/* ================= PORTFOLIO DASHBOARD ================= */
+let pfChartInstances = [];
+let pfHistoryCache = null;   // { key, rows }
+// Same curve the consensus uses to turn a rank into a price (see applyConsensusStockPrices).
+function pfPriceAtRank(rank, n){
+  const t = n > 1 ? (rank - 1) / (n - 1) : 0;
+  return 6 + (115 - 6) * Math.exp(-4.6 * t);
+}
+function pfMoney(v){ return '$' + Math.round(v).toLocaleString(); }
+function pfPct(v, d){ const x = Number(v).toFixed(d === undefined ? 1 : d); return (v > 0 ? '+' : '') + x + '%'; }
+function pfCls(v){ return v > 0.0001 ? 'pf-up' : v < -0.0001 ? 'pf-down' : ''; }
+function pfBuild(){
+  const held = Object.keys(myHoldings).filter(rk => myHoldings[rk] > 0).map(rk => {
+    const id = Number(rk), pl = players.find(x => x.id === id);
+    return { id, p: pl, shares: myHoldings[rk], price: stockPrices[id] || 0 };
+  }).filter(h => h.p);
+  held.forEach(h => { h.value = h.shares * h.price; });
+  held.sort((a,b) => b.value - a.value);
+  const priced = players.filter(p => stockPrices[p.id] !== undefined).sort((a,b) => stockPrices[b.id] - stockPrices[a.id]);
+  const n = priced.length;
+  const mrank = {}; priced.forEach((p,i) => { mrank[p.id] = i + 1; });
+  held.forEach(h => { h.mrank = mrank[h.id] || n; });
+  const total = held.reduce((t,h) => t + h.value, 0);
+  held.forEach(h => { h.weight = total ? h.value / total * 100 : 0; });
+  return { held, n, total, mrank };
+}
+function pfScenario(held, n, delta){
+  return held.reduce((t,h) => t + h.shares * pfPriceAtRank(Math.min(n, Math.max(1, h.mrank + delta)), n), 0);
+}
+function pfDashboardHTML(){
+  const d = pfBuild();
+  if(!d.held.length) return '';
+  const cash = Number(currentProfile.balance) || 0;
+  const net = cash + d.total;
+  const top = d.held[0];
+  // scenarios: every position moves X spots on the consensus board (negative = falls)
+  const sc = [[-10,'FALL 10'],[-5,'FALL 5'],[0,'NOW'],[5,'RISE 5'],[10,'RISE 10']].map(([dl, lbl]) => {
+    const v = dl === 0 ? d.total : pfScenario(d.held, d.n, -dl);   // rising = lower rank number
+    return { lbl, dl, v, pct: d.total ? (v / d.total - 1) * 100 : 0 };
+  });
+  // value if the market used YOUR big board
+  let boardLine = '', boardRows = '';
+  if(customBoardLoaded && customBoardOrder.length){
+    const yr = {}; customBoardOrder.forEach((id,i) => { yr[id] = i + 1; });
+    let bv = 0;
+    d.held.forEach(h => { h.yrank = yr[h.id] || d.n; bv += h.shares * pfPriceAtRank(h.yrank, d.n); });
+    const bp = d.total ? (bv / d.total - 1) * 100 : 0;
+    boardLine = `<div class="pf-kpi"><div class="k">Your Board Says</div><div class="v ${pfCls(bp)}">${pfPct(bp)}</div><div class="d">worth ${pfMoney(bv)}</div></div>`;
+    boardRows = `<div class="pf-card" style="margin-bottom:16px;"><h4>Market vs Your Board</h4><div class="sub">Where the market ranks each player you own compared with your own big board. Green means you think he's underpriced.</div>
+      <div style="overflow-x:auto;"><table class="pf-tbl"><thead><tr><th>Player</th><th>Market</th><th>Yours</th><th>Gap</th><th>Your take</th></tr></thead><tbody>
+      ${d.held.map(h => { const gap = h.mrank - h.yrank; return `<tr><td>${h.p.name}</td><td>#${h.mrank}</td><td>#${h.yrank}</td><td class="${pfCls(gap)}">${gap > 0 ? '+' : ''}${gap}</td><td class="${pfCls(gap)}">${gap > 3 ? 'Undervalued' : gap < -3 ? 'Overvalued' : 'Fair'}</td></tr>`; }).join('')}
+      </tbody></table></div></div>`;
+  }
+  const conc = top.weight;
+  const hhi = d.held.reduce((t,h) => t + Math.pow(h.weight / 100, 2), 0);
+  const divLabel = d.held.length === 1 ? 'All in one' : hhi > .5 ? 'Concentrated' : hhi > .25 ? 'Balanced' : 'Diversified';
+  const groupBars = (keyFn) => {
+    const g = {}; d.held.forEach(h => { const k = keyFn(h.p); g[k] = (g[k] || 0) + h.value; });
+    const rows = Object.entries(g).sort((a,b) => b[1] - a[1]).slice(0, 6);
+    const mx = rows[0] ? rows[0][1] : 1;
+    return rows.map(([k,v]) => `<div class="pf-bar"><span class="n" title="${k}">${k}</span><span class="tr"><span class="fl" style="display:block; width:${Math.round(v / mx * 100)}%;"></span></span><span class="pc">${Math.round(v / d.total * 100)}%</span></div>`).join('');
+  };
+  return `<div id="pfDash">
+    <div class="pf-kpis">
+      <div class="pf-kpi"><div class="k">Net Worth</div><div class="v">${pfMoney(net)}</div><div class="d">cash + holdings</div></div>
+      <div class="pf-kpi"><div class="k">Invested</div><div class="v">${pfMoney(d.total)}</div><div class="d">${Math.round(d.total / net * 100)}% of net worth</div></div>
+      <div class="pf-kpi"><div class="k">Cash</div><div class="v">${pfMoney(cash)}</div><div class="d">${d.held.length} position${d.held.length===1?'':'s'}</div></div>
+      <div class="pf-kpi"><div class="k">Top Holding</div><div class="v" style="font-size:1.15rem;">${top.p.name}</div><div class="d">${conc.toFixed(0)}% of portfolio</div></div>
+      <div class="pf-kpi"><div class="k">Mix</div><div class="v" style="font-size:1.3rem;">${divLabel}</div><div class="d">diversification</div></div>
+      ${boardLine}
+    </div>
+    <div class="pf-grid">
+      <div class="pf-card"><h4>Portfolio Value Over Time</h4><div class="sub" id="pfHistSub">Your current holdings priced at each moment the market moved.</div><div class="pf-chart"><canvas id="pfHistChart"></canvas></div></div>
+      <div class="pf-card"><h4>Where Your Money Is</h4><div class="sub">Share of portfolio value by player.</div><div class="pf-chart"><canvas id="pfAllocChart"></canvas></div></div>
+    </div>
+    <div class="pf-card" style="margin-bottom:16px;"><h4>Projection</h4>
+      <div class="sub">What your holdings would be worth if every player you own moved this many spots on the consensus board. Prices follow the board's rank curve, so moves near the top are worth the most.</div>
+      <div class="pf-scen">${sc.map(x => `<div class="${x.dl===0?'now':''}"><div class="t">${x.lbl}</div><div class="a">${pfMoney(x.v)}</div><div class="p ${pfCls(x.pct)}">${x.dl===0 ? 'current' : pfPct(x.pct)}</div></div>`).join('')}</div>
+      <div class="pf-chart" style="height:200px;"><canvas id="pfScenChart"></canvas></div>
+    </div>
+    <div class="pf-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="pf-card"><h4>By School</h4><div class="sub">Where your exposure sits.</div>${groupBars(p => p.school)}</div>
+      <div class="pf-card"><h4>By Position</h4><div class="sub">Guards, wings and bigs.</div>${groupBars(p => (p.pos || '').split('/')[0] || 'N/A')}</div>
+    </div>
+    ${boardRows}
+    <h4 style="font-family:var(--display); font-weight:400; letter-spacing:.05em; font-size:1.15rem; margin:22px 0 10px;">Your Holdings</h4>
+  </div>`;
+}
+async function pfDrawCharts(){
+  pfChartInstances.forEach(c => { try{ c.destroy(); }catch(e){} }); pfChartInstances = [];
+  if(typeof Chart === 'undefined') return;
+  const d = pfBuild();
+  if(!d.held.length) return;
+  const txt = '#a9a49a', grid = '#2e3136', mono = { family: 'Space Mono', size: 10 };
+  // allocation doughnut
+  const ac = document.getElementById('pfAllocChart');
+  if(ac){
+    const palette = ['#c6a15b','#e8c873','#5c9e6f','#6ba3c9','#c96b6b','#9a6bc9','#8a8d94'];
+    const top = d.held.slice(0, 6), rest = d.held.slice(6).reduce((t,h) => t + h.value, 0);
+    const labels = top.map(h => h.p.name).concat(rest > 0 ? ['Others'] : []);
+    const data = top.map(h => h.value).concat(rest > 0 ? [rest] : []);
+    pfChartInstances.push(new Chart(ac, { type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: palette.slice(0, data.length), borderColor: '#141417', borderWidth: 2 }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '62%',
+        plugins: { legend: { position: 'bottom', labels: { color: txt, font: mono, boxWidth: 10 } },
+          tooltip: { callbacks: { label: c => ` ${c.label}: ${pfMoney(c.parsed)} (${Math.round(c.parsed / d.total * 100)}%)` } } } } }));
+  }
+  // scenario bars
+  const sc = document.getElementById('pfScenChart');
+  if(sc){
+    const steps = [-10,-5,0,5,10];
+    const vals = steps.map(dl => dl === 0 ? d.total : pfScenario(d.held, d.n, -dl));
+    pfChartInstances.push(new Chart(sc, { type: 'bar',
+      data: { labels: steps.map(x => x === 0 ? 'Now' : (x > 0 ? '+' + x + ' spots' : x + ' spots')),
+        datasets: [{ data: vals, backgroundColor: steps.map(x => x === 0 ? '#c6a15b' : x > 0 ? '#5c9e6f' : '#d9483a'), borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + pfMoney(c.parsed.y) + (steps[c.dataIndex] ? ' (' + pfPct((c.parsed.y / d.total - 1) * 100) + ')' : '') } } },
+        scales: { x: { grid: { display: false }, ticks: { color: txt, font: mono } },
+          y: { grid: { color: grid }, ticks: { color: txt, font: mono, callback: v => '$' + Math.round(v).toLocaleString() }, min: Math.max(0, Math.min(...vals) * 0.8) } } } }));
+  }
+  // value over time, rebuilt from price history for the players you hold now
+  const hc = document.getElementById('pfHistChart');
+  if(hc){
+    const ids = d.held.map(h => h.id);
+    let rows = [];
+    try{
+      const { data, error } = await sb.from('price_history').select('player_rk, price, recorded_at').in('player_rk', ids).gte('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at', { ascending: true }).limit(20000);
+      if(error) throw error;
+      rows = data || [];
+    } catch(e){ console.error('Portfolio history failed', e); }
+    const times = [...new Set(rows.map(r => r.recorded_at))].sort();
+    const last = {}; const sharesBy = {}; d.held.forEach(h => { sharesBy[h.id] = h.shares; last[h.id] = null; });
+    // seed with each player's first known price so early points are not understated
+    const firstSeed = {}; rows.forEach(r => { if(firstSeed[r.player_rk] === undefined) firstSeed[r.player_rk] = Number(r.price); });
+    const byTime = {}; rows.forEach(r => { (byTime[r.recorded_at] = byTime[r.recorded_at] || []).push(r); });
+    const cur = {}; ids.forEach(id => { cur[id] = firstSeed[id] !== undefined ? firstSeed[id] : (stockPrices[id] || 0); });
+    const pts = times.map(t => { byTime[t].forEach(r => { cur[r.player_rk] = Number(r.price); }); return { t, v: ids.reduce((s,id) => s + cur[id] * sharesBy[id], 0) }; });
+    pts.push({ t: new Date().toISOString(), v: d.total });
+    const sub = document.getElementById('pfHistSub');
+    if(pts.length < 3 && sub) sub.textContent = 'History builds as the market moves. Each time the staff boards change, a new point lands here.';
+    const span = pts.length > 1 ? new Date(pts[pts.length-1].t) - new Date(pts[0].t) : 0;
+    const labels = pts.map(p => { const dt = new Date(p.t); return span < 36e5 * 48 ? dt.toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : dt.toLocaleDateString('en-US', { month:'short', day:'numeric' }); });
+    const vs = pts.map(p => p.v);
+    const lo = Math.min(...vs), hi = Math.max(...vs), mid = (lo + hi) / 2, rng = Math.max(hi - lo, mid * 0.12, 1);
+    pfChartInstances.push(new Chart(hc, { type: 'line',
+      data: { labels, datasets: [{ data: vs, borderColor: '#c6a15b', backgroundColor: 'rgba(198,161,91,.12)', fill: true, tension: .2, borderWidth: 2, pointRadius: vs.length < 6 ? 4 : 2, pointBackgroundColor: '#c6a15b' }] },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + pfMoney(c.parsed.y) } } },
+        scales: { x: { grid: { color: grid }, ticks: { color: txt, font: mono, maxTicksLimit: 5, maxRotation: 0 } },
+          y: { min: Math.max(0, mid - rng * .65), max: mid + rng * .65, grid: { color: grid }, ticks: { color: txt, font: mono, maxTicksLimit: 5, callback: v => '$' + Math.round(v).toLocaleString() } } } } }));
+  }
+}
+
 function portfolioValue(){
   let total = 0;
   for(const rk in myHoldings){
@@ -10026,12 +10304,14 @@ function renderStockView(){
     <div class="stock-tabs">
       <button class="stock-tab ${stockActiveTab==='market'?'active':''}" onclick="setStockTab('market')">Market</button>
       <button class="stock-tab ${stockActiveTab==='portfolio'?'active':''}" onclick="setStockTab('portfolio')">My Portfolio</button>
+      ${canSeeInvestors() ? `<button class="stock-tab ${stockActiveTab==='investors'?'active':''}" onclick="setStockTab('investors')">Investors</button>` : ''}
     </div>
     <div class="player-search-row"><input type="text" id="stockSearch" placeholder="Search players by name..." autocomplete="off" value="${stockQuery.replace(/"/g,'&quot;')}" oninput="stockQuery=this.value; renderStockList()"></div>
     <div id="stockListArea"></div>
     <div class="stock-msg" id="stockMsg"></div>
   `;
   renderStockList();
+  loadAllHoldings().then(() => { if(stockDetailRk === null && document.getElementById('stockListArea')) renderStockList(); });
 }
 
 async function renderStockDetailView(el, pv){
@@ -10070,7 +10350,9 @@ async function renderStockDetailView(el, pv){
     </div>
     <div class="stock-msg" id="stockMsg"></div>
     <button class="btn btn-ghost" style="margin-top:20px;" onclick="showPlayerQuickView(${p.id})">View Full Scouting Profile →</button>
+    <div id="stockHoldersBox"></div>
   `;
+  loadAllHoldings().then(() => { if(stockDetailRk === rk) renderStockHoldersBox(rk); });
 
   const history = await fetchPriceHistory(rk);
   const canvas = document.getElementById('stockDetailChart');
@@ -10123,7 +10405,7 @@ function renderStockList(){
         <div class="sav" data-av="${p.name.replace(/"/g,'&quot;')}">${PLAYER_PHOTOS[p.name] ? '' : playerAvatarHTML(p.name)}</div>
         <div class="sinfo" onclick="openStockDetail(${p.id})">
           <div class="sname">${p.name}</div>
-          <div class="smeta">${p.pos} · ${p.school}</div>
+          <div class="smeta">${p.pos} · ${p.school}${(() => { const oc = ownerCountOf(p.id); return oc ? ` · ${oc} investor${oc===1?'':'s'}` : ''; })()}</div>
         </div>
         <div class="sprice"><b>$${price.toLocaleString()}</b><span>per share</span></div>
         <div class="stock-trade">
@@ -10137,13 +10419,16 @@ function renderStockList(){
       </div>`;
     }).join("") || '<div class="dd-none">No players match that search.</div>';
     hydrateMarketAvatars(listEl);
+  } else if(stockActiveTab === 'investors' && canSeeInvestors()){
+    renderInvestorsList(listEl);
   } else {
     const held = Object.keys(myHoldings).filter(rk => myHoldings[rk] > 0);
     if(held.length === 0){
       listEl.innerHTML = `<div class="stock-empty">You don't own any shares yet. Head to the Market tab to buy your first stock.</div>`;
       return;
     }
-    listEl.innerHTML = held.map((rk, idx) => {
+    const dashHTML = (!stockQuery && typeof pfDashboardHTML === 'function') ? pfDashboardHTML() : '';
+    listEl.innerHTML = dashHTML + held.map((rk, idx) => {
       const p = players.find(x => x.id == rk);
       const shares = myHoldings[rk];
       const price = stockPrices[rk] || 0;
@@ -10170,6 +10455,7 @@ function renderStockList(){
       </div>`;
     }).join("") || '<div class="dd-none">No holdings match that search.</div>';
     hydrateMarketAvatars(listEl);
+    if(dashHTML) pfDrawCharts();
   }
 }
 function stepSellQty(id, d, max){
