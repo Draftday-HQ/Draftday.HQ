@@ -669,6 +669,21 @@
   .gd-day.sel .dn, .gd-day.sel .dc{color:var(--void);}
   .gd-daytitle{font-family:var(--serif); font-size:1.25rem; color:var(--paper); margin:30px 0 4px;}
   .game-card{cursor:pointer;}
+  .gd-day.past{border-style:dashed;}
+  .gc-mini{font-family:var(--mono); font-size:.56rem; letter-spacing:.05em; color:var(--paper); white-space:nowrap; margin-top:1px;}
+  .gdm-boxbar{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:12px 22px; background:#0d0d10; border-top:1px solid var(--steel); border-bottom:1px solid var(--steel);
+    font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--paper-dim);}
+  .gdm-livedot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#e23b2e; margin-right:8px; animation:gdmPulse 1.4s infinite;}
+  @keyframes gdmPulse{0%{box-shadow:0 0 0 0 rgba(226,59,46,.6);} 70%{box-shadow:0 0 0 8px rgba(226,59,46,0);} 100%{box-shadow:0 0 0 0 rgba(226,59,46,0);}}
+  @media (prefers-reduced-motion:reduce){ .gdm-livedot{animation:none;} }
+  .gdm-boxline{display:grid; grid-template-columns:repeat(5, 1fr); gap:6px 4px; margin-top:6px;}
+  .gdm-bx{background:#0b0b0d; border:1px solid var(--steel); padding:6px 2px 5px; text-align:center; min-width:0;}
+  .gdm-bx b{display:block; font-family:var(--display); font-size:1.05rem; font-weight:400; line-height:1.1; color:var(--paper);}
+  .gdm-bx span{display:block; font-family:var(--mono); font-size:.5rem; letter-spacing:.08em; color:var(--paper-dim);}
+  .gdm-bx.hi{border-color:var(--gold);} .gdm-bx.hi b{color:var(--gold);}
+  .gdm-boxline .gdm-boxwait{grid-column:1 / -1;}
+  .gdm-boxwait{font-family:var(--mono); font-size:.62rem; letter-spacing:.06em; color:var(--paper-dim);}
+  @media (max-width:700px){ .gdm-boxline{grid-template-columns:repeat(5, 1fr);} }
   .gc-hint{font-family:var(--mono); font-size:.56rem; letter-spacing:.1em; text-transform:uppercase; color:var(--paper-dim); text-align:center; padding:11px 0 13px; border-top:1px solid var(--steel); transition:color .15s;}
   .game-card:hover .gc-hint{color:var(--gold);}
   #gameDetailModal{z-index:3000; align-items:flex-start; overflow-y:auto; padding:5vh 16px;}
@@ -2262,7 +2277,7 @@
   <section id="upcoming-games-wrap">
     <div class="eyebrow">Mark Your Calendar</div>
     <h2 class="section-title">Upcoming Prospect Games</h2>
-    <p class="section-sub">The next two weeks of college games featuring our ranked prospects, with head-to-heads flagged.</p>
+    <p class="section-sub">College games featuring our ranked prospects, two weeks back and two weeks ahead. Live and final games show box scores for our prospects.</p>
     <div class="upcoming-games-filter" id="upcomingGamesFilter">
       <button class="active" data-f="all" onclick="setUpcomingGamesFilter('all')">All games</button>
       <button data-f="h2h" onclick="setUpcomingGamesFilter('h2h')">Prospect vs. prospect</button>
@@ -3065,7 +3080,7 @@ function isContentEditor(){
   return !!(currentUser && currentUser.email && getConsensusBoardEmails().includes(currentUser.email.toLowerCase()));
 }
 
-const SEASON_YEAR_RANK = {"Freshman":1, "Redshirt Freshman":1.5, "Sophomore":2, "Junior":3, "Senior":4, "5th Year":5};
+const SEASON_YEAR_RANK = {"2026-27":99, "Freshman":1, "Redshirt Freshman":1.5, "Sophomore":2, "Junior":3, "Senior":4, "5th Year":5};
 function seasonsMostRecentFirst(seasons){
   if(!seasons) return seasons;
   return [...seasons].sort((a,b) => (SEASON_YEAR_RANK[b.yr]||0) - (SEASON_YEAR_RANK[a.yr]||0));
@@ -4538,13 +4553,20 @@ function parseCollegeScoreboard(json){
   });
   return out;
 }
-async function fetchCollegeGames(days){
-  const fmt = d => d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+const SEASON_START = '2026-11-01';          // first day box scores count toward the 2026-27 averages
+const GAMES_DAYS_BACK = 14, GAMES_DAYS_AHEAD = 14;
+async function fetchCollegeDay(d){
+  const key = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  try{
+    const r = await fetch(COLLEGE_SCOREBOARD_URL + '?groups=50&limit=400&dates=' + key);
+    return r.ok ? await r.json() : null;
+  }catch(e){ return null; }
+}
+async function fetchCollegeGames(back, ahead){
   const reqs = [];
-  for(let i = 0; i < days; i++){
+  for(let i = -back; i < ahead; i++){
     const d = new Date(); d.setDate(d.getDate() + i);
-    reqs.push(fetch(COLLEGE_SCOREBOARD_URL + '?groups=50&limit=400&dates=' + fmt(d))
-      .then(r => r.ok ? r.json() : null).catch(() => null));
+    reqs.push(fetchCollegeDay(d));
   }
   const results = await Promise.all(reqs);
   if(results.every(r => r === null)) throw new Error('college schedule feed unavailable');
@@ -4564,20 +4586,20 @@ async function fetchTrackedGamesFallback(){
     detail: '', network: '', neutral: false, dateOnly: true
   })).filter(g => g.homeTracked || g.awayTracked);
 }
-function gcProspectHTML(p, sc){
+function gcProspectHTML(p, sc, gid){
   const src = PLAYER_PHOTOS[p.name];
   const ava = src ? `<img src="${src}" alt="${p.name}" loading="lazy" draggable="false">` : `<span>${initials(p.name)}</span>`;
   return `<div class="gc-pros" style="--sc:${sc}">
     <div class="gc-ava">${ava}</div>
-    <div class="gc-pinfo"><span class="gc-pname">${p.name}</span><span class="gc-pmeta">#${p.rk} · ${primaryPosition(p.pos)}</span></div>
+    <div class="gc-pinfo"><span class="gc-pname">${p.name}</span><span class="gc-pmeta">#${p.rk} · ${primaryPosition(p.pos)}</span>${gid ? `<span class="gc-mini" data-ev="${gid}" data-pid="${p.id}"></span>` : ''}</div>
   </div>`;
 }
-function gcSideHTML(school, tracked, label){
+function gcSideHTML(school, tracked, label, gid){
   const list = tracked ? players.filter(p => p.school === school).sort((a, b) => a.rk - b.rk) : [];
   const sc = accentFor(school);
   return `<div class="gc-side" style="--sc:${sc}">
     <div class="gc-side-label">${label} · ${school}</div>
-    ${list.length ? list.slice(0, 3).map(p => gcProspectHTML(p, sc)).join('') : '<div class="gc-none">No ranked prospects</div>'}
+    ${list.length ? list.slice(0, 3).map(p => gcProspectHTML(p, sc, gid)).join('') : '<div class="gc-none">No ranked prospects</div>'}
     ${list.length > 3 ? `<div class="gc-more">+${list.length - 3} more on the board</div>` : ''}
   </div>`;
 }
@@ -4589,7 +4611,7 @@ function upcomingGameCardHTML(g){
   const live = g.state === 'in', fin = g.state === 'post';
   const mid = fin ? 'FINAL' : live ? 'LIVE' : (g.neutral ? 'VS' : '@');
   const sc = v => (v !== null && v !== undefined && !isNaN(v)) ? `<div class="game-card-score">${v}</div>` : '';
-  const pill = live ? `<span class="gc-pill live">${g.detail || 'Live'}</span>` : h2h ? '<span class="gc-pill h2h">Prospect vs. Prospect</span>' : (g.network ? `<span class="gc-pill">${g.network}</span>` : '');
+  const pill = live ? `<span class="gc-pill live">${g.detail || 'Live'}</span>` : fin ? '<span class="gc-pill">Final</span>' : h2h ? '<span class="gc-pill h2h">Prospect vs. Prospect</span>' : (g.network ? `<span class="gc-pill">${g.network}</span>` : '');
   return `
   <div class="game-card${h2h ? ' game-card-h2h' : ''}" onclick="openGameDetail('${g.id}')">
     <div class="gc-top"><span class="gc-when">${dateLabel}${timeLabel ? ' · ' + timeLabel : ''}</span>${pill}</div>
@@ -4598,15 +4620,15 @@ function upcomingGameCardHTML(g){
       <div class="game-card-vs">${mid}</div>
       <div class="game-card-team">${schoolBadge(g.home)}<div class="game-card-team-name">${g.home}</div>${sc(g.homeScore)}</div>
     </div>
-    <div class="gc-split">${gcSideHTML(g.away, g.awayTracked, 'Away')}${gcSideHTML(g.home, g.homeTracked, 'Home')}</div>
-    <div class="gc-hint">Tap for full matchup</div>
+    <div class="gc-split">${gcSideHTML(g.away, g.awayTracked, 'Away', g.state !== 'pre' ? g.id : '')}${gcSideHTML(g.home, g.homeTracked, 'Home', g.state !== 'pre' ? g.id : '')}</div>
+    <div class="gc-hint">${g.state === 'pre' ? 'Tap for full matchup' : 'Tap for full box score'}</div>
   </div>`;
 }
 let upcomingGamesDay = null;
 function gameDayKey(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function upcomingDayList(){
   const out = [], t = new Date(); t.setHours(12, 0, 0, 0);
-  for(let i = 0; i < 14; i++){ const d = new Date(t); d.setDate(t.getDate() + i); out.push({ key: gameDayKey(d), d }); }
+  for(let i = -GAMES_DAYS_BACK; i < GAMES_DAYS_AHEAD; i++){ const d = new Date(t); d.setDate(t.getDate() + i); out.push({ key: gameDayKey(d), d, off: i }); }
   return out;
 }
 function setUpcomingGamesDay(key){ upcomingGamesDay = key; renderUpcomingGames(true); }
@@ -4623,8 +4645,10 @@ function renderUpcomingGames(scrollToDay){
   const counts = {};
   list.forEach(g => { const k = gameDayKey(g.when); counts[k] = (counts[k] || 0) + 1; });
   if(!days.some(x => x.key === upcomingGamesDay)){
-    const first = days.find(x => counts[x.key]);
-    upcomingGamesDay = (first || days[0]).key;
+    const todayKey = gameDayKey(new Date());
+    const next = days.find(x => x.off >= 0 && counts[x.key]);
+    const past = days.filter(x => x.off < 0 && counts[x.key]).pop();
+    upcomingGamesDay = (next || past || days.find(x => x.key === todayKey) || days[0]).key;
   }
   document.querySelectorAll('#upcomingGamesFilter button').forEach(b => b.classList.toggle('active', b.dataset.f === upcomingGamesFilter));
   const bar = document.getElementById('upcomingGamesDays');
@@ -4633,8 +4657,8 @@ function renderUpcomingGames(scrollToDay){
     bar.innerHTML = `<button class="gd-arrow" onclick="stepUpcomingGamesDay(-1)" ${selIdx <= 0 ? 'disabled' : ''} aria-label="Previous day">‹</button>
       <div class="gd-strip" id="gdStrip">${days.map((x, i) => {
         const c = counts[x.key] || 0;
-        return `<button class="gd-day ${c ? 'has' : 'empty'} ${x.key === upcomingGamesDay ? 'sel' : ''}" onclick="setUpcomingGamesDay('${x.key}')">
-          <span class="dw">${i === 0 ? 'Today' : x.d.toLocaleDateString('en-US', { weekday:'short' })}</span>
+        return `<button class="gd-day ${c ? 'has' : 'empty'} ${x.off < 0 ? 'past' : ''} ${x.key === upcomingGamesDay ? 'sel' : ''}" onclick="setUpcomingGamesDay('${x.key}')">
+          <span class="dw">${x.off === 0 ? 'Today' : x.d.toLocaleDateString('en-US', { weekday:'short' })}</span>
           <span class="dn">${x.d.getDate()}</span>
           <span class="dc">${c ? c + (c === 1 ? ' game' : ' games') : '—'}</span></button>`;
       }).join('')}</div>
@@ -4650,6 +4674,7 @@ function renderUpcomingGames(scrollToDay){
   wrap.innerHTML = cards.length
     ? `<div class="upcoming-games-rail" id="upcomingGamesRail" style="margin-top:14px;">${cards.join('')}</div>`
     : `<div class="upcoming-games-empty" id="upcomingGamesRail" style="margin-top:14px;"><p>${upcomingGamesFilter === 'h2h' ? 'No games between two of our tracked prospects on this day.' : 'No games with our tracked prospects on this day.'} Use the arrows or pick another date.</p></div>`;
+  hydrateGameBoxes();
 }
 function setUpcomingGamesFilter(f){ upcomingGamesFilter = f; renderUpcomingGames(); }
 
@@ -4661,7 +4686,7 @@ function gameBlurb(p){
   if(t.length > 150) t = t.slice(0, 147).replace(/\s+\S*$/, '') + '...';
   return t;
 }
-function gdmProspectHTML(p, sc){
+function gdmProspectHTML(p, sc, g){
   const src = PLAYER_PHOTOS[p.name];
   const ava = src ? `<img src="${src}" alt="${p.name}" loading="lazy" draggable="false">` : `<span>${initials(p.name)}</span>`;
   const st = p.stats || {};
@@ -4673,25 +4698,25 @@ function gdmProspectHTML(p, sc){
       <div class="gdm-prow"><span class="gdm-rank">#${p.rk}</span><span class="gdm-pname">${p.name}</span></div>
       <div class="gdm-pvit">${p.pos} · ${p.hs}${typeof p.wt === 'number' ? ' · ' + p.wt + ' LBS' : ''} · ${p.cls}</div>
       ${stats ? `<div class="gdm-pstats">${stats}</div>` : ''}
-      <div class="gdm-pblurb"><span style="color:var(--paper)">Known for:</span> ${gameBlurb(p)}</div>
+      ${g && g.state !== 'pre' ? `<div class="gdm-boxline" data-ev="${g.id}" data-pid="${p.id}"><span class="gdm-boxwait">Loading box score...</span></div>` : `<div class="gdm-pblurb"><span style="color:var(--paper)">Known for:</span> ${gameBlurb(p)}</div>`}
       <div class="gdm-link">View full profile →</div>
     </div>
   </div>`;
 }
-function gdmColHTML(school, tracked, label){
+function gdmColHTML(school, tracked, label, g){
   const sc = accentFor(school);
   const list = tracked ? players.filter(p => p.school === school).sort((a, b) => a.rk - b.rk) : [];
   return `<div class="gdm-col" style="--sc:${sc}">
     <div class="gdm-col-title">${label} · ${school} · ${list.length} ranked ${list.length === 1 ? 'prospect' : 'prospects'}</div>
-    ${list.length ? list.map(p => gdmProspectHTML(p, sc)).join('') : '<div class="gdm-none">No ranked prospects on this team.</div>'}
+    ${list.length ? list.map(p => gdmProspectHTML(p, sc, g)).join('') : '<div class="gdm-none">No ranked prospects on this team.</div>'}
   </div>`;
 }
-function closeGameDetail(){ const m = document.getElementById('gameDetailModal'); if(m) m.remove(); document.body.style.overflow = ''; }
+function closeGameDetail(){ gdmOpenId = null; const m = document.getElementById('gameDetailModal'); if(m) m.remove(); document.body.style.overflow = ''; }
 function openGameProspect(id){ closeGameDetail(); showPlayerQuickView(id); }
 function openGameDetail(id){
   const g = upcomingGamesCache.find(x => String(x.id) === String(id));
   if(!g) return;
-  closeGameDetail();
+  closeGameDetail(); gdmOpenId = String(g.id);
   const dateLabel = g.when.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
   const timeLabel = g.dateOnly ? '' : g.when.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
   const live = g.state === 'in', fin = g.state === 'post';
@@ -4710,19 +4735,198 @@ function openGameDetail(id){
         <div class="gdm-team">${schoolBadge(g.home)}<div class="gdm-team-name">${g.home}</div>${sc(g.homeScore)}</div>
       </div>
     </div>
-    <div class="gdm-cols">${gdmColHTML(g.away, g.awayTracked, 'Away')}${gdmColHTML(g.home, g.homeTracked, 'Home')}</div>
+    ${g.state !== 'pre' ? `<div class="gdm-boxbar"><span>${live ? '<i class="gdm-livedot"></i>Live box score' : 'Final box score'} · our prospects only</span><span id="gdmUpdated"></span></div>` : ''}
+    <div class="gdm-cols">${gdmColHTML(g.away, g.awayTracked, 'Away', g)}${gdmColHTML(g.home, g.homeTracked, 'Home', g)}</div>
   </div>`;
   document.body.appendChild(ov);
   document.body.style.overflow = 'hidden';
+  if(g.state !== 'pre') hydrateGameBoxes(true);
 }
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && document.getElementById('gameDetailModal')) closeGameDetail(); });
+
+
+// ===== Box scores (ESPN game summary), matched to our prospects =====
+const COLLEGE_SUMMARY_URL = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary';
+let gdmOpenId = null;
+const gameBoxCache = {};      // eventId -> { at, final, data }
+function nameKey(n){
+  return String(n || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z\s]/g, ' ')
+    .split(/\s+/).filter(t => t && !['jr', 'sr', 'ii', 'iii', 'iv', 'v'].includes(t)).join(' ');
+}
+function matchProspect(school, displayName){
+  const k = nameKey(displayName), roster = players.filter(p => p.school === school);
+  let hit = roster.find(p => nameKey(p.name) === k);
+  if(hit) return hit;
+  const parts = k.split(' '), first = parts[0], last = parts[parts.length - 1];
+  const loose = roster.filter(p => { const q = nameKey(p.name).split(' '); return q[q.length - 1] === last && (q[0] === first || q[0][0] === first[0]); });
+  return loose.length === 1 ? loose[0] : null;
+}
+function parseGameBox(json){
+  const out = {};
+  const teams = (json && json.boxscore && json.boxscore.players) || [];
+  teams.forEach(t => {
+    const school = prospectSchoolFor(t.team || {});
+    if(!school) return;
+    const blk = (t.statistics || [])[0]; if(!blk) return;
+    const labels = (blk.labels || blk.names || []).map(x => String(x).toUpperCase());
+    const ix = k => labels.indexOf(k);
+    const num = (arr, k) => { const i = ix(k); const v = i < 0 ? NaN : parseFloat(arr[i]); return isNaN(v) ? 0 : v; };
+    const made = (arr, k) => { const i = ix(k); const m = i < 0 ? null : String(arr[i]).match(/(\d+)-(\d+)/); return m ? [+m[1], +m[2]] : [0, 0]; };
+    (blk.athletes || []).forEach(a => {
+      const p = matchProspect(school, a.athlete && a.athlete.displayName); if(!p) return;
+      const st = a.stats || [];
+      if(a.didNotPlay || !st.length){ out[p.id] = { dnp: true, school }; return; }
+      const [fgm, fga] = made(st, 'FG'), [tpm, tpa] = made(st, '3PT'), [ftm, fta] = made(st, 'FT');
+      out[p.id] = { school, dnp: false, min: num(st, 'MIN'), pts: num(st, 'PTS'), reb: num(st, 'REB'), oreb: num(st, 'OREB'), ast: num(st, 'AST'),
+        stl: num(st, 'STL'), blk: num(st, 'BLK'), tov: num(st, 'TO'), pf: num(st, 'PF'), fgm, fga, tpm, tpa, ftm, fta };
+    });
+  });
+  return out;
+}
+async function getGameBox(g, force){
+  const c = gameBoxCache[g.id];
+  if(c && !force && (c.final || Date.now() - c.at < 25000)) return c.data;
+  if(g.state === 'post'){ try{ const l = JSON.parse(localStorage.getItem('dd_box_' + g.id) || 'null'); if(l){ gameBoxCache[g.id] = { at: Date.now(), final: true, data: l }; return l; } }catch(e){} }
+  try{
+    const r = await fetch(COLLEGE_SUMMARY_URL + '?event=' + encodeURIComponent(g.id));
+    if(!r.ok) throw new Error('summary ' + r.status);
+    const data = parseGameBox(await r.json());
+    gameBoxCache[g.id] = { at: Date.now(), final: g.state === 'post', data };
+    if(g.state === 'post'){ try{ localStorage.setItem('dd_box_' + g.id, JSON.stringify(data)); }catch(e){} }
+    return data;
+  }catch(e){ return c ? c.data : null; }
+}
+function boxMiniText(r){
+  if(!r) return '';
+  if(r.dnp) return 'DNP';
+  return r.pts + ' PTS · ' + r.reb + ' REB · ' + r.ast + ' AST';
+}
+function boxLineHTML(r){
+  if(!r) return '<span class="gdm-boxwait">No box score line yet</span>';
+  if(r.dnp) return '<span class="gdm-boxwait">Did not play</span>';
+  const cell = (v, l, hi) => `<div class="gdm-bx${hi ? ' hi' : ''}"><b>${v}</b><span>${l}</span></div>`;
+  return cell(r.pts, 'PTS', true) + cell(r.reb, 'REB') + cell(r.ast, 'AST') + cell(r.stl, 'STL') + cell(r.blk, 'BLK') + cell(r.tov, 'TO') +
+    cell(r.fgm + '-' + r.fga, 'FG') + cell(r.tpm + '-' + r.tpa, '3PT') + cell(r.ftm + '-' + r.fta, 'FT') + cell(Math.round(r.min), 'MIN');
+}
+let boxTimer = null;
+async function hydrateGameBoxes(force){
+  const visible = [];
+  const dayGames = upcomingGamesCache.filter(g => gameDayKey(g.when) === upcomingGamesDay && g.state !== 'pre');
+  dayGames.forEach(g => visible.push(g));
+  if(gdmOpenId){ const og = upcomingGamesCache.find(x => String(x.id) === gdmOpenId); if(og && !visible.includes(og) && og.state !== 'pre') visible.push(og); }
+  await Promise.all(visible.map(g => getGameBox(g, force && String(g.id) === gdmOpenId)));
+  document.querySelectorAll('.gc-mini').forEach(el => {
+    const c = gameBoxCache[el.dataset.ev]; el.textContent = c && c.data ? (c.data[el.dataset.pid] ? boxMiniText(c.data[el.dataset.pid]) : 'DNP') : '';
+  });
+  document.querySelectorAll('.gdm-boxline').forEach(el => {
+    const c = gameBoxCache[el.dataset.ev]; el.innerHTML = c && c.data ? boxLineHTML(c.data[el.dataset.pid] || { dnp: true }) : '<span class="gdm-boxwait">Box score not available yet</span>';
+  });
+  const up = document.getElementById('gdmUpdated'); if(up) up.textContent = 'Updated ' + new Date().toLocaleTimeString('en-US');
+  clearTimeout(boxTimer);
+  const anyLive = upcomingGamesCache.some(g => g.state === 'in');
+  if(anyLive) boxTimer = setTimeout(liveTick, 30000);
+}
+async function liveTick(){
+  try{
+    const fresh = [];
+    for(const off of [-1, 0]){ const d = new Date(); d.setDate(d.getDate() + off); const j = await fetchCollegeDay(d); if(j) fresh.push(...parseCollegeScoreboard(j)); }
+    fresh.forEach(f => {
+      const i = upcomingGamesCache.findIndex(g => String(g.id) === String(f.id));
+      if(i >= 0){ const keepWhen = upcomingGamesCache[i].when; upcomingGamesCache[i] = { ...upcomingGamesCache[i], ...f, when: f.when || keepWhen }; }
+      else upcomingGamesCache.push(f);
+    });
+    const rail = document.getElementById('upcomingGamesRail'), keep = rail ? rail.scrollLeft : 0;
+    renderUpcomingGames();
+    const r2 = document.getElementById('upcomingGamesRail'); if(r2) r2.scrollLeft = keep;
+    if(gdmOpenId){ const og = upcomingGamesCache.find(x => String(x.id) === gdmOpenId); if(og && og.state === 'post'){ maybeSyncGameLogs(); } }
+  }catch(e){ console.warn('live refresh failed', e); }
+  hydrateGameBoxes(true);
+}
+
+// ===== Season averages built from stored final box scores (table: game_logs) =====
+const CUR_SEASON_LABEL = '2026-27';
+let gameLogs = [];
+async function loadGameLogs(){
+  try{
+    let all = [], from = 0;
+    for(;;){
+      const { data, error } = await sb.from('game_logs').select('*').range(from, from + 999);
+      if(error){ console.warn('game_logs unavailable (run game_logs.sql):', error.message || error); return; }
+      all = all.concat(data || []);
+      if(!data || data.length < 1000) break;
+      from += 1000;
+    }
+    gameLogs = all;
+    applyGameLogsToPlayers();
+  }catch(e){ console.warn('Could not load game logs', e); }
+}
+function applyGameLogsToPlayers(){
+  const by = {};
+  gameLogs.forEach(l => { if(l.game_date >= SEASON_START && Number(l.min) > 0){ (by[l.player_id] = by[l.player_id] || []).push(l); } });
+  players.forEach(p => {
+    p.seasons = (p.seasons || []).filter(x => x.yr !== CUR_SEASON_LABEL);
+    const L = by[p.id];
+    if(!p.__baseStats) p.__baseStats = { ...p.stats };
+    if(!L || !L.length){ p.stats = { ...p.__baseStats }; return; }
+    const n = L.length, sum = k => L.reduce((a, l) => a + (Number(l[k]) || 0), 0), avg = k => Math.round(sum(k) / n * 10) / 10;
+    const pct = (m, a) => sum(a) ? Math.round(sum(m) / sum(a) * 1000) / 10 : 0;
+    const row = { yr: CUR_SEASON_LABEL, gp: n, ppg: avg('pts'), rpg: avg('reb'), apg: avg('ast'), stl: avg('stl'), blk: avg('blk'), to: avg('tov'), min: avg('min'),
+      fg: pct('fgm', 'fga'), tpt: pct('tpm', 'tpa'), tpa: avg('tpa'), ft: pct('ftm', 'fta'), fta: avg('fta') };
+    p.seasons.push(row);
+    p.stats = { ppg: row.ppg.toFixed(1), rpg: row.rpg.toFixed(1), apg: row.apg.toFixed(1), fg: row.fg.toFixed(1) + '%' };
+  });
+  try{ if(typeof renderPlayerGrids === 'function') renderPlayerGrids(); }catch(e){}
+}
+function canSyncGameLogs(){
+  if(!currentUser) return false;
+  if(typeof MASTER_BOARD_USER_ID !== 'undefined' && currentUser.id === MASTER_BOARD_USER_ID) return true;
+  return STAFF_TRACKED_EMAILS.includes(String(currentUser.email || '').toLowerCase());
+}
+let gameSyncRunning = false;
+async function maybeSyncGameLogs(){
+  if(gameSyncRunning || !canSyncGameLogs()) return;
+  gameSyncRunning = true;
+  try{
+    // Catch up on any days between the season start and the loaded window.
+    let games = upcomingGamesCache.slice();
+    const winStart = new Date(); winStart.setDate(winStart.getDate() - GAMES_DAYS_BACK);
+    const start = new Date(SEASON_START + 'T12:00:00');
+    for(let d = new Date(start); d < winStart; d.setDate(d.getDate() + 1)){
+      const k = gameDayKey(d); let done = false;
+      try{ done = localStorage.getItem('dd_synced_' + k) === '1'; }catch(e){}
+      if(done) continue;
+      const j = await fetchCollegeDay(new Date(d)); if(!j) continue;
+      games.push(...parseCollegeScoreboard(j));
+      try{ localStorage.setItem('dd_synced_' + k, '1'); }catch(e){}
+    }
+    const have = new Set(gameLogs.map(l => l.event_id + ':' + l.player_id));
+    const rows = [];
+    for(const g of games.filter(x => x.state === 'post' && gameDayKey(x.when) >= SEASON_START)){
+      const box = await getGameBox(g);
+      if(!box) continue;
+      Object.keys(box).forEach(pid => {
+        const r = box[pid]; if(!r || r.dnp || have.has(g.id + ':' + pid)) return;
+        const opp = r.school === g.home ? g.away : g.home;
+        rows.push({ event_id: String(g.id), player_id: Number(pid), game_date: gameDayKey(g.when), team: r.school, opponent: opp, min: r.min, pts: r.pts, reb: r.reb, oreb: r.oreb,
+          ast: r.ast, stl: r.stl, blk: r.blk, tov: r.tov, pf: r.pf, fgm: r.fgm, fga: r.fga, tpm: r.tpm, tpa: r.tpa, ftm: r.ftm, fta: r.fta });
+        have.add(g.id + ':' + pid);
+      });
+    }
+    if(rows.length){
+      const { error } = await sb.from('game_logs').upsert(rows, { onConflict: 'event_id,player_id' });
+      if(error){ console.warn('Could not save box scores', error.message || error); }
+      else { gameLogs = gameLogs.concat(rows); applyGameLogsToPlayers(); console.info('Saved ' + rows.length + ' box score lines'); }
+    }
+  }catch(e){ console.warn('Box score sync failed', e); }
+  gameSyncRunning = false;
+}
 
 async function loadUpcomingGames(){
   const wrap = document.getElementById('upcomingGamesBody');
   if(!wrap) return;
   let games = null;
   try{
-    games = await fetchCollegeGames(14);
+    games = await fetchCollegeGames(GAMES_DAYS_BACK, GAMES_DAYS_AHEAD);
     try{ localStorage.setItem('dd_upcoming_games', JSON.stringify({ at: Date.now(), games })); }catch(e){}
   }catch(e){
     console.warn('College schedule feed unavailable', e && e.message || e);
@@ -4732,8 +4936,9 @@ async function loadUpcomingGames(){
     }catch(e2){}
     if(!games){ try{ games = await fetchTrackedGamesFallback(); }catch(e3){ console.error('Could not load upcoming games', e3); games = []; } }
   }
-  upcomingGamesCache = games.filter(g => g.when.getTime() > Date.now() - 4 * 3600000 || g.state === 'in');
+  upcomingGamesCache = games;
   renderUpcomingGames();
+  maybeSyncGameLogs();
 }
 
 function formatArticleByline(a){
@@ -10055,6 +10260,7 @@ async function loadSessionInner(){
   }
   // Show the signed-in state right away; the heavier data loads continue in the background.
   updateAcctBtn();
+  setTimeout(() => { try{ maybeSyncGameLogs(); }catch(e){} }, 1500);
   sessionLoaded = true;
   customBoardLoaded = false;
   myCommentsLoaded = false;
@@ -10510,43 +10716,94 @@ async function pfDrawCharts(){
         scales: { x: { grid: { display: false }, ticks: { color: txt, font: mono } },
           y: { grid: { color: grid }, ticks: { color: txt, font: mono, callback: v => '$' + Math.round(v).toLocaleString() }, min: Math.max(0, Math.min(...vals) * 0.8) } } } }));
   }
-  // value over time, rebuilt from price history for the players you hold now
+  // value over time: one point per day since PORTFOLIO_CHART_START, priced at each day's close using the shares held that day
   const hc = document.getElementById('pfHistChart');
   if(hc){
-    const ids = d.held.map(h => h.id);
-    let rows = [];
+    const startMs = new Date(PORTFOLIO_CHART_START).getTime();
+    const snaps = await loadPortfolioSnapshots();
+    const curHold = {}; d.held.forEach(h => { curHold[h.id] = h.shares; });
+    const idSet = new Set(Object.keys(curHold).map(Number));
+    snaps.forEach(sn => Object.keys(sn.holdings || {}).forEach(k => idSet.add(Number(k))));
+    const ids = [...idSet];
+    let rows = [], pre = {};
     try{
-      // The API returns at most 1000 rows per request, and every board save logs a row per player,
-      // so page through until everything since the start date is loaded (a single request would cut off the newest points).
       for(let from = 0; from < 100000; from += 1000){
-        const { data, error } = await sb.from('price_history').select('player_rk, price, recorded_at').in('player_rk', ids).gte('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at', { ascending: true }).order('player_rk', { ascending: true }).range(from, from + 999);
+        const { data, error } = await sb.from('price_history').select('player_rk, price, recorded_at').in('player_rk', ids).gte('recorded_at', PORTFOLIO_CHART_START).order('recorded_at', { ascending: true }).order('player_rk', { ascending: true }).range(from, from + 999);
         if(error) throw error;
         rows = rows.concat(data || []);
         if(!data || data.length < 1000) break;
       }
+      const { data: before } = await sb.from('price_history').select('player_rk, price, recorded_at').in('player_rk', ids).lt('recorded_at', PORTFOLIO_CHART_START).order('recorded_at', { ascending: false }).limit(3000);
+      (before || []).forEach(r => { if(pre[r.player_rk] === undefined) pre[r.player_rk] = Number(r.price); });
     } catch(e){ console.error('Portfolio history failed', e); }
-    const times = [...new Set(rows.map(r => r.recorded_at))].sort();
-    const last = {}; const sharesBy = {}; d.held.forEach(h => { sharesBy[h.id] = h.shares; last[h.id] = null; });
-    // seed with each player's first known price so early points are not understated
-    const firstSeed = {}; rows.forEach(r => { if(firstSeed[r.player_rk] === undefined) firstSeed[r.player_rk] = Number(r.price); });
-    const byTime = {}; rows.forEach(r => { (byTime[r.recorded_at] = byTime[r.recorded_at] || []).push(r); });
-    const cur = {}; ids.forEach(id => { cur[id] = firstSeed[id] !== undefined ? firstSeed[id] : (stockPrices[id] || 0); });
-    const pts = times.map(t => { byTime[t].forEach(r => { cur[r.player_rk] = Number(r.price); }); return { t, v: ids.reduce((s,id) => s + cur[id] * sharesBy[id], 0) }; });
-    pts.push({ t: new Date().toISOString(), v: d.total });
+    const series = {};            // player -> [{t, p}] ascending
+    rows.forEach(r => { (series[r.player_rk] = series[r.player_rk] || []).push({ t: new Date(r.recorded_at).getTime(), p: Number(r.price) }); });
+    const priceAt = (id, T) => {
+      const arr = series[id] || []; let v = pre[id];
+      if(v === undefined && arr.length) v = arr[0].p;
+      for(let i = 0; i < arr.length && arr[i].t <= T; i++) v = arr[i].p;
+      return v !== undefined ? v : (stockPrices[id] || 0);
+    };
+    const holdingsFor = dayKey => {
+      let h = null;
+      snaps.forEach(sn => { if(sn.snap_day <= dayKey) h = sn.holdings; });
+      return h || curHold;
+    };
+    const valueAt = (T, dayKey) => { const h = holdingsFor(dayKey); return Object.keys(h).reduce((t, id) => t + Number(h[id]) * priceAt(Number(id), T), 0); };
+    const pts = [];
+    const firstDay = localDayKey(new Date(startMs));
+    pts.push({ label: 'Start', v: valueAt(startMs, firstDay) });
+    const now = Date.now();
+    for(let day = new Date(startMs); day.getTime() <= now; day.setDate(day.getDate() + 1)){
+      const dk = localDayKey(day), end = new Date(day); end.setHours(23, 59, 59, 999);
+      const isToday = dk === localDayKey(new Date());
+      pts.push({ label: day.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + (isToday ? ' (now)' : ''), v: isToday ? d.total : valueAt(end.getTime(), dk) });
+    }
     const sub = document.getElementById('pfHistSub');
-    if(pts.length < 3 && sub) sub.textContent = 'History builds as the market moves. Each time the staff boards change, a new point lands here.';
-    const span = pts.length > 1 ? new Date(pts[pts.length-1].t) - new Date(pts[0].t) : 0;
-    const labels = pts.map(p => { const dt = new Date(p.t); return span < 36e5 * 48 ? dt.toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : dt.toLocaleDateString('en-US', { month:'short', day:'numeric' }); });
+    const dayCount = pts.length - 1;
+    if(sub) sub.textContent = dayCount <= 1
+      ? 'Tracking began Nov 4. A new point lands each day, priced at that day\'s close.'
+      : 'One point per day since Nov 4, priced at each day\'s close with the shares you held that day.';
     const vs = pts.map(p => p.v);
-    const lo = Math.min(...vs), hi = Math.max(...vs), mid = (lo + hi) / 2, rng = Math.max(hi - lo, mid * 0.12, 1);
+    const lo = Math.min(...vs), hi = Math.max(...vs);
+    const pad = Math.max((hi - lo) * 0.3, hi * 0.02, 1);
     pfChartInstances.push(new Chart(hc, { type: 'line',
-      data: { labels, datasets: [{ data: vs, borderColor: '#c6a15b', backgroundColor: 'rgba(198,161,91,.12)', fill: true, tension: .2, borderWidth: 2, pointRadius: vs.length < 6 ? 4 : 2, pointBackgroundColor: '#c6a15b' }] },
+      data: { labels: pts.map(p => p.label), datasets: [{ data: vs, borderColor: '#c6a15b', backgroundColor: 'rgba(198,161,91,.12)', fill: true, tension: .25, borderWidth: 2, pointRadius: vs.length < 12 ? 4 : 2, pointBackgroundColor: '#c6a15b' }] },
       options: { responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + pfMoney(c.parsed.y) } } },
-        scales: { x: { grid: { color: grid }, ticks: { color: txt, font: mono, maxTicksLimit: 5, maxRotation: 0 } },
-          y: { min: Math.max(0, mid - rng * .65), max: mid + rng * .65, grid: { color: grid }, ticks: { color: txt, font: mono, maxTicksLimit: 5, callback: v => '$' + Math.round(v).toLocaleString() } } } } }));
+        scales: { x: { grid: { color: grid }, ticks: { color: txt, font: mono, maxTicksLimit: 8, maxRotation: 0 } },
+          y: { min: Math.max(0, lo - pad), max: hi + pad, grid: { color: grid }, ticks: { color: txt, font: mono, maxTicksLimit: 6, callback: v => '$' + Math.round(v).toLocaleString() } } } } }));
   }
+  savePortfolioSnapshot();
 }
+
+// ===== Daily portfolio snapshots (so past days keep the shares you actually held) =====
+const PORTFOLIO_CHART_START = '2026-11-04T00:00:00-06:00';   // portfolio value tracking begins Nov 4, 2026 (Central)
+function localDayKey(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+async function loadPortfolioSnapshots(){
+  if(!currentUser) return [];
+  try{
+    const { data, error } = await sb.from('portfolio_snapshots').select('snap_day, holdings').eq('user_id', currentUser.id).gte('snap_day', localDayKey(new Date(PORTFOLIO_CHART_START))).order('snap_day', { ascending: true });
+    if(error){ console.warn('portfolio_snapshots unavailable (run portfolio_snapshots.sql):', error.message || error); return []; }
+    return data || [];
+  }catch(e){ return []; }
+}
+let lastSnapshotAt = 0;
+async function savePortfolioSnapshot(){
+  if(!currentUser || Date.now() < new Date(PORTFOLIO_CHART_START).getTime()) return;
+  if(Date.now() - lastSnapshotAt < 60000) return;
+  lastSnapshotAt = Date.now();
+  try{
+    const { error } = await sb.from('portfolio_snapshots').upsert({ user_id: currentUser.id, snap_day: localDayKey(new Date()), holdings: myHoldings, updated_at: new Date().toISOString() }, { onConflict: 'user_id,snap_day' });
+    if(error) console.warn('Could not save portfolio snapshot', error.message || error);
+  }catch(e){}
+}
+// Re-snapshot right after any buy or sell so the day keeps the shares held at close.
+['buyShares', 'sellShares', 'buySharesDetail', 'sellSharesDetail'].forEach(fn => {
+  const orig = window[fn];
+  if(typeof orig !== 'function') return;
+  window[fn] = async function(...args){ const r = await orig.apply(this, args); lastSnapshotAt = 0; setTimeout(savePortfolioSnapshot, 1200); return r; };
+});
 
 function portfolioValue(){
   let total = 0;
@@ -11468,6 +11725,7 @@ loadConsensusForProfiles();
 loadAndApplyDraftBoardFlags();
 loadAndApplyArticleOverrides();
 loadAndApplyPlayerOverrides();
+loadGameLogs();
 loadAdvStatsLive();
 document.documentElement.setAttribute('data-profile-view', profileViewMode);
 renderProfileViewToggle();
