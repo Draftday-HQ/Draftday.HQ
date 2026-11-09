@@ -2,6 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://draftday-hq.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://draftday-hq.com/mock-draft/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://draftday-hq.com/custom-mock-draft/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://draftday-hq.com/player-profiles/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://draftday-hq.com/big-board/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://draftday-hq.com/community-boards/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://draftday-hq.com/prospect-market/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
