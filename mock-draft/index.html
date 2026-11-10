@@ -1745,6 +1745,11 @@
   .cb-trow.cb-drop-before td{box-shadow:inset 0 3px 0 var(--gold);} .cb-trow.cb-drop-after td{box-shadow:inset 0 -3px 0 var(--gold);}
   .cb-ghost{position:fixed; z-index:9999; pointer-events:none; background:var(--panel-2); border:1px solid var(--gold); color:var(--paper); font-family:var(--display); letter-spacing:.04em; padding:10px 16px; box-shadow:0 8px 24px rgba(0,0,0,.55); max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transform:translate(-14px,-50%);}
   body.cb-drag-active{user-select:none; -webkit-user-select:none; cursor:grabbing;}
+  .cb-shiftable{transition:transform .16s cubic-bezier(.2,.8,.2,1); will-change:transform;}
+  .cb-lifted{position:relative; z-index:20; transition:none !important; will-change:transform; opacity:1 !important; box-shadow:0 10px 28px rgba(0,0,0,.6); outline:1px solid var(--gold); background:var(--panel-2);}
+  .cb-trow.cb-lifted td{background:var(--panel-2); opacity:1 !important;}
+  .cb-trow.cb-lifted{outline-offset:-1px;}
+  body.cb-drag-active #cbList{touch-action:none;}
   body.cb-drag-active *{cursor:grabbing !important;}
   @media (max-width:700px){
     .cb-hide-sm{display:none;}
@@ -1833,6 +1838,11 @@
   .stock-row.mkt .smeta{margin-top:3px; font-size:.68rem;}
   .stock-row.mkt .sprice{display:flex; flex-direction:column; align-items:flex-end; gap:2px;}
   .stock-row.mkt .sprice b{font-weight:400; font-size:1.15rem; color:var(--paper);}
+  .pchg{font-style:normal; font-family:var(--mono); font-size:.74rem; letter-spacing:.02em; white-space:nowrap;}
+  .pchg.up{color:var(--signal-up, #4ade80);} .pchg.down{color:#f87171;} .pchg.flat{color:var(--paper-dim);}
+  .mkt-period{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:0 0 14px; font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--paper-dim);}
+  .mkt-period button{background:none; border:1px solid var(--steel-soft, #2e3136); color:var(--paper-dim); font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; padding:6px 12px; cursor:pointer;}
+  .mkt-period button.active{border-color:var(--gold); color:var(--gold);}
   .stock-row.mkt .sprice span{font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--paper-dim);}
   .stock-row.mkt .qty-step{display:flex; align-items:stretch; border:1px solid var(--steel-soft);}
   .stock-row.mkt .qty-step button{border:0; padding:0 10px; font-size:1rem; line-height:1; color:var(--paper-dim); background:none;}
@@ -7925,107 +7935,102 @@ function cbTypeRank(idx, newValueRaw){
 
 let cbAutoScrollDirection = 0;   // -1 up, 0 idle, 1 down
 let cbAutoScrollRAF = null;
-let cbLastDragOverEl = null;
-const cbAutoScrollZone = 120;    // px from edge of viewport that triggers scrolling
-const cbAutoScrollSpeed = 16;    // px per frame at full speed
-
-let cbGhostEl = null, cbLastClientY = 0, cbDropEl = null;
+const cbAutoScrollZone = 110;    // px from the viewport edge that starts scrolling
+const cbAutoScrollSpeed = 18;    // px per frame at full speed
+let cbDrag = null;               // live drag state: the row follows the pointer, the rows around it slide out of the way
 function cbRowEls(){ return Array.from(document.querySelectorAll('#cbList .cb-row, #cbList .cb-trow')); }
 function cbPointerDown(e, idx){
   if(e.pointerType === 'mouse' && e.button !== 0) return;
   e.preventDefault();
-  cbDragIdx = idx;
-  cbPointerTargetIdx = idx;
-  cbLastClientY = e.clientY;
+  if(cbDrag) cbDragCleanup(false);
   const handle = e.currentTarget;
   const rowEl = handle.closest('.cb-row, .cb-trow');
-  if(rowEl) rowEl.classList.add('cb-dragging');
-  try{ handle.setPointerCapture(e.pointerId); }catch(err){}
-  const pl = players.find(x => x.id === customBoardOrder[idx]);
-  cbGhostEl = document.createElement('div');
-  cbGhostEl.className = 'cb-ghost';
-  cbGhostEl.textContent = `${idx + 1}. ${pl ? pl.name : ''}`;
-  cbGhostEl.style.left = e.clientX + 'px'; cbGhostEl.style.top = e.clientY + 'px';
-  document.body.appendChild(cbGhostEl);
+  if(!rowEl) return;
+  // All measuring happens once, here. While dragging we only write transforms, so it stays smooth.
+  const rows = cbRowEls(), sy = window.scrollY;
+  const rects = rows.map(r => r.getBoundingClientRect());
+  const tops = rects.map(r => r.top + sy), hts = rects.map(r => r.height);
+  const step = idx < rows.length - 1 ? tops[idx + 1] - tops[idx] : (idx > 0 ? tops[idx] - tops[idx - 1] : hts[idx]);
+  cbDragIdx = idx; cbPointerTargetIdx = idx;
+  cbDrag = { from: idx, rows, tops, hts, step, startY: e.clientY + sy, lastY: e.clientY, target: idx, raf: 0 };
+  rows.forEach((r, i) => { if(i === idx) r.classList.add('cb-lifted'); else r.classList.add('cb-shiftable'); });
   document.body.classList.add('cb-drag-active');
+  try{ handle.setPointerCapture(e.pointerId); }catch(err){}
   document.addEventListener('pointermove', cbPointerMove, { passive: false });
   document.addEventListener('touchmove', cbBlockTouchScroll, { passive: false });
   document.addEventListener('pointerup', cbPointerUp);
   document.addEventListener('pointercancel', cbPointerUp);
 }
-// Work out where the dragged row would land (before the first row whose midpoint is below the pointer) and mark it.
-function cbUpdateDropTarget(clientY){
-  const rows = cbRowEls();
-  if(!rows.length) return;
-  let ins = rows.length;
-  for(let i = 0; i < rows.length; i++){
-    const r = rows[i].getBoundingClientRect();
-    if(clientY < r.top + r.height / 2){ ins = i; break; }
+function cbDragFrame(){
+  const d = cbDrag; if(!d) return;
+  d.raf = 0;
+  const dy = d.lastY + window.scrollY - d.startY;
+  const lifted = d.rows[d.from];
+  lifted.style.transform = 'translate3d(0,' + dy + 'px,0)';
+  const center = d.tops[d.from] + d.hts[d.from] / 2 + dy;
+  let t = d.from;
+  for(let i = d.from - 1; i >= 0; i--){ if(center < d.tops[i] + d.hts[i] / 2) t = i; else break; }
+  for(let i = d.from + 1; i < d.rows.length; i++){ if(center > d.tops[i] + d.hts[i] / 2) t = i; else break; }
+  if(t !== d.target){
+    d.target = t; cbPointerTargetIdx = t;
+    for(let i = 0; i < d.rows.length; i++){
+      if(i === d.from) continue;
+      let off = 0;
+      if(t > d.from && i > d.from && i <= t) off = -d.step;
+      else if(t < d.from && i >= t && i < d.from) off = d.step;
+      d.rows[i].style.transform = off ? 'translate3d(0,' + off + 'px,0)' : '';
+    }
   }
-  cbPointerTargetIdx = ins;
-  if(cbDropEl){ cbDropEl.classList.remove('cb-drop-before', 'cb-drop-after'); cbDropEl = null; }
-  if(ins === cbDragIdx || ins === cbDragIdx + 1) return;   // dropping here changes nothing
-  if(ins < rows.length){ cbDropEl = rows[ins]; cbDropEl.classList.add('cb-drop-before'); }
-  else { cbDropEl = rows[rows.length - 1]; cbDropEl.classList.add('cb-drop-after'); }
 }
+function cbScheduleFrame(){ if(cbDrag && !cbDrag.raf) cbDrag.raf = requestAnimationFrame(cbDragFrame); }
 function cbPointerMove(e){
-  if(cbDragIdx === null) return;
+  if(!cbDrag) return;
   if(e.cancelable) e.preventDefault();
-  cbLastClientY = e.clientY;
-  if(cbGhostEl){ cbGhostEl.style.left = e.clientX + 'px'; cbGhostEl.style.top = e.clientY + 'px'; }
+  cbDrag.lastY = e.clientY;
   cbUpdateAutoScrollDirection(e.clientY);
-  cbUpdateDropTarget(e.clientY);
+  cbScheduleFrame();
 }
-function cbBlockTouchScroll(e){ if(cbDragIdx !== null && e.cancelable) e.preventDefault(); }
-function cbPointerUp(e){
+function cbBlockTouchScroll(e){ if(cbDrag && e.cancelable) e.preventDefault(); }
+function cbDragCleanup(commit){
+  const d = cbDrag; if(!d) return;
   document.removeEventListener('pointermove', cbPointerMove);
   document.removeEventListener('touchmove', cbBlockTouchScroll);
   document.removeEventListener('pointerup', cbPointerUp);
   document.removeEventListener('pointercancel', cbPointerUp);
   cbStopAutoScroll();
-  if(cbGhostEl){ cbGhostEl.remove(); cbGhostEl = null; }
+  if(d.raf) cancelAnimationFrame(d.raf);
   document.body.classList.remove('cb-drag-active');
-  document.querySelectorAll('#cbList .cb-row, #cbList .cb-trow').forEach(r => r.classList.remove('cb-dragging', 'cb-drop-before', 'cb-drop-after'));
-  cbDropEl = null;
-  const from = cbDragIdx, ins = cbPointerTargetIdx;
-  cbDragIdx = null; cbPointerTargetIdx = null;
-  if(from === null || ins === null || e.type === 'pointercancel') return;
-  if(ins === from || ins === from + 1) return;
-  const id = customBoardOrder[from];
-  customBoardOrder.splice(from, 1);
-  customBoardOrder.splice(ins > from ? ins - 1 : ins, 0, id);
-  renderCustomBoardList();
-  const msgEl = document.getElementById('cbMsg');
-  if(msgEl) msgEl.textContent = '';
+  d.rows.forEach(r => { r.style.transform = ''; r.classList.remove('cb-lifted', 'cb-shiftable'); });
+  cbDrag = null; cbDragIdx = null; cbPointerTargetIdx = null;
+  if(commit && d.target !== d.from){
+    const id = customBoardOrder[d.from];
+    customBoardOrder.splice(d.from, 1);
+    customBoardOrder.splice(d.target, 0, id);
+    renderCustomBoardList();
+    const msgEl = document.getElementById('cbMsg');
+    if(msgEl) msgEl.textContent = '';
+  }
 }
+function cbPointerUp(e){ cbDragCleanup(!(e && e.type === 'pointercancel')); }
 function cbUpdateAutoScrollDirection(clientY){
   const viewportH = window.innerHeight;
-  if(clientY < cbAutoScrollZone){
-    cbAutoScrollDirection = -1;
-  } else if(clientY > viewportH - cbAutoScrollZone){
-    cbAutoScrollDirection = 1;
-  } else {
-    cbAutoScrollDirection = 0;
-  }
-  if(cbAutoScrollDirection !== 0 && !cbAutoScrollRAF){
-    cbRunAutoScroll();
-  }
+  if(clientY < cbAutoScrollZone) cbAutoScrollDirection = -1;
+  else if(clientY > viewportH - cbAutoScrollZone) cbAutoScrollDirection = 1;
+  else cbAutoScrollDirection = 0;
+  if(cbAutoScrollDirection !== 0 && !cbAutoScrollRAF) cbRunAutoScroll();
 }
 function cbRunAutoScroll(){
-  if(cbAutoScrollDirection === 0){
-    cbAutoScrollRAF = null;
-    return;
-  }
-  window.scrollBy(0, cbAutoScrollSpeed * cbAutoScrollDirection);
-  if(cbDragIdx !== null) cbUpdateDropTarget(cbLastClientY);
+  if(cbAutoScrollDirection === 0 || !cbDrag){ cbAutoScrollRAF = null; return; }
+  // Scroll faster the closer the pointer is to the edge.
+  const edge = cbAutoScrollDirection < 0 ? cbDrag.lastY : window.innerHeight - cbDrag.lastY;
+  const f = Math.max(0.25, Math.min(1, 1 - edge / cbAutoScrollZone));
+  window.scrollBy(0, cbAutoScrollSpeed * f * cbAutoScrollDirection);
+  cbDragFrame();
   cbAutoScrollRAF = requestAnimationFrame(cbRunAutoScroll);
 }
 function cbStopAutoScroll(){
   cbAutoScrollDirection = 0;
-  if(cbAutoScrollRAF){
-    cancelAnimationFrame(cbAutoScrollRAF);
-    cbAutoScrollRAF = null;
-  }
+  if(cbAutoScrollRAF){ cancelAnimationFrame(cbAutoScrollRAF); cbAutoScrollRAF = null; }
 }
 
 function resetCustomBoard(){
@@ -10922,7 +10927,7 @@ async function pfDrawCharts(){
     const idSet = new Set(Object.keys(curHold).map(Number));
     snaps.forEach(sn => Object.keys(sn.holdings || {}).forEach(k => idSet.add(Number(k))));
     const ids = [...idSet];
-    let rows = [], pre = {};
+    let rows = [];
     try{
       for(let from = 0; from < 100000; from += 1000){
         const { data, error } = await sb.from('price_history').select('player_rk, price, recorded_at').in('player_rk', ids).gte('recorded_at', PORTFOLIO_CHART_START).order('recorded_at', { ascending: true }).order('player_rk', { ascending: true }).range(from, from + 999);
@@ -10930,42 +10935,43 @@ async function pfDrawCharts(){
         rows = rows.concat(data || []);
         if(!data || data.length < 1000) break;
       }
-      const { data: before } = await sb.from('price_history').select('player_rk, price, recorded_at').in('player_rk', ids).lt('recorded_at', PORTFOLIO_CHART_START).order('recorded_at', { ascending: false }).limit(3000);
-      (before || []).forEach(r => { if(pre[r.player_rk] === undefined) pre[r.player_rk] = Number(r.price); });
     } catch(e){ console.error('Portfolio history failed', e); }
-    const series = {};            // player -> [{t, p}] ascending
-    rows.forEach(r => { (series[r.player_rk] = series[r.player_rk] || []).push({ t: new Date(r.recorded_at).getTime(), p: Number(r.price) }); });
+    const series = {};            // player -> [{t, p}] ascending, only prices inside the market's real band
+    rows.forEach(r => { if(validStockPrice(r.price)) (series[r.player_rk] = series[r.player_rk] || []).push({ t: new Date(r.recorded_at).getTime(), p: Number(r.price) }); });
+    // The price a player had at time T: the latest logged price up to T; before the first logged one, that first price.
     const priceAt = (id, T) => {
-      const arr = series[id] || []; let v = pre[id];
-      if(v === undefined && arr.length) v = arr[0].p;
+      const arr = series[id] || [];
+      if(!arr.length) return stockPrices[id] || 0;
+      let v = arr[0].p;
       for(let i = 0; i < arr.length && arr[i].t <= T; i++) v = arr[i].p;
-      return v !== undefined ? v : (stockPrices[id] || 0);
+      return v;
     };
+    // Shares held on a day come only from the daily snapshots. A day before the first snapshot has no known holdings,
+    // so it is left empty rather than pretending today's shares were owned back then.
     const holdingsFor = dayKey => {
       let h = null;
       snaps.forEach(sn => { if(sn.snap_day <= dayKey) h = sn.holdings; });
-      return h || curHold;
+      return h;
     };
-    const valueAt = (T, dayKey) => { const h = holdingsFor(dayKey); return Object.keys(h).reduce((t, id) => t + Number(h[id]) * priceAt(Number(id), T), 0); };
+    const valueAt = (T, dayKey) => { const h = holdingsFor(dayKey); return h ? Object.keys(h).reduce((t, id) => t + Number(h[id]) * priceAt(Number(id), T), 0) : null; };
     const pts = [];
-    const firstDay = localDayKey(new Date(startMs));
-    pts.push({ label: 'Start', v: valueAt(startMs, firstDay) });
-    const now = Date.now();
+    const now = Date.now(), todayKey = localDayKey(new Date());
     for(let day = new Date(startMs); day.getTime() <= now; day.setDate(day.getDate() + 1)){
       const dk = localDayKey(day), end = new Date(day); end.setHours(23, 59, 59, 999);
-      const isToday = dk === localDayKey(new Date());
+      const isToday = dk === todayKey;
       pts.push({ label: day.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + (isToday ? ' (now)' : ''), v: isToday ? d.total : valueAt(end.getTime(), dk) });
     }
     const sub = document.getElementById('pfHistSub');
-    const dayCount = pts.length - 1;
-    if(sub) sub.textContent = dayCount <= 1
-      ? 'Tracking began Nov 8. A new point lands each day, priced at that day\'s close.'
-      : 'One point per day since Nov 8, priced at each day\'s close with the shares you held that day.';
+    const known = pts.filter(p => p.v !== null).length;
+    if(sub) sub.textContent = known <= 1
+      ? 'Tracking began Nov 8. Each day\'s holdings are saved when you open or trade, and the line fills in from your first saved day.'
+      : 'One point per day since Nov 8, priced at each day\'s close with the shares you held that day. Days before your first saved holdings stay empty.';
     const vs = pts.map(p => p.v);
-    const lo = Math.min(...vs), hi = Math.max(...vs);
+    const real = vs.filter(v => v !== null);
+    const lo = Math.min(...real), hi = Math.max(...real);
     const pad = Math.max((hi - lo) * 0.3, hi * 0.02, 1);
     pfChartInstances.push(new Chart(hc, { type: 'line',
-      data: { labels: pts.map(p => p.label), datasets: [{ data: vs, borderColor: '#c6a15b', backgroundColor: 'rgba(198,161,91,.12)', fill: true, tension: .25, borderWidth: 2, pointRadius: vs.length < 12 ? 4 : 2, pointBackgroundColor: '#c6a15b' }] },
+      data: { labels: pts.map(p => p.label), datasets: [{ data: vs, borderColor: '#c6a15b', backgroundColor: 'rgba(198,161,91,.12)', fill: true, tension: .25, borderWidth: 2, pointRadius: vs.length < 12 ? 4 : 2, pointBackgroundColor: '#c6a15b', spanGaps: false }] },
       options: { responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + pfMoney(c.parsed.y) } } },
         scales: { x: { grid: { color: grid }, ticks: { color: txt, font: mono, maxTicksLimit: 8, maxRotation: 0 } },
@@ -11010,6 +11016,10 @@ function portfolioValue(){
   return total;
 }
 
+// Prices on this market always sit between $6 and $115 (see consensusPriceForRank). A logged price outside that
+// band is a leftover from an old pricing scale, so it never reaches a chart or a % change.
+const STOCK_MIN_PRICE = 6, STOCK_MAX_PRICE = 115;
+function validStockPrice(v){ v = Number(v); return isFinite(v) && v >= STOCK_MIN_PRICE - 0.01 && v <= STOCK_MAX_PRICE + 0.01; }
 function consensusPriceForRank(rk, n){
   const t = n > 1 ? (rk - 1) / (n - 1) : 0;
   return Number((6 + (115 - 6) * Math.exp(-4.6 * t)).toFixed(2));
@@ -11021,7 +11031,7 @@ async function fetchPriceHistory(rk){
   try{
     const { data, error } = await sb.from('price_history').select('*').eq('player_rk', rk).gte('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at', { ascending: true });
     if(error) throw error;
-    rows = data || [];
+    rows = (data || []).filter(r => validStockPrice(r.price));
   } catch(e){ console.error('Failed to load price history', e); }
   if(rows.length < 3){
     try{
@@ -11032,15 +11042,11 @@ async function fetchPriceHistory(rk){
     } catch(e){}
   }
   const live = (typeof stockPrices !== 'undefined') ? stockPrices[rk] : undefined;
-  // Anchor the line at Nov 8: the last price from before then if one was logged, otherwise the first logged price.
+  // Anchor the line at Nov 8. Nothing is invented: if the price hasn't moved the line is flat, and until the first
+  // logged change the price is simply the first price we have.
   const startIso = new Date(HISTORY_CHART_START_DATE).toISOString();
   if(!rows.length || new Date(rows[0].recorded_at).getTime() > new Date(HISTORY_CHART_START_DATE).getTime() + 6e4){
-    let basePrice;
-    try{
-      const { data: prev } = await sb.from('price_history').select('price').eq('player_rk', rk).lt('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at', { ascending: false }).limit(1);
-      if(prev && prev.length) basePrice = Number(prev[0].price);
-    } catch(e){}
-    if(basePrice === undefined) basePrice = rows.length ? Number(rows[0].price) : (live !== undefined ? Number(live) : undefined);
+    const basePrice = rows.length ? Number(rows[0].price) : (live !== undefined ? Number(live) : undefined);
     if(basePrice !== undefined) rows = [{ player_rk: rk, price: basePrice, recorded_at: startIso }].concat(rows);
   }
   if(live !== undefined){
@@ -11559,10 +11565,12 @@ function renderStockView(){
       ${canSeeInvestors() ? `<button class="stock-tab ${stockActiveTab==='investors'?'active':''}" onclick="setStockTab('investors')">Investors</button>` : ''}
     </div>
     <div class="player-search-row"><input type="text" id="stockSearch" placeholder="Search players by name..." autocomplete="off" value="${stockQuery.replace(/"/g,'&quot;')}" oninput="stockQuery=this.value; renderStockList()"></div>
+    ${marketPeriodBarHTML()}
     <div id="stockListArea"></div>
     <div class="stock-msg" id="stockMsg"></div>
   `;
   renderStockList();
+  loadMarketPriceSeries().then(() => { if(stockDetailRk === null && document.getElementById('stockListArea')) renderStockList(); });
   loadAllHoldings().then(() => { if(stockDetailRk === null && document.getElementById('stockListArea')) renderStockList(); });
 }
 
@@ -11639,6 +11647,59 @@ function stepMarketQty(id, d){
   inp.value = Math.max(1, (parseInt(inp.value,10) || 1) + d);
 }
 
+/* ===== % change next to each player over a period you pick ===== */
+const MARKET_PERIODS = { day: { label: '1D', ms: 864e5 }, week: { label: '7D', ms: 6048e5 }, all: { label: 'Since Nov 8', ms: Infinity } };
+let marketChangePeriod = 'week';
+try{ const sv = localStorage.getItem('dd_mkt_period'); if(MARKET_PERIODS[sv]) marketChangePeriod = sv; }catch(e){}
+let marketPriceSeries = null, marketSeriesLoadedAt = 0, marketSeriesLoading = null;
+async function loadMarketPriceSeries(force){
+  if(!force && marketPriceSeries && Date.now() - marketSeriesLoadedAt < 120000) return;
+  if(marketSeriesLoading) return marketSeriesLoading;
+  marketSeriesLoading = (async () => {
+    const series = {};
+    try{
+      for(let from = 0; from < 200000; from += 1000){
+        const { data, error } = await sb.from('price_history').select('player_rk, price, recorded_at').gte('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at', { ascending: true }).order('player_rk', { ascending: true }).range(from, from + 999);
+        if(error) throw error;
+        (data || []).forEach(r => { if(validStockPrice(r.price)) (series[r.player_rk] = series[r.player_rk] || []).push({ t: new Date(r.recorded_at).getTime(), p: Number(r.price) }); });
+        if(!data || data.length < 1000) break;
+      }
+      marketPriceSeries = series; marketSeriesLoadedAt = Date.now();
+    } catch(e){ console.warn('Could not load price history for % change', e); if(!marketPriceSeries) marketPriceSeries = {}; }
+    marketSeriesLoading = null;
+  })();
+  return marketSeriesLoading;
+}
+// % move from the price at the start of the period (never earlier than Nov 8) to the live price.
+// With no logged change the price simply hasn't moved, so it reads 0.0%.
+function marketChangePct(rk){
+  const cur = stockPrices[rk];
+  if(cur === undefined || !marketPriceSeries) return null;
+  const arr = marketPriceSeries[rk] || [];
+  const startMs = new Date(HISTORY_CHART_START_DATE).getTime(), per = MARKET_PERIODS[marketChangePeriod];
+  const from = per.ms === Infinity ? startMs : Math.max(startMs, Date.now() - per.ms);
+  let base;
+  for(const r of arr){ if(r.t <= from) base = r.p; else break; }
+  if(base === undefined) base = arr.length ? arr[0].p : cur;
+  return base ? (cur - base) / base * 100 : null;
+}
+function marketChgHTML(rk){
+  const v = marketChangePct(rk);
+  if(v === null) return '';
+  const cls = Math.abs(v) < 0.05 ? 'flat' : v > 0 ? 'up' : 'down';
+  return `<em class="pchg ${cls}" title="${marketChangePeriod === 'all' ? 'Change since Nov 8' : 'Change over ' + MARKET_PERIODS[marketChangePeriod].label}">${cls === 'up' ? '▲' : cls === 'down' ? '▼' : '–'} ${Math.abs(v).toFixed(1)}%</em>`;
+}
+function setMarketPeriod(k){
+  if(!MARKET_PERIODS[k]) return;
+  marketChangePeriod = k;
+  try{ localStorage.setItem('dd_mkt_period', k); }catch(e){}
+  document.querySelectorAll('#mktPeriod button').forEach(b => b.classList.toggle('active', b.dataset.k === k));
+  renderStockList();
+}
+function marketPeriodBarHTML(){
+  return `<div class="mkt-period" id="mktPeriod"><span>Change over</span>${Object.keys(MARKET_PERIODS).map(k => `<button type="button" data-k="${k}" class="${k === marketChangePeriod ? 'active' : ''}" onclick="setMarketPeriod('${k}')">${MARKET_PERIODS[k].label}</button>`).join('')}</div>`;
+}
+
 let stockQuery = '';
 function renderStockList(){
   const listEl = document.getElementById('stockListArea');
@@ -11659,7 +11720,7 @@ function renderStockList(){
           <div class="sname">${p.name}</div>
           <div class="smeta">${p.pos} · ${p.school}${(() => { const oc = ownerCountOf(p.id); return oc ? ` · ${oc} investor${oc===1?'':'s'}` : ''; })()}</div>
         </div>
-        <div class="sprice"><b>$${price.toLocaleString()}</b><span>per share</span></div>
+        <div class="sprice"><b>$${price.toLocaleString()}</b>${marketChgHTML(p.id)}<span>per share</span></div>
         <div class="stock-trade">
           <div class="qty-step">
             <button type="button" aria-label="Fewer" onclick="stepMarketQty(${p.id},-1)">&minus;</button>
@@ -11695,7 +11756,7 @@ function renderStockList(){
           <div class="sname">${nm}</div>
           <div class="smeta">${shares} share${shares===1?'':'s'} · $${price.toLocaleString()}/share</div>
         </div>
-        <div class="sprice"><b>$${value.toLocaleString()}</b><span>total value</span></div>
+        <div class="sprice"><b>$${value.toLocaleString()}</b>${marketChgHTML(Number(rk))}<span>total value</span></div>
         <div class="stock-trade">
           <div class="qty-step">
             <button type="button" aria-label="Fewer" onclick="stepSellQty(${rk},-1,${shares})">&minus;</button>
