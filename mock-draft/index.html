@@ -2474,7 +2474,7 @@
         <div class="team-chip-row" id="rankWatchCompareChips" style="margin-top:12px;"></div>
       </div>
       <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;"><div id="rankWatchChartWrap"><canvas id="rankWatchChart"></canvas></div></div>
-      <p class="profile-empty" style="margin-top:14px;" id="rankWatchNote">Rank history starts accumulating from October 22, so lines will fill in more as the board changes from that date forward.</p>
+      <p class="profile-empty" style="margin-top:14px;" id="rankWatchNote">Rank history is tracked daily from November 8, so lines fill in as the board changes.</p>
       </div>
     </div>
   </section>
@@ -5332,8 +5332,11 @@ async function toggleRankHistory(playerId, playerName){
       if(error) throw error;
       const canvas = document.getElementById('rankHistoryMiniChart');
       if(!canvas || typeof Chart === 'undefined') return;
-      const labels = (data||[]).map(r => new Date(r.recorded_at).toLocaleDateString('en-US', {month:'short', day:'numeric'}));
-      const values = (data||[]).map(r => r.rk);
+      const days = chartDayKeys();
+      const labels = days.map(chartDayLabel);
+      const prePl = await fetchPreStartRanks('rank_history', [playerId]);
+      const curPl = players.find(x => x.id === playerId);
+      const values = buildDailyRankSeries(data || [], days, prePl[playerId], curPl ? curPl.rk : null);
       if(rankHistoryMiniChartInstance) rankHistoryMiniChartInstance.destroy();
       rankHistoryMiniChartInstance = new Chart(canvas, {
         type: 'line',
@@ -7946,6 +7949,7 @@ function cbPointerDown(e, idx){
   document.body.appendChild(cbGhostEl);
   document.body.classList.add('cb-drag-active');
   document.addEventListener('pointermove', cbPointerMove, { passive: false });
+  document.addEventListener('touchmove', cbBlockTouchScroll, { passive: false });
   document.addEventListener('pointerup', cbPointerUp);
   document.addEventListener('pointercancel', cbPointerUp);
 }
@@ -7972,8 +7976,10 @@ function cbPointerMove(e){
   cbUpdateAutoScrollDirection(e.clientY);
   cbUpdateDropTarget(e.clientY);
 }
+function cbBlockTouchScroll(e){ if(cbDragIdx !== null && e.cancelable) e.preventDefault(); }
 function cbPointerUp(e){
   document.removeEventListener('pointermove', cbPointerMove);
+  document.removeEventListener('touchmove', cbBlockTouchScroll);
   document.removeEventListener('pointerup', cbPointerUp);
   document.removeEventListener('pointercancel', cbPointerUp);
   cbStopAutoScroll();
@@ -10953,8 +10959,8 @@ async function pfDrawCharts(){
     const sub = document.getElementById('pfHistSub');
     const dayCount = pts.length - 1;
     if(sub) sub.textContent = dayCount <= 1
-      ? 'Tracking began Nov 4. A new point lands each day, priced at that day\'s close.'
-      : 'One point per day since Nov 4, priced at each day\'s close with the shares you held that day.';
+      ? 'Tracking began Nov 8. A new point lands each day, priced at that day\'s close.'
+      : 'One point per day since Nov 8, priced at each day\'s close with the shares you held that day.';
     const vs = pts.map(p => p.v);
     const lo = Math.min(...vs), hi = Math.max(...vs);
     const pad = Math.max((hi - lo) * 0.3, hi * 0.02, 1);
@@ -10969,7 +10975,7 @@ async function pfDrawCharts(){
 }
 
 // ===== Daily portfolio snapshots (so past days keep the shares you actually held) =====
-const PORTFOLIO_CHART_START = '2026-11-04T00:00:00-06:00';   // portfolio value tracking begins Nov 4, 2026 (Central)
+const PORTFOLIO_CHART_START = '2026-11-08T00:00:00-06:00';   // portfolio value tracking begins Nov 8, 2026 (Central)
 function localDayKey(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 async function loadPortfolioSnapshots(){
   if(!currentUser) return [];
@@ -11026,6 +11032,17 @@ async function fetchPriceHistory(rk){
     } catch(e){}
   }
   const live = (typeof stockPrices !== 'undefined') ? stockPrices[rk] : undefined;
+  // Anchor the line at Nov 8: the last price from before then if one was logged, otherwise the first logged price.
+  const startIso = new Date(HISTORY_CHART_START_DATE).toISOString();
+  if(!rows.length || new Date(rows[0].recorded_at).getTime() > new Date(HISTORY_CHART_START_DATE).getTime() + 6e4){
+    let basePrice;
+    try{
+      const { data: prev } = await sb.from('price_history').select('price').eq('player_rk', rk).lt('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at', { ascending: false }).limit(1);
+      if(prev && prev.length) basePrice = Number(prev[0].price);
+    } catch(e){}
+    if(basePrice === undefined) basePrice = rows.length ? Number(rows[0].price) : (live !== undefined ? Number(live) : undefined);
+    if(basePrice !== undefined) rows = [{ player_rk: rk, price: basePrice, recorded_at: startIso }].concat(rows);
+  }
   if(live !== undefined){
     const last = rows[rows.length - 1];
     if(!last || Number(last.price) !== Number(live) || (Date.now() - new Date(last.recorded_at)) > 36e5){
@@ -11036,7 +11053,39 @@ async function fetchPriceHistory(rk){
 }
 
 /* ================= RANK WATCH ================= */
-const HISTORY_CHART_START_DATE = '2026-11-01T00:00:00-05:00'; // rank/price history charts only show data from this moment forward (tracking restarted Oct 21, 2026 at about midnight Central)
+const HISTORY_CHART_START_DATE = '2026-11-08T00:00:00-06:00'; // every history graph begins here: Nov 8, 2026, midnight Central
+const CHART_START_DAY = '2026-11-08';
+// Every graph starts on Nov 8 and runs day by day to today, so a chart is never just a single "today" dot.
+function chartDayKeys(){
+  const out = [], [y, m, d] = CHART_START_DAY.split('-').map(Number), todayKey = localDayKey(new Date());
+  for(let dt = new Date(y, m - 1, d); out.length < 400; dt.setDate(dt.getDate() + 1)){
+    const k = localDayKey(dt); out.push(k); if(k >= todayKey) break;
+  }
+  return out;
+}
+function chartDayLabel(k){ const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
+// One value per day. A rank holds until it changes: before the first logged change it uses the last rank
+// from before Nov 8 (pre) or the first logged one, and the final point is always today's live rank (cur).
+function buildDailyRankSeries(rows, days, pre, cur){
+  const byDay = {}; rows.forEach(r => { byDay[localDayKey(new Date(r.recorded_at))] = r.rk; });
+  let v = pre != null ? pre : (rows.length ? rows[0].rk : cur);
+  return days.map((k, i) => {
+    if(byDay[k] !== undefined) v = byDay[k];
+    if(i === days.length - 1 && cur != null) return cur;
+    return v === undefined ? null : v;
+  });
+}
+// Latest logged rank from before Nov 8 for each player, so the Nov 8 point is the real starting rank.
+async function fetchPreStartRanks(table, ids, narrow){
+  const pre = {};
+  try{
+    let q = sb.from(table).select('player_id, rk, recorded_at').in('player_id', ids).lt('recorded_at', HISTORY_CHART_START_DATE).order('recorded_at', { ascending: false }).limit(Math.max(200, ids.length * 40));
+    if(narrow) q = narrow(q);
+    const { data } = await q;
+    (data || []).forEach(r => { if(pre[r.player_id] === undefined) pre[r.player_id] = r.rk; });
+  } catch(e){}
+  return pre;
+}
 let rankWatchN = 10;   // "to" rank
 let rankWatchFrom = 1; // "from" rank
 let rankWatchSearchName = '';
@@ -11169,7 +11218,8 @@ async function renderRankWatchChart(){
         historyRows = data || [];
       } catch(e){ console.error('Failed to load personal board history', e); return; }
     }
-    drawRankWatchDatasets(canvas, targetIds.map(id => players.find(p=>p.id===id)).filter(Boolean), historyRows);
+    const preMine = targetIds.length ? await fetchPreStartRanks('custom_board_history', targetIds, q => q.eq('user_id', currentUser.id)) : {};
+    drawRankWatchDatasets(canvas, targetIds.map(id => players.find(p=>p.id===id)).filter(Boolean), historyRows, id => { const i = boardOrder.indexOf(id); return i === -1 ? null : i + 1; }, preMine);
     return;
   }
 
@@ -11179,10 +11229,10 @@ async function renderRankWatchChart(){
     if(noteEl) noteEl.textContent = "Comparing the specific players you've added above.";
   } else if(rankWatchSearchName){
     targetPlayers = players.filter(p => p.name.toLowerCase().includes(rankWatchSearchName));
-    if(noteEl) noteEl.textContent = "Rank history starts accumulating from October 22, so lines will fill in more as the board changes from that date forward.";
+    if(noteEl) noteEl.textContent = "Rank history is tracked daily from November 8, so lines fill in as the board changes.";
   } else {
     targetPlayers = players.slice().sort((a,b) => a.rk - b.rk).slice((rankWatchFrom || 1) - 1, rankWatchN);
-    if(noteEl) noteEl.textContent = "Rank history starts accumulating from October 22, so lines will fill in more as the board changes from that date forward.";
+    if(noteEl) noteEl.textContent = "Rank history is tracked daily from November 8, so lines fill in as the board changes.";
   }
   if(targetPlayers.length === 0){
     if(rankWatchChartInstance) rankWatchChartInstance.destroy();
@@ -11199,32 +11249,22 @@ async function renderRankWatchChart(){
     console.error('Failed to load rank history', e);
     return;
   }
-  drawRankWatchDatasets(canvas, targetPlayers, historyRows);
+  const preAll = await fetchPreStartRanks('rank_history', ids);
+  drawRankWatchDatasets(canvas, targetPlayers, historyRows, id => { const p = players.find(x => x.id === id); return p ? p.rk : null; }, preAll);
 }
 
-function drawRankWatchDatasets(canvas, targetPlayers, historyRows){
+function drawRankWatchDatasets(canvas, targetPlayers, historyRows, curRank, preMap){
   const wrap = document.getElementById('rankWatchChartWrap');
   if(wrap){
     const minWidth = Math.max(600, targetPlayers.length * 90);
     wrap.style.minWidth = minWidth + 'px';
   }
-  let allDates = [...new Set(historyRows.map(r => new Date(r.recorded_at).toISOString().slice(0,10)))].sort();
-  const usingCurrentOnly = allDates.length === 0;
-  if(usingCurrentOnly){
-    allDates = [new Date().toISOString().slice(0,10)];
-  }
-  const labels = allDates.map(d => new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric'}));
+  const days = chartDayKeys();
+  const labels = days.map(chartDayLabel);
 
   const datasets = targetPlayers.map((p, i) => {
-    let dataPoints;
-    if(usingCurrentOnly){
-      dataPoints = [p.rk];
-    } else {
-      const rows = historyRows.filter(r => r.player_id === p.id);
-      const byDate = {};
-      rows.forEach(r => { byDate[new Date(r.recorded_at).toISOString().slice(0,10)] = r.rk; });
-      dataPoints = allDates.map(d => byDate[d] !== undefined ? byDate[d] : null);
-    }
+    const rows = historyRows.filter(r => r.player_id === p.id);
+    const dataPoints = buildDailyRankSeries(rows, days, preMap ? preMap[p.id] : null, curRank ? curRank(p.id) : null);
     const color = RANK_LINE_COLORS[i % RANK_LINE_COLORS.length];
     return {
       label: p.name,
@@ -12056,13 +12096,17 @@ function setStandingsNote(){
     : '';
 }
 function applyNBAStandings(order){
-  if(typeof draftSimActive !== 'undefined' && draftSimActive) return false;
+  // Only a draft that is genuinely under way (picks already made, or a co-op room) keeps its frozen order.
+  // A simulation restored from storage with no picks yet used to block every standings update.
+  const simStarted = (typeof draftSimActive !== 'undefined' && draftSimActive) && (typeof draftSimResults !== 'undefined' && draftSimResults.length > 0);
+  if(simStarted || (typeof coopCurrentRoom !== 'undefined' && coopCurrentRoom)) return false;
   if(!Array.isArray(order) || order.length !== 30 || new Set(order).size !== 30 || order.some(t => !ROUND1_BY_TEAM[t])) return false;
   for(let i = 0; i < 30; i++){ const p = ROUND1_BY_TEAM[order[i]]; mockDraftPicksBaseline[i] = p; mockDraftPicks[i] = p; }
   for(let i = 0; i < 16; i++){ TEAM_RECORD_ORDER[i] = order[i]; TEAM_RECORD_ORDER_DEFAULT[i] = order[i]; }
   for(let j = 0; j < 14; j++) TEAM_RECORD_TAIL[j] = order[16 + j];
   recomputeRound2FromRecord();
   lotteryHasRun = false;
+  try{ if(typeof draftSimActive !== 'undefined' && draftSimActive) saveMockDraftProgress(); }catch(e){}
   try{ renderCustomMockDraft(); }catch(e){}
   try{ setStandingsNote(); }catch(e){}
   return true;
@@ -12079,8 +12123,13 @@ function parseNBAStandings(json){
     const t = e.team || {};
     const stat = k => { const s = (e.stats || []).find(x => x.name === k || x.type === k); return s ? Number(s.value) : NaN; };
     const nick = getTeamShortName(t.displayName || t.name || '') || t.name;
-    const w = stat('wins'), l = stat('losses');
-    if(nick && ROUND1_BY_TEAM[nick] && isFinite(w) && isFinite(l)) rows.push({ nick, w, l });
+    let w = stat('wins'), l = stat('losses');
+    if(!(isFinite(w) && isFinite(l))){
+      const ov = (e.stats || []).find(x => x.name === 'overall' || x.type === 'total' || x.name === 'record');
+      const m = ov && String(ov.displayValue || ov.summary || '').match(/^(\d+)-(\d+)/);
+      if(m){ w = Number(m[1]); l = Number(m[2]); }
+    }
+    if(nick && ROUND1_BY_TEAM[nick] && isFinite(w) && isFinite(l) && !rows.some(r => r.nick === nick)) rows.push({ nick, w, l });
   });
   return rows;
 }
@@ -12107,6 +12156,7 @@ async function refreshNBAStandings(){
   nbaStandingsInfo = { asOf, records };
   if(sig === nbaStandingsSignature){ try{ renderCustomMockDraft(); setStandingsNote(); }catch(e){} return; }
   if(applyNBAStandings(order)) nbaStandingsSignature = sig;
+  else setTimeout(refreshNBAStandings, 60 * 1000);   // a draft was under way; try again shortly
 }
 refreshNBAStandings();
 setInterval(refreshNBAStandings, 30 * 60 * 1000);
