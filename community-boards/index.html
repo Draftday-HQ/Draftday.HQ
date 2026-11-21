@@ -461,27 +461,128 @@
   .mock-timer-badge.low{color:#ff6b5b; border-color:#ff6b5b;}
   .mock-timer-btn:hover{border-color:var(--gold); color:var(--gold);}
   .mock-timer-btn.active{background:var(--gold); border-color:var(--gold); color:var(--void);}
-  .trade-columns{display:grid; grid-template-columns:1fr 1.1fr 1fr; gap:20px; align-items:start;}
-  .trade-side{border:1px solid var(--steel-soft); padding:16px;}
-  .trade-summary{display:flex; flex-direction:column; gap:16px;}
-  .trade-receive-box{border:1px solid var(--gold); padding:14px; min-height:100px;}
-  .trade-receive-header{display:flex; align-items:center; gap:8px; margin-bottom:10px; font-family:var(--serif); font-size:.95rem;}
-  .trade-asset-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--steel); font-family:var(--serif); font-size:.85rem;}
-  .trade-asset-btn{flex-shrink:0; min-width:110px; text-align:center; padding:6px 12px; font-size:.7rem;}
   .depth-player-name{font-family:var(--display); font-weight:400; font-size:.95rem; color:var(--paper);}
-  @media (max-width:800px){
-    .trade-columns{grid-template-columns:1fr 1fr; gap:12px;}
-    .trade-side{order:1; padding:10px;}
-    .trade-side:last-of-type{order:2;}
-    .trade-summary{order:3; grid-column:1 / -1;}
-  }
-  @media (max-width:600px){
-    /* Two trade sides squeezed side-by-side is too cramped to actually read on a phone —
-       stack them full-width instead: left team, then the trade summary, then right team. */
-    .trade-columns{grid-template-columns:1fr;}
-    .trade-side{order:unset; padding:14px;}
-    .trade-side:last-of-type{order:unset;}
-    .trade-summary{order:unset; grid-column:auto;}
+  /* ---- Trade simulator ---- */
+  .tsim{--tc:var(--gold); position:relative; width:min(1180px,96vw); height:min(860px,94vh); display:flex; flex-direction:column; background:var(--bg,#0d0e10); border:1px solid var(--steel-soft); box-shadow:0 30px 80px rgba(0,0,0,.6); overflow:hidden; color:var(--text,#eee);}
+  .tsim *{box-sizing:border-box;}
+  .tsim section{padding:0; margin:0; max-width:none; width:auto; min-height:0;}
+  .tsim .tsim-review{padding:14px;}
+  .tsim-mk.m2 b{margin-top:13px;}
+  .tsim-meter{margin-bottom:26px !important;}
+  .tsim-head{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:16px 20px 12px; border-bottom:1px solid var(--steel-soft);}
+  .tsim-head h2{margin:0; font-size:1.5rem;}
+  .tsim-head p{margin:4px 0 0; font-size:.78rem; opacity:.65;}
+  .tsim-x{background:none; border:1px solid var(--steel-soft); color:inherit; width:38px; height:38px; font-size:1.5rem; line-height:1; cursor:pointer; flex-shrink:0;}
+  .tsim-x:hover{border-color:var(--gold); color:var(--gold);}
+  .tsim-body{flex:1; min-height:0; display:flex; flex-direction:column;}
+  .tsim-switch{display:none;}
+  .tsim-grid{flex:1; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,1fr); gap:0;}
+  .tsim-side,.tsim-review{min-height:0; min-width:0; display:flex; flex-direction:column;}
+  .tsim-side{border-right:1px solid var(--steel-soft);}
+  .tsim-review{padding:14px; overflow-y:auto; gap:12px; border-right:1px solid var(--steel-soft);}
+  .tsim-side:last-child{border-right:0; order:3;}
+  .tsim-side-top{padding:12px 14px; border-bottom:1px solid var(--steel-soft); border-top:3px solid var(--tc); display:flex; flex-direction:column; gap:10px;}
+  .tsim-teamrow{display:flex; align-items:center; gap:10px; min-width:0;}
+  .tsim-teamrow > *:first-child{flex-shrink:0;}
+  .tsim-select{flex:1; min-width:0; width:100%; padding:10px 12px; background:#16181c; color:inherit; border:1px solid var(--steel-soft); font:inherit; font-size:.9rem;}
+  .tsim-payroll{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:.8rem; flex-wrap:wrap;}
+  .tsim-payroll em{font-style:normal; opacity:.8;}
+  .tsim-chip{display:inline-block; padding:3px 9px; border-radius:99px; font-size:.68rem; font-weight:700; background:#2a2d33; white-space:nowrap;}
+  .tsim-chip.ok{background:rgba(70,180,110,.18); color:#5fd088;}
+  .tsim-chip.warn{background:rgba(230,170,50,.18); color:#e8b543;}
+  .tsim-chip.bad{background:rgba(235,90,80,.18); color:#ff7a6b;}
+  .tsim-meter{position:relative; height:10px; background:#23262b; border-radius:5px; margin:4px 0 16px;}
+  .tsim-fill{position:absolute; left:0; top:0; bottom:0; border-radius:5px;}
+  .tsim-fill.pre{background:#5b6270;}
+  .tsim-fill.post{background:#5fd088; opacity:.85;}
+  .tsim-fill.post.warn{background:#e8b543;} .tsim-fill.post.bad{background:#ff7a6b;}
+  .tsim-mk{position:absolute; top:-3px; bottom:-3px; width:1px; background:rgba(255,255,255,.45);}
+  .tsim-mk b{position:absolute; top:100%; left:50%; transform:translateX(-50%); font-size:.58rem; font-weight:600; opacity:.6; margin-top:2px; font-style:normal;}
+  .tsim-tabs{display:flex; border-bottom:1px solid var(--steel-soft);}
+  .tsim-tabs button{flex:1; padding:11px 8px; background:none; border:0; border-bottom:2px solid transparent; color:inherit; opacity:.65; font:inherit; font-weight:600; cursor:pointer;}
+  .tsim-tabs button.on{opacity:1; border-bottom-color:var(--gold); color:var(--gold);}
+  .tsim-tabs i{font-style:normal; background:var(--gold); color:#111; border-radius:99px; padding:1px 7px; font-size:.68rem; margin-left:4px;}
+  .tsim-list{flex:1; min-height:0; overflow-y:auto; padding:6px 8px; -webkit-overflow-scrolling:touch;}
+  .tsim-row{display:flex; align-items:center; gap:10px; width:100%; padding:10px 8px; margin:2px 0; background:none; border:1px solid transparent; color:inherit; text-align:left; font:inherit; cursor:pointer; min-height:52px;}
+  .tsim-row:hover{background:rgba(255,255,255,.04);}
+  .tsim-row.on{background:rgba(198,161,91,.12); border-color:var(--gold);}
+  .tsim-row.used{opacity:.4; cursor:default;}
+  .tsim-check{flex-shrink:0; width:22px; height:22px; border:1.5px solid var(--steel-soft); border-radius:5px; display:grid; place-items:center; font-size:.8rem; font-weight:700;}
+  .tsim-row.on .tsim-check{background:var(--gold); border-color:var(--gold); color:#111;}
+  .tsim-name{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
+  .tsim-name b{font-weight:600; font-size:.92rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .tsim-row.pick .tsim-name b{white-space:normal;}
+  .tsim-name small{font-size:.72rem; opacity:.6; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .tsim-row.pick .tsim-name small{white-space:normal;}
+  .tsim-sal{flex-shrink:0; font-weight:700; font-size:.88rem; font-variant-numeric:tabular-nums;}
+  .tsim-sub{padding:12px 8px 4px; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; opacity:.5;}
+  .tsim-empty{padding:28px 18px; text-align:center; opacity:.6; font-size:.9rem;}
+  .tsim-hint{margin:auto; max-width:300px; padding:20px; text-align:left; opacity:.85; font-size:.9rem; line-height:1.5;}
+  .tsim-hint ol{padding-left:18px; margin:8px 0 0;}
+  .tsim-verdict{display:flex; flex-direction:column; gap:3px; padding:14px 16px; border-left:5px solid #555; background:#1a1c20;}
+  .tsim-verdict span{font-size:1.3rem; font-weight:800; letter-spacing:.04em;}
+  .tsim-verdict small{font-size:.8rem; opacity:.8;}
+  .tsim-verdict.ok{border-color:#5fd088; background:rgba(70,180,110,.1);} .tsim-verdict.ok span{color:#5fd088;}
+  .tsim-verdict.bad{border-color:#ff7a6b; background:rgba(235,90,80,.1);} .tsim-verdict.bad span{color:#ff7a6b;}
+  .tsim-verdict.warn{border-color:#e8b543; background:rgba(230,170,50,.1);} .tsim-verdict.warn span{color:#e8b543;}
+  .tsim-verdict.small{padding:8px 12px;} .tsim-verdict.small span{font-size:1rem;}
+  .tsim-card{border:1px solid var(--steel-soft); padding:12px 14px; display:flex; flex-direction:column; gap:10px;}
+  .tsim-card-h{display:flex; align-items:center; gap:10px; min-width:0;}
+  .tsim-card-h > div{min-width:0; display:flex; flex-direction:column;}
+  .tsim-card-h small{font-size:.74rem; opacity:.65;}
+  .tsim-recv{list-style:none; margin:0; padding:0;}
+  .tsim-recv li{display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.07); font-size:.88rem;}
+  .tsim-recv li em{font-style:normal; opacity:.65; flex-shrink:0;}
+  .tsim-recv li.none{opacity:.5; border:0;}
+  .tsim-after{display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:.82rem;}
+  .tsim-after span:first-child{opacity:.65;}
+  .tsim-checks{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  .tsim-checks li{display:flex; gap:10px; align-items:flex-start;}
+  .tsim-checks .ico{flex-shrink:0; width:20px; height:20px; border-radius:50%; display:grid; place-items:center; font-size:.72rem; font-weight:800; margin-top:1px;}
+  .tsim-checks li.pass .ico{background:rgba(70,180,110,.2); color:#5fd088;}
+  .tsim-checks li.fail .ico{background:rgba(235,90,80,.22); color:#ff7a6b;}
+  .tsim-checks li.review .ico{background:rgba(230,170,50,.2); color:#e8b543;}
+  .tsim-checks b{font-size:.84rem; display:block;}
+  .tsim-checks p{margin:2px 0 0; font-size:.76rem; opacity:.7; line-height:1.4;}
+  .tsim-notes{font-size:.76rem; opacity:.75; padding:0 2px 6px;}
+  .tsim-notes summary{cursor:pointer; padding:6px 0;}
+  .tsim-notes p{margin:4px 0;}
+  .tsim-bar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-top:1px solid var(--steel-soft); background:#101215;}
+  .tsim-bar-status{display:flex; align-items:center; gap:8px; font-weight:700; font-size:.9rem; min-width:0;}
+  .tsim-bar-status i{width:10px; height:10px; border-radius:50%; background:#666; flex-shrink:0;}
+  .tsim-bar-status.ok i{background:#5fd088;} .tsim-bar-status.bad i{background:#ff7a6b;} .tsim-bar-status.warn i{background:#e8b543;}
+  .tsim-propose{padding:13px 28px; background:var(--gold); color:#111; border:0; font:inherit; font-weight:800; letter-spacing:.03em; cursor:pointer; min-height:48px;}
+  .tsim-propose:disabled{opacity:.35; cursor:not-allowed;}
+  .tsim-propose.shake{animation:tsimShake .4s;}
+  @keyframes tsimShake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .tsim-back{padding:13px 18px; background:none; border:1px solid var(--steel-soft); color:inherit; font:inherit; cursor:pointer; min-height:48px;}
+  .tsim-confirm{width:min(440px,92vw); max-height:90vh; overflow-y:auto; background:#0d0e10; border:1px solid var(--gold); padding:20px; display:flex; flex-direction:column; gap:12px;}
+  .tsim-confirm h3{margin:0; font-size:1.3rem;}
+  .tsim-confirm-row .h{display:flex; align-items:center; gap:8px;}
+  .tsim-confirm-row .h em{margin-left:auto; font-style:normal; opacity:.7; font-size:.85rem;}
+  .tsim-confirm-row p{margin:4px 0 0; font-size:.88rem; opacity:.85;}
+  .tsim-confirm-note{font-size:.78rem; opacity:.7; margin:0;}
+  .tsim-confirm-actions{display:flex; gap:10px; margin-top:6px;} .tsim-confirm-actions .tsim-propose{flex:1;}
+  @media (max-width:860px){
+    #tradeModal{align-items:stretch; justify-content:stretch; padding:0 !important;}
+    .tsim .tsim-review{padding:10px 12px;}
+    .tsim{width:100vw; height:100dvh; border:0;}
+    .tsim-head{padding:12px 14px 10px;} .tsim-head h2{font-size:1.2rem;}
+    .tsim-switch{display:grid; grid-template-columns:1fr 1fr; gap:0; border-bottom:1px solid var(--steel-soft);}
+    .tsim-switch button{background:none; border:0; border-bottom:3px solid transparent; color:inherit; padding:10px 6px; font:inherit; font-weight:700; opacity:.6; display:flex; flex-direction:column; align-items:center; gap:1px; min-width:0;}
+    .tsim-switch button i{font-style:normal; font-size:.68rem; font-weight:500; opacity:.8;}
+    .tsim-switch button.on{opacity:1; border-bottom-color:var(--gold); color:var(--gold);}
+    .tsim-grid{display:flex; flex-direction:column; overflow:hidden;}
+    .tsim-side,.tsim-review{border:0; flex:1; min-height:0;}
+    .tsim-side:last-child{order:0;}
+    .tsim-grid[data-mobile="left"] #tradeSideRight,.tsim-grid[data-mobile="right"] #tradeSideLeft{display:none;}
+    .tsim-review{flex:none; max-height:34%; border-top:1px solid var(--steel-soft); padding:10px 12px; order:5;}
+    .tsim-review .tsim-card,.tsim-review .tsim-notes{display:none;}
+    .tsim-review .tsim-verdict{padding:8px 12px;} .tsim-review .tsim-verdict span{font-size:1rem;}
+    .tsim-hint{display:none;}
+    .tsim-review:has(.tsim-hint){display:none;}
+    .tsim-bar{padding:10px 12px calc(10px + env(safe-area-inset-bottom));}
+    .tsim-propose{padding:12px 20px;}
   }
   .mock-standings-note{font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; color:var(--paper-dim); margin:0 0 10px; line-height:1.5;}
   .mock-standings-note b{color:var(--gold); font-weight:400;}
@@ -724,6 +825,10 @@
   .gdm-ava span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-size:1.5rem; color:var(--paper);}
   .gdm-pinfo{display:flex; flex-direction:column; gap:5px; min-width:0; flex:1;}
   .gdm-prow{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .gc-out, .gdm-out{display:inline-block; font-family:var(--mono); font-weight:700; letter-spacing:.12em; color:#ff3b30; border:1px solid #ff3b30; background:rgba(255,59,48,.12); line-height:1; padding:2px 6px; font-size:.6rem; vertical-align:middle; flex:none;}
+  .gc-out{margin-left:6px;} .gdm-out{font-size:.68rem; padding:3px 8px;}
+  .gdm-pros.is-out .gdm-ava{border-color:#ff3b30 !important; filter:grayscale(.55); opacity:.85;} .gc-pros.is-out .gc-ava{border-color:#ff3b30 !important; filter:grayscale(.55);}
+  .gdm-outbtn{background:transparent; border:1px solid var(--steel-soft); color:var(--paper-dim); font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; padding:4px 8px; margin-top:6px; cursor:pointer;}
   .gdm-rank{font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; background:var(--gold); color:var(--void); padding:2px 7px;}
   .gdm-pname{font-family:var(--display); font-size:1.3rem; letter-spacing:.02em; color:var(--paper); line-height:1.05;}
   .gdm-pvit{font-family:var(--mono); font-size:.6rem; letter-spacing:.06em; color:var(--gold);}
@@ -4881,20 +4986,21 @@ async function fetchTrackedGamesFallback(){
     detail: '', network: '', neutral: false, dateOnly: true
   })).filter(g => g.homeTracked || g.awayTracked);
 }
-function gcProspectHTML(p, sc, gid){
+function gcProspectHTML(p, sc, gid, g){
   const src = PLAYER_PHOTOS[p.name];
   const ava = src ? `<img src="${src}" alt="${p.name}" loading="lazy" draggable="false">` : `<span>${initials(p.name)}</span>`;
-  return `<div class="gc-pros" style="--sc:${sc}">
+  const out = isProspectOut(p, g);
+  return `<div class="gc-pros${out ? ' is-out' : ''}" style="--sc:${sc}" data-pid="${p.id}" data-gid="${g ? g.id : ''}">
     <div class="gc-ava">${ava}</div>
-    <div class="gc-pinfo"><span class="gc-pname">${p.name}</span><span class="gc-pmeta">${p.matchupOnly ? '2028 CLASS' : '#' + p.rk} · ${primaryPosition(p.pos)}</span>${gid ? `<span class="gc-mini" data-ev="${gid}" data-pid="${p.id}"></span>` : ''}</div>
+    <div class="gc-pinfo"><span class="gc-pname">${p.name}${out ? '<span class="gc-out">OUT</span>' : ''}</span><span class="gc-pmeta">${p.matchupOnly ? '2028 CLASS' : '#' + p.rk} · ${primaryPosition(p.pos)}</span>${gid ? `<span class="gc-mini" data-ev="${gid}" data-pid="${p.id}"></span>` : ''}</div>
   </div>`;
 }
-function gcSideHTML(school, tracked, label, gid){
+function gcSideHTML(school, tracked, label, gid, g){
   const list = tracked ? gameRosterFor(school) : [];
   const sc = accentFor(school);
   return `<div class="gc-side" style="--sc:${sc}">
     <div class="gc-side-label">${label} · ${school}</div>
-    ${list.length ? list.slice(0, 3).map(p => gcProspectHTML(p, sc, gid)).join('') : '<div class="gc-none">No ranked prospects</div>'}
+    ${list.length ? list.slice(0, 3).map(p => gcProspectHTML(p, sc, gid, g)).join('') : '<div class="gc-none">No ranked prospects</div>'}
     ${list.length > 3 ? `<div class="gc-more">+${list.length - 3} more on the board</div>` : ''}
   </div>`;
 }
@@ -4915,7 +5021,7 @@ function upcomingGameCardHTML(g){
       <div class="game-card-vs">${mid}</div>
       <div class="game-card-team">${schoolBadge(g.home)}<div class="game-card-team-name">${g.home}</div>${sc(g.homeScore)}</div>
     </div>
-    <div class="gc-split">${gcSideHTML(g.away, g.awayTracked, 'Away', g.state !== 'pre' ? g.id : '')}${gcSideHTML(g.home, g.homeTracked, 'Home', g.state !== 'pre' ? g.id : '')}</div>
+    <div class="gc-split">${gcSideHTML(g.away, g.awayTracked, 'Away', g.state !== 'pre' ? g.id : '', g)}${gcSideHTML(g.home, g.homeTracked, 'Home', g.state !== 'pre' ? g.id : '', g)}</div>
     <div class="gc-hint">${g.state === 'pre' ? 'Tap for full matchup' : 'Tap for full box score'}</div>
   </div>`;
 }
@@ -5048,14 +5154,16 @@ function gdmProspectHTML(p, sc, g){
   const st = p.stats || {};
   const stat = (k, lab) => (st[k] && st[k] !== 'N/A') ? `<span><b>${st[k]}</b> ${lab}</span>` : '';
   const stats = stat('ppg', 'PPG') + stat('rpg', 'RPG') + stat('apg', 'APG');
-  return `<div class="gdm-pros" style="--sc:${sc}" onclick="openGameProspect(${p.id})">
+  const out = isProspectOut(p, g);
+  return `<div class="gdm-pros${out ? ' is-out' : ''}" style="--sc:${sc}" data-pid="${p.id}" onclick="openGameProspect(${p.id})">
     <div class="gdm-ava">${ava}</div>
     <div class="gdm-pinfo">
-      <div class="gdm-prow"><span class="gdm-rank">${p.matchupOnly ? '2028' : '#' + p.rk}</span><span class="gdm-pname">${p.name}</span></div>
+      <div class="gdm-prow"><span class="gdm-rank">${p.matchupOnly ? '2028' : '#' + p.rk}</span><span class="gdm-pname">${p.name}</span>${out ? '<span class="gdm-out">OUT</span>' : ''}</div>
       <div class="gdm-pvit">${p.pos} · ${p.hs}${typeof p.wt === 'number' ? ' · ' + p.wt + ' LBS' : ''} · ${p.cls}</div>
       ${stats ? `<div class="gdm-pstats">${stats}</div>` : ''}
       ${g && g.state !== 'pre' ? `<div class="gdm-boxline" data-ev="${g.id}" data-pid="${p.id}"><span class="gdm-boxwait">Loading box score...</span></div>` : `<div class="gdm-pblurb"><span style="color:var(--paper)">Known for:</span> ${gameBlurb(p)}</div>`}
       <div class="gdm-link">View full profile →</div>
+      ${isHighlightOwner() ? `<button type="button" class="gdm-outbtn" onclick="event.stopPropagation(); toggleProspectOut(${p.id})">${PROSPECT_OUT.has(p.id) ? 'Clear OUT' : 'Mark OUT'}</button>` : ''}
     </div>
   </div>`;
 }
@@ -5069,6 +5177,89 @@ function gdmColHTML(school, tracked, label, g){
 }
 function closeGameDetail(){ gdmOpenId = null; const m = document.getElementById('gameDetailModal'); if(m) m.remove(); document.body.style.overflow = ''; }
 function openGameProspect(id){ closeGameDetail(); showPlayerQuickView(id); }
+// ===== Injury status ("OUT" in red) =====
+// Two sources: (1) the ESPN game summary's injury report, read for upcoming tracked games, and
+// (2) a manual flag only the owner can set from the game popup (table `prospect_status`, run prospect_status.sql).
+const PROSPECT_OUT = new Set();
+const gameOutCache = {};      // eventId -> Set of prospect ids ESPN lists as Out for that game
+const gameInjuryTried = {};   // eventId -> timestamp of last fetch
+function isProspectOut(p, g){
+  if(!p) return false;
+  if(PROSPECT_OUT.has(p.id)) return true;
+  const s = g && gameOutCache[String(g.id)];
+  return !!(s && s.has(p.id));
+}
+function parseGameInjuries(json, g){
+  const out = new Set();
+  const lists = Array.isArray(json && json.injuries) ? json.injuries : [];
+  lists.forEach(t => (t.injuries || []).forEach(i => {
+    const nm = i && i.athlete && (i.athlete.displayName || i.athlete.fullName);
+    if(!nm) return;
+    const status = [i.status, i.type && (i.type.description || i.type.name), i.details && i.details.fantasyStatus && i.details.fantasyStatus.description].filter(Boolean).join(' ');
+    if(!/\bout\b/i.test(status) || /day[\s-]*to[\s-]*day/i.test(status)) return;
+    const hit = matchProspect(g.away, nm) || matchProspect(g.home, nm);
+    if(hit) out.add(hit.id);
+  }));
+  return out;
+}
+async function loadGameInjuries(onlyGame){
+  const now = Date.now();
+  const soon = upcomingGamesCache.filter(g => g.state === 'pre' && (g.homeTracked || g.awayTracked) && g.when && (g.when - now) < 3 * 864e5 && (g.when - now) > -2 * 36e5);
+  const list = onlyGame ? [onlyGame] : soon.slice(0, 30);
+  let changed = false;
+  await Promise.all(list.map(async g => {
+    const k = String(g.id);
+    if(gameInjuryTried[k] && now - gameInjuryTried[k] < 20 * 60000) return;
+    gameInjuryTried[k] = now;
+    try{
+      const r = await fetch(COLLEGE_SUMMARY_URL + '?event=' + encodeURIComponent(g.id));
+      if(!r.ok) return;
+      const set = parseGameInjuries(await r.json(), g);
+      const before = gameOutCache[k] ? [...gameOutCache[k]].sort().join() : '';
+      gameOutCache[k] = set;
+      if([...set].sort().join() !== before) changed = true;
+    }catch(e){}
+  }));
+  if(changed) refreshOutTags();
+}
+function refreshOutTags(){
+  try{
+    const rail = document.getElementById('upcomingGamesRail'), keep = rail ? rail.scrollLeft : 0;
+    renderUpcomingGames();
+    const r2 = document.getElementById('upcomingGamesRail'); if(r2) r2.scrollLeft = keep;
+  }catch(e){}
+  const m = document.getElementById('gameDetailModal');
+  if(m){
+    const g = upcomingGamesCache.find(x => String(x.id) === gdmOpenId);
+    m.querySelectorAll('.gdm-pros[data-pid]').forEach(card => {
+      const p = players.concat(matchupOnlyPlayers).find(x => x.id === +card.dataset.pid);
+      const out = isProspectOut(p, g);
+      card.classList.toggle('is-out', out);
+      const row = card.querySelector('.gdm-prow'); let tag = row && row.querySelector('.gdm-out');
+      if(out && row && !tag){ tag = document.createElement('span'); tag.className = 'gdm-out'; tag.textContent = 'OUT'; row.appendChild(tag); }
+      if(!out && tag) tag.remove();
+      const b = card.querySelector('.gdm-outbtn'); if(b) b.textContent = PROSPECT_OUT.has(p.id) ? 'Clear OUT' : 'Mark OUT';
+    });
+  }
+}
+async function loadProspectStatus(){
+  try{
+    const { data, error } = await sb.from('prospect_status').select('player_id,status');
+    if(error){ console.warn('prospect_status unavailable (run prospect_status.sql):', error.message || error); return; }
+    PROSPECT_OUT.clear();
+    (data || []).forEach(r => { if(String(r.status).toLowerCase() === 'out') PROSPECT_OUT.add(r.player_id); });
+    refreshOutTags();
+  }catch(e){ console.warn('prospect_status unavailable', e); }
+}
+async function toggleProspectOut(pid){
+  if(!isHighlightOwner()) return;
+  const wasOut = PROSPECT_OUT.has(pid);
+  const { error } = wasOut ? await sb.from('prospect_status').delete().eq('player_id', pid)
+                           : await sb.from('prospect_status').upsert({ player_id: pid, status: 'out', updated_at: new Date().toISOString() });
+  if(error){ alert('Could not save: ' + (error.message || 'run prospect_status.sql in Supabase first.')); return; }
+  if(wasOut) PROSPECT_OUT.delete(pid); else PROSPECT_OUT.add(pid);
+  refreshOutTags();
+}
 function openGameDetail(id){
   const g = upcomingGamesCache.find(x => String(x.id) === String(id));
   if(!g) return;
@@ -5097,6 +5288,7 @@ function openGameDetail(id){
   document.body.appendChild(ov);
   document.body.style.overflow = 'hidden';
   if(g.state !== 'pre') hydrateGameBoxes(true);
+  else loadGameInjuries(g);
 }
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && document.getElementById('gameDetailModal')) closeGameDetail(); });
 
@@ -5343,6 +5535,7 @@ async function loadUpcomingGames(){
   upcomingGamesCache = games;
   renderUpcomingGames();
   maybeSyncGameLogs();
+  loadGameInjuries();
 }
 
 function formatArticleByline(a){
@@ -6720,6 +6913,7 @@ async function startMockDraftSimulation(){
     }
   }
   mockTradeLog = [];
+  tradeMoves = {};
   depthEdits = {};
   if(coopEnabled){
     const roomId = await ensureCoopRoom();
@@ -7581,26 +7775,42 @@ function openBoardSnapshotPicker(){
         <div class="lbl" style="margin-bottom:6px;">Or save separate images of 30</div>
         <p class="section-sub" style="margin:0 0 12px; font-size:14px;">Each image is its own set of 30 players, with the real ranks, so you can post them one at a time.</p>
         <div class="chip-row" id="boardSnapSetChips" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;"></div>
+        <button class="btn btn-solid" id="boardSnapOne" style="width:100%; margin-bottom:10px;" disabled onclick="downloadSelectedSnapSet()">Select a set to download</button>
         <button class="btn btn-ghost" id="boardSnapAll" style="width:100%;" onclick="downloadBoardSnapshotSets()">Save all sets</button>
       </div>
     </div>`;
   document.body.appendChild(overlay);
-  window.__snapTotals = { board: total, draft: draftTotal };
+  snapPickedSet = null; window.__snapTotals = { board: total, draft: draftTotal };
   snapRefreshSets();
 }
 const SNAP_SET = 30;
 function snapActiveSrc(){ const c = document.querySelector('#boardSnapOpts .chip.active'); return c ? c.dataset.src : 'board'; }
+let snapPickedSet = null;
 function snapRefreshSets(){
   const wrap = document.getElementById('boardSnapSets'); if(!wrap) return;
   const src = snapActiveSrc(), total = (window.__snapTotals || {})[src] || 0;
   const sets = Math.ceil(total / SNAP_SET);
   if(sets < 2){ wrap.style.display = 'none'; return; }
   wrap.style.display = '';
+  if(snapPickedSet !== null && snapPickedSet >= sets) snapPickedSet = null;
   document.getElementById('boardSnapSetChips').innerHTML = Array.from({ length: sets }, (_, i) => {
     const a = i * SNAP_SET + 1, b = Math.min(total, (i + 1) * SNAP_SET);
-    return `<button class="chip" onclick="downloadBoardSnapshot(${SNAP_SET}, '${src}', { start: ${i * SNAP_SET}, single: true })">${a}&ndash;${b}</button>`;
+    return `<button type="button" class="chip${snapPickedSet === i ? ' active' : ''}" aria-pressed="${snapPickedSet === i}" onclick="snapPickSet(${i})">${a}&ndash;${b}</button>`;
   }).join('');
+  const one = document.getElementById('boardSnapOne');
+  if(one){
+    if(snapPickedSet === null){ one.disabled = true; one.textContent = 'Select a set to download'; }
+    else { const a = snapPickedSet * SNAP_SET + 1, b = Math.min(total, (snapPickedSet + 1) * SNAP_SET); one.disabled = false; one.textContent = 'Download image (' + a + '\u2013' + b + ')'; }
+  }
   const all = document.getElementById('boardSnapAll'); if(all){ all.textContent = 'Save all ' + sets + ' images'; all.disabled = false; }
+}
+function snapPickSet(i){ snapPickedSet = (snapPickedSet === i ? null : i); snapRefreshSets(); }
+async function downloadSelectedSnapSet(){
+  if(snapPickedSet === null) return;
+  const one = document.getElementById('boardSnapOne');
+  if(one){ one.disabled = true; one.textContent = 'Building image...'; }
+  try{ await downloadBoardSnapshot(SNAP_SET, snapActiveSrc(), { start: snapPickedSet * SNAP_SET, single: true }); }catch(e){ console.warn(e); }
+  snapRefreshSets();
 }
 async function downloadBoardSnapshotSets(){
   const src = snapActiveSrc(), total = (window.__snapTotals || {})[src] || 0;
@@ -9246,121 +9456,222 @@ Object.keys(TEAM_PICK_NOTES).forEach(fromTeam => {
   });
 });
 
+// ===== Trade Simulator: 2026-27 contracts + CBA trade rules =====
+// Contract data: Basketball-Reference 2026-27 player contracts (as of Nov 21, 2026). Salary = 2026-27 cap hit; yrs = years shown on the contract.
+// A fourth value of 1 marks a duplicate/waived row that is not tradable (dead money is not included in payroll).
+const TRADE_CONTRACTS = {"GSW":[["Stephen Curry",62587158,3],["Jimmy Butler",56832773,1],["Draymond Green",27678571,1],["Kristaps Porziņģis",19512195,2],["Moses Moody",12500000,2],["Al Horford",6822000,2],["Yaxel Lendeborg",6096240,4],["Brandin Podziemski",5679459,6],["De'Anthony Melton",5477000,2],["Gui Santos",4629630,3],["Gary Payton II",2449421,1],["Charles Bassey",2449421,1],["Georges Niang",2449421,1],["Brandon Williams",2449421,1],["Will Richard",2150917,3]],"DEN":[["Nikola Jokić",59033114,2],["Jamal Murray",50105628,3],["Aaron Gordon",33658037,3],["Cameron Johnson",23062500,1],["Christian Braun",21551726,5],["Zeke Nnaji",7466667,2],["Spencer Jones",6000000,2],["Julian Strawther",4826931,1],["DaRon Holmes",3372120,2],["DeMar DeRozan",2449421,1],["Marvin Bagley III",2449421,1],["Tyus Jones",2449421,1],["Trevon Brazile",1357763,1],["Alpha Diallo",1357763,1]],"BOS":[["Jayson Tatum",58456566,4],["Paul George",54126380,2],["Derrick White",30348000,3],["Mitchell Robinson",15044000,3],["Sam Hauser",10848215,3],["Payton Pritchard",7767857,4],["Ron Harper Jr.",3150752,4],["Chris Cenac Jr.",2988120,4],["Hugo González",2923560,3],["Luka Garza",2801346,1],["Baylor Scheierman",2744040,2],["Neemias Queta",2667944,5],["Mike Conley",2449421,1],["Jordan Walsh",2406205,4]],"WAS":[["Anthony Davis",58456566,2],["Trae Young",49488300,4],["AJ Dybantsa",14748000,4],["Alex Sarr",12370680,2],["Bilal Coulibaly",9240012,1],["Tre Johnson",8649600,3],["Deandre Ayton",8104000,1],["Tre Mann",8000000,2],["Khris Middleton",5591122,3],["Bub Carrington",4900560,2],["Will Riley",3688320,3],["Kyshawn George",3108000,2],["Justin Champagnie",2667944,2],["Anthony Gill",2449421,1]],"MIA":[["Giannis Antetokounmpo",58456566,2],["Bam Adebayo",49800000,3],["Andrew Wiggins",30169644,3],["Nikola Jović",16200000,4],["Bobby Portis",14521414,2],["Klay Thompson",13260317,2],["Davion Mitchell",12400000,1],["Tim Hardaway Jr.",6500000,1],["Dru Smith",2584539,1],["Nick Richards",2449421,1],["Simone Fontecchio",2449421,1],["Pelle Larsson",2296271,5],["Myron Gardner",2150917,1],["Ryan Conwell",1357763,3]],"PHI":[["Joel Embiid",58100000,3],["Jaylen Brown",57078728,3],["Tyrese Maxey",40770520,3],["Kentavious Caldwell-Pope",20194392,1],["VJ Edgecombe",11663880,3],["Dean Wade",9000000,4],["Anfernee Simons",6000000,2],["LeBron James",3876529,2],["Labaron Philon Jr.",3597120,4],["Dominick Barlow",3415000,1],["Ariel Hukporti",3400000,1],["Jabari Walker",2584539,1],["Justin Edwards",2411090,2],["Adem Bona",2296271,1]],"PHO":[["Devin Booker",57078728,4],["Jalen Green",36251166,2],["Bradley Beal",25807810,4,1],["Miles Bridges",22826087,1],["Dillon Brooks",19992727,4],["Mark Williams",11728395,3],["Collin Gillespie",10714286,4],["Khaman Maluach",6316680,3],["Luke Kennard",6064000,2],["Jordan Goodwin",5864198,3],["Nassir Little",3107143,3],["Koa Peat",2926800,4],["Ryan Dunn",2784240,2],["Jamaree Bouyea",2584539,1],["Oso Ighodaro",2296271,5],["Rasheer Fleming",2150917,3],["Haywood Highsmith",1000000,1],["E.J. Liddell",706898,1]],"NYK":[["Karl-Anthony Towns",57078728,2],["OG Anunoby",42500000,3],["Jalen Brunson",37739521,3],["Mikal Bridges",33482145,4],["Josh Hart",20923760,2],["Landry Shamet",5357143,4],["Jose Alvarado",4500000,3],["Miles McBride",3956523,1],["Pacôme Dadiet",2983680,2],["Jordan Clarkson",2449421,1],["Andre Drummond",2449421,1],["James Wiseman",2449421,1],["Tyler Kolek",2296271,2],["Mohamed Diawara",2232143,4]],"TOR":[["Kawhi Leonard",50300000,3],["Scottie Barnes",41754690,4],["Immanuel Quickley",32500000,3],["RJ Barrett",29616071,1],["Jakob Poeltl",19500000,4],["Collin Murray-Boyles",6649560,3],["Allen Graves",4065720,4],["Ja'Kobe Walter",3811800,2],["Kyle Anderson",2449421,1],["Trayce Jackson-Davis",2406205,1],["Jamal Shead",2296271,4],["Jamison Battle",2296271,1],["Alijah Martin",2185116,2],["Jaden Bradley",1357763,4]],"CLE":[["Donovan Mitchell",50105628,5],["Evan Mobley",50105628,4],["James Harden",30647619,3],["Jarrett Allen",28000000,3],["Peyton Watson",20465116,4],["Sam Merrill",9160715,3],["Jaylon Tyson",3658560,2],["Mario Hezonja",2449421,1],["Thomas Bryant",2449421,1],["Nae'Qwan Tomlin",2411090,1],["Craig Porter Jr.",2406205,1],["Tyrese Proctor",2150917,3],["Cam Whitmore",1819437,3],["Meleek Thomas",1357763,4],["Khalifa Diop",1357763,4],["Ricky Rubio",424672,1]],"DET":[["Cade Cunningham",50105628,4],["Jalen Duren",40160643,5],["John Collins",17000000,3],["Duncan Robinson",15992957,1],["Isaiah Joe",11323006,2],["Ausar Thompson",11117925,6],["Ron Holland",9069600,2],["Kevin Huerter",8333333,3],["Paul Reed",5602689,1],["Ebuka Okorie",4481280,4],["Daniss Jenkins",4000000,1],["Javonte Green",3943679,1],["Gary Harris",3815861,1],["Taurean Prince",3815861,1],["Tolu Smith",2411090,1],["Chaz Lanier",2150917,3]],"SAS":[["De'Aaron Fox",49800000,4],["Devin Vassell",27000000,3],["Keldon Johnson",17500000,1],["Victor Wembanyama",16868246,6],["Tobias Harris",15044000,2],["Julian Champagnie",13888889,3],["Dylan Harper",12989040,3],["Luke Kornet",10450000,3],["Stephon Castle",10015920,2],["Harrison Barnes",8000000,1],["Carter Bryant",5145360,3],["Jayden Quaintance",3902760,4],["Tarris Reed Jr.",3076920,4],["Jordan McLaughlin",2449421,1]],"LAL":[["Luka Dončić",49800000,3],["Austin Reaves",41240250,4],["Walker Kessler",30232558,4],["Quentin Grimes",13953489,4],["Sandro Mamukelashvili",13000000,4],["Jarred Vanderbilt",12428571,2],["Collin Sexton",9366000,2],["Jake LaRavia",6000000,1],["Jaden Hardy",6000000,2],["Dalton Knecht",4201080,1],["Cameron Carr",3315360,4],["Matisse Thybulle",2449421,1],["Ziaire Williams",2449421,1],["Kevon Looney",2449421,1],["Bronny James",2296271,1],["Adou Thiero",2150917,2]],"UTA":[["Jaren Jackson Jr.",49000000,4],["Lauri Markkanen",46113154,3],["Josh Green",14679012,1],["Darryn Peterson",13195320,4],["Jusuf Nurkić",10576923,2],["Ace Bailey",9523080,3],["Keyonte George",6563925,6],["Jaxson Hayes",6000000,2],["Josh Okogie",6000000,2],["Brice Sensabaugh",4862237,1],["Svi Mykhailiuk",3850000,1],["Mo Bamba",3286399,2],["Kyle Filipowski",3000000,1],["Isaiah Collier",2763960,2]],"SAC":[["Zach LaVine",48967380,1],["Domantas Sabonis",45472000,2],["De'Andre Hunter",24910714,1],["Keegan Murray",24137936,5],["Malik Monk",20190035,2],["Darius Acuff Jr.",8021640,4],["Precious Achiuwa",5477000,2],["Alex Karaban",2948280,4],["Daeqwon Plowden",2449421,2],["Ben Simmons",2449421,1],["Maxime Raynaud",2150917,2],["Mason Plumlee",2139724,1],["Emanuel Sharp",1357763,3]],"MIN":[["Anthony Edwards",48924624,3],["LaMelo Ball",40770520,3],["Rudy Gobert",36500000,2],["Jaden McDaniels",26200001,4],["Ayo Dosunmu",19310345,5],["Donte DiVincenzo",12535000,1],["Jonathan Kuminga",6064000,2],["Cody Williams",6015600,2],["Joan Beringer",4411200,3],["Jaylen Clark",3086420,3],["Bones Hyland",2845883,1],["Terrence Shannon Jr.",2801640,2],["Trey Lyles",2449421,1],["John Konchar",2055000,3],["Isaiah Evans",1357763,4]],"IND":[["Tyrese Haliburton",48924624,3],["Pascal Siakam",48924624,2],["Ivica Zubac",20342140,2],["Andrew Nembhard",19550160,2],["Obi Toppin",15000000,2],["Aaron Nesmith",11000000,3],["T.J. McConnell",11000000,3],["Jarace Walker",8478542,1],["Kelly Oubre Jr.",8050000,2],["Ben Sheppard",5031669,1],["Jay Huff",2667944,1],["Larry Nance Jr.",2449421,1],["Johnny Furphy",2296271,2]],"HOU":[["Kevin Durant",43902439,2],["Alperen Şengün",35642202,4],["Fred VanVleet",25000000,1],["Jabari Smith Jr.",23643411,5],["Tari Eason",14051724,5],["Steven Adams",13000000,2],["Amen Thompson",12258609,6],["Reed Sheppard",11108880,2],["Clint Capela",7035000,2],["Marcus Smart",6064000,2],["Isaiah Crawford",2449421,2],["Jae'Sean Tate",2449421,1],["Bogdan Bogdanović",2449421,1],["Bruce Thornton",1357763,4]],"POR":[["Ja Morant",42166510,2],["Damian Lillard",35915403,4],["Jrue Holiday",34800000,2],["Shaedon Sharpe",20089287,4],["Toumani Camara",18080358,4],["Robert Williams",13968254,3],["Scoot Henderson",13585523,1],["Deni Avdija",13125000,2],["Donovan Clingan",7519920,2],["Yang Hansen",4643520,3],["Micah Potter",2801346,1],["Vít Krejčí",2667944,1],["Sidy Cissoko",2497812,1],["Branden Carlson",2449421,1],["Didi Louzada",268032,3]],"NOP":[["Zion Williamson",42166510,2],["Jordan Poole",34044642,1],["Dejounte Murray",32785071,2],["Trey Murphy III",27000000,3],["Herbert Jones",14898786,4],["Jeremiah Fears",7896240,3],["Bennedict Mathurin",7804878,2],["Saddiq Bey",6440678,4],["Derik Queen",5416080,3],["DeAndre Jordan",3876529,2],["Yves Missi",3512760,2],["AJ Johnson",3237120,2],["Bryce McGowens",2584539,2],["Trendon Watford",2449421,1],["Karlo Matković",2296271,1],["Taj Gibson",148828,1]],"LAC":[["Darius Garland",42166510,2],["Brandon Ingram",40000000,2],["Bradley Beal",25807810,4],["Max Strus",16660836,1],["Rui Hachimura",14000000,2],["Derrick Jones Jr.",10476190,1],["Keaton Wagler",9674760,4],["Brook Lopez",9187500,1],["Gradey Dick",7131511,1],["Isaiah Jackson",7000000,2],["Nicolas Batum",5881680,1],["Kris Dunn",5684800,1],["Jordan Miller",5300000,3],["Yanic Konan Niederhäuser",2880960,3],["Kobe Sanders",2622139,4],["Johni Broome",2150917,1],["Baba Miller",1705630,4]],"ORL":[["Franz Wagner",41754690,4],["Paolo Banchero",41500000,5],["Desmond Bane",39446090,3],["Jalen Suggs",32400000,4],["Wendell Carter Jr.",18102000,3],["Jonathan Isaac",10449421,1],["Jonathan Isaac",10449421,1,1],["Anthony Black",10106316,1],["Goga Bitadze",7608696,1],["Tristan Da Silva",3991200,2],["Jase Richardson",3132360,3],["Jamal Cain",2584539,1],["Jevon Carter",2449421,1],["Nikola Vučević",2449421,1],["Noah Penda",2150917,3]],"OKC":[["Jalen Williams",41500000,5],["Chet Holmgren",41500000,5],["Shai Gilgeous-Alexander",40806150,5],["Isaiah Hartenstein",23148148,3],["Alex Caruso",19550160,3],["Jaylin Williams",7774648,2],["Cason Wallace",7420806,6],["Aday Mara",5791680,4],["Nikola Topić",5429760,1],["Kenrich Williams",5000000,1],["Thomas Sorber",4887720,3],["Bennett Stirtz",4717320,4],["Jared McCain",4422600,2],["Nique Clifford",3263400,3],["Ajay Mitchell",2850000,1]],"BRK":[["Michael Porter Jr.",40806150,1],["Julius Randle",33333334,2],["Terance Mann",15500000,2],["Day'Ron Sharpe",10000000,2],["Moritz Wagner",9268293,2],["Mikel Brown Jr.",8787000,4],["Keon Ellis",8780488,2],["Egor Dëmin",7233720,3],["Noah Clowney",5414034,1],["Josh Minott",4500000,2],["Nolan Traoré",4002000,3],["Drake Powell",3540600,3],["Ben Saraf",3028560,3],["Joshua Jefferson",2969520,4],["Danny Wolf",2941440,3]],"DAL":[["Kyrie Irving",39491282,2],["P.J. Washington",19813044,4],["Daniel Gafford",17263584,3],["Santi Aldama",17007043,2],["Cooper Flagg",14517480,3],["Zaccharie Risacher",13826040,2],["Klay Thompson",13260317,2,1],["Caleb Martin",10001493,2],["Naji Marshall",9428571,4],["Max Christie",8285714,2],["Dereck Lively II",7239131,1],["Morez Johnson Jr.",6754800,4],["Marcus Sasser",5198983,1],["Olivier-Maxence Prosper",3500172,2],["Sergio de Larrea",3182280,4],["Tarik Biberovic",3000000,2],["JaVale McGee",2208856,2],["Moussa Cissé",2185116,2],["Dwight Powell",1000000,1]],"MEM":[["Jerami Grant",34206898,2],["Kentavious Caldwell-Pope",20194392,1,1],["Isaiah Stewart",15000000,2],["Cameron Boozer",11849760,4],["Ty Jerome",9220050,2],["Quinten Post",8285714,3],["Taylor Hendricks",7805900,1],["Jordan Hawkins",7021895,1],["Zach Edey",6332760,2],["Cedric Coward",6001080,3],["D'Angelo Russell",5969250,1],["Kris Murray",5315004,1],["Walter Clayton",4190520,1],["Karim López",3746760,4],["Cole Anthony",3700000,2],["Olivier-Maxence Prosper",3500172,2,1],["Scotty Pippen Jr.",2461462,1],["Cam Spencer",2411090,3],["GG Jackson II",2406205,1],["Jaylen Wells",2296271,1],["Micah Peavy",2150917,1],["Mamadi Diakite",464050,1]],"MIL":[["Damian Lillard",35915403,4,1],["Tyler Herro",33000000,1],["Myles Turner",26584164,3],["Kyle Kuzma",20345152,1],["Gary Trent Jr.",15200000,4],["Caris LeVert",14809200,1],["A.J. Green",10044644,4],["Brayden Burries",6417360,4],["Jaime Jaquez Jr.",5939141,1],["Ousmane Dieng",5750000,3],["Nate Ament",5502000,4],["Kevin Porter Jr.",5390700,1],["Kel'el Ware",4654920,2],["Ryan Rollins",4000000,2],["Kasparas Jakučionis",3841680,3],["Jericho Sims",2801346,1],["Pete Nance",2537526,1],["Bogoljub Markovic",1357763,4],["Vasilije Micić",666667,2]],"ATL":[["Jalen Johnson",30000000,4],["Dyson Daniels",25000000,4],["CJ McCollum",21000000,1],["Luguentz Dort",18222222,1],["Onyeka Okongwu",16120000,2],["Nickeil Alexander-Walker",14403710,3],["Jock Landale",14100000,1],["Corey Kispert",13975000,3],["Dorian Finney-Smith",13335000,3],["Aaron Wiggins",9224300,3],["Kingston Flemings",7348680,4],["Devin Carter",5158080,1],["Zuby Ejiofor",3453360,4],["Asa Newell",3399480,3],["Mouhamed Gueye",2406205,1],["Henri Veesaar",1357763,4]],"CHI":[["Josh Giddey",25000000,3],["Nic Claxton",23147727,2],["Norman Powell",21500000,2],["Patrick Williams",18000000,3],["Isaac Okoro",11814814,1],["Caleb Wilson",10683720,4],["Buddy Hield",9658536,2],["Jalen Smith",9428571,1],["Zach Collins",8292683,2],["Tre Jones",8000000,2],["Matas Buzelis",5715360,2],["Noa Essengue",5701200,3],["Dailyn Swain",4965480,4],["Leonard Miller",2406205,1],["Orlando Robinson",2125647,1]],"CHO":[["Naz Reid",23275862,4],["Coby White",22839506,3],["Grayson Allen",18125000,2],["Brandon Miller",15104626,6],["Dennis Schröder",14809200,2],["Grant Williams",14265750,1],["Royce O'Neale",10875000,2],["Kon Knueppel",10516560,3],["Tidjane Salaün",8237880,2],["Rob Dillingham",6889320,1],["Hannes Steinbach",5227200,4],["Christian Anderson Jr.",4257480,4],["Pat Connaughton",3815861,1],["Liam McNeeley",2902080,3],["Moussa Diabaté",2461462,1],["Sion James",2411090,3],["Ryan Kalkbrenner",2411090,3],["Ryan Nembhard",2150917,1]]};
+
+const TRADE_ABBR_TO_SHORT = {"ATL":"Hawks","BOS":"Celtics","BRK":"Nets","CHO":"Hornets","CHI":"Bulls","CLE":"Cavaliers","DAL":"Mavericks","DEN":"Nuggets","DET":"Pistons","GSW":"Warriors","HOU":"Rockets","IND":"Pacers","LAC":"Clippers","LAL":"Lakers","MEM":"Grizzlies","MIA":"Heat","MIL":"Bucks","MIN":"Timberwolves","NOP":"Pelicans","NYK":"Knicks","OKC":"Thunder","ORL":"Magic","PHI":"76ers","PHO":"Suns","POR":"Trail Blazers","SAC":"Kings","SAS":"Spurs","TOR":"Raptors","UTA":"Jazz","WAS":"Wizards"};
+// Season figures (official 2026-27 release, from the rulebook). Kept in one place so they are never hard-coded in the rules below.
+const TRADE_CBA = { season:'2026-27', cap:164961000, tax:200428000, apron1:209015000, apron2:221686000, minPayroll:148465000, cap2324:136021000, expandedFlat:7500000, buffer:250000, maxStd:15, stdFloor:1100000 };
+let tradeMoves = {};       // nameKey -> team short, for players who already changed teams in this mock draft
+let tradeAll = null, tradeRecByName = {};
+function tradeNameKey(n){
+  return String(n || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[.']/g, '').replace(/-/g, ' ')
+    .replace(/[^a-z ]/g, '').split(/\s+/).filter(t => t && !['jr','sr','ii','iii','iv'].includes(t)).join(' ');
+}
+function tradeInit(){
+  if(tradeAll) return;
+  tradeAll = []; tradeRecByName = {};
+  const byKey = {}, posByKey = {};
+  Object.keys(NBA_DEPTH_CHARTS).forEach(team => {
+    const c = NBA_DEPTH_CHARTS[team];
+    [...c.starters, ...c.second, ...c.third, ...(c.twoway || [])].forEach(p => { posByKey[tradeNameKey(p.n)] = { pos: p.pos, team, n: p.n }; });
+  });
+  Object.keys(TRADE_CONTRACTS).forEach(abbr => {
+    const team = TRADE_ABBR_TO_SHORT[abbr];
+    TRADE_CONTRACTS[abbr].forEach(r => {
+      if(r[3]) return; // dead / duplicate row
+      const key = tradeNameKey(r[0]), ch = posByKey[key];
+      const rec = { n: r[0], key, tm: team, sal: r[1], yrs: r[2], pos: ch ? ch.pos : '' };
+      byKey[key] = rec; tradeAll.push(rec); tradeRecByName[rec.n] = rec;
+    });
+  });
+  Object.keys(posByKey).forEach(key => {
+    if(byKey[key]) return;
+    const ch = posByKey[key];
+    const rec = { n: ch.n, key, tm: ch.team, sal: null, yrs: 0, pos: ch.pos, noContract: true };
+    tradeAll.push(rec); tradeRecByName[rec.n] = rec;
+  });
+}
+function tradeTeamOf(rec){ return tradeMoves[rec.key] || rec.tm; }
+function tradeRosterOf(team){ tradeInit(); return tradeAll.filter(r => tradeTeamOf(r) === team).sort((a, b) => (b.sal || 0) - (a.sal || 0) || a.n.localeCompare(b.n)); }
+function tradePayroll(team){ return tradeRosterOf(team).reduce((s, r) => s + (r.sal || 0), 0); }
+function tradeStdCount(team, drop, add){
+  const ok = r => (r.sal || 0) >= TRADE_CBA.stdFloor;
+  const base = tradeRosterOf(team).filter(ok).length;
+  return base - (drop || []).filter(ok).length + (add || []).filter(ok).length;
+}
+function tradeFmtM(n){ if(n === null || n === undefined) return '—'; const m = n / 1e6; return '$' + (Math.abs(m) >= 100 ? m.toFixed(1) : m.toFixed(1)) + 'M'; }
+function tradeFmtFull(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+function tradeStatusOf(p){
+  const C = TRADE_CBA;
+  if(p > C.apron2) return { k:'apron2', label:'Above 2nd apron', tone:'bad' };
+  if(p > C.apron1) return { k:'apron1', label:'Above 1st apron', tone:'bad' };
+  if(p > C.tax)    return { k:'tax', label:'Over the tax line', tone:'warn' };
+  if(p > C.cap)    return { k:'over', label:'Over the cap', tone:'warn' };
+  return { k:'under', label:'Under the cap', tone:'ok' };
+}
+// Maximum incoming salary for one team, by route. O = outgoing salary, pre = payroll before the trade.
+function tradeLimits(pre, O){
+  const C = TRADE_CBA, buf = C.buffer;
+  const idx = Math.round(C.expandedFlat * (C.cap / C.cap2324));
+  const capRoom = O + Math.max(0, C.cap - pre) + buf;
+  const expanded = Math.max(Math.min(2 * O + buf, O + idx), Math.round(1.25 * O) + buf);
+  const matching = Math.max(O, Math.min(expanded, C.apron1 - (pre - O)));
+  return { idx, capRoom, expanded, matching, max: Math.max(capRoom, matching) };
+}
+function tradeStepienIssue(team, keys){
+  const currentYear = new Date().getFullYear() + 1;
+  const years = [currentYear, currentYear + 1, currentYear + 2, currentYear + 3], exempt = [currentYear, currentYear + 1];
+  const owns = y => { if(y === currentYear) return true; const n = TEAM_PICK_NOTES[team]; if(!n || !n[y]) return true; return n[y].first.trim().toLowerCase().startsWith('own'); };
+  const gone = new Set();
+  keys.forEach(k => { if(/^pick:r1:\d+$/.test(k)) gone.add(currentYear); const m = k.match(/^pick:(\d{4}) 1st Round Pick$/); if(m) gone.add(+m[1]); });
+  if(!gone.size) return null;
+  const own = {}; years.forEach(y => own[y] = owns(y) && !gone.has(y));
+  for(let i = 0; i < years.length - 1; i++){
+    const a = years[i], b = years[i + 1];
+    if(!own[a] && !own[b] && !(exempt.includes(a) && exempt.includes(b))) return a + ' and ' + b;
+  }
+  return null;
+}
+// Full audit of the proposed trade. Returns { ready, verdict, teams:[...], notes:[...] }.
+function validateTrade(){
+  tradeInit();
+  const C = TRADE_CBA, L = tradeTeams.left, R = tradeTeams.right;
+  const res = { ready: false, verdict: 'ILLEGAL', teams: [], notes: [] };
+  if(!L || !R) return res;
+  const selL = [...tradeSelections.left], selR = [...tradeSelections.right];
+  res.ready = selL.length + selR.length > 0;
+  const recsOf = keys => keys.filter(k => k.startsWith('player:')).map(k => tradeRecByName[k.slice(7)]).filter(Boolean);
+  const mk = (team, sendKeys, recvKeys, other) => {
+    const out = recsOf(sendKeys), inc = recsOf(recvKeys);
+    const O = out.reduce((s, r) => s + (r.sal || 0), 0), I = inc.reduce((s, r) => s + (r.sal || 0), 0);
+    const pre = tradePayroll(team), post = pre - O + I;
+    const lim = tradeLimits(pre, O);
+    const checks = [];
+    const add = (id, status, title, detail) => checks.push({ id, status, title, detail });
+    // 1. each side gets something
+    if(recvKeys.length === 0) add('value', 'FAIL', 'Receives nothing', team + ' would be giving assets away for nothing. Both teams must receive at least one player or pick.');
+    else add('value', 'PASS', 'Receives assets', recvKeys.length + ' asset' + (recvKeys.length === 1 ? '' : 's') + ' coming in.');
+    // 2. salary matching
+    if(I === 0) add('match', 'PASS', 'Salary matching', 'No salary coming back, so nothing to match.');
+    else {
+      const room = Math.max(0, C.cap - pre);
+      let route, maxIn;
+      if(post <= C.cap){ route = 'cap room'; maxIn = lim.capRoom; }
+      else if(I <= lim.capRoom && pre < C.cap){ route = 'cap room + outgoing salary'; maxIn = lim.capRoom; }
+      else if(post <= C.apron1){ route = 'expanded matching'; maxIn = lim.matching; }
+      else { route = 'first-apron matching'; maxIn = lim.matching; }
+      const best = lim.max;
+      if(I <= best){
+        let how;
+        if(route === 'cap room') how = 'Salary fits under the ' + tradeFmtM(C.cap) + ' cap (' + tradeFmtM(room) + ' of room), so no matching is needed.';
+        else if(route === 'cap room + outgoing salary') how = 'Uses cap room (' + tradeFmtM(room) + ') plus outgoing salary plus $250K. Limit ' + tradeFmtM(lim.capRoom) + '.';
+        else if(route === 'expanded matching') how = 'Expanded matching: the most it can take back is ' + tradeFmtM(lim.matching) + ' (greater of 2×outgoing+$250K capped at outgoing+' + tradeFmtM(lim.idx) + ', or 125%×outgoing+$250K).';
+        else how = 'This team is above the first apron, so it may not take back more salary than it sends out (' + tradeFmtM(O) + ').';
+        add('match', 'PASS', 'Salary matching', 'Takes back ' + tradeFmtM(I) + ' for ' + tradeFmtM(O) + ' sent out. ' + how);
+      } else {
+        const aboveApron = pre - O + Math.min(lim.expanded, I) > C.apron1 || pre > C.apron1;
+        add('match', 'FAIL', 'Salary matching', 'Takes back ' + tradeFmtM(I) + ' but the most ' + team + ' can take back is ' + tradeFmtM(best) + ' (over by ' + tradeFmtFull(I - best) + '). ' +
+          (aboveApron ? 'Teams that would end above the first apron ($' + (C.apron1 / 1e6).toFixed(1) + 'M) can only take back as much as they send out.' : 'Send out more salary, or take back less.'));
+      }
+    }
+    // 3. second apron: no aggregating salaries to take back a bigger contract
+    if((pre > C.apron2 || post > C.apron2) && out.length >= 2 && inc.length){
+      const topIn = Math.max(...inc.map(r => r.sal || 0)), topOut = Math.max(...out.map(r => r.sal || 0));
+      if(topIn > topOut) add('agg', 'FAIL', 'Second-apron aggregation', team + ' is above the second apron ($' + (C.apron2 / 1e6).toFixed(1) + 'M), so it cannot combine two or more contracts to bring back a larger one (' + tradeFmtM(topIn) + ' is bigger than the biggest contract it sends, ' + tradeFmtM(topOut) + ').');
+      else add('agg', 'PASS', 'Second-apron aggregation', 'No contracts are being combined to take back a larger one.');
+    }
+    // 4. roster limit
+    const stdPre = tradeStdCount(team), stdPost = tradeStdCount(team, out, inc);
+    if(stdPost > C.maxStd && stdPost > stdPre) add('roster', 'FAIL', 'Roster limit', team + ' would carry ' + stdPost + ' players on standard-size contracts (max ' + C.maxStd + '). Send another player out or take fewer back.');
+    else add('roster', 'PASS', 'Roster limit', stdPost + ' players on standard-size contracts after the trade (max ' + C.maxStd + ').');
+    // 5. first-round pick rule
+    const st = tradeStepienIssue(team, sendKeys);
+    if(st) add('stepien', 'FAIL', 'Stepien rule', team + ' would be left without a first-round pick in ' + st + '. A team cannot go two drafts in a row without a first.');
+    else if(sendKeys.some(k => k.startsWith('pick:'))) add('stepien', 'PASS', 'Stepien rule', 'Still has a first-round pick in every pair of consecutive drafts.');
+    // 6. data gaps
+    const gaps = out.concat(inc).filter(r => r.noContract);
+    if(gaps.length) add('data', 'REVIEW', 'No salary on file', gaps.map(r => r.n).join(', ') + ' ' + (gaps.length === 1 ? 'has' : 'have') + ' no standard contract in the salary data (two-way or unsigned). Salary counted as $0, so verify this part by hand.');
+    return { team, out, inc, O, I, pre, post, lim, checks, statusPre: tradeStatusOf(pre), statusPost: tradeStatusOf(post) };
+  };
+  res.teams = [mk(L, selL, selR, R), mk(R, selR, selL, L)];
+  if(L === R) res.teams[0].checks.unshift({ id:'same', status:'FAIL', title:'Same team', detail:'Pick two different teams.' });
+  const all = res.teams.flatMap(t => t.checks);
+  res.verdict = all.some(c => c.status === 'FAIL') ? 'ILLEGAL' : all.some(c => c.status === 'REVIEW') ? 'NEEDS REVIEW' : 'LEGAL';
+  res.notes = [
+    'Salaries are 2026-27 cap hits from Basketball-Reference as of Nov 21, 2026. Waived-player dead money, cap holds and exceptions are not in the data, so payrolls can differ slightly from the real cap sheets.',
+    'Not checked (no data): recent-signing waiting periods (most summer signings are locked until Dec 15), no-trade clauses and trade kickers, incentives, cash, and the trade deadline.'
+  ];
+  return res;
+}
+
 let tradeTeams = { left: null, right: null };
 let mockTradeLog = [];
 let tradeSelections = { left: new Set(), right: new Set() };
+let tradeActiveTab = { left: 'players', right: 'players' };
+let tradeMobileSide = 'left';
 
+function tsEsc(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function openTradeModal(){
+  tradeInit();
   const visiblePicks = getVisiblePickOrder();
   const onClockTeamRaw = draftSimActive ? visiblePicks[draftSimPickIndex] : mockDraftPicks[0];
   const onClockTeam = onClockTeamRaw.split(" (from")[0].trim();
   tradeTeams = { left: onClockTeam, right: null };
   tradeSelections = { left: new Set(), right: new Set() };
-  tradePickView = { left: 'current', right: 'current' };
+  tradeActiveTab = { left: 'players', right: 'players' };
+  tradeMobileSide = 'left';
+  document.getElementById('tradeModal')?.remove();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay open';
   overlay.id = 'tradeModal';
   overlay.innerHTML = `
-    <div class="modal-box profile-modal-box" style="max-width:1200px; width:95vw; position:relative;">
-      <button class="quick-view-close" onclick="document.getElementById('tradeModal').remove()">×</button>
-      <h2 style="margin-bottom:20px;">Trade</h2>
-      <div class="trade-columns">
-        <div class="trade-side" id="tradeSideLeft"></div>
-        <div class="trade-summary" id="tradeSummary"></div>
-        <div class="trade-side" id="tradeSideRight"></div>
+    <div class="tsim" role="dialog" aria-label="Trade simulator">
+      <div class="tsim-head">
+        <div><h2>Trade Simulator</h2><p>${TRADE_CBA.season} contracts &nbsp;·&nbsp; CBA salary-matching rules checked live</p></div>
+        <button class="tsim-x" onclick="closeTradeModal()" aria-label="Close">&times;</button>
       </div>
-      <button class="btn btn-solid" style="width:100%; margin-top:20px;" onclick="confirmTradeBeforeCompleting()">Complete Trade</button>
-      <div id="tradeCompleteMsg" class="modal-msg"></div>
+      <div class="tsim-body">
+        <div class="tsim-switch" id="tsimSwitch"></div>
+        <div class="tsim-grid">
+          <section class="tsim-side" id="tradeSideLeft"></section>
+          <section class="tsim-review" id="tsimReview"></section>
+          <section class="tsim-side" id="tradeSideRight"></section>
+        </div>
+      </div>
+      <div class="tsim-bar" id="tsimBar"></div>
     </div>`;
   document.body.appendChild(overlay);
-  renderTradeSide('left', onClockTeam);
-  renderTradeSide('right', null);
-  renderTradeSummary();
+  document.body.style.overflow = 'hidden';
+  tradeRender();
 }
+function closeTradeModal(){ document.getElementById('tradeModal')?.remove(); document.getElementById('confirmTradeModal')?.remove(); document.body.style.overflow = ''; }
 
-function buildTradeTeamOptions(selectedTeam){
+function buildTradeTeamOptions(selectedTeam, disabledTeam){
   const optsWithPick = NBA_TEAMS.map(t => {
     const short = getTeamShortName(t);
     const r1idx = mockDraftPicks.findIndex(p => p === short || p.startsWith(short + " ("));
-    const r2idx = (typeof mockDraftPicksRound2 !== 'undefined' && mockDraftPicksRound2) ? mockDraftPicksRound2.findIndex(p => p === short || p.startsWith(short + " (")) : -1;
     const pick = r1idx !== -1 ? r1idx + 1 : 999;
-    const pick2 = r2idx !== -1 ? r2idx + 31 : null;
-    return { short, full: t, pick, pick2 };
-  }).sort((a,b) => a.pick - b.pick);
-  return optsWithPick.map(o => {
-    let label = '';
-    if(o.pick <= 30) label = 'Pick ' + o.pick + (o.pick2 ? ' & ' + o.pick2 : '') + ' - ';
-    else if(o.pick2) label = 'Pick ' + o.pick2 + ' - ';
-    return `<option value="${o.short}" ${o.short===selectedTeam?'selected':''}>${label}${o.full}</option>`;
-  }).join("");
+    return { short, full: t, pick };
+  }).sort((a, b) => a.pick - b.pick || a.full.localeCompare(b.full));
+  return optsWithPick.map(o => `<option value="${tsEsc(o.short)}" ${o.short === selectedTeam ? 'selected' : ''} ${o.short === disabledTeam ? 'disabled' : ''}>${o.pick <= 30 ? '#' + o.pick + '  ' : ''}${o.full}</option>`).join('');
 }
-
-let tradeActiveTab = { left: 'roster', right: 'roster' };
-function setTradeTab(side, tab){
-  tradeActiveTab[side] = tab;
-  renderTradeSide(side, tradeTeams[side]);
+function tradePickTeam(side, team){
+  tradeTeams[side] = team || null;
+  tradeSelections[side] = new Set();
+  const other = side === 'left' ? 'right' : 'left';
+  tradeSelections[other] = new Set([...tradeSelections[other]]);
+  tradeRender();
 }
-
-function renderTradeSide(side, teamName){
-  tradeTeams[side] = teamName;
-  const el = document.getElementById('tradeSide' + (side==='left'?'Left':'Right'));
-  if(!teamName){
-    el.innerHTML = `
-      <select class="mock-source-btn" style="width:100%;" onchange="renderTradeSide('${side}', this.value); renderTradeSummary();">
-        <option value="">Select a team...</option>
-        ${buildTradeTeamOptions(null)}
-      </select>`;
-    return;
-  }
-  const chart = NBA_DEPTH_CHARTS[teamName];
-  const roster = chart ? [...chart.starters, ...chart.second, ...chart.third, ...(chart.twoway||[])].map(p => p.n) : generatePlaceholderRoster(teamName);
-  const picks = getTeamPicksForTrade(teamName);
-  const activeTab = tradeActiveTab[side];
-  el.innerHTML = `
-    <select class="mock-source-btn" style="width:100%; margin-bottom:14px;" onchange="renderTradeSide('${side}', this.value); renderTradeSummary();">
-      <option value="">Select a team...</option>
-      ${buildTradeTeamOptions(teamName)}
-    </select>
-    <div class="mock-source-row" style="margin-bottom:14px;">
-      <button class="mock-timer-btn ${activeTab==='picks'?'active':''}" onclick="setTradeTab('${side}', 'picks')">Draft Picks</button>
-      <button class="mock-timer-btn ${activeTab==='roster'?'active':''}" onclick="setTradeTab('${side}', 'roster')">Roster</button>
-    </div>
-    <div style="max-height:480px; overflow-y:auto;">
-      ${activeTab === 'picks' ? picks.map(p => {
-        const key = p.arr ? `pick:${p.arr}:${p.pickIndex}` : ('pick:' + p.label);
-        const active = tradeSelections[side].has(key);
-        const btnHtml = p.used
-          ? `<button class="btn btn-ghost trade-asset-btn" disabled style="opacity:.4; cursor:not-allowed;">Already Used</button>`
-          : `<button class="btn ${active?'btn-solid':'btn-ghost'} trade-asset-btn" onclick="toggleTradeAsset('${side}', '${key.replace(/'/g,"\\'")}')">${active?'Selected':'Trade Asset'}</button>`;
-        return `<div class="trade-asset-row" style="align-items:flex-start; flex-direction:column; gap:8px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-            <span style="font-weight:600;">${p.label}</span>
-            ${btnHtml}
-          </div>
-          <span style="color:var(--gold); font-size:.78rem; line-height:1.4;">${p.detail}</span>
-        </div>`;
-      }).join("") : roster.map(name => {
-        const key = 'player:' + name;
-        const active = tradeSelections[side].has(key);
-        return `<div class="trade-asset-row">
-          <span>${name}</span>
-          <button class="btn ${active?'btn-solid':'btn-ghost'} trade-asset-btn" onclick="toggleTradeAsset('${side}', '${key.replace(/'/g,"\\'")}')">${active?'Selected':'Trade Asset'}</button>
-        </div>`;
-      }).join("")}
-    </div>`;
-}
-
-function setTradePickView(side, view, teamName){
-  tradePickView[side] = view;
-  renderTradeSide(side, teamName);
-}
-
+function tradeSetTab(side, tab){ tradeActiveTab[side] = tab; tradeRender(); }
+function tradeSetMobileSide(side){ tradeMobileSide = side; tradeRender(); }
 function toggleTradeAsset(side, key){
-  if(tradeSelections[side].has(key)) tradeSelections[side].delete(key);
-  else tradeSelections[side].add(key);
-  renderTradeSide(side, tradeTeams[side]);
-  renderTradeSummary();
+  if(tradeSelections[side].has(key)) tradeSelections[side].delete(key); else tradeSelections[side].add(key);
+  tradeRender();
 }
+function tradeToggleBtn(btn){ toggleTradeAsset(btn.dataset.side, btn.dataset.k); }
 
 function formatAssetLabel(key){
   const idxMatch = key.match(/^pick:(r1|r2):(\d+)$/);
@@ -9372,99 +9683,143 @@ function formatAssetLabel(key){
   const [type, ...rest] = key.split(':');
   return rest.join(':');
 }
-
-function renderTradeSummary(){
-  const el = document.getElementById('tradeSummary');
-  if(!el) return;
-  const leftTeam = tradeTeams.left;
-  const rightTeam = tradeTeams.right;
-  const leftAssets = Array.from(tradeSelections.left);
-  const rightAssets = Array.from(tradeSelections.right);
-  el.innerHTML = `
-    <div class="trade-receive-box">
-      <div class="trade-receive-header">${rightTeam ? nbaTeamBadge(rightTeam) : ''}<b>${rightTeam || 'Team 2'}</b> Receive</div>
-      ${leftAssets.length ? leftAssets.map(a => `<div class="comp-row"><span>${formatAssetLabel(a)}</span></div>`).join("") : '<p class="profile-empty">Nothing selected yet.</p>'}
-    </div>
-    <div class="trade-receive-box">
-      <div class="trade-receive-header">${leftTeam ? nbaTeamBadge(leftTeam) : ''}<b>${leftTeam || 'Team 1'}</b> Receive</div>
-      ${rightAssets.length ? rightAssets.map(a => `<div class="comp-row"><span>${formatAssetLabel(a)}</span></div>`).join("") : '<p class="profile-empty">Nothing selected yet.</p>'}
-    </div>`;
+function tradeMeterHTML(pre, post){
+  const C = TRADE_CBA, max = 240e6;
+  const pct = v => Math.max(0, Math.min(100, v / max * 100));
+  const tone = post > C.apron2 ? 'bad' : post > C.apron1 ? 'bad' : post > C.cap ? 'warn' : 'ok';
+  const mk = (v, l) => `<i class="tsim-mk${l === '2nd' ? ' m2' : ''}" style="left:${pct(v)}%"><b>${l}</b></i>`;
+  return `<div class="tsim-meter">
+    <div class="tsim-fill pre" style="width:${pct(pre)}%"></div>
+    ${post !== pre ? `<div class="tsim-fill post ${tone}" style="width:${pct(post)}%"></div>` : ''}
+    ${mk(C.cap, 'Cap')}${mk(C.apron1, '1st')}${mk(C.apron2, '2nd')}
+  </div>`;
 }
-
-function confirmTradeBeforeCompleting(){
-  const msgEl = document.getElementById('tradeCompleteMsg');
-  if(!tradeTeams.left || !tradeTeams.right){
-    msgEl.textContent = 'Select both teams before completing a trade.';
-    msgEl.className = 'modal-msg error';
+function tradeSideHTML(side, v){
+  const team = tradeTeams[side], other = side === 'left' ? tradeTeams.right : tradeTeams.left;
+  const t = v && v.teams[side === 'left' ? 0 : 1];
+  const sel = tradeSelections[side];
+  const color = team && NBA_TEAM_COLOR[team] ? NBA_TEAM_COLOR[team] : 'var(--gold)';
+  let html = `<div class="tsim-side-top" style="--tc:${color}">
+    <div class="tsim-teamrow">${team ? nbaTeamBadge(team) : '<div class="tsim-nobadge"></div>'}
+      <select class="tsim-select" aria-label="Team" onchange="tradePickTeam('${side}', this.value)">
+        <option value="">Choose a team…</option>${buildTradeTeamOptions(team, other)}
+      </select></div>`;
+  if(team){
+    const pre = tradePayroll(team), post = t ? t.post : pre, st = tradeStatusOf(post);
+    html += `<div class="tsim-payroll"><span>Payroll <b>${tradeFmtM(pre)}</b>${post !== pre ? ` <em>→ ${tradeFmtM(post)}</em>` : ''}</span><span class="tsim-chip ${st.tone}">${st.label}</span></div>${tradeMeterHTML(pre, post)}`;
+  }
+  html += '</div>';
+  if(!team) return html + '<p class="tsim-empty">Pick a team to see its roster, contracts and picks.</p>';
+  const tab = tradeActiveTab[side];
+  const nPl = [...sel].filter(k => k.startsWith('player:')).length, nPk = sel.size - nPl;
+  html += `<div class="tsim-tabs" role="tablist">
+      <button role="tab" aria-selected="${tab === 'players'}" class="${tab === 'players' ? 'on' : ''}" onclick="tradeSetTab('${side}','players')">Players${nPl ? ` <i>${nPl}</i>` : ''}</button>
+      <button role="tab" aria-selected="${tab === 'picks'}" class="${tab === 'picks' ? 'on' : ''}" onclick="tradeSetTab('${side}','picks')">Picks${nPk ? ` <i>${nPk}</i>` : ''}</button>
+    </div><div class="tsim-list">`;
+  if(tab === 'players'){
+    const roster = tradeRosterOf(team), withSal = roster.filter(r => !r.noContract), noSal = roster.filter(r => r.noContract);
+    const row = r => {
+      const key = 'player:' + r.n, on = sel.has(key);
+      const sub = [r.pos, r.noContract ? 'No standard contract on file' : (r.yrs > 1 ? r.yrs + '-yr deal' : '1 year left')].filter(Boolean).join(' · ');
+      return `<button type="button" class="tsim-row${on ? ' on' : ''}" data-side="${side}" data-k="${tsEsc(key)}" aria-pressed="${on}" onclick="tradeToggleBtn(this)">
+        <span class="tsim-check">${on ? '✓' : ''}</span>
+        <span class="tsim-name"><b>${tsEsc(r.n)}</b><small>${tsEsc(sub)}</small></span>
+        <span class="tsim-sal">${r.noContract ? '—' : tradeFmtM(r.sal)}</span></button>`;
+    };
+    html += withSal.map(row).join('') + (noSal.length ? `<div class="tsim-sub">Two-way / unsigned</div>` + noSal.map(row).join('') : '');
+  } else {
+    const picks = getTeamPicksForTrade(team);
+    html += picks.map(p => {
+      const key = p.arr ? `pick:${p.arr}:${p.pickIndex}` : ('pick:' + p.label), on = sel.has(key);
+      if(p.used) return `<div class="tsim-row used"><span class="tsim-check"></span><span class="tsim-name"><b>${tsEsc(p.label)}</b><small>Already used</small></span></div>`;
+      return `<button type="button" class="tsim-row pick${on ? ' on' : ''}" data-side="${side}" data-k="${tsEsc(key)}" aria-pressed="${on}" onclick="tradeToggleBtn(this)">
+        <span class="tsim-check">${on ? '✓' : ''}</span>
+        <span class="tsim-name"><b>${tsEsc(p.label)}</b><small>${tsEsc(p.detail || '')}</small></span></button>`;
+    }).join('') || '<p class="tsim-empty">No picks listed.</p>';
+  }
+  return html + '</div>';
+}
+function tradeCheckIcon(s){ return s === 'PASS' ? '✓' : s === 'FAIL' ? '✕' : '!'; }
+function tradeReviewHTML(v){
+  const L = tradeTeams.left, R = tradeTeams.right;
+  if(!L || !R) return `<div class="tsim-hint"><b>How it works</b><ol><li>Choose both teams.</li><li>Tap the players and picks each team will send.</li><li>Watch the rules check update, then hit <b>Propose Trade</b>.</li></ol></div>`;
+  const vcls = v.verdict === 'LEGAL' ? 'ok' : v.verdict === 'ILLEGAL' ? 'bad' : 'warn';
+  const total = v.teams[0].out.length + v.teams[1].out.length + [...tradeSelections.left, ...tradeSelections.right].filter(k => k.startsWith('pick:')).length;
+  let html = '';
+  if(!v.ready) html += `<div class="tsim-verdict idle"><span>Nothing selected yet</span><small>Tap players or picks on either side.</small></div>`;
+  else html += `<div class="tsim-verdict ${vcls}"><span>${v.verdict}</span><small>${v.verdict === 'LEGAL' ? 'Passes every rule we can check.' : v.verdict === 'ILLEGAL' ? 'Fix the red items below to propose this trade.' : 'Passes, but part of it needs a manual check.'}</small></div>`;
+  [[0, tradeSelections.right, tradeSelections.left], [1, tradeSelections.left, tradeSelections.right]].forEach(([i, recvSet]) => {
+    const t = v.teams[i], team = t.team;
+    const items = [...recvSet].map(k => {
+      if(k.startsWith('player:')){ const r = tradeRecByName[k.slice(7)]; return `<li><span>${tsEsc(r ? r.n : k.slice(7))}</span><em>${r && !r.noContract ? tradeFmtM(r.sal) : '—'}</em></li>`; }
+      return `<li><span>${tsEsc(formatAssetLabel(k))}</span><em>Pick</em></li>`;
+    });
+    html += `<div class="tsim-card"><div class="tsim-card-h">${nbaTeamBadge(team)}<div><b>${tsEsc(team)} receive</b><small>${t.I ? tradeFmtM(t.I) + ' incoming' : 'No salary incoming'} &nbsp;·&nbsp; ${t.O ? tradeFmtM(t.O) + ' outgoing' : 'No salary outgoing'}</small></div></div>
+      <ul class="tsim-recv">${items.join('') || '<li class="none">Nothing yet</li>'}</ul>`;
+    if(v.ready){
+      html += `<div class="tsim-after"><span>After the trade</span><b>${tradeFmtM(t.post)}</b><span class="tsim-chip ${t.statusPost.tone}">${t.statusPost.label}</span></div>
+      <ul class="tsim-checks">${t.checks.map(c => `<li class="${c.status.toLowerCase()}"><span class="ico">${tradeCheckIcon(c.status)}</span><div><b>${tsEsc(c.title)}</b><p>${tsEsc(c.detail)}</p></div></li>`).join('')}</ul>`;
+    }
+    html += '</div>';
+  });
+  if(v.ready) html += `<details class="tsim-notes"><summary>What this check does not cover</summary>${v.notes.map(n => `<p>${tsEsc(n)}</p>`).join('')}</details>`;
+  return html;
+}
+function tradeBarHTML(v){
+  const L = tradeTeams.left, R = tradeTeams.right;
+  const ready = L && R && v.ready;
+  const vcls = !ready ? 'idle' : v.verdict === 'LEGAL' ? 'ok' : v.verdict === 'ILLEGAL' ? 'bad' : 'warn';
+  const label = !ready ? (L && R ? 'Select assets to trade' : 'Choose both teams') : v.verdict;
+  return `<div class="tsim-bar-status ${vcls}"><i></i><span>${label}</span></div>
+    <button class="tsim-propose" id="tsimPropose" ${ready ? '' : 'disabled'} onclick="proposeTrade()">Propose Trade</button>`;
+}
+function tradeRender(){
+  const v = validateTrade();
+  const L = tradeTeams.left, R = tradeTeams.right;
+  const sw = document.getElementById('tsimSwitch');
+  if(sw){
+    const cnt = s => tradeSelections[s].size;
+    sw.innerHTML = ['left', 'right'].map(s => `<button class="${tradeMobileSide === s ? 'on' : ''}" onclick="tradeSetMobileSide('${s}')">${tsEsc(tradeTeams[s] || (s === 'left' ? 'Team 1' : 'Team 2'))}<i>${cnt(s) ? cnt(s) + ' sending' : 'sending'}</i></button>`).join('');
+  }
+  const grid = document.querySelector('#tradeModal .tsim-grid');
+  if(grid) grid.dataset.mobile = tradeMobileSide;
+  const keepL = document.querySelector('#tradeSideLeft .tsim-list'), keepR = document.querySelector('#tradeSideRight .tsim-list');
+  const sl = keepL ? keepL.scrollTop : 0, sr = keepR ? keepR.scrollTop : 0;
+  document.getElementById('tradeSideLeft').innerHTML = tradeSideHTML('left', v);
+  document.getElementById('tradeSideRight').innerHTML = tradeSideHTML('right', v);
+  const nl = document.querySelector('#tradeSideLeft .tsim-list'), nr = document.querySelector('#tradeSideRight .tsim-list');
+  if(nl) nl.scrollTop = sl; if(nr) nr.scrollTop = sr;
+  document.getElementById('tsimReview').innerHTML = tradeReviewHTML(v);
+  document.getElementById('tsimBar').innerHTML = tradeBarHTML(v);
+}
+function proposeTrade(){
+  const v = validateTrade();
+  if(!tradeTeams.left || !tradeTeams.right || !v.ready) return;
+  if(v.verdict === 'ILLEGAL'){
+    const rv = document.getElementById('tsimReview');
+    const bar = document.getElementById('tsimPropose');
+    if(bar){ bar.classList.remove('shake'); void bar.offsetWidth; bar.classList.add('shake'); }
+    const first = rv && rv.querySelector('.tsim-checks li.fail');
+    if(first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
-  if(tradeSelections.left.size === 0 && tradeSelections.right.size === 0){
-    msgEl.textContent = 'Select at least one asset to trade.';
-    msgEl.className = 'modal-msg error';
-    return;
-  }
-  const currentYear = new Date().getFullYear() + 1;
-  const trackedYears = [currentYear, currentYear+1, currentYear+2, currentYear+3];
-  const exemptYears = [currentYear, currentYear+1];
-
-  function ownsFirstRound(teamName, year){
-    if(year === currentYear) return true;
-    const notes = TEAM_PICK_NOTES[teamName];
-    if(!notes || !notes[year]) return true;
-    return notes[year].first.trim().toLowerCase().startsWith('own');
-  }
-  function wouldMissBackToBack(teamName, tradedAwayYear){
-    const ownership = {};
-    trackedYears.forEach(y => { ownership[y] = ownsFirstRound(teamName, y); });
-    ownership[tradedAwayYear] = false;
-    for(let i=0; i<trackedYears.length-1; i++){
-      const y1 = trackedYears[i], y2 = trackedYears[i+1];
-      const bothExempt = exemptYears.includes(y1) && exemptYears.includes(y2);
-      if(!ownership[y1] && !ownership[y2] && !bothExempt) return `${y1} and ${y2}`;
-    }
-    return null;
-  }
-  const currentYearForCheck = new Date().getFullYear() + 1;
-  for(const side of ['left','right']){
-    for(const key of tradeSelections[side]){
-      let year = null;
-      if(/^pick:r1:\d+$/.test(key)) year = currentYearForCheck;
-      else {
-        const m = key.match(/^pick:(\d{4}) 1st Round Pick$/);
-        if(m) year = parseInt(m[1]);
-      }
-      if(year !== null){
-        const gap = wouldMissBackToBack(tradeTeams[side], year);
-        if(gap){
-          msgEl.textContent = `${tradeTeams[side]} can't make this trade, they'd be left without a first-round pick in ${gap}.`;
-          msgEl.className = 'modal-msg error';
-          return;
-        }
-      }
-    }
-  }
-
-  const leftGets = Array.from(tradeSelections.right).map(formatAssetLabel);
-  const rightGets = Array.from(tradeSelections.left).map(formatAssetLabel);
+  const row = t => `<div class="tsim-confirm-row"><div class="h">${nbaTeamBadge(t.team)}<b>${tsEsc(t.team)} receive</b><em>${t.I ? tradeFmtM(t.I) : 'picks only'}</em></div><p>${[...(t.team === tradeTeams.left ? tradeSelections.right : tradeSelections.left)].map(k => tsEsc(formatAssetLabel(k))).join(', ') || 'Nothing'}</p></div>`;
+  document.getElementById('confirmTradeModal')?.remove();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay open';
   overlay.id = 'confirmTradeModal';
-  overlay.innerHTML = `
-    <div class="modal-box" style="max-width:480px;">
-      <h2 style="margin-bottom:16px;">Confirm This Trade?</h2>
-      <div class="comp-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
-        <b>${tradeTeams.left} receive:</b> ${leftGets.join(", ") || "Nothing"}
-      </div>
-      <div class="comp-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
-        <b>${tradeTeams.right} receive:</b> ${rightGets.join(", ") || "Nothing"}
-      </div>
-      <div style="display:flex; gap:12px; margin-top:20px;">
-        <button class="btn btn-solid" style="flex:1;" onclick="document.getElementById('confirmTradeModal').remove(); handleTradeConfirmed();">Yes, Make the Trade</button>
-        <button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('confirmTradeModal').remove();">No, Go Back</button>
-      </div>
-    </div>`;
+  overlay.innerHTML = `<div class="tsim-confirm">
+      <h3>Propose this trade?</h3>
+      <div class="tsim-verdict ${v.verdict === 'LEGAL' ? 'ok' : 'warn'} small"><span>${v.verdict}</span></div>
+      ${v.teams.map(row).join('')}
+      ${v.verdict === 'NEEDS REVIEW' ? '<p class="tsim-confirm-note">Part of this trade has no salary on file, so it cannot be fully checked.</p>' : ''}
+      <div class="tsim-confirm-actions">
+        <button class="tsim-propose" onclick="document.getElementById('confirmTradeModal').remove(); handleTradeConfirmed();">Propose Trade</button>
+        <button class="tsim-back" onclick="document.getElementById('confirmTradeModal').remove();">Go back</button>
+      </div></div>`;
   document.body.appendChild(overlay);
 }
+
 
 function getCoopTeamController(teamName){
   if(!coopCurrentRoom) return null;
@@ -9552,6 +9907,8 @@ function executeTrade(){
   }
   applyPickMoves(tradeSelections.left, tradeTeams.left, tradeTeams.right);
   applyPickMoves(tradeSelections.right, tradeTeams.right, tradeTeams.left);
+  tradeSelections.left.forEach(k => { if(k.startsWith('player:') && tradeRecByName[k.slice(7)]) tradeMoves[tradeRecByName[k.slice(7)].key] = tradeTeams.right; });
+  tradeSelections.right.forEach(k => { if(k.startsWith('player:') && tradeRecByName[k.slice(7)]) tradeMoves[tradeRecByName[k.slice(7)].key] = tradeTeams.left; });
 
   mockTradeLog.push({
     team1: tradeTeams.left, team1Receives: Array.from(tradeSelections.right).map(formatAssetLabel),
@@ -12431,6 +12788,7 @@ loadAndApplyDraftBoardFlags();
 loadAndApplyArticleOverrides();
 loadAndApplyPlayerOverrides();
 loadAndApplyPlayerHighlights();
+loadProspectStatus();
 (function(){ const __ls = loadSession; loadSession = async function(){ const r = await __ls.apply(this, arguments); try{ syncOwnerHighlightButton(); }catch(e){} return r; }; })();
 loadGameLogs();
 loadAdvStatsLive();
