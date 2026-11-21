@@ -14320,7 +14320,15 @@ async function gmAIInvoke(body){
   if(res.error){
     const e = res.error; let status = null, detail = '';
     try{ if(e.context){ status = e.context.status; const j = await e.context.clone().json(); detail = (j.error || '') + (j.detail ? ': ' + j.detail : ''); } }catch(_){ try{ detail = await e.context.text(); }catch(__){} }
-    const err = new Error(gmAIExplain(status, detail, e.message || e.name)); err.explained = true; throw err;
+    let msg = gmAIExplain(status, detail, e.message || e.name);
+    if(e.name === 'FunctionsFetchError' || /fetch|Failed to send/i.test(String(e.message || ''))){
+      let reachable = false;
+      try{ await fetch(sb.supabaseUrl + '/functions/v1/gm-chat', { method: 'GET', mode: 'no-cors' }); reachable = true; }catch(_){}
+      msg = reachable
+        ? 'The function exists, but the browser blocked its reply (CORS). Redeploy the newest gm-chat/index.ts. If it still fails, open Edge Functions, then gm-chat, then Logs in Supabase and look for a red error line.'
+        : 'The browser could not reach Supabase at ' + sb.supabaseUrl.replace('https://', '') + '/functions. Check your internet connection, ad blockers or extensions, and that gm-chat is deployed in this project.';
+    }
+    const err = new Error(msg); err.explained = true; throw err;
   }
   return res.data;
 }
