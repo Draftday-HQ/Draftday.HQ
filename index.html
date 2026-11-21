@@ -2451,8 +2451,9 @@
     .stats-table th .q{margin-left:3px; width:12px; height:12px;}
     .stats-scroll{max-height:75vh;}
   }
-  /* ---- GM Draft Room ---- */
-  .gm-setup .gm-team-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:8px; margin:12px 0;}
+    /* ---- GM Draft Room ---- */
+  .gm-setup-wrap{max-width:1100px;}
+  .gm-setup .gm-team-grid,.gm-team-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:8px; margin:14px 0;}
   .gm-team{display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 6px; background:var(--void); border:1px solid var(--steel-soft); border-top:3px solid var(--tc); color:var(--paper); cursor:pointer; text-align:center;}
   .gm-team img{width:34px; height:34px; object-fit:contain;}
   .gm-team b{font-size:.82rem; font-weight:600;}
@@ -2461,10 +2462,16 @@
   .gm-team.on{background:rgba(198,161,91,.14); border-color:var(--gold); border-top-color:var(--gold);}
   .gm-team:disabled{opacity:.3; cursor:default;}
   .gm-opt-row{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:8px 0 14px;}
-  .gm-opt-row > span{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--paper-dim); min-width:130px;}
+  .gm-opt-row > span{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--paper-dim); min-width:140px;}
   .gm-opt-row button{padding:8px 14px; background:none; border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--mono); font-size:.68rem; cursor:pointer;}
   .gm-opt-row button.on{background:var(--gold); border-color:var(--gold); color:#111;}
-  #gmRoom{position:fixed; inset:0; z-index:9000; background:#050507; color:#f2efe8; display:flex; flex-direction:column; font-family:var(--serif);}
+  .gm-fo{margin:6px 0 16px; padding:14px 16px; border:1px solid var(--steel-soft); background:var(--void);} .gm-fo:empty{display:none;}
+  .gm-fo-h{font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;}
+  .gm-fo-r{display:flex; align-items:center; gap:12px; padding:6px 0;} .gm-fo-r b{display:block; font-size:.92rem;} .gm-fo-r small{display:block; font-size:.74rem; color:var(--paper-dim);}
+  .gm-fo-av{width:38px; height:38px; border-radius:50%; border:2px solid var(--ac); display:grid; place-items:center; font-family:var(--display); color:var(--ac); flex-shrink:0;}
+  .gm-fo-src{display:inline-block; margin-top:8px; font-size:.74rem; color:var(--gold);}
+  .gm-note{font-size:.74rem; color:var(--paper-dim); margin:10px 0 0; line-height:1.5;}
+  #gmRoom{position:fixed; inset:0; z-index:9000; background:#04050a; color:#f2efe8; display:flex; flex-direction:column; font-family:var(--serif);}
   #gmRoom *{box-sizing:border-box;}
   .gm-top{display:flex; justify-content:space-between; align-items:center; padding:10px 18px; background:#0b0b0e; border-bottom:1px solid rgba(198,161,91,.35); flex-shrink:0;}
   .gm-top-title{font-family:var(--display); letter-spacing:.06em; text-transform:uppercase;} .gm-top-title span{color:var(--gold); margin-left:8px;}
@@ -2472,23 +2479,39 @@
   .gm-skip,.gm-leave{background:none; border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; padding:9px 14px; cursor:pointer;}
   .gm-skip{border-color:var(--gold); color:var(--gold);} .gm-leave:hover{color:#ff6b5b; border-color:#ff6b5b;}
   #gmView{flex:1; min-height:0; position:relative;}
-  .gm-stage{position:absolute; inset:0; overflow:hidden; background:radial-gradient(ellipse at 50% 0%, #1b2236 0%, #0a0c14 60%, #050507 100%);}
-  .gm-backdrop{position:absolute; left:0; right:0; top:6%; height:34%; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#0c1220,#101a30); border-top:3px solid var(--gold); border-bottom:3px solid var(--gold);}
-  .gm-bd-text{font-family:var(--display); font-size:clamp(2rem,7vw,5rem); letter-spacing:.1em; color:#f2efe8; text-shadow:0 0 30px rgba(198,161,91,.5);} .gm-bd-text span{color:var(--gold);}
-  .gm-spots{position:absolute; inset:0; background:conic-gradient(from 200deg at 20% -10%, transparent 0 8%, rgba(255,255,255,.07) 10% 12%, transparent 14%), conic-gradient(from 150deg at 80% -10%, transparent 0 8%, rgba(255,255,255,.07) 10% 12%, transparent 14%); pointer-events:none;}
-  .gm-crowd{position:absolute; left:0; right:0; bottom:0; height:30%; background:radial-gradient(circle at 10px 100%, #0b0c12 0 14px, transparent 15px) 0 0/34px 34px repeat-x, linear-gradient(0deg,#050507 30%,transparent); opacity:.95;}
-  .gm-lectern{position:absolute; left:50%; bottom:15%; transform:translateX(-50%); width:clamp(150px,22vw,230px); height:clamp(120px,18vh,170px); background:linear-gradient(180deg,#2a2d36,#15171c); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; z-index:3; clip-path:polygon(6% 0,94% 0,100% 100%,0 100%);}
-  .gm-lectern span{font-family:var(--display); font-size:2rem; letter-spacing:.12em; color:var(--gold);}
-  .gm-comm{position:absolute; bottom:calc(15% + clamp(90px,13vh,130px)); left:-20%; width:clamp(90px,13vw,130px); z-index:2; transition:left 3.2s linear;}
-  .gm-comm.walking{left:calc(50% - clamp(45px,6.5vw,65px));} .gm-comm.arrived{left:calc(50% - clamp(45px,6.5vw,65px)); transition:none;}
-  .gm-comm-svg{width:100%; height:auto; display:block;}
+  /* draft stage */
+  .gm-stage{position:absolute; inset:0; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #101a3a 0%, #070a18 55%, #030409 100%);}
+  .gm-wall{position:absolute; left:4%; right:4%; top:4%; height:37%; border:3px solid #1b2547; border-radius:6px; overflow:hidden; --tc:#2d63c8; background:
+      linear-gradient(135deg, rgba(200,16,46,.55) 0%, rgba(10,22,70,.2) 40%, rgba(23,64,140,.7) 100%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 9px), repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 9px), #0a1230;
+      box-shadow:0 0 60px rgba(45,99,200,.45), inset 0 0 40px rgba(0,0,0,.6);}
+  .gm-wall-in{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center;}
+  .gm-wall-title{font-family:var(--display); font-size:clamp(1.8rem,6.5vw,4.8rem); letter-spacing:.1em; line-height:1; text-shadow:0 0 28px rgba(120,170,255,.7);} .gm-wall-title b{font-weight:400; color:#fff;}
+  .gm-wall-sub{font-family:var(--mono); font-size:clamp(.55rem,1.4vw,.8rem); letter-spacing:.4em; color:#9db7ff;}
+  .gm-wall-pick{display:flex; align-items:center; gap:clamp(10px,3vw,30px); padding:0 3%; animation:gmWallIn .5s ease-out; background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 55%,transparent),transparent 80%); width:100%; height:100%; justify-content:center;}
+  .gm-wall-pick small{font-family:var(--mono); letter-spacing:.3em; font-size:clamp(.6rem,1.6vw,1rem); color:#cfe0ff;} .gm-wall-pick b{font-family:var(--display); font-size:clamp(3rem,12vw,8rem); line-height:1; font-weight:400;}
+  .gm-wall-pick img{width:clamp(50px,12vw,130px); height:clamp(50px,12vw,130px); object-fit:contain; filter:drop-shadow(0 0 14px rgba(255,255,255,.35));} .gm-wall-pick span{font-family:var(--display); font-size:clamp(1.1rem,3.6vw,2.6rem); letter-spacing:.06em; text-transform:uppercase;}
+  @keyframes gmWallIn{from{opacity:0; transform:scale(1.06);}to{opacity:1; transform:none;}}
+  .gm-beams{position:absolute; inset:0; pointer-events:none; background:conic-gradient(from 195deg at 14% -8%, transparent 0 7%, rgba(150,190,255,.13) 9% 12%, transparent 14%), conic-gradient(from 155deg at 86% -8%, transparent 0 7%, rgba(255,120,130,.12) 9% 12%, transparent 14%), conic-gradient(from 178deg at 50% -12%, transparent 0 4%, rgba(255,255,255,.09) 5% 7%, transparent 8%);}
+  .gm-stage.intro .gm-beams{animation:gmSweep 3.4s ease-in-out;} @keyframes gmSweep{0%,100%{transform:translateX(0); opacity:.6;}50%{transform:translateX(2.5%); opacity:1;}}
+  .gm-stage-floor{position:absolute; left:0; right:0; bottom:0; height:44%; background:linear-gradient(180deg,#0b0f20 0%,#141a33 40%,#070913 100%); border-top:2px solid #2d63c8;}
+  .gm-stage-floor::before{content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 2px, transparent 2px 90px); transform:perspective(300px) rotateX(55deg); transform-origin:50% 0; opacity:.7;}
+  .gm-edge{position:absolute; left:0; right:0; top:-2px; height:4px; background:linear-gradient(90deg,#c8102e,#2d63c8 50%,#c8102e); box-shadow:0 0 18px rgba(200,16,46,.6), 0 0 30px rgba(45,99,200,.5);}
+  .gm-crowd{position:absolute; left:0; right:0; bottom:0; height:16%; background:radial-gradient(circle at 12px 100%, #05060b 0 15px, transparent 16px) 0 0/30px 30px repeat-x, linear-gradient(0deg,#03040a 40%,transparent); z-index:4; pointer-events:none;}
+  .gm-flashes i{position:absolute; width:4px; height:4px; border-radius:50%; background:#fff; box-shadow:0 0 10px 3px rgba(255,255,255,.7); opacity:0; animation:gmFlash 3.6s infinite;} @keyframes gmFlash{0%,92%,100%{opacity:0;}94%{opacity:1;}97%{opacity:.2;}}
+  .gm-lectern{position:absolute; left:50%; bottom:15%; transform:translateX(-50%); width:clamp(150px,22vw,240px); height:clamp(120px,18vh,170px); background:linear-gradient(180deg,rgba(190,215,255,.28),rgba(80,110,170,.18) 60%,rgba(20,30,60,.5)); border:2px solid rgba(190,215,255,.65); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:3; backdrop-filter:blur(2px); box-shadow:0 0 30px rgba(120,160,255,.35);}
+  .gm-lect-top{position:absolute; top:-6px; left:-6px; right:-6px; height:8px; background:linear-gradient(90deg,#c8102e,#fff,#2d63c8);}
+  .gm-lectern span{font-family:var(--display); font-size:clamp(1.8rem,4vw,2.6rem); letter-spacing:.14em; color:#fff; line-height:1;} .gm-lectern em{font-style:normal; font-family:var(--mono); font-size:.6rem; letter-spacing:.4em; color:#9db7ff;}
+  .gm-comm{position:absolute; bottom:calc(15% + clamp(90px,13vh,130px)); left:-20%; width:clamp(90px,13vw,132px); z-index:2; transition:left 3.4s linear; filter:drop-shadow(0 0 14px rgba(120,160,255,.35));}
+  .gm-comm.walking{left:calc(50% - clamp(45px,6.5vw,66px));} .gm-comm.arrived{left:calc(50% - clamp(45px,6.5vw,66px)); transition:none;}
+  .gm-comm-svg{width:100%; height:auto; display:block; overflow:visible;}
   .gm-comm.walking .gm-comm-svg{animation:gmBob .5s ease-in-out infinite;}
   .gm-comm.walking .gm-leg.l{transform-origin:51px 150px; animation:gmStepL .5s ease-in-out infinite;} .gm-comm.walking .gm-leg.r{transform-origin:71px 150px; animation:gmStepR .5s ease-in-out infinite;}
-  .gm-comm.talking .gm-arm.r{transform-origin:99px 76px; animation:gmWave .5s ease-in-out infinite alternate;}
-  @keyframes gmBob{50%{transform:translateY(-6px);}} @keyframes gmStepL{50%{transform:rotate(14deg);}} @keyframes gmStepR{50%{transform:rotate(-14deg);}} @keyframes gmWave{to{transform:rotate(-14deg);}}
-  .gm-bubble{position:absolute; left:50%; top:41%; transform:translateX(-50%); width:min(680px,90vw); min-height:64px; background:rgba(8,10,16,.88); border:1px solid var(--gold); padding:16px 20px; font-size:clamp(1rem,2.4vw,1.35rem); line-height:1.4; text-align:center; z-index:4; opacity:0; transition:opacity .3s;}
+  .gm-comm.talking .gm-arm.r{transform-origin:100px 76px; animation:gmWave .5s ease-in-out infinite alternate;} .gm-comm.talking .gm-mouth{animation:gmTalk .26s steps(2) infinite;}
+  @keyframes gmBob{50%{transform:translateY(-6px);}} @keyframes gmStepL{50%{transform:rotate(14deg);}} @keyframes gmStepR{50%{transform:rotate(-14deg);}} @keyframes gmWave{to{transform:rotate(-12deg);}} @keyframes gmTalk{50%{transform:scaleY(1.9); transform-origin:60px 53px;}}
+  .gm-bubble{position:absolute; left:50%; top:42%; transform:translateX(-50%); width:min(680px,90vw); min-height:60px; background:rgba(6,9,20,.9); border:1px solid rgba(157,183,255,.6); padding:14px 20px; font-size:clamp(1rem,2.4vw,1.3rem); line-height:1.4; text-align:center; z-index:5; opacity:0; transition:opacity .3s;}
   .gm-bubble.on{opacity:1;}
-  .gm-callout{position:absolute; left:50%; bottom:22%; transform:translate(-50%,24px) scale(.96); width:min(560px,92vw); display:flex; align-items:center; gap:14px; padding:12px 16px; background:linear-gradient(100deg,color-mix(in srgb,var(--tc,#c6a15b) 45%,#0b0b0e),#101116 70%); border:1px solid var(--gold); border-left:6px solid var(--tc,#c6a15b); z-index:5; opacity:0; pointer-events:none; transition:opacity .35s, transform .35s;}
+  .gm-callout{position:absolute; left:50%; bottom:15%; transform:translate(-50%,24px) scale(.96); width:min(560px,92vw); display:flex; align-items:center; gap:14px; padding:12px 16px; background:linear-gradient(100deg,color-mix(in srgb,var(--tc,#c6a15b) 50%,#0b0b0e),#0e1020 70%); border:1px solid rgba(255,255,255,.35); border-left:6px solid var(--tc,#c6a15b); z-index:6; opacity:0; pointer-events:none; transition:opacity .35s, transform .35s;}
   .gm-callout.on{opacity:1; transform:translate(-50%,0) scale(1); pointer-events:auto;}
   .gm-co-num{font-family:var(--display); font-size:2.4rem; color:var(--gold); min-width:50px; text-align:center;}
   .gm-co-ph{width:68px; height:68px; border-radius:50%; overflow:hidden; border:3px solid var(--tc,#c6a15b); background:#444; flex-shrink:0; display:grid; place-items:center;}
@@ -2497,34 +2520,49 @@
   .gm-co-info small{font-family:var(--mono); font-size:.62rem; letter-spacing:.06em; text-transform:uppercase; color:#a8a39a;} .gm-co-info em{font-style:normal; font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--gold);}
   .gm-co-logo{width:52px; height:52px; object-fit:contain; flex-shrink:0;}
   .gm-go{padding:12px 18px; background:var(--gold); color:#111; border:0; font-family:var(--mono); font-weight:700; letter-spacing:.08em; text-transform:uppercase; cursor:pointer;}
-  .gm-ticker{position:absolute; left:0; right:0; bottom:0; display:flex; gap:10px; padding:10px 14px; overflow-x:auto; background:rgba(5,5,7,.92); border-top:1px solid rgba(198,161,91,.3); z-index:6; scrollbar-width:none;}
+  .gm-ticker{position:absolute; left:0; right:0; bottom:0; display:flex; gap:10px; padding:10px 14px; overflow-x:auto; background:rgba(3,4,9,.94); border-top:1px solid rgba(157,183,255,.3); z-index:7; scrollbar-width:none;}
   .gm-tk{display:flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid rgba(255,255,255,.1); font-size:.8rem; white-space:nowrap; flex-shrink:0;} .gm-tk b{color:var(--gold); font-family:var(--display);} .gm-tk span{opacity:.7;} .gm-tk em{font-style:normal;}
-  /* war room */
+  /* board room */
   .gm-war{position:absolute; inset:0; display:flex; flex-direction:column; background:radial-gradient(ellipse at 50% 0%, color-mix(in srgb,var(--tc) 22%, #0c0d12), #07080b 70%);}
-  .gm-war-top{display:flex; align-items:center; gap:14px; padding:10px 18px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0;}
+  .gm-war-top{display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0;}
   .gm-war-top img{width:42px; height:42px; object-fit:contain;} .gm-war-top small{display:block; font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);} .gm-war-top b{font-family:var(--display); font-size:1.3rem; letter-spacing:.03em;}
-  .gm-clock{margin-left:auto; font-family:var(--display); font-size:1.8rem; padding:4px 14px; border:1px solid var(--gold); color:var(--gold); min-width:84px; text-align:center;} .gm-clock:empty{display:none;} .gm-clock.low{color:#ff6b5b; border-color:#ff6b5b; animation:gmPulse 1s infinite;}
+  .gm-clockbox{margin-left:auto; display:flex; align-items:center; gap:8px;}
+  .gm-clock{font-family:var(--display); font-size:1.8rem; padding:4px 14px; border:1px solid var(--gold); color:var(--gold); min-width:84px; text-align:center;} .gm-clock:empty{display:none;} .gm-clock.low{color:#ff6b5b; border-color:#ff6b5b; animation:gmPulse 1s infinite;} .gm-clock.paused{color:#9db7ff; border-color:#9db7ff; animation:none;}
+  .gm-pause{padding:11px 16px; background:none; border:1px solid var(--gold); color:var(--gold); font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer;} .gm-pause.on{background:#9db7ff; border-color:#9db7ff; color:#0a1020;}
   @keyframes gmPulse{50%{opacity:.5;}}
-  .gm-board-btn{display:none; background:none; border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; padding:10px 14px;}
-  .gm-war-main{flex:1; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 340px;}
-  .gm-room{display:flex; flex-direction:column; min-height:0; padding:14px 18px 12px; gap:0;}
-  .gm-seats{display:flex; justify-content:center; gap:clamp(12px,4vw,56px); flex-shrink:0; padding-top:4px;}
-  .gm-seat{display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center; width:140px;}
-  .gm-seat-av{width:58px; height:58px; border-radius:50%; background:linear-gradient(160deg,#2c313c,#171a21); border:3px solid var(--ac); display:grid; place-items:center; font-family:var(--display); font-size:1.5rem; color:var(--ac); transition:box-shadow .25s, transform .25s;}
-  .gm-seat.talk .gm-seat-av{box-shadow:0 0 0 5px color-mix(in srgb,var(--ac) 35%, transparent), 0 0 22px var(--ac); transform:scale(1.07);}
-  .gm-seat b{font-size:.85rem;} .gm-seat small{font-family:var(--mono); font-size:.56rem; letter-spacing:.06em; text-transform:uppercase; color:#8d887f;}
-  .gm-desk{height:16px; margin:6px 8% 8px; border-radius:50%; background:linear-gradient(180deg,#4a3722,#241a10); box-shadow:0 10px 24px rgba(0,0,0,.6); flex-shrink:0;}
-  .gm-chat{flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:8px 4px; scroll-behavior:smooth;}
-  .gm-msg{max-width:88%; padding:9px 13px; background:#12141a; border-left:4px solid var(--ac,#888); font-size:.98rem; line-height:1.45; align-self:flex-start; animation:gmMsg .25s ease-out;}
-  .gm-msg b{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ac,#aaa); display:block; margin-bottom:2px;} .gm-msg p{margin:0;}
-  .gm-msg.you{align-self:flex-end; background:rgba(198,161,91,.16); border-left:0; border-right:4px solid var(--gold);} .gm-msg.you b{color:var(--gold); text-align:right;}
-  .gm-msg.sys{align-self:center; background:none; border:0; font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; color:#8d887f; text-align:center; max-width:100%;}
-  .gm-msg.typing i{font-style:normal; font-size:.85rem; opacity:.7;} .gm-msg.typing i span{animation:gmDot 1s infinite;} .gm-msg.typing i span:nth-child(2){animation-delay:.2s;} .gm-msg.typing i span:nth-child(3){animation-delay:.4s;}
-  @keyframes gmDot{50%{opacity:.15;}} @keyframes gmMsg{from{opacity:0; transform:translateY(6px);}to{opacity:1; transform:none;}}
+  .gm-sheet-btn{display:none; background:none; border:1px solid var(--steel-soft); color:var(--paper); font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; padding:10px 12px;}
+  .gm-war-main{flex:1; min-height:0; display:grid; grid-template-columns:300px minmax(0,1fr) 320px;}
+  .gm-left{display:flex; flex-direction:column; gap:12px; padding:12px; overflow-y:auto; min-height:0; border-right:1px solid rgba(255,255,255,.08); background:#08090d;}
+  .gm-mon{border:3px solid #232733; border-radius:6px; background:linear-gradient(180deg,#0c1325,#070b16); box-shadow:0 0 22px rgba(60,110,220,.18), inset 0 0 30px rgba(0,0,0,.5); overflow:hidden; flex-shrink:0;}
+  .gm-mon-picks{max-height:46%; overflow-y:auto; flex-shrink:1;}
+  .gm-mon-h{display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:linear-gradient(90deg,#1a2f66,#0e1a3c); font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; position:sticky; top:0; z-index:1;} .gm-mon-h b{color:var(--gold); font-weight:600;}
+  .gm-dc-row{padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.05);} .gm-dc-l{display:block; font-family:var(--mono); font-size:.52rem; letter-spacing:.14em; text-transform:uppercase; color:#8aa0d6; margin-bottom:4px;}
+  .gm-dc-p{display:flex; flex-wrap:wrap; gap:4px;} .gm-dc-pl{display:inline-flex; align-items:center; gap:5px; padding:3px 7px; background:rgba(255,255,255,.06); font-size:.78rem; line-height:1.25;} .gm-dc-pl i{font-style:normal; font-family:var(--mono); font-size:.52rem; color:var(--gold);} .gm-dc-none{font-size:.78rem; color:#8d887f;}
+  .gm-pk{display:flex; align-items:center; gap:8px; padding:6px 10px; border-bottom:1px solid rgba(255,255,255,.05); border-left:3px solid var(--tc);} .gm-pk.mine{background:rgba(198,161,91,.14);} .gm-pk b{font-family:var(--display); color:var(--gold); min-width:22px; text-align:center;} .gm-pk img{width:24px; height:24px; object-fit:contain;} .gm-pk span{display:flex; flex-direction:column; min-width:0;} .gm-pk em{font-style:normal; font-size:.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;} .gm-pk small{font-family:var(--mono); font-size:.52rem; letter-spacing:.05em; text-transform:uppercase; color:#8d887f;}
+  .gm-sheet-close{display:none; padding:12px; background:var(--gold); color:#111; border:0; font-family:var(--mono); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:.7rem;}
+  .gm-room{display:flex; flex-direction:column; min-height:0; padding:12px 18px 12px;}
+  .gm-seats{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; flex-shrink:0; max-width:760px; width:100%; margin:0 auto; position:relative; z-index:1;}
+  .gm-seat{display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center; min-width:0;}
+  .gm-seat-av{width:56px; height:56px; border-radius:50%; background:linear-gradient(160deg,#2c313c,#171a21); border:3px solid var(--ac); display:grid; place-items:center; font-family:var(--display); font-size:1.3rem; color:var(--ac); transition:box-shadow .25s, transform .25s; overflow:hidden;} .gm-seat-av img{width:70%; height:70%; object-fit:contain; max-width:none; margin:0; border-radius:0;}
+  .gm-seat.talk .gm-seat-av{box-shadow:0 0 0 5px color-mix(in srgb,var(--ac) 35%, transparent), 0 0 22px var(--ac); transform:scale(1.08);}
+  .gm-seat b{font-size:.82rem; line-height:1.2;} .gm-seat small{font-family:var(--mono); font-size:.5rem; letter-spacing:.05em; text-transform:uppercase; color:#8d887f; line-height:1.3; max-width:100%; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;}
+  .gm-table{height:20px; margin:-6px 4% 12px; border-radius:50%; background:linear-gradient(180deg,#5a4228,#241a10); box-shadow:0 12px 26px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.12); flex-shrink:0; max-width:820px; width:92%; align-self:center;}
+  .gm-quote{position:relative; align-self:center; width:min(720px,100%); min-height:92px; padding:14px 18px; background:#f4f1ea; color:#15161b; border-radius:16px; margin-bottom:14px; flex-shrink:0; opacity:.0; transition:opacity .2s; box-shadow:0 8px 24px rgba(0,0,0,.45);}
+  .gm-quote.on{opacity:1;} .gm-quote.pop{animation:gmPop .28s ease-out;}
+  .gm-quote::before{content:""; position:absolute; top:-12px; left:var(--tail,50%); transform:translateX(-50%); border:12px solid transparent; border-top:0; border-bottom-color:#f4f1ea;}
+  .gm-quote b{display:block; font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:#5c5a52; margin-bottom:4px; border-left:4px solid var(--ac); padding-left:8px;}
+  .gm-quote p{margin:0; font-size:1.02rem; line-height:1.45; font-style:italic;} .gm-quote.you{background:#f0dba4;} .gm-quote.you::before{border-bottom-color:#f0dba4;}
+  .gm-quote i{font-style:normal; font-size:.9rem; color:#5c5a52;} .gm-quote i span{animation:gmDot 1s infinite;} .gm-quote i span:nth-child(2){animation-delay:.2s;} .gm-quote i span:nth-child(3){animation-delay:.4s;}
+  @keyframes gmPop{from{transform:scale(.96); opacity:.4;}to{transform:none; opacity:1;}} @keyframes gmDot{50%{opacity:.15;}}
+  .gm-chat{flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding:4px 4px; scroll-behavior:smooth;}
+  .gm-msg{max-width:88%; padding:7px 12px; background:#12141a; border-left:3px solid var(--ac,#888); font-size:.84rem; line-height:1.4; align-self:flex-start; border-radius:0 10px 10px 0; opacity:.85;}
+  .gm-msg b{font-family:var(--mono); font-size:.54rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ac,#aaa); display:block; margin-bottom:1px;} .gm-msg p{margin:0;}
+  .gm-msg.you{align-self:flex-end; background:rgba(198,161,91,.14); border-left:0; border-right:3px solid var(--gold); border-radius:10px 0 0 10px;} .gm-msg.you b{color:var(--gold); text-align:right;}
+  .gm-msg.sys{align-self:center; background:none; border:0; font-family:var(--mono); font-size:.62rem; letter-spacing:.06em; color:#8d887f; text-align:center; max-width:100%; opacity:1;}
   .gm-input{display:flex; gap:8px; padding-top:8px; flex-shrink:0;} .gm-input input{flex:1; min-width:0; padding:13px 14px; background:#12141a; border:1px solid var(--steel-soft); color:#f2efe8; font:inherit; font-size:1rem;} .gm-input input:focus{outline:none; border-color:var(--gold);}
   .gm-input button{padding:0 22px; background:var(--gold); color:#111; border:0; font-family:var(--mono); font-weight:700; letter-spacing:.08em; text-transform:uppercase; cursor:pointer;}
   .gm-board{border-left:1px solid rgba(255,255,255,.08); overflow-y:auto; background:#0a0b0f; min-height:0;}
-  .gm-board-h{position:sticky; top:0; background:#0a0b0f; padding:12px 14px; font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); border-bottom:1px solid rgba(255,255,255,.08);}
+  .gm-board-h{position:sticky; top:0; background:#0a0b0f; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); border-bottom:1px solid rgba(255,255,255,.08);}
   .gm-pl{display:flex; align-items:center; gap:10px; width:100%; padding:9px 12px; background:none; border:0; border-bottom:1px solid rgba(255,255,255,.05); color:inherit; text-align:left; cursor:pointer; min-height:56px;}
   .gm-pl:hover{background:rgba(255,255,255,.04);} .gm-pl.on{background:rgba(198,161,91,.15); box-shadow:inset 3px 0 0 var(--gold);}
   .gm-pl-rk{width:24px; text-align:center; font-family:var(--display); color:var(--gold); flex-shrink:0;}
@@ -2534,17 +2572,27 @@
   .gm-sel{display:flex; flex-direction:column; min-width:0;} .gm-sel span{font-family:var(--mono); font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);} .gm-sel b{font-size:1rem; font-weight:600; overflow:hidden; text-overflow:ellipsis;}
   .gm-propose{padding:13px 24px; background:var(--gold); color:#111; border:0; font-family:var(--mono); font-weight:700; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; min-height:48px; flex-shrink:0;} .gm-propose:disabled{opacity:.35; cursor:not-allowed;}
   .gm-conf{display:flex; gap:8px;} .gm-back{padding:13px 16px; background:none; border:1px solid var(--steel-soft); color:inherit; font-family:var(--mono); text-transform:uppercase; font-size:.7rem; cursor:pointer;}
-  @media (max-width:860px){
+  @media (max-width:1100px){
     .gm-war-main{grid-template-columns:1fr; position:relative;}
-    .gm-board-btn{display:block; margin-left:10px;} .gm-clock{margin-left:auto; font-size:1.3rem; min-width:64px;}
-    .gm-board{position:absolute; inset:0; z-index:5; display:none;} .gm-war.board-open .gm-board{display:block;}
-    .gm-seats{gap:10px;} .gm-seat{width:100px;} .gm-seat-av{width:46px; height:46px; font-size:1.2rem;} .gm-seat small{display:none;} .gm-seat b{font-size:.72rem;}
-    .gm-msg{max-width:94%; font-size:.92rem;}
-    .gm-skip,.gm-leave{padding:8px 10px;} .gm-top{padding:8px 12px;} .gm-top-title{font-size:.9rem;}
-    .gm-co-num{font-size:1.8rem; min-width:34px;} .gm-co-ph{width:52px; height:52px;} .gm-co-info b{font-size:1.1rem;} .gm-co-logo{width:36px; height:36px;}
-    .gm-callout{bottom:16%;} .gm-bubble{top:38%; font-size:.95rem; padding:10px 12px;} .gm-top-title span{display:none;} .gm-comm{bottom:calc(15% + 80px);} .gm-propose{padding:12px 14px; font-size:.7rem;}
+    .gm-sheet-btn{display:block;}
+    .gm-clockbox{margin-left:auto;}
+    .gm-left,.gm-board{display:none; position:absolute; inset:0; z-index:5;}
+    .gm-war[data-sheet="screens"] .gm-left{display:flex; background:#07080b;} .gm-war[data-sheet="board"] .gm-board{display:block;}
+    .gm-war[data-sheet="screens"] .gm-sheet-close{display:block;} .gm-sheet-close.sm{display:block; padding:6px 10px;}
+    .gm-mon-picks{max-height:none;}
   }
-  @media (prefers-reduced-motion:reduce){ .gm-comm.walking .gm-comm-svg,.gm-comm.walking .gm-leg{animation:none;} }
+  @media (max-width:640px){
+    .gm-war-top{gap:8px; padding:8px 10px;} .gm-war-top img{width:30px; height:30px;} .gm-war-top b{font-size:1rem;}
+    .gm-clock{font-size:1.15rem; min-width:56px; padding:4px 8px;} .gm-pause{padding:9px 9px; font-size:.58rem;} .gm-sheet-btn{padding:9px 8px; font-size:.56rem;}
+    .gm-war-top > div:nth-child(2) small{display:none;}
+    .gm-room{padding:8px 10px;} .gm-seat-av{width:44px; height:44px; font-size:1.05rem;} .gm-seat b{font-size:.7rem;} .gm-seat small{display:none;}
+    .gm-quote{min-height:70px; padding:10px 12px; margin-bottom:8px;} .gm-quote p{font-size:.9rem;}
+    .gm-skip,.gm-leave{padding:8px 10px;} .gm-top{padding:8px 12px;} .gm-top-title{font-size:.9rem;} .gm-top-title span{display:none;}
+    .gm-co-num{font-size:1.8rem; min-width:34px;} .gm-co-ph{width:52px; height:52px;} .gm-co-info b{font-size:1.1rem;} .gm-co-logo{width:36px; height:36px;}
+    .gm-callout{bottom:16%;} .gm-bubble{top:39%; font-size:.95rem; padding:10px 12px;} .gm-comm{bottom:calc(15% + 80px);} .gm-propose{padding:12px 14px; font-size:.7rem;}
+    .gm-wall{left:2%; right:2%;}
+  }
+  @media (prefers-reduced-motion:reduce){ .gm-comm.walking .gm-comm-svg,.gm-comm.walking .gm-leg,.gm-flashes i,.gm-stage.intro .gm-beams{animation:none;} }
 
 </style>
 </head>
@@ -2580,6 +2628,7 @@
         <div class="nav-dropdown-menu">
           <a href="javascript:void(0)" onclick="showView('customboard'); showCustomBoardSub('board');">Big Board</a>
           <a href="javascript:void(0)" onclick="goToCustomBoardMock();">Mock Draft</a>
+          <a href="javascript:void(0)" onclick="showView('customboard'); showCustomBoardSub('gm');">GM Draft Room</a>
           <a href="javascript:void(0)" onclick="showView('customboard'); showCustomBoardSub('community');">Community Boards</a>
         </div>
       </div>
@@ -2617,6 +2666,7 @@
     <div class="mobile-submenu" id="customboardSubmenu" style="display:none;">
       <a href="javascript:void(0)" onclick="closeMobileNav(); showView('customboard'); showCustomBoardSub('board');">Big Board</a>
       <a href="javascript:void(0)" onclick="closeMobileNav(); goToCustomBoardMock();">Mock Draft</a>
+      <a href="javascript:void(0)" onclick="closeMobileNav(); showView('customboard'); showCustomBoardSub('gm');">GM Draft Room</a>
       <a href="javascript:void(0)" onclick="closeMobileNav(); showView('customboard'); showCustomBoardSub('community');">Community Boards</a>
     </div>
     <div class="mobile-nav-social">
@@ -2968,6 +3018,7 @@
     <div class="filter-row" style="margin-bottom:34px;">
       <button class="chip active" id="cbSubBigBoard" onclick="showCustomBoardSub('board')">Big Board</button>
       <button class="chip" id="cbSubMock" onclick="showCustomBoardSub('mock')">Mock Draft</button>
+      <button class="chip" id="cbSubGM" onclick="showCustomBoardSub('gm')">GM Draft Room</button>
       <button class="chip" id="cbSubCommunity" onclick="showCustomBoardSub('community')">Community Boards</button>
     </div>
     <div id="cbCommunityPanel" style="display:none;"><div id="cbCommunityBody"></div></div>
@@ -3001,6 +3052,20 @@
         <div class="filter-row" id="cbPosFilterRow" style="margin-bottom:14px;"></div>
         <div class="filter-row" id="cbClsFilterRow" style="margin-bottom:24px;"></div>
         <div class="cb-pool-grid" id="cbPoolList"></div>
+      </div>
+    </div>
+    <div id="cbGMPanel" style="display:none;">
+      <div class="gm-setup gm-setup-wrap" id="gmSetupSection">
+        <h3 style="font-family:var(--display); letter-spacing:.04em; margin:0 0 6px;">GM Draft Room</h3>
+        <p class="section-sub" style="margin:0;">Run one team. Walk in as the commissioner opens the draft, watch the picks come in, then sit down with your front office and make the call.</p>
+        <div class="gm-opt-row" style="margin-top:18px;"><span>Your team</span></div>
+        <div class="gm-team-grid" id="gmTeamGrid"></div>
+        <div class="gm-fo" id="gmFoPreview"></div>
+        <div class="gm-opt-row"><span>Lottery</span><label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" id="gmLottery" checked onchange="gmSetOpt('lottery', this.checked)"> Simulate the lottery first</label></div>
+        <div class="gm-opt-row" id="gmPaceRow"><span>Time between picks</span><button type="button" data-v="3" onclick="gmSetOpt('pace',3)">3s</button><button type="button" data-v="5" onclick="gmSetOpt('pace',5)">5s</button><button type="button" data-v="8" onclick="gmSetOpt('pace',8)">8s</button></div>
+        <div class="gm-opt-row" id="gmClockRow"><span>Your clock</span><button type="button" data-v="0" onclick="gmSetOpt('clock',0)">None</button><button type="button" data-v="60" onclick="gmSetOpt('clock',60)">1 min</button><button type="button" data-v="120" onclick="gmSetOpt('clock',120)">2 min</button><button type="button" data-v="300" onclick="gmSetOpt('clock',300)">5 min</button><button type="button" data-v="600" onclick="gmSetOpt('clock',600)">10 min</button></div>
+        <p class="gm-note">You can pause your clock while you are on the pick. Front office names and titles come from a 2026-27 directory and may be out of date. Everything they say in the room is simulated.</p>
+        <button type="button" class="gm-propose" id="gmEnterBtn" onclick="gmEnter()" style="width:100%; margin-top:14px;">Choose your team to enter the draft room</button>
       </div>
     </div>
     <div id="cbMockPanel" style="display:none;">
@@ -3045,15 +3110,6 @@
             <p class="profile-empty" style="margin-top:8px;">Randomizes picks 1-16 using the NBA's 3-2-1 weighted-ball system, with the three worst teams protected from falling past pick 12.</p>
           </div>
 
-          <div class="mock-coop-section gm-setup" id="gmSetupSection">
-            <div class="mock-section-title">GM Draft Room <span style="color:var(--gold);">NEW</span></div>
-            <p style="font-size:.85rem; color:var(--paper-dim); margin:4px 0 0;">Run one team. Walk into the draft room, argue with your advisors, and make the pick.</p>
-            <div class="gm-team-grid" id="gmTeamGrid"></div>
-            <div class="gm-opt-row"><span>Lottery</span><label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" id="gmLottery" checked onchange="gmSetOpt('lottery', this.checked)"> Simulate the lottery first</label></div>
-            <div class="gm-opt-row" id="gmPaceRow"><span>Time between picks</span><button type="button" data-v="3" onclick="gmSetOpt('pace',3)">3s</button><button type="button" data-v="5" onclick="gmSetOpt('pace',5)">5s</button><button type="button" data-v="8" onclick="gmSetOpt('pace',8)">8s</button></div>
-            <div class="gm-opt-row" id="gmClockRow"><span>Your clock</span><button type="button" data-v="0" onclick="gmSetOpt('clock',0)">None</button><button type="button" data-v="60" onclick="gmSetOpt('clock',60)">1 min</button><button type="button" data-v="120" onclick="gmSetOpt('clock',120)">2 min</button><button type="button" data-v="300" onclick="gmSetOpt('clock',300)">5 min</button></div>
-            <button type="button" class="gm-propose" id="gmEnterBtn" onclick="gmEnter()" style="width:100%;">Choose your team to enter the draft room</button>
-          </div>
           <div class="mock-coop-section" id="soloAutomationSection">
             <div class="mock-coop-header">
               <div class="lbl" style="margin:0;">Automate Some Picks</div>
@@ -6665,6 +6721,9 @@ function showCustomBoardSub(which){
   document.getElementById('cbBoardPanel').style.display = which==='board' ? 'block' : 'none';
   document.getElementById('cbMockPanel').style.display = which==='mock' ? 'block' : 'none';
   document.getElementById('cbCommunityPanel').style.display = which==='community' ? 'block' : 'none';
+  document.getElementById('cbGMPanel').style.display = which==='gm' ? 'block' : 'none';
+  document.getElementById('cbSubGM').classList.toggle('active', which==='gm');
+  if(which==='gm' && typeof gmRenderSetup==='function') gmRenderSetup();
   document.getElementById('cbSubBigBoard').classList.toggle('active', which==='board');
   document.getElementById('cbSubMock').classList.toggle('active', which==='mock');
   document.getElementById('cbSubCommunity').classList.toggle('active', which==='community');
@@ -13340,19 +13399,36 @@ routeFromHash(__initialHash || (window.__ROUTE ? '#' + window.__ROUTE : ''));
 
 </script>
 <script>
-/* ===================== GM DRAFT ROOM ===================== */
+const GM_FRONT_OFFICE = {"Atlanta Hawks": {"url": "https://www.nba.com/hawks/staff-directory", "staff": [["Onsi Saleh", "President of Basketball Operations"], ["Peter Dinwiddie", "Executive Vice President, Basketball Operations"], ["Kyle Korver", "Assistant General Manager / Basketball Operations (role should be reconfirmed)"]]}, "Boston Celtics": {"url": "https://www.nba.com/celtics/team/front-office", "staff": [["Brad Stevens", "President of Basketball Operations"], ["Mike Zarren", "Assistant General Manager / Chief Basketball Strategist"], ["Dave Lewin", "Assistant General Manager"]]}, "Brooklyn Nets": {"url": "https://www.nba.com/nets/team/front-office", "staff": [["Sean Marks", "General Manager"], ["Boris Balibrea", "Assistant General Manager (role should be reconfirmed)"], ["Andy Birdsong", "VP, Basketball Strategy (role should be reconfirmed)"]]}, "Charlotte Hornets": {"url": "https://www.nba.com/hornets/staff-directory", "staff": [["Jeff Peterson", "President of Basketball Operations"], ["Ryan Gisriel", "Vice President, Basketball Operations & Strategy"], ["Dutton Akinwale", "Assistant General Manager"], ["Ryan Lambert", "Director of Amateur Scouting"], ["Jakub Kucabek", "Director of International Scouting"]]}, "Chicago Bulls": {"url": "https://www.nba.com/bulls/team/front-office", "staff": [["Bryson Graham", "Executive Vice President, Basketball Operations / General Manager (2026)"], ["Brian Hagen", "Senior Vice President, Player Personnel"], ["Stephen Mervis", "Basketball operations executive; title needs confirmation"]]}, "Cleveland Cavaliers": {"url": "https://cavsdatabase.com/staff", "staff": [["Koby Altman", "President of Basketball Operations"], ["Brandon Weems", "General Manager"], ["Jon Nichols", "Associate General Manager"], ["Brendon Yu", "Assistant General Manager"], ["José Calderón", "Assistant General Manager"]]}, "Dallas Mavericks": {"url": "https://basketball.realgm.com/nba/teams/Dallas-Mavericks/6/staff-members/Current/grid", "staff": [["Masai Ujiri", "Team President"], ["Mike Schmitz", "General Manager"], ["Matt Redfield", "Assistant General Manager"], ["Khalia Collier", "Vice President, Basketball Operations"]]}, "Denver Nuggets": {"url": "https://www.nba.com/nuggets/staff", "staff": [["Ben Tenzer", "Executive Vice President, Basketball Operations"], ["Jonathan Wallace", "Executive Vice President, Player Personnel"], ["Todd Checovich", "Vice President, Basketball Operations"], ["Layne Vashro", "Vice President, Analytics & Strategy"], ["Jim Clibanoff", "Director, Amateur & Grassroots Scouting"], ["Scott Howard", "Director, College Scouting"]]}, "Detroit Pistons": {"url": "https://www.nba.com/pistons/team/front-office", "staff": [["Trajan Langdon", "President of Basketball Operations"], ["Dennis Lindsey", "Senior Vice President, Basketball Operations"], ["Bobby Marks", "Basketball operations executive/advisor (confirm current title)"]]}, "Golden State Warriors": {"url": "https://www.nba.com/warriors/team/front-office", "staff": [["Mike Dunleavy Jr.", "General Manager"], ["Kirk Lacob", "Executive Vice President, Basketball Operations"], ["Mike Dunleavy Sr.", "Senior Advisor (role should be reconfirmed)"]]}, "Houston Rockets": {"url": "https://www.nba.com/rockets/team/front-office", "staff": [["Rafael Stone", "General Manager"], ["Gersson Rosas", "Executive Vice President, Basketball Operations"], ["Monte McNair", "Senior Vice President, Basketball Operations (reported role; reconfirm)"]]}, "Indiana Pacers": {"url": "https://basketball.realgm.com/nba/teams/Indiana-Pacers/11/staff-members/Current/grid", "staff": [["Kevin Pritchard", "President of Basketball Operations"], ["Chad Buchanan", "General Manager"], ["Ted Wu", "Executive Vice President, Basketball Operations / Assistant GM"], ["Vance Catlin", "Senior Vice President, Pro Scouting"], ["Luca Desta", "Director of College Scouting"], ["Michael Born", "Vice President, Player Personnel"]]}, "Los Angeles Clippers": {"url": "https://www.nba.com/clippers/team/front-office", "staff": [["Trent Redden", "President of Basketball Operations"], ["Mark Hughes", "Assistant General Manager"], ["Daniel Katz", "Vice President, Basketball Strategy (role should be reconfirmed)"]]}, "Los Angeles Lakers": {"url": "https://basketball.realgm.com/nba/teams/Los-Angeles-Lakers/13/staff-members/Current/grid", "staff": [["Rob Pelinka", "President of Basketball Operations & General Manager"], ["Kurt Rambis", "Senior Vice President, Basketball Operations"], ["Eric Amsler", "Assistant General Manager"], ["Rohan Ramadas", "Assistant General Manager"], ["Nick Mazzella", "Senior Director, Player Personnel"], ["Irving Thomas", "Head Scout"]]}, "Memphis Grizzlies": {"url": "https://www.nba.com/grizzlies/team/front-office", "staff": [["Zach Kleiman", "Executive Vice President, Basketball Operations & General Manager"], ["Rich Cho", "Senior Vice President, Basketball Operations (verify current role)"], ["John Hollinger", "Basketball strategy/advisory role (verify current title)"]]}, "Miami Heat": {"url": "https://www.nba.com/heat/team/front-office", "staff": [["Pat Riley", "President"], ["Andy Elisburg", "General Manager"], ["Adam Simon", "Assistant General Manager"], ["C. J. Kupchak", "Vice President, Basketball Operations (verify current title)"]]}, "Milwaukee Bucks": {"url": "https://www.nba.com/bucks/team/front-office", "staff": [["Jon Horst", "General Manager"], ["Milt Newton", "Assistant General Manager"], ["Dave Babcock", "Vice President, Player Personnel"]]}, "Minnesota Timberwolves": {"url": "https://basketball.realgm.com/nba/teams/Minnesota-Timberwolves/16/staff-members/Current/grid", "staff": [["Tim Connelly", "President of Basketball Operations"], ["Matt Lloyd", "General Manager"], ["Emmanuel Rohan", "Assistant General Manager"]]}, "New Orleans Pelicans": {"url": "https://basketball.realgm.com/nba/teams/New-Orleans-Pelicans/19/rosters", "staff": [["Joe Dumars", "Executive Vice President, Basketball Operations"], ["Troy Weaver", "Senior Vice President, Basketball Operations"], ["Adam Barnes", "Assistant General Manager"], ["Anthony Goods", "Director of International Scouting"], ["A.J. Meyer", "Director of Basketball Analytics"]]}, "New York Knicks": {"url": "https://www.nba.com/knicks/front-office", "staff": [["Leon Rose", "President of Basketball Operations"], ["William Wesley", "Executive Vice President, Senior Basketball Advisor"], ["Brock Aller", "Senior Vice President, Basketball & Strategic Planning"], ["Frank Zanin", "Senior Vice President, Player Personnel"], ["Walter Perrin", "Assistant General Manager, College Scouting"], ["Nicholas Fleder", "Director, Amateur Scouting"]]}, "Oklahoma City Thunder": {"url": "https://www.nba.com/thunder/team/front-office", "staff": [["Sam Presti", "Executive Vice President & General Manager"], ["Rob Hennigan", "Vice President, Basketball Operations"], ["Rich Cho", "Senior Vice President, Basketball Operations (role should be reconfirmed)"]]}, "Orlando Magic": {"url": "https://www.nba.com/magic/orlando-magic-executives", "staff": [["Anthony Parker", "General Manager"], ["Pete D'Alessandro", "Executive Vice President, Basketball Operations"], ["John Hammond", "Senior Advisor (confirm current title)"]]}, "Philadelphia 76ers": {"url": "https://www.nba.com/sixers/team/front-office/mike-gansey", "staff": [["Mike Gansey", "President of Basketball Operations"], ["Jameer Nelson", "Executive Vice President, Basketball Operations"], ["Daryl Morey", "President of Basketball Operations (historical title; likely superseded—do not treat as current)"]]}, "Phoenix Suns": {"url": "https://www.nba.com/suns/team/front-office", "staff": [["Brian Gregory", "General Manager"], ["James Jones", "Senior Advisor"], ["Oronde Taliaferro", "Assistant General Manager"]]}, "Portland Trail Blazers": {"url": "https://www.nba.com/blazers/frontoffice", "staff": [["Joe Cronin", "General Manager"], ["Andrae Patterson", "Assistant General Manager"], ["Asjha Jones", "Director of Basketball Strategy"], ["Danny Connors", "Director of Scouting & Remix General Manager"], ["Geoff Clark", "Director of Medical Scouting"]]}, "Sacramento Kings": {"url": "https://cdn.nba.com/teams/uploads/sites/1610612758/2025/10/2025-26-Sacramento-Kings-Media-Guide-copy.pdf", "staff": [["Scott Perry", "General Manager"], ["BJ Armstrong", "Assistant General Manager"], ["Phil Jabour", "Vice President, Basketball Operations & Player Personnel"], ["Saagar Sarin", "Senior Director, Pro Personnel"], ["Marshall Payne", "Senior Data Scientist & Lead Draft Analyst"]]}, "San Antonio Spurs": {"url": "https://www.nba.com/spurs/team/front-office", "staff": [["Brian Wright", "General Manager"], ["RC Buford", "Chief Executive Officer / Basketball operations leadership"], ["Brent Barry", "Vice President, Basketball Operations (confirm current title)"]]}, "Toronto Raptors": {"url": "https://www.nba.com/news/raptors-bobby-webster-gm-extension-2026", "staff": [["Bobby Webster", "Executive Vice President & General Manager"], ["Dan Tolzman", "Vice President, Player Personnel / Assistant General Manager"], ["Keith Boyarsky", "Vice President, Basketball Strategy & Research"], ["Tyla Flexman", "Vice President, Basketball Operations"]]}, "Utah Jazz": {"url": "https://www.nba.com/jazz/team/front-office", "staff": [["Justin Zanik", "General Manager"], ["Danny Ainge", "Alternate Governor / CEO, Basketball Operations"], ["Koby Altman", "Basketball operations advisor (reported; verify current role)"]]}, "Washington Wizards": {"url": "https://www.nba.com/wizards/staff-directory", "staff": [["Michael Winger", "President, Monumental Basketball"], ["Will Dawkins", "General Manager"], ["Travis Schlenk", "Senior Vice President, Player Personnel"], ["Frank Ross", "Vice President, College Personnel"], ["Johnny Rogers", "Vice President, Pro Personnel"], ["Tony DiLeo", "Senior Director, College Personnel"], ["Antawn Jamison", "Senior Director, Pro Personnel"]]}};
+/* ===================== GM DRAFT ROOM v2 ===================== */
 let gm = null;
 const gmSetup = { team: null, pace: 5, clock: 120, lottery: true };
-const GM_ADVISORS = [
-  { id: 'scout', name: 'Marcus Hale', short: 'Marcus', role: 'Head of Scouting', color: '#c6a15b' },
-  { id: 'coach', name: 'Coach Reyes', short: 'Coach', role: 'Head Coach', color: '#5b9bd5' },
-  { id: 'analytics', name: 'Dana Whitfield', short: 'Dana', role: 'Analytics Director', color: '#6fcf97' }
-];
+const GM_LENS = ['scout', 'coach', 'analytics'];
+const GM_LENS_COLOR = { scout: '#e0b85c', coach: '#6aa9e8', analytics: '#5fd39a', you: '#f2efe8' };
+const GM_FALLBACK = [{ name: 'Marcus Hale', title: 'Director of Scouting' }, { name: 'Dana Whitfield', title: 'Assistant General Manager' }, { name: 'Sam Okafor', title: 'Director of Analytics' }];
 function gmOrd(n){ const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 function gmLast(p){ const k = String(p.name).replace(/\b(jr\.?|sr\.?|ii|iii|iv)$/i, '').trim().split(/\s+/); return k[k.length - 1]; }
 function gmEsc(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function gmCleanTitle(t){
+  return String(t || '').replace(/\s*\([^)]*(confirm|verify|reported)[^)]*\)/ig, '').replace(/;\s*title needs confirmation/i, '').replace(/\s*\/\s*Basketball operations leadership/i, '').trim();
+}
+function gmInit(n){ return String(n).replace(/\b(jr\.?|sr\.?|ii|iii|iv)$/i, '').trim().split(/\s+/).map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase(); }
+function gmBuildAdvisors(short){
+  const full = NBA_TEAMS.find(t => getTeamShortName(t) === short);
+  const fo = full && GM_FRONT_OFFICE[full];
+  const staff = (fo ? fo.staff : []).map(s => ({ name: s[0], title: gmCleanTitle(s[1]) }));
+  const lensOf = t => /analytic|strateg|data|research/i.test(t) ? 'analytics' : /scout|personnel|draft|college/i.test(t) ? 'scout' : null;
+  const out = {}, used = new Set();
+  staff.forEach((s, i) => { const l = lensOf(s.title); if(l && !out[l]){ out[l] = s; used.add(i); } });
+  GM_LENS.forEach(l => { if(!out[l]){ const i = staff.findIndex((s, k) => !used.has(k)); if(i !== -1){ out[l] = staff[i]; used.add(i); } } });
+  GM_LENS.forEach((l, i) => { if(!out[l]) out[l] = GM_FALLBACK[i]; });
+  const res = {};
+  GM_LENS.forEach(l => { const s = out[l]; const parts = s.name.replace(/\b(jr\.?|sr\.?|ii|iii|iv)$/i, '').trim().split(/\s+/); res[l] = { id: l, name: s.name, short: parts[parts.length - 1], role: gmShort(s.title, 44), color: GM_LENS_COLOR[l], ini: gmInit(s.name) }; });
+  return { list: GM_LENS.map(l => res[l]), map: res, url: fo ? fo.url : null };
+}
+function gmAdv(id){ return gm && gm.adv.map[id]; }
 
-/* ---------- setup (inside the Mock Draft menu) ---------- */
+/* ---------- setup (own tab under Custom Board) ---------- */
 function gmRenderSetup(){
   const grid = document.getElementById('gmTeamGrid');
   if(!grid) return;
@@ -13369,6 +13445,11 @@ function gmRenderSetup(){
   set('gmPaceRow', gmSetup.pace); set('gmClockRow', gmSetup.clock);
   const lt = document.getElementById('gmLottery'); if(lt) lt.checked = gmSetup.lottery;
   const go = document.getElementById('gmEnterBtn'); if(go) go.textContent = gmSetup.team ? 'Enter the draft room as the ' + gmSetup.team : 'Choose your team to enter the draft room';
+  const fp = document.getElementById('gmFoPreview');
+  if(fp){
+    if(!gmSetup.team){ fp.innerHTML = ''; }
+    else { const a = gmBuildAdvisors(gmSetup.team); fp.innerHTML = `<div class="gm-fo-h">Your front office in the room</div>` + a.list.map(x => `<div class="gm-fo-r"><span class="gm-fo-av" style="--ac:${x.color}">${gmEsc(x.ini)}</span><div><b>${gmEsc(x.name)}</b><small>${gmEsc(x.role)}</small></div></div>`).join('') + (a.url ? `<a class="gm-fo-src" href="${gmEsc(a.url)}" target="_blank" rel="noopener">Front office source</a>` : ''); }
+  }
 }
 function gmPickTeam(t){ gmSetup.team = t; gmRenderSetup(); }
 function gmSetOpt(k, v){ gmSetup[k] = v; gmRenderSetup(); }
@@ -13399,7 +13480,7 @@ function gmEnter(){
   if(pool.length < order.length){ alert('Your player source only has ' + pool.length + ' players for ' + order.length + ' picks. Pick another source or a shorter draft.'); return; }
   mockTradeLog = []; tradeMoves = {}; tradeCashLedger = {}; depthEdits = {};
   draftSimActive = true; draftSimPickIndex = 0; draftSimResults = []; draftSimAvailableIds = pool.map(p => p.id);
-  gm = { team: gmSetup.team, pace: gmSetup.pace, clock: gmSetup.clock, fast: false, selected: null, msgs: [], mine, clockLeft: 0, clockTimer: null, lastSpeaker: null, lastRec: null };
+  gm = { team: gmSetup.team, adv: gmBuildAdvisors(gmSetup.team), pace: gmSetup.pace, clock: gmSetup.clock, fast: false, selected: null, mine, clockLeft: 0, clockTimer: null, lastSpeaker: null, lastRec: null, paused: false };
   document.getElementById('gmRoom')?.remove();
   const ov = document.createElement('div');
   ov.id = 'gmRoom';
@@ -13422,28 +13503,46 @@ function gmClose(){
 }
 function gmSkip(){ if(gm){ gm.fast = true; } const b = document.getElementById('gmSkipBtn'); if(b) b.style.display = 'none'; }
 
-/* ---------- stage (commissioner) ---------- */
-const GM_COMM_SVG = `<svg viewBox="0 0 120 260" class="gm-comm-svg" aria-hidden="true">
-  <g class="gm-leg l"><rect x="44" y="150" width="14" height="96" rx="6" fill="#38405a"/><rect x="40" y="238" width="24" height="10" rx="5" fill="#0a0a0c"/></g>
-  <g class="gm-leg r"><rect x="64" y="150" width="14" height="96" rx="6" fill="#38405a"/><rect x="60" y="238" width="24" height="10" rx="5" fill="#0a0a0c"/></g>
-  <path d="M28 70 Q60 56 92 70 L98 160 L22 160 Z" fill="#46506b"/>
-  <path d="M52 66 L60 96 L68 66 Z" fill="#f2efe8"/><path d="M58 70 L60 120 L62 70 Z" fill="#c6a15b"/>
-  <g class="gm-arm l"><rect x="14" y="72" width="14" height="78" rx="7" fill="#46506b"/><circle cx="21" cy="154" r="8" fill="#d9a77d"/></g>
-  <g class="gm-arm r"><rect x="92" y="72" width="14" height="78" rx="7" fill="#46506b"/><circle cx="99" cy="154" r="8" fill="#d9a77d"/></g>
-  <rect x="54" y="52" width="12" height="18" fill="#d9a77d"/>
-  <ellipse cx="60" cy="36" rx="19" ry="23" fill="#d9a77d"/><path d="M41 32 Q60 6 79 32 Q60 20 41 32Z" fill="#2a2018"/>
+/* ---------- the draft stage ---------- */
+const GM_COMM_SVG = `<svg viewBox="0 0 120 270" class="gm-comm-svg" aria-hidden="true">
+  <defs><linearGradient id="gmSuit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a3350"/><stop offset=".5" stop-color="#3b4670"/><stop offset="1" stop-color="#232b45"/></linearGradient></defs>
+  <g class="gm-leg l"><rect x="44" y="150" width="14" height="100" rx="6" fill="#222a44"/><rect x="39" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
+  <g class="gm-leg r"><rect x="64" y="150" width="14" height="100" rx="6" fill="#222a44"/><rect x="59" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
+  <path d="M26 72 Q60 56 94 72 L100 165 L20 165 Z" fill="url(#gmSuit)"/>
+  <path d="M50 66 L60 100 L70 66 Z" fill="#f4f2ee"/>
+  <path d="M57 72 L60 78 L63 72 Z" fill="#2d63c8"/><path d="M58 78 L56 118 L60 128 L64 118 L62 78 Z" fill="#2d63c8"/>
+  <path d="M26 72 L50 66 L58 118 L40 165 L20 165 Z" fill="#1c2340" opacity=".55"/><path d="M94 72 L70 66 L62 118 L80 165 L100 165 Z" fill="#1c2340" opacity=".55"/>
+  <circle cx="38" cy="96" r="2.4" fill="#d9b25c"/>
+  <g class="gm-arm l"><rect x="12" y="72" width="15" height="80" rx="7.5" fill="url(#gmSuit)"/><circle cx="19.5" cy="156" r="8" fill="#e0b08a"/></g>
+  <g class="gm-arm r"><rect x="93" y="72" width="15" height="80" rx="7.5" fill="url(#gmSuit)"/><circle cx="100.5" cy="156" r="8" fill="#e0b08a"/></g>
+  <rect x="54" y="50" width="12" height="20" fill="#d4a37c"/>
+  <ellipse cx="60" cy="36" rx="19" ry="23" fill="#e0b08a"/>
+  <path d="M40 34 Q40 8 62 9 Q81 10 80 34 Q78 22 66 19 Q50 17 40 34Z" fill="#c9ccd4"/>
+  <path d="M41 34 Q39 26 43 22 L43 36Z M79 34 Q81 26 77 22 L77 36Z" fill="#b9bdc7"/>
+  <rect x="48" y="33" width="9" height="2.4" rx="1.2" fill="#6b4a34"/><rect x="63" y="33" width="9" height="2.4" rx="1.2" fill="#6b4a34"/>
+  <circle cx="52.5" cy="40" r="1.8" fill="#2a2018"/><circle cx="67.5" cy="40" r="1.8" fill="#2a2018"/>
+  <path d="M53 52 Q60 57 67 52" stroke="#8c5a45" stroke-width="2" fill="none" stroke-linecap="round" class="gm-mouth"/>
 </svg>`;
 function gmStageHTML(){
+  let flashes = '';
+  for(let i = 0; i < 16; i++) flashes += `<i style="left:${Math.round(Math.random() * 96) + 1}%; bottom:${Math.round(Math.random() * 18) + 2}%; animation-delay:${(Math.random() * 4).toFixed(2)}s"></i>`;
   return `<div class="gm-stage">
-    <div class="gm-backdrop"><div class="gm-bd-text">2027 NBA <span>DRAFT</span></div></div>
-    <div class="gm-spots"></div>
-    <div class="gm-crowd"></div>
+    <div class="gm-wall" id="gmWall"><div class="gm-wall-in" id="gmWallIn"><div class="gm-wall-title">2027 <b>NBA DRAFT</b></div><div class="gm-wall-sub">BROOKLYN · LIVE</div></div></div>
+    <div class="gm-beams"></div>
+    <div class="gm-stage-floor"><div class="gm-edge"></div></div>
+    <div class="gm-crowd"><div class="gm-flashes">${flashes}</div></div>
     <div class="gm-comm" id="gmComm">${GM_COMM_SVG}</div>
-    <div class="gm-lectern"><span>NBA</span></div>
+    <div class="gm-lectern"><div class="gm-lect-top"></div><span>NBA</span><em>DRAFT</em></div>
     <div class="gm-bubble" id="gmBubble"><span id="gmBubbleText"></span></div>
     <div class="gm-callout" id="gmCallout"></div>
     <div class="gm-ticker" id="gmTicker"></div>
   </div>`;
+}
+function gmWallPick(r, team){
+  const w = document.getElementById('gmWallIn'); if(!w) return;
+  const col = NBA_TEAM_COLOR[team] || '#c6a15b';
+  w.parentElement.style.setProperty('--tc', col);
+  w.innerHTML = `<div class="gm-wall-pick"><small>PICK</small><b>${r}</b><img src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'"><span>${gmEsc(team)}</span></div>`;
 }
 function gmTickerRender(){
   const el = document.getElementById('gmTicker'); if(!el) return;
@@ -13455,19 +13554,27 @@ async function gmIntro(){
   document.getElementById('gmView').innerHTML = gmStageHTML();
   gmTickerRender();
   const comm = document.getElementById('gmComm');
+  document.querySelector('.gm-stage').classList.add('intro');
   comm.classList.add('walking');
-  await gmSleep(3200); if(gm !== g) return;
+  await gmSleep(3400); if(gm !== g) return;
   comm.classList.remove('walking'); comm.classList.add('arrived');
+  document.querySelector('.gm-stage')?.classList.remove('intro');
   const bubble = document.getElementById('gmBubble'), txt = document.getElementById('gmBubbleText');
-  bubble.classList.add('on');
+  bubble.classList.add('on'); comm.classList.add('talking');
   await gmType(txt, 'Good evening, and welcome to the 2027 NBA Draft!', 34); if(gm !== g) return;
   await gmSleep(1300); if(gm !== g) return;
   const first = getVisiblePickOrder()[0].split(' (from')[0].trim();
   if(lotteryHasRun){ await gmType(txt, 'The lottery has set the order, and it is time to get started.', 30); if(gm !== g) return; await gmSleep(1300); if(gm !== g) return; }
   await gmType(txt, 'The ' + first + ' are on the clock.', 34); if(gm !== g) return;
+  comm.classList.remove('talking');
   await gmSleep(1500);
   if(gm !== g) return;
   gmNext();
+}
+function gmEnsureStage(){
+  if(document.getElementById('gmComm')) return;
+  document.getElementById('gmView').innerHTML = gmStageHTML();
+  document.getElementById('gmComm').classList.add('arrived'); document.getElementById('gmBubble').classList.add('on');
 }
 async function gmNext(){
   const g = gm; if(!g) return;
@@ -13478,7 +13585,7 @@ async function gmNext(){
     g.fast = false; const sb = document.getElementById('gmSkipBtn'); if(sb) sb.style.display = 'none';
     gmWarRoom(); return;
   }
-  if(!document.getElementById('gmComm')){ document.getElementById('gmView').innerHTML = gmStageHTML(); const c = document.getElementById('gmComm'); c.classList.add('arrived'); document.getElementById('gmBubble').classList.add('on'); }
+  gmEnsureStage();
   const player = gmAutomatedChoice(team, draftSimPickIndex + 1);
   draftSimResults.push({ pick: draftSimPickIndex + 1, team, player, automated: true });
   draftSimAvailableIds = draftSimAvailableIds.filter(id => id !== player.id);
@@ -13496,10 +13603,11 @@ function gmAutomatedChoice(team, pickNo){
 }
 async function gmAnnounce(r){
   const g = gm;
-  const comm = document.getElementById('gmComm'); if(comm){ comm.classList.add('talking'); }
+  const comm = document.getElementById('gmComm'); if(comm) comm.classList.add('talking');
   const team = r.team.split(' (from')[0].trim();
   const line = 'With the ' + gmOrd(r.pick) + ' pick in the 2027 NBA Draft, the ' + team + ' select...';
   document.getElementById('gmCallout').classList.remove('on');
+  gmWallPick(r.pick, team);
   await gmType(document.getElementById('gmBubbleText'), line, 22); if(gm !== g) return;
   await gmSleep(900); if(gm !== g) return;
   const pl = players.find(x => x.id === r.player.id) || r.player;
@@ -13562,54 +13670,78 @@ function gmWeakness(p){ return gmShort((p.weaknesses && p.weaknesses[0]) || 'the
 function gmReason(adv, p){
   const age = typeof p.age === 'number' ? p.age : null, grp = { guard: 'guard', wing: 'wing', big: 'big man' }[gmPosGroup(p)];
   if(adv === 'scout') return gmStrength(p) + '. That is star upside, and you do not find that later in the draft.';
-  if(adv === 'coach'){ const need = gmNeeds(gm.team)[gmPosGroup(p)]; return (need > 0 ? 'We are thin at ' + grp + ', and ' : '') + gmStrength(p).replace(/^./, c => c.toLowerCase()) + (/Senior|Junior|5th/.test(p.cls || '') ? '. He is ' + String(p.cls).toLowerCase() + ', so he can play for me right away.' : '.'); }
+  if(adv === 'coach'){ const need = gmNeeds(gm.team)[gmPosGroup(p)]; return (need > 0 ? 'We are thin at ' + grp + ', and ' : '') + gmStrength(p).replace(/^./, c => c.toLowerCase()) + (/Senior|Junior|5th/.test(p.cls || '') ? '. He is ' + String(p.cls).toLowerCase() + ', so he can play right away.' : '.'); }
   return 'He is ' + (age ? age + ' years old' : 'young') + ' and graded #' + p.rk + ' on our board, so at this slot the value is strong' + (p.stats && p.stats.fg && p.stats.fg !== 'N/A' ? ', and he shoots ' + p.stats.fg + ' from the field.' : '.');
 }
-function gmAdvisor(id){ return GM_ADVISORS.find(a => a.id === id); }
 
 /* ---------- war room ---------- */
+function gmDepthHTML(){
+  const ch = NBA_DEPTH_CHARTS[gm.team];
+  const row = (label, arr) => `<div class="gm-dc-row"><span class="gm-dc-l">${label}</span><div class="gm-dc-p">${(arr || []).map(x => `<span class="gm-dc-pl"><i>${gmEsc((x.pos || '').split('/')[0])}</i>${gmEsc(x.n)}</span>`).join('') || '<span class="gm-dc-none">None listed</span>'}</div></div>`;
+  const mine = draftSimResults.filter(r => r.team.split(' (from')[0].trim() === gm.team);
+  return `<div class="gm-mon-h"><span>Depth chart</span><b>${gmEsc(gm.team)}</b></div>` + (ch ? row('Starters', ch.starters) + row('Second unit', ch.second) + row('Third unit', ch.third) : '<div class="gm-dc-none" style="padding:12px;">No depth chart on file.</div>')
+    + (mine.length ? row('Drafted tonight', mine.map(r => ({ n: r.player.name, pos: r.player.pos }))) : '');
+}
+function gmPicksHTML(){
+  const rs = draftSimResults.slice().reverse();
+  return `<div class="gm-mon-h"><span>Picks so far</span><b>${draftSimResults.length}</b></div>` + (rs.length ? rs.map(r => { const t = r.team.split(' (from')[0].trim(); return `<div class="gm-pk${t === gm.team ? ' mine' : ''}" style="--tc:${NBA_TEAM_COLOR[t] || '#888'}"><b>${r.pick}</b><img src="${getNbaLogoUrl(t)}" alt="" onerror="this.style.visibility='hidden'"><span><em>${gmEsc(r.player.name)}</em><small>${gmEsc((NBA_TEAM_ABBR && NBA_TEAM_ABBR[t]) || t)} · ${gmEsc(r.player.pos || '')}${r.player.school ? ' · ' + gmEsc(r.player.school) : ''}</small></span></div>`; }).join('') : '<div class="gm-dc-none" style="padding:12px;">You are first on the board. No picks yet.</div>');
+}
 function gmWarRoom(){
-  const g = gm, order = getVisiblePickOrder(), team = order[draftSimPickIndex], pickNo = draftSimPickIndex + 1;
-  g.selected = null; g.msgs = []; g.board = false;
+  const g = gm, order = getVisiblePickOrder(), pickNo = draftSimPickIndex + 1;
+  g.selected = null; g.log = []; g.paused = false; g.submitting = false;
+  const seats = g.adv.list.map(a => `<div class="gm-seat" id="seat-${a.id}" style="--ac:${a.color}"><div class="gm-seat-av">${gmEsc(a.ini)}</div><b>${gmEsc(a.name)}</b><small>${gmEsc(a.role)}</small></div>`).join('')
+    + `<div class="gm-seat" id="seat-you" style="--ac:${GM_LENS_COLOR.you}"><div class="gm-seat-av you"><img src="${getNbaLogoUrl(g.team)}" alt="" onerror="this.style.display='none'"></div><b>You</b><small>General Manager</small></div>`;
   document.getElementById('gmView').innerHTML = `<div class="gm-war" style="--tc:${NBA_TEAM_COLOR[g.team] || '#c6a15b'}">
-    <div class="gm-war-top"><img src="${getNbaLogoUrl(g.team)}" alt="" onerror="this.style.display='none'"><div><small>${gmEsc(g.team)} war room</small><b>On the clock: pick ${pickNo}</b></div>
-      <div class="gm-clock" id="gmClock"></div><button class="gm-board-btn" onclick="gmToggleBoard()">Board</button></div>
+    <div class="gm-war-top"><img src="${getNbaLogoUrl(g.team)}" alt="" onerror="this.style.display='none'"><div><small>${gmEsc(g.team)} board room</small><b>On the clock: pick ${pickNo}</b></div>
+      <div class="gm-clockbox"><div class="gm-clock" id="gmClock"></div><button class="gm-pause" id="gmPauseBtn" onclick="gmTogglePause()" ${g.clock ? '' : 'style="display:none"'}>Pause</button></div>
+      <button class="gm-sheet-btn" onclick="gmSheet('screens')">Screens</button><button class="gm-sheet-btn" onclick="gmSheet('board')">Board</button></div>
     <div class="gm-war-main">
+      <div class="gm-left"><div class="gm-mon" id="gmDepth"></div><div class="gm-mon gm-mon-picks" id="gmPicks"></div><button class="gm-sheet-close" onclick="gmSheet('')">Back to the room</button></div>
       <div class="gm-room">
-        <div class="gm-seats" id="gmSeats">${GM_ADVISORS.map(a => `<div class="gm-seat" id="seat-${a.id}" style="--ac:${a.color}"><div class="gm-seat-av">${a.short[0]}</div><b>${a.name}</b><small>${a.role}</small></div>`).join('')}</div>
-        <div class="gm-desk"></div>
+        <div class="gm-seats" id="gmSeats">${seats}</div>
+        <div class="gm-table"></div>
+        <div class="gm-quote" id="gmQuote"></div>
         <div class="gm-chat" id="gmChat"></div>
-        <form class="gm-input" onsubmit="gmSend(event)"><input id="gmInput" type="text" autocomplete="off" placeholder="Talk it out with the room... (try a player's name)" maxlength="200"><button type="submit">Send</button></form>
+        <form class="gm-input" onsubmit="gmSend(event)"><input id="gmInput" type="text" autocomplete="off" placeholder="Say something to the room... (try a player's name)" maxlength="200"><button type="submit">Send</button></form>
       </div>
       <aside class="gm-board" id="gmBoard"></aside>
     </div>
     <div class="gm-war-bar" id="gmBar"></div>
   </div>`;
+  document.getElementById('gmDepth').innerHTML = gmDepthHTML();
+  document.getElementById('gmPicks').innerHTML = gmPicksHTML();
   gmRenderBoard(); gmRenderBar();
   if(g.clock){ g.clockLeft = g.clock; gmClockTick(); g.clockTimer = setInterval(gmClockTick, 1000); }
   gmOpeners();
 }
+function gmSheet(name){ const w = document.querySelector('.gm-war'); if(!w) return; w.dataset.sheet = (w.dataset.sheet === name ? '' : name); }
 function gmClockTick(){
-  const g = gm; if(!g) return;
+  const g = gm; if(!g || !g.clock) return;
   const el = document.getElementById('gmClock');
-  if(g.clock){
-    const m = Math.floor(g.clockLeft / 60), s = String(g.clockLeft % 60).padStart(2, '0');
-    if(el){ el.textContent = m + ':' + s; el.classList.toggle('low', g.clockLeft <= 15); }
-    if(g.clockLeft <= 0){ clearInterval(g.clockTimer); gmTimeUp(); return; }
-    g.clockLeft--;
-  }
+  if(g.paused){ if(el) el.classList.add('paused'); return; }
+  const m = Math.floor(g.clockLeft / 60), s = String(g.clockLeft % 60).padStart(2, '0');
+  if(el){ el.textContent = m + ':' + s; el.classList.remove('paused'); el.classList.toggle('low', g.clockLeft <= 15); }
+  if(g.clockLeft <= 0){ clearInterval(g.clockTimer); gmTimeUp(); return; }
+  g.clockLeft--;
+}
+function gmTogglePause(){
+  const g = gm; if(!g || !g.clock || g.submitting) return;
+  g.paused = !g.paused;
+  const b = document.getElementById('gmPauseBtn'), el = document.getElementById('gmClock');
+  if(b){ b.textContent = g.paused ? 'Resume' : 'Pause'; b.classList.toggle('on', g.paused); }
+  if(el) el.classList.toggle('paused', g.paused);
+  gmLogSys(g.paused ? 'Clock paused.' : 'Clock running.');
 }
 function gmTimeUp(){
   const g = gm; if(!g || g.submitting) return;
   const pick = g.selected || gmRanked('scout')[0];
-  gmPost('sys', 'Time is up. The room submits ' + pick.name + '.');
+  gmLogSys('Time is up. The room submits ' + pick.name + '.');
   g.selected = pick; gmSubmit();
 }
-function gmToggleBoard(){ document.querySelector('.gm-war')?.classList.toggle('board-open'); }
 function gmRenderBoard(){
   const el = document.getElementById('gmBoard'); if(!el || !gm) return;
   const sel = gm.selected ? gm.selected.id : null;
-  el.innerHTML = `<div class="gm-board-h">Available prospects</div>` + gmAvail().slice(0, 25).map(p => {
+  el.innerHTML = `<div class="gm-board-h"><span>Available prospects</span><button class="gm-sheet-close sm" onclick="gmSheet('')">Close</button></div>` + gmAvail().slice(0, 25).map(p => {
     const src = PLAYER_PHOTOS[p.name];
     return `<button type="button" class="gm-pl${sel === p.id ? ' on' : ''}" onclick="gmChoose(${p.id})">
       <span class="gm-pl-rk">${p.rk}</span><span class="gm-pl-ph">${src ? `<img src="${src}" alt="">` : gmEsc(initials(p.name))}</span>
@@ -13630,8 +13762,8 @@ function gmAskConfirm(){
 function gmChoose(id){
   const p = players.find(x => x.id === id); if(!p || !gm) return;
   gm.selected = p; gmRenderBoard(); gmRenderBar();
-  document.querySelector('.gm-war')?.classList.remove('board-open');
-  gmPost('you', 'I like ' + p.name + '.');
+  const w = document.querySelector('.gm-war'); if(w) w.dataset.sheet = '';
+  gmPost('you', 'I like ' + p.name + '.', true);
   gmReact(p);
 }
 async function gmSubmit(){
@@ -13643,7 +13775,7 @@ async function gmSubmit(){
   draftSimPickIndex++;
   document.getElementById('gmBar').innerHTML = `<div class="gm-sel"><span>Pick submitted</span><b>${gmEsc(p.name)}</b></div>`;
   const rec = g.lastRec || {};
-  const adv = GM_ADVISORS[Math.floor(Math.random() * 3)];
+  const adv = g.adv.list[Math.floor(Math.random() * 3)];
   const agree = rec[adv.id] && rec[adv.id].id === p.id;
   await gmPost(adv.id, agree ? 'Good call. Let us go get him.' : 'Not who I would have taken, but I trust you. I hope you are right.');
   if(gm !== g) return;
@@ -13656,45 +13788,60 @@ async function gmSubmit(){
   gmNext();
 }
 
-/* ---------- chat ---------- */
+/* ---------- conversation: quote bubbles ---------- */
+function gmLogSys(text){
+  const chat = document.getElementById('gmChat'); if(!chat) return;
+  const m = document.createElement('div'); m.className = 'gm-msg sys'; m.innerHTML = `<span>${gmEsc(text)}</span>`;
+  chat.appendChild(m); chat.scrollTop = chat.scrollHeight;
+}
+function gmQuote(who, text, typing){
+  const q = document.getElementById('gmQuote'); if(!q) return;
+  const a = who === 'you' ? { short: 'You', color: GM_LENS_COLOR.you } : gmAdv(who);
+  const idx = who === 'you' ? 3 : GM_LENS.indexOf(who);
+  q.style.setProperty('--tail', ((idx + .5) / 4 * 100) + '%'); q.style.setProperty('--ac', a.color);
+  q.className = 'gm-quote on ' + (who === 'you' ? 'you' : '') + (typing ? ' typing' : '');
+  q.innerHTML = typing ? `<b>${gmEsc(a.name || 'You')}</b><i>is talking<span>.</span><span>.</span><span>.</span></i>` : `<b>${gmEsc(a.name || 'You')}</b><p>“${gmEsc(text)}”</p>`;
+  void q.offsetWidth; q.classList.add('pop');
+}
 async function gmPost(who, text, noDelay){
   const g = gm; if(!g) return;
   const chat = document.getElementById('gmChat'); if(!chat) return;
-  const adv = gmAdvisor(who);
+  const adv = who === 'you' ? null : gmAdv(who);
+  document.querySelectorAll('.gm-seat.talk').forEach(s => s.classList.remove('talk'));
+  const seat = document.getElementById('seat-' + who);
   if(adv && !noDelay){
-    const seat = document.getElementById('seat-' + who); seat?.classList.add('talk');
-    const typing = document.createElement('div'); typing.className = 'gm-msg adv typing'; typing.style.setProperty('--ac', adv.color);
-    typing.innerHTML = `<b>${adv.short}</b><i>typing<span>.</span><span>.</span><span>.</span></i>`;
-    chat.appendChild(typing); chat.scrollTop = chat.scrollHeight;
-    await new Promise(r => setTimeout(r, 500 + Math.min(1600, text.length * 16)));
-    typing.remove(); seat?.classList.remove('talk');
+    seat?.classList.add('talk'); gmQuote(who, '', true);
+    await new Promise(r => setTimeout(r, 450 + Math.min(1500, text.length * 14)));
     if(gm !== g || !document.getElementById('gmChat')) return;
-  }
+  } else seat?.classList.add('talk');
+  gmQuote(who, text, false);
   const m = document.createElement('div');
-  m.className = 'gm-msg ' + (who === 'you' ? 'you' : who === 'sys' ? 'sys' : 'adv');
+  m.className = 'gm-msg ' + (who === 'you' ? 'you' : 'adv');
   if(adv) m.style.setProperty('--ac', adv.color);
-  m.innerHTML = who === 'sys' ? `<span>${gmEsc(text)}</span>` : `<b>${who === 'you' ? 'You' : adv.short}</b><p>${gmEsc(text)}</p>`;
+  m.innerHTML = `<b>${who === 'you' ? 'You' : gmEsc(adv.short)}</b><p>${gmEsc(text)}</p>`;
   chat.appendChild(m); chat.scrollTop = chat.scrollHeight;
   g.lastSpeaker = who;
+  setTimeout(() => seat?.classList.remove('talk'), 1600);
 }
 async function gmOpeners(){
   const g = gm, picks = {};
-  GM_ADVISORS.forEach(a => { picks[a.id] = gmRanked(a.id)[0]; });
+  GM_LENS.forEach(l => { picks[l] = gmRanked(l)[0]; });
   g.lastRec = picks;
+  const S = gmAdv('scout'), C = gmAdv('coach'), D = gmAdv('analytics');
   const first = picks.scout;
-  await gmPost('sys', 'The clock is running. Your advisors are weighing in.', true);
+  gmLogSys('The clock is running. Your front office is weighing in.');
   await gmPost('scout', 'The board is clear to me. I would take ' + first.name + ' (' + first.pos + ', ' + first.school + '). ' + gmReason('scout', first)); if(gm !== g) return;
   const c = picks.coach;
-  await gmPost('coach', c.id === first.id ? 'I agree with Marcus on ' + c.name + '. ' + gmReason('coach', c) : 'I hear you, Marcus, but I need to win games. I like ' + c.name + ' (' + c.pos + ', ' + c.school + '). ' + gmReason('coach', c)); if(gm !== g) return;
+  await gmPost('coach', c.id === first.id ? 'I agree with ' + S.short + ' on ' + c.name + '. ' + gmReason('coach', c) : 'I hear you, ' + S.short + ', but we need to win games. I like ' + c.name + ' (' + c.pos + ', ' + c.school + '). ' + gmReason('coach', c)); if(gm !== g) return;
   const d = picks.analytics;
-  await gmPost('analytics', d.id === first.id && d.id === c.id ? 'Everybody is on ' + d.name + '. The numbers back it up. ' + gmReason('analytics', d) : d.id === first.id ? 'I side with Marcus on ' + d.name + '. ' + gmReason('analytics', d) : d.id === c.id ? 'I am with Coach on ' + d.name + '. ' + gmReason('analytics', d) : 'Respectfully, I have a third name: ' + d.name + '. ' + gmReason('analytics', d)); if(gm !== g) return;
-  await gmPost('sys', 'It is your call. Select a player on the board, or tell the room who you want.', true);
+  await gmPost('analytics', d.id === first.id && d.id === c.id ? 'Everybody is on ' + d.name + '. The numbers back it up. ' + gmReason('analytics', d) : d.id === first.id ? 'I side with ' + S.short + ' on ' + d.name + '. ' + gmReason('analytics', d) : d.id === c.id ? 'I am with ' + C.short + ' on ' + d.name + '. ' + gmReason('analytics', d) : 'Respectfully, I have a third name: ' + d.name + '. ' + gmReason('analytics', d)); if(gm !== g) return;
+  gmLogSys('It is your call. Select a player on the board, or tell the room who you want.');
 }
 async function gmReact(p){
   const g = gm; if(!g || g.reacting) return;
   g.reacting = true;
   try{
-    for(const a of GM_ADVISORS){
+    for(const a of g.adv.list){
       if(gm !== g) return;
       const rank = gmRanked(a.id).findIndex(x => x.id === p.id), top = gmRanked(a.id)[0];
       let text;
@@ -13733,18 +13880,18 @@ async function gmSend(e){
     const rk = a => gmRanked(a)[0];
     const say = async (id, s) => { await gmPost(id, s); };
     if(/trade|phone|call|move (up|down)/.test(t)) await say('analytics', 'The phones are quiet. Nobody is calling about this pick, so we stay on the board.');
-    else if(/need|fit|position|roster|depth/.test(t)){ const n = gmNeeds(g.team), top = Object.keys(n).sort((a, b) => n[b] - n[a])[0]; await say('coach', 'Our thinnest spot is ' + ({ guard: 'guard', wing: 'wing', big: 'big man' })[top] + '. ' + rk('coach').name + ' fits that best.'); }
+    else if(/need|fit|position|roster|depth/.test(t)){ const n = gmNeeds(g.team), top = Object.keys(n).sort((a, b) => n[b] - n[a])[0]; await say('coach', 'Look at the depth chart on the screen. Our thinnest spot is ' + ({ guard: 'guard', wing: 'wing', big: 'big man' })[top] + ', and ' + rk('coach').name + ' fits that best.'); }
     else if(/upside|ceiling|potential|star|swing/.test(t)) await say('scout', 'If you want a star, it is ' + rk('scout').name + '. ' + gmReason('scout', rk('scout')));
     else if(/safe|floor|ready|win now|contribut|experience|rotation/.test(t)) await say('coach', 'For a guy who helps right away, I want ' + rk('coach').name + '. ' + gmReason('coach', rk('coach')));
     else if(/young|age|value|analytic|numbers|stats|efficien/.test(t)) await say('analytics', 'By the numbers it is ' + rk('analytics').name + '. ' + gmReason('analytics', rk('analytics')));
     else if(/best available|bpa|highest|top of the board/.test(t)) await say('scout', 'Best player available is ' + gmAvail()[0].name + '. That is the safest pick on talent.');
-    else if(/who|think|suggest|recommend|opinion|options|thoughts|help/.test(t)){ for(const a of GM_ADVISORS) await say(a.id, 'My guy is ' + rk(a.id).name + '. ' + gmShort(gmReason(a.id, rk(a.id)), 130)); }
-    else if(/why/.test(t)){ const who = g.lastSpeaker && gmAdvisor(g.lastSpeaker) ? g.lastSpeaker : 'scout'; await say(who, 'Because ' + gmShort(gmReason(who, rk(who)), 150).replace(/^./, c => c.toLowerCase())); }
+    else if(/who|think|suggest|recommend|opinion|options|thoughts|help/.test(t)){ for(const a of g.adv.list) await say(a.id, 'My guy is ' + rk(a.id).name + '. ' + gmShort(gmReason(a.id, rk(a.id)), 130)); }
+    else if(/why/.test(t)){ const who = g.lastSpeaker && g.lastSpeaker !== 'you' ? g.lastSpeaker : 'scout'; await say(who, 'Because ' + gmShort(gmReason(who, rk(who)), 150).replace(/^./, c => c.toLowerCase())); }
     else if(/agree|fine|go with|lets do|let's do|lock|sounds good|make it|do it|submit/.test(t)){ if(g.selected) await say('analytics', 'Then press "Make the pick" when you are ready. ' + g.selected.name + ' it is.'); else await say('scout', 'Who are we taking? Pick someone from the board.'); }
-    else if(/time|clock|how long/.test(t)) await say('analytics', g.clock ? 'We have about ' + g.clockLeft + ' seconds left.' : 'No clock on this one. Take your time.');
+    else if(/time|clock|how long/.test(t)) await say('analytics', g.clock ? (g.paused ? 'The clock is paused, so take your time.' : 'We have about ' + g.clockLeft + ' seconds left.') : 'No clock on this one. Take your time.');
     else if(/no|disagree|wrong|not sure|hmm/.test(t)) await say('scout', 'Convince me. Who is your guy?');
     else if(/^(hi|hey|hello|yo)\b/.test(t)) await say('coach', 'Evening. We are on the clock, so let us talk about the pick.');
-    else { const a = GM_ADVISORS[Math.floor(Math.random() * 3)]; await say(a.id, 'Let us stay focused. ' + gmAvail()[0].name + ' is still on the board and everybody is asking about him. Who do you want?'); }
+    else { const a = g.adv.list[Math.floor(Math.random() * 3)]; await say(a.id, 'Let us stay focused. ' + gmAvail()[0].name + ' is still on the board and everybody is asking about him. Who do you want?'); }
   } finally { if(gm === g) g.reacting = false; }
 }
 
