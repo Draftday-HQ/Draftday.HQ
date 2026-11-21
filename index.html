@@ -2486,7 +2486,7 @@
       repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 9px), repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 9px), #0a1230;
       box-shadow:0 0 60px rgba(45,99,200,.45), inset 0 0 40px rgba(0,0,0,.6);}
   .gm-wall-in{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center;}
-  .gm-wall-title{font-family:var(--display); font-size:clamp(1.8rem,6.5vw,4.8rem); letter-spacing:.1em; line-height:1; text-shadow:0 0 28px rgba(120,170,255,.7);} .gm-wall-title b{font-weight:400; color:#fff;}
+  .gm-wall-title{white-space:nowrap; font-family:var(--display); font-size:clamp(1.3rem,4.4vw,3.6rem); letter-spacing:.1em; line-height:1; text-shadow:0 0 28px rgba(120,170,255,.7);} .gm-wall-title b{font-weight:400; color:#fff;}
   .gm-wall-sub{font-family:var(--mono); font-size:clamp(.55rem,1.4vw,.8rem); letter-spacing:.4em; color:#9db7ff;}
   .gm-wall-pick{display:flex; align-items:center; gap:clamp(10px,3vw,30px); padding:0 3%; animation:gmWallIn .5s ease-out; background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 55%,transparent),transparent 80%); width:100%; height:100%; justify-content:center;}
   .gm-wall-pick small{font-family:var(--mono); letter-spacing:.3em; font-size:clamp(.6rem,1.6vw,1rem); color:#cfe0ff;} .gm-wall-pick b{font-family:var(--display); font-size:clamp(3rem,12vw,8rem); line-height:1; font-weight:400;}
@@ -2594,6 +2594,36 @@
   }
   @media (prefers-reduced-motion:reduce){ .gm-comm.walking .gm-comm-svg,.gm-comm.walking .gm-leg,.gm-flashes i,.gm-stage.intro .gm-beams{animation:none;} }
 
+  /* ---- GM v3: stage upgrade ---- */
+  .gm-wall{display:grid; grid-template-columns:21% 1fr 21%;}
+  .gm-wall-main{position:relative; min-width:0;}
+  .gm-wall-side{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:8px; text-align:center; min-width:0; --tc:#2d63c8; background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 38%,#000),rgba(0,0,0,.35)); border-right:1px solid rgba(157,183,255,.3);}
+  .gm-wall-side.r{border-right:0; border-left:1px solid rgba(157,183,255,.3); background:rgba(0,0,0,.35); align-items:stretch; justify-content:center;}
+  .gm-wall-side small{font-family:var(--mono); font-size:clamp(.45rem,1vw,.64rem); letter-spacing:.28em; color:#9db7ff;}
+  .gm-wall-side.l img{width:clamp(34px,6vw,76px); height:clamp(34px,6vw,76px); object-fit:contain; filter:drop-shadow(0 0 10px rgba(255,255,255,.3));}
+  .gm-wall-side.l b{font-family:var(--display); font-size:clamp(.8rem,1.9vw,1.5rem); text-transform:uppercase; line-height:1.1;}
+  .gm-wall-side em{font-style:normal; font-family:var(--mono); font-size:clamp(.5rem,1.1vw,.75rem); letter-spacing:.1em; color:var(--gold); text-transform:uppercase;}
+  .gm-wall-side.r small{text-align:center; margin-bottom:4px;}
+  .gm-wall-side.r div{display:flex; align-items:center; gap:7px; padding:4px 6px; font-size:clamp(.6rem,1.3vw,.95rem); border-top:1px solid rgba(255,255,255,.08);} .gm-wall-side.r i{font-style:normal; font-family:var(--display); color:var(--gold); min-width:1.4em;} .gm-wall-side.r img{width:clamp(16px,2.4vw,30px); height:clamp(16px,2.4vw,30px); object-fit:contain;}
+  .gm-wc{display:flex; align-items:center; gap:clamp(8px,2vw,22px); width:100%; height:100%; padding:0 3%; background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 55%,transparent),transparent 78%); animation:gmWallIn .5s ease-out;}
+  .gm-wc-pick{display:flex; flex-direction:column; align-items:center; flex-shrink:0;} .gm-wc-pick small{font-family:var(--mono); letter-spacing:.3em; font-size:clamp(.45rem,1vw,.7rem); color:#cfe0ff;} .gm-wc-pick b{font-family:var(--display); font-size:clamp(1.8rem,5.4vw,4.4rem); line-height:1; font-weight:400;}
+  .gm-wc-ph{height:86%; aspect-ratio:3/4; border:3px solid var(--tc); background:#222; overflow:hidden; display:grid; place-items:center; flex-shrink:0; font-family:var(--display); font-size:1.6rem;} .gm-wc-ph img{width:100%; height:100%; object-fit:cover; object-position:center 12%; max-width:none; margin:0; border-radius:0; display:block;}
+  .gm-wc-info{min-width:0; flex:1; display:flex; flex-direction:column; gap:3px; text-align:left;} .gm-wc-info em{font-style:normal; font-family:var(--mono); font-size:clamp(.5rem,1.1vw,.78rem); letter-spacing:.16em; text-transform:uppercase; color:var(--gold);}
+  .gm-wc-info b{font-family:var(--display); font-size:clamp(1.1rem,3.2vw,2.6rem); line-height:1.05; font-weight:400; letter-spacing:.02em;} .gm-wc-info small{font-family:var(--mono); font-size:clamp(.5rem,1.1vw,.74rem); letter-spacing:.08em; text-transform:uppercase; color:#b9c9ee;}
+  .gm-wc-stats{display:flex; gap:clamp(8px,1.6vw,20px); margin-top:4px;} .gm-wc-stats span{display:flex; flex-direction:column; font-family:var(--mono); font-size:clamp(.42rem,.9vw,.62rem); letter-spacing:.14em; color:#9db7ff;} .gm-wc-stats b{font-family:var(--display); font-size:clamp(.95rem,2.2vw,1.7rem); color:#fff; line-height:1.05;}
+  .gm-wc-logo{width:clamp(36px,7vw,92px); height:clamp(36px,7vw,92px); object-fit:contain; flex-shrink:0; filter:drop-shadow(0 0 10px rgba(255,255,255,.3));}
+  .gm-draftee{position:absolute; bottom:calc(15% + clamp(76px,11.5vh,116px) - 20px); left:112%; width:clamp(92px,13.5vw,142px); z-index:2; pointer-events:none; filter:drop-shadow(0 0 12px rgba(255,255,255,.16));}
+  .gm-draftee.in{left:calc(50% + clamp(80px,12vw,160px)); transition:left 1.7s ease-out;}
+  .gm-draftee.walking .gm-comm-svg{animation:gmBob .5s ease-in-out infinite;} .gm-draftee.walking .gm-leg.l{transform-origin:50px 165px; animation:gmStepL .5s ease-in-out infinite;} .gm-draftee.walking .gm-leg.r{transform-origin:71px 165px; animation:gmStepR .5s ease-in-out infinite;}
+  .gm-draftee.shakehand .gm-arm.l{transform-origin:15px 84px; animation:gmShakeD .3s ease-in-out 5 alternate; transform:rotate(58deg);}
+  .gm-comm.shake .gm-arm.r{transform-origin:100px 76px; animation:gmShakeC .3s ease-in-out 5 alternate; transform:rotate(-58deg);}
+  @keyframes gmShakeC{from{transform:rotate(-58deg);}to{transform:rotate(-46deg);}} @keyframes gmShakeD{from{transform:rotate(58deg);}to{transform:rotate(46deg);}}
+  .gm-tables{position:absolute; left:0; right:0; bottom:19%; display:flex; justify-content:space-around; padding:0 2%; z-index:1; pointer-events:none;}
+  .gm-tbl{position:relative; width:clamp(54px,8vw,96px); height:clamp(18px,2.8vw,28px); border-radius:50%; background:radial-gradient(ellipse,#2b3a6a,#121832); border:1px solid rgba(157,183,255,.4); box-shadow:0 0 16px rgba(70,110,220,.35);}
+  .gm-tbl b,.gm-tbl u{position:absolute; top:-10px; width:10px; height:12px; border-radius:50% 50% 30% 30%; background:#2a2e3c;} .gm-tbl b{left:18%;} .gm-tbl u{right:18%; background:#3a3f50;}
+  .gm-callout{bottom:64px;}
+  .gm-ai{font-size:.78rem; line-height:1.5; padding:10px 12px; border:1px solid var(--steel-soft); color:var(--paper-dim); margin:6px 0 12px;} .gm-ai.on{border-color:#5fd39a; color:#5fd39a;}
+  @media (max-width:640px){ .gm-wall{grid-template-columns:1fr;} .gm-wall-side{display:none;} .gm-callout{bottom:56px;} .gm-wc-pick b{font-size:1.9rem;} .gm-draftee{width:92px;} .gm-draftee.in{left:calc(50% + 62px);} .gm-tbl{width:48px;} }
 </style>
 </head>
 <body>
@@ -3064,6 +3094,7 @@
         <div class="gm-opt-row"><span>Lottery</span><label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" id="gmLottery" checked onchange="gmSetOpt('lottery', this.checked)"> Simulate the lottery first</label></div>
         <div class="gm-opt-row" id="gmPaceRow"><span>Time between picks</span><button type="button" data-v="3" onclick="gmSetOpt('pace',3)">3s</button><button type="button" data-v="5" onclick="gmSetOpt('pace',5)">5s</button><button type="button" data-v="8" onclick="gmSetOpt('pace',8)">8s</button></div>
         <div class="gm-opt-row" id="gmClockRow"><span>Your clock</span><button type="button" data-v="0" onclick="gmSetOpt('clock',0)">None</button><button type="button" data-v="60" onclick="gmSetOpt('clock',60)">1 min</button><button type="button" data-v="120" onclick="gmSetOpt('clock',120)">2 min</button><button type="button" data-v="300" onclick="gmSetOpt('clock',300)">5 min</button><button type="button" data-v="600" onclick="gmSetOpt('clock',600)">10 min</button></div>
+        <div class="gm-ai" id="gmAIStatus"></div>
         <p class="gm-note">You can pause your clock while you are on the pick. Front office names and titles come from a 2026-27 directory and may be out of date. Everything they say in the room is simulated.</p>
         <button type="button" class="gm-propose" id="gmEnterBtn" onclick="gmEnter()" style="width:100%; margin-top:14px;">Choose your team to enter the draft room</button>
       </div>
@@ -13445,12 +13476,14 @@ function gmRenderSetup(){
   set('gmPaceRow', gmSetup.pace); set('gmClockRow', gmSetup.clock);
   const lt = document.getElementById('gmLottery'); if(lt) lt.checked = gmSetup.lottery;
   const go = document.getElementById('gmEnterBtn'); if(go) go.textContent = gmSetup.team ? 'Enter the draft room as the ' + gmSetup.team : 'Choose your team to enter the draft room';
+  gmRenderAIStatus();
   const fp = document.getElementById('gmFoPreview');
   if(fp){
     if(!gmSetup.team){ fp.innerHTML = ''; }
     else { const a = gmBuildAdvisors(gmSetup.team); fp.innerHTML = `<div class="gm-fo-h">Your front office in the room</div>` + a.list.map(x => `<div class="gm-fo-r"><span class="gm-fo-av" style="--ac:${x.color}">${gmEsc(x.ini)}</span><div><b>${gmEsc(x.name)}</b><small>${gmEsc(x.role)}</small></div></div>`).join('') + (a.url ? `<a class="gm-fo-src" href="${gmEsc(a.url)}" target="_blank" rel="noopener">Front office source</a>` : ''); }
   }
 }
+function gmRenderAIStatus(){ const el = document.getElementById('gmAIStatus'); if(!el) return; const s = gmAIStatus(); el.className = 'gm-ai' + (s.on ? ' on' : ''); el.textContent = s.text; }
 function gmPickTeam(t){ gmSetup.team = t; gmRenderSetup(); }
 function gmSetOpt(k, v){ gmSetup[k] = v; gmRenderSetup(); }
 
@@ -13504,46 +13537,7 @@ function gmClose(){
 function gmSkip(){ if(gm){ gm.fast = true; } const b = document.getElementById('gmSkipBtn'); if(b) b.style.display = 'none'; }
 
 /* ---------- the draft stage ---------- */
-const GM_COMM_SVG = `<svg viewBox="0 0 120 270" class="gm-comm-svg" aria-hidden="true">
-  <defs><linearGradient id="gmSuit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a3350"/><stop offset=".5" stop-color="#3b4670"/><stop offset="1" stop-color="#232b45"/></linearGradient></defs>
-  <g class="gm-leg l"><rect x="44" y="150" width="14" height="100" rx="6" fill="#222a44"/><rect x="39" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
-  <g class="gm-leg r"><rect x="64" y="150" width="14" height="100" rx="6" fill="#222a44"/><rect x="59" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
-  <path d="M26 72 Q60 56 94 72 L100 165 L20 165 Z" fill="url(#gmSuit)"/>
-  <path d="M50 66 L60 100 L70 66 Z" fill="#f4f2ee"/>
-  <path d="M57 72 L60 78 L63 72 Z" fill="#2d63c8"/><path d="M58 78 L56 118 L60 128 L64 118 L62 78 Z" fill="#2d63c8"/>
-  <path d="M26 72 L50 66 L58 118 L40 165 L20 165 Z" fill="#1c2340" opacity=".55"/><path d="M94 72 L70 66 L62 118 L80 165 L100 165 Z" fill="#1c2340" opacity=".55"/>
-  <circle cx="38" cy="96" r="2.4" fill="#d9b25c"/>
-  <g class="gm-arm l"><rect x="12" y="72" width="15" height="80" rx="7.5" fill="url(#gmSuit)"/><circle cx="19.5" cy="156" r="8" fill="#e0b08a"/></g>
-  <g class="gm-arm r"><rect x="93" y="72" width="15" height="80" rx="7.5" fill="url(#gmSuit)"/><circle cx="100.5" cy="156" r="8" fill="#e0b08a"/></g>
-  <rect x="54" y="50" width="12" height="20" fill="#d4a37c"/>
-  <ellipse cx="60" cy="36" rx="19" ry="23" fill="#e0b08a"/>
-  <path d="M40 34 Q40 8 62 9 Q81 10 80 34 Q78 22 66 19 Q50 17 40 34Z" fill="#c9ccd4"/>
-  <path d="M41 34 Q39 26 43 22 L43 36Z M79 34 Q81 26 77 22 L77 36Z" fill="#b9bdc7"/>
-  <rect x="48" y="33" width="9" height="2.4" rx="1.2" fill="#6b4a34"/><rect x="63" y="33" width="9" height="2.4" rx="1.2" fill="#6b4a34"/>
-  <circle cx="52.5" cy="40" r="1.8" fill="#2a2018"/><circle cx="67.5" cy="40" r="1.8" fill="#2a2018"/>
-  <path d="M53 52 Q60 57 67 52" stroke="#8c5a45" stroke-width="2" fill="none" stroke-linecap="round" class="gm-mouth"/>
-</svg>`;
-function gmStageHTML(){
-  let flashes = '';
-  for(let i = 0; i < 16; i++) flashes += `<i style="left:${Math.round(Math.random() * 96) + 1}%; bottom:${Math.round(Math.random() * 18) + 2}%; animation-delay:${(Math.random() * 4).toFixed(2)}s"></i>`;
-  return `<div class="gm-stage">
-    <div class="gm-wall" id="gmWall"><div class="gm-wall-in" id="gmWallIn"><div class="gm-wall-title">2027 <b>NBA DRAFT</b></div><div class="gm-wall-sub">BROOKLYN · LIVE</div></div></div>
-    <div class="gm-beams"></div>
-    <div class="gm-stage-floor"><div class="gm-edge"></div></div>
-    <div class="gm-crowd"><div class="gm-flashes">${flashes}</div></div>
-    <div class="gm-comm" id="gmComm">${GM_COMM_SVG}</div>
-    <div class="gm-lectern"><div class="gm-lect-top"></div><span>NBA</span><em>DRAFT</em></div>
-    <div class="gm-bubble" id="gmBubble"><span id="gmBubbleText"></span></div>
-    <div class="gm-callout" id="gmCallout"></div>
-    <div class="gm-ticker" id="gmTicker"></div>
-  </div>`;
-}
-function gmWallPick(r, team){
-  const w = document.getElementById('gmWallIn'); if(!w) return;
-  const col = NBA_TEAM_COLOR[team] || '#c6a15b';
-  w.parentElement.style.setProperty('--tc', col);
-  w.innerHTML = `<div class="gm-wall-pick"><small>PICK</small><b>${r}</b><img src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'"><span>${gmEsc(team)}</span></div>`;
-}
+
 function gmTickerRender(){
   const el = document.getElementById('gmTicker'); if(!el) return;
   const last = draftSimResults.slice(-6);
@@ -13600,29 +13594,6 @@ async function gmNext(){
 function gmAutomatedChoice(team, pickNo){
   const avail = gmAvail();
   return avail[0];
-}
-async function gmAnnounce(r){
-  const g = gm;
-  const comm = document.getElementById('gmComm'); if(comm) comm.classList.add('talking');
-  const team = r.team.split(' (from')[0].trim();
-  const line = 'With the ' + gmOrd(r.pick) + ' pick in the 2027 NBA Draft, the ' + team + ' select...';
-  document.getElementById('gmCallout').classList.remove('on');
-  gmWallPick(r.pick, team);
-  await gmType(document.getElementById('gmBubbleText'), line, 22); if(gm !== g) return;
-  await gmSleep(900); if(gm !== g) return;
-  const pl = players.find(x => x.id === r.player.id) || r.player;
-  const src = PLAYER_PHOTOS[r.player.name];
-  const mine = team === g.team;
-  const co = document.getElementById('gmCallout');
-  co.style.setProperty('--tc', NBA_TEAM_COLOR[team] || '#c6a15b');
-  co.innerHTML = `<div class="gm-co-num">${r.pick}</div>
-    <div class="gm-co-ph">${src ? `<img src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
-    <div class="gm-co-info"><b>${gmEsc(r.player.name)}</b><small>${gmEsc([pl.pos, pl.school].filter(Boolean).join(' · '))}</small><em>${gmEsc(team)}${mine ? ' · your pick' : ''}</em></div>
-    <img class="gm-co-logo" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'">`;
-  co.classList.add('on');
-  gmType(document.getElementById('gmBubbleText'), 'With the ' + gmOrd(r.pick) + ' pick, the ' + team + ' select ' + r.player.name + (pl.school ? ' from ' + pl.school : '') + '.', 18);
-  gmTickerRender();
-  if(comm) comm.classList.remove('talking');
 }
 async function gmFinish(){
   const g = gm;
@@ -13796,8 +13767,8 @@ function gmLogSys(text){
 }
 function gmQuote(who, text, typing){
   const q = document.getElementById('gmQuote'); if(!q) return;
-  const a = who === 'you' ? { short: 'You', color: GM_LENS_COLOR.you } : gmAdv(who);
-  const idx = who === 'you' ? 3 : GM_LENS.indexOf(who);
+  const a = who === 'you' ? { short: 'You', color: GM_LENS_COLOR.you } : who === 'room' ? { short: 'Room', name: 'Your front office', color: '#9db7ff' } : gmAdv(who);
+  const idx = who === 'you' ? 3 : who === 'room' ? 1.5 : GM_LENS.indexOf(who);
   q.style.setProperty('--tail', ((idx + .5) / 4 * 100) + '%'); q.style.setProperty('--ac', a.color);
   q.className = 'gm-quote on ' + (who === 'you' ? 'you' : '') + (typing ? ' typing' : '');
   q.innerHTML = typing ? `<b>${gmEsc(a.name || 'You')}</b><i>is talking<span>.</span><span>.</span><span>.</span></i>` : `<b>${gmEsc(a.name || 'You')}</b><p>“${gmEsc(text)}”</p>`;
@@ -13806,6 +13777,7 @@ function gmQuote(who, text, typing){
 async function gmPost(who, text, noDelay){
   const g = gm; if(!g) return;
   const chat = document.getElementById('gmChat'); if(!chat) return;
+  if(who !== 'you') text = gmPolish(text);
   const adv = who === 'you' ? null : gmAdv(who);
   document.querySelectorAll('.gm-seat.talk').forEach(s => s.classList.remove('talk'));
   const seat = document.getElementById('seat-' + who);
@@ -13820,80 +13792,490 @@ async function gmPost(who, text, noDelay){
   if(adv) m.style.setProperty('--ac', adv.color);
   m.innerHTML = `<b>${who === 'you' ? 'You' : gmEsc(adv.short)}</b><p>${gmEsc(text)}</p>`;
   chat.appendChild(m); chat.scrollTop = chat.scrollHeight;
-  g.lastSpeaker = who;
+  g.lastSpeaker = who; (g.hist = g.hist || []).push({ who, text });
   setTimeout(() => seat?.classList.remove('talk'), 1600);
 }
-async function gmOpeners(){
-  const g = gm, picks = {};
-  GM_LENS.forEach(l => { picks[l] = gmRanked(l)[0]; });
-  g.lastRec = picks;
-  const S = gmAdv('scout'), C = gmAdv('coach'), D = gmAdv('analytics');
-  const first = picks.scout;
-  gmLogSys('The clock is running. Your front office is weighing in.');
-  await gmPost('scout', 'The board is clear to me. I would take ' + first.name + ' (' + first.pos + ', ' + first.school + '). ' + gmReason('scout', first)); if(gm !== g) return;
-  const c = picks.coach;
-  await gmPost('coach', c.id === first.id ? 'I agree with ' + S.short + ' on ' + c.name + '. ' + gmReason('coach', c) : 'I hear you, ' + S.short + ', but we need to win games. I like ' + c.name + ' (' + c.pos + ', ' + c.school + '). ' + gmReason('coach', c)); if(gm !== g) return;
-  const d = picks.analytics;
-  await gmPost('analytics', d.id === first.id && d.id === c.id ? 'Everybody is on ' + d.name + '. The numbers back it up. ' + gmReason('analytics', d) : d.id === first.id ? 'I side with ' + S.short + ' on ' + d.name + '. ' + gmReason('analytics', d) : d.id === c.id ? 'I am with ' + C.short + ' on ' + d.name + '. ' + gmReason('analytics', d) : 'Respectfully, I have a third name: ' + d.name + '. ' + gmReason('analytics', d)); if(gm !== g) return;
-  gmLogSys('It is your call. Select a player on the board, or tell the room who you want.');
+
+const GM_COMM_SVG = `<svg viewBox="0 0 120 270" class="gm-comm-svg" aria-hidden="true">
+  <defs><linearGradient id="gmSuit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a3350"/><stop offset=".5" stop-color="#3b4670"/><stop offset="1" stop-color="#232b45"/></linearGradient></defs>
+  <g class="gm-leg l"><rect x="44" y="150" width="14" height="100" rx="6" fill="#3a4468"/><rect x="39" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
+  <g class="gm-leg r"><rect x="64" y="150" width="14" height="100" rx="6" fill="#3a4468"/><rect x="59" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
+  <path d="M26 72 Q60 56 94 72 L100 165 L20 165 Z" fill="url(#gmSuit)"/>
+  <path d="M50 66 L60 100 L70 66 Z" fill="#f4f2ee"/>
+  <path d="M57 72 L60 78 L63 72 Z" fill="#2d63c8"/><path d="M58 78 L56 118 L60 128 L64 118 L62 78 Z" fill="#2d63c8"/>
+  <path d="M26 72 L50 66 L58 118 L40 165 L20 165 Z" fill="#1c2340" opacity=".55"/><path d="M94 72 L70 66 L62 118 L80 165 L100 165 Z" fill="#1c2340" opacity=".55"/>
+  <circle cx="38" cy="96" r="2.4" fill="#d9b25c"/>
+  <g class="gm-arm l"><rect x="12" y="72" width="15" height="80" rx="7.5" fill="url(#gmSuit)"/><circle cx="19.5" cy="156" r="8" fill="#e0b08a"/></g>
+  <g class="gm-arm r"><rect x="93" y="72" width="15" height="80" rx="7.5" fill="url(#gmSuit)"/><circle cx="100.5" cy="156" r="8" fill="#e0b08a"/></g>
+  <rect x="54" y="50" width="12" height="20" fill="#d4a37c"/>
+  <ellipse cx="60" cy="36" rx="19" ry="23" fill="#e0b08a"/>
+  <path d="M40 34 Q40 8 62 9 Q81 10 80 34 Q78 22 66 19 Q50 17 40 34Z" fill="#c9ccd4"/>
+  <path d="M41 34 Q39 26 43 22 L43 36Z M79 34 Q81 26 77 22 L77 36Z" fill="#b9bdc7"/>
+  <rect x="48" y="31" width="9" height="2.4" rx="1.2" fill="#8a8e98"/><rect x="63" y="31" width="9" height="2.4" rx="1.2" fill="#8a8e98"/>
+  <circle cx="52.5" cy="40" r="1.8" fill="#2a2018"/><circle cx="67.5" cy="40" r="1.8" fill="#2a2018"/>
+  <g class="gm-glasses" fill="rgba(200,225,255,.16)" stroke="#16171c" stroke-width="1.7"><rect x="45" y="34.5" width="15" height="11.5" rx="4"/><rect x="60" y="34.5" width="15" height="11.5" rx="4"/><path d="M60 38.5 Q60 37.5 60 38.5" fill="none"/><path d="M45 38 L40.5 36.5 M75 38 L79.5 36.5" fill="none"/></g>
+  <path d="M53 52 Q60 57 67 52" stroke="#8c5a45" stroke-width="2" fill="none" stroke-linecap="round" class="gm-mouth"/>
+</svg>`;
+const GM_SKIN = ['#8d5a3b', '#c68642', '#e0ac69', '#6b4226', '#f1c27d', '#a56a43'];
+function gmDrafteeSVG(color, skin){
+  return `<svg viewBox="0 0 120 300" class="gm-comm-svg" aria-hidden="true">
+  <g class="gm-leg l"><rect x="43" y="165" width="15" height="115" rx="6" fill="#2c3040"/><rect x="38" y="272" width="26" height="12" rx="5" fill="#f2efe8"/></g>
+  <g class="gm-leg r"><rect x="64" y="165" width="15" height="115" rx="6" fill="#2c3040"/><rect x="59" y="272" width="26" height="12" rx="5" fill="#f2efe8"/></g>
+  <path d="M22 78 Q60 60 98 78 L103 180 L17 180 Z" fill="#1b1d26"/><path d="M50 70 L60 104 L70 70 Z" fill="#f4f2ee"/><path d="M60 80 L56 112 L60 150 L64 112Z" fill="${color}"/>
+  <g class="gm-arm l"><rect x="8" y="78" width="15" height="88" rx="7.5" fill="#1b1d26"/><circle cx="15.5" cy="170" r="8" fill="${skin}"/></g>
+  <g class="gm-arm r"><rect x="97" y="78" width="15" height="88" rx="7.5" fill="#1b1d26"/><circle cx="104.5" cy="170" r="8" fill="${skin}"/></g>
+  <rect x="54" y="54" width="12" height="20" fill="${skin}"/><ellipse cx="60" cy="40" rx="18" ry="22" fill="${skin}"/>
+  <path d="M40 34 Q42 10 61 10 Q80 10 80 34 L80 30 Q60 24 40 30Z" fill="${color}"/><path d="M62 26 Q92 22 96 31 Q80 33 62 31Z" fill="${color}" opacity=".85"/><circle cx="60" cy="20" r="4" fill="#fff" opacity=".85"/>
+  <circle cx="53" cy="42" r="1.8" fill="#1a1410"/><circle cx="67" cy="42" r="1.8" fill="#1a1410"/><path d="M53 54 Q60 59 67 54" stroke="#3a1f14" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>`;
 }
-async function gmReact(p){
-  const g = gm; if(!g || g.reacting) return;
+function gmStageHTML(){
+  let flashes = '', tables = '';
+  for(let i = 0; i < 22; i++) flashes += `<i style="left:${Math.round(Math.random() * 96) + 1}%; bottom:${Math.round(Math.random() * 18) + 2}%; animation-delay:${(Math.random() * 4).toFixed(2)}s"></i>`;
+  for(let i = 0; i < 6; i++) tables += `<div class="gm-tbl"><b></b><u></u></div>`;
+  return `<div class="gm-stage">
+    <div class="gm-wall" id="gmWall">
+      <div class="gm-wall-side l" id="gmWallL"></div>
+      <div class="gm-wall-main"><div class="gm-wall-in" id="gmWallIn"><div class="gm-wall-title">2027 <b>NBA DRAFT</b></div><div class="gm-wall-sub">ROUND 1 · LIVE</div></div></div>
+      <div class="gm-wall-side r" id="gmWallR"></div>
+    </div>
+    <div class="gm-beams"></div>
+    <div class="gm-stage-floor"><div class="gm-edge"></div></div>
+    <div class="gm-tables">${tables}</div>
+    <div class="gm-comm" id="gmComm">${GM_COMM_SVG}</div>
+    <div class="gm-draftee" id="gmDraftee"></div>
+    <div class="gm-lectern"><div class="gm-lect-top"></div><span>NBA</span><em>DRAFT</em></div>
+    <div class="gm-crowd"><div class="gm-flashes">${flashes}</div></div>
+    <div class="gm-bubble" id="gmBubble"><span id="gmBubbleText"></span></div>
+    <div class="gm-callout" id="gmCallout"></div>
+    <div class="gm-ticker" id="gmTicker"></div>
+  </div>`;
+}
+function gmWallClock(team, pickNo){
+  const L = document.getElementById('gmWallL'), R = document.getElementById('gmWallR'); if(!L || !R) return;
+  const col = NBA_TEAM_COLOR[team] || '#c6a15b', order = getVisiblePickOrder();
+  L.style.setProperty('--tc', col);
+  L.innerHTML = `<small>ON THE CLOCK</small><img src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'"><b>${gmEsc(team)}</b><em>Pick ${pickNo}</em>`;
+  const nx = [1, 2, 3].map(k => order[pickNo - 1 + k]).filter(Boolean);
+  R.innerHTML = `<small>UP NEXT</small>` + (nx.length ? nx.map((t, i) => { const b = t.split(' (from')[0].trim(); return `<div><i>${pickNo + 1 + i}</i><img src="${getNbaLogoUrl(b)}" alt="" onerror="this.style.display='none'"><span>${gmEsc((NBA_TEAM_ABBR && NBA_TEAM_ABBR[b]) || b)}</span></div>`; }).join('') : '<div><span>Final pick</span></div>');
+  const w = document.getElementById('gmWallIn');
+  if(w){ w.parentElement.style.removeProperty('--tc'); w.innerHTML = `<div class="gm-wall-title">2027 <b>NBA DRAFT</b></div><div class="gm-wall-sub">ROUND ${pickNo > 30 ? 2 : 1} · PICK ${pickNo}</div>`; }
+}
+function gmWallCard(r, team, pl){
+  const w = document.getElementById('gmWallIn'); if(!w) return;
+  const col = NBA_TEAM_COLOR[team] || '#c6a15b', src = PLAYER_PHOTOS[r.player.name], s = gmSeason(pl);
+  w.parentElement.style.setProperty('--tc', col);
+  const stat = s ? `<div class="gm-wc-stats"><span><b>${s.ppg}</b>PPG</span><span><b>${s.rpg}</b>RPG</span><span><b>${s.apg}</b>APG</span></div>` : `<div class="gm-wc-stats"><span><b>${gmEsc(pl.hs || '')}</b>HT</span><span><b>${pl.wt || ''}</b>WT</span><span><b>${pl.age || ''}</b>AGE</span></div>`;
+  w.innerHTML = `<div class="gm-wc"><div class="gm-wc-pick"><small>PICK</small><b>${r.pick}</b></div>
+    <div class="gm-wc-ph">${src ? `<img src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
+    <div class="gm-wc-info"><em>${gmEsc(team)}</em><b>${gmEsc(r.player.name)}</b><small>${gmEsc([pl.pos, pl.school].filter(Boolean).join(' · '))}</small>${stat}</div>
+    <img class="gm-wc-logo" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'"></div>`;
+}
+function gmDrafteeIn(r, team){
+  const dr = document.getElementById('gmDraftee'); if(!dr) return;
+  dr.className = 'gm-draftee';
+  dr.innerHTML = gmDrafteeSVG(NBA_TEAM_COLOR[team] || '#c6a15b', GM_SKIN[r.player.id % GM_SKIN.length]);
+  void dr.offsetWidth;
+  dr.classList.add('in', 'walking');
+  const g = gm;
+  setTimeout(() => { if(gm !== g) return; dr.classList.remove('walking'); dr.classList.add('shakehand'); const c = document.getElementById('gmComm'); if(c){ c.classList.add('shake'); setTimeout(() => c.classList.remove('shake'), 1500); } }, g && g.fast ? 100 : 1700);
+}
+async function gmAnnounce(r){
+  const g = gm;
+  const comm = document.getElementById('gmComm'), bubble = document.getElementById('gmBubble'), txt = document.getElementById('gmBubbleText');
+  const team = r.team.split(' (from')[0].trim(), pl = players.find(x => x.id === r.player.id) || r.player, mine = team === g.team;
+  document.getElementById('gmCallout').classList.remove('on');
+  const dr = document.getElementById('gmDraftee'); if(dr) dr.className = 'gm-draftee';
+  gmWallClock(team, r.pick);
+  await gmSleep(900); if(gm !== g) return;
+  bubble.classList.add('on'); if(comm) comm.classList.add('talking');
+  await gmType(txt, 'With the ' + gmOrd(r.pick) + ' pick in the 2027 NBA Draft, the ' + team + ' select...', 24); if(gm !== g) return;
+  if(comm) comm.classList.remove('talking');
+  await gmSleep(1100); if(gm !== g) return;
+  bubble.classList.remove('on'); await gmSleep(500); if(gm !== g) return;
+  gmWallCard(r, team, pl); gmDrafteeIn(r, team);
+  txt.textContent = ''; bubble.classList.add('on'); if(comm) comm.classList.add('talking');
+  await gmType(txt, r.player.name + (pl.school ? ', from ' + pl.school : '') + '.', 30); if(gm !== g) return;
+  if(comm) comm.classList.remove('talking');
+  const src = PLAYER_PHOTOS[r.player.name], s = gmSeason(pl);
+  const co = document.getElementById('gmCallout');
+  co.style.setProperty('--tc', NBA_TEAM_COLOR[team] || '#c6a15b');
+  co.innerHTML = `<div class="gm-co-num">${r.pick}</div>
+    <div class="gm-co-ph">${src ? `<img src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
+    <div class="gm-co-info"><b>${gmEsc(r.player.name)}</b><small>${gmEsc([pl.pos, pl.school, pl.hs].filter(Boolean).join(' · '))}</small><em>${gmEsc(team)}${mine ? ' · your pick' : ''}</em></div>
+    <img class="gm-co-logo" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'">`;
+  co.classList.add('on');
+  gmTickerRender();
+}
+/* opening arguments: they disagree with each other, with reasons */
+async function gmOpeners(){
+  const g = gm, tops = {};
+  GM_LENS.forEach(l => { tops[l] = gmOwnBest(l); });
+  g.lastRec = tops; g.focus = tops.scout;
+  const S = gmAdv('scout'), C = gmAdv('coach'), D = gmAdv('analytics'), s = tops.scout, c = tops.coach, d = tops.analytics;
+  const f = (arr, alt) => arr && arr.length ? gmLc(gmClean(arr[0], 130)) : alt;
+  const joinPros = (adv, p) => gmPros(adv, p).slice(0, 2).map((x, i) => (i ? 'And ' : '') + (i ? gmLc(gmClean(x, 110)) : gmClean(x, 125).replace(/^./, m => m.toUpperCase())) + '.').join(' ');
+  gmLogSys('The clock is running. Your front office is weighing in.');
+  await gmPost('scout', 'Talent first. I would take ' + s.name + ' (' + s.pos + ', ' + s.school + '). ' + joinPros('scout', s)); if(gm !== g) return;
+  await gmPost('coach', c.id === s.id ? 'I agree with ' + S.short + ' on ' + c.name + ', and for my own reasons: ' + f(gmPros('coach', c), 'he fits') + '.' : 'I respect ' + gmLast(s) + ', ' + S.short + ', but ' + f(gmCons('coach', s), 'he does not fill a need') + '. I want ' + c.name + ' (' + c.pos + ', ' + c.school + '). ' + joinPros('coach', c)); if(gm !== g) return;
+  let dl;
+  if(d.id === s.id && d.id === c.id) dl = 'Everybody is on ' + d.name + ', and the numbers agree: ' + f(gmPros('analytics', d), 'the value is there') + '.';
+  else if(d.id === s.id) dl = 'I side with ' + S.short + ' on ' + d.name + '. ' + joinPros('analytics', d) + ' ' + C.short + ', ' + gmLast(c) + ' has a problem: ' + f(gmCons('analytics', c), 'the value is thin') + '.';
+  else if(d.id === c.id) dl = 'I am with ' + C.short + ' on ' + d.name + '. ' + joinPros('analytics', d) + ' ' + S.short + ', on ' + gmLast(s) + ': ' + f(gmCons('analytics', s), 'I see a reach') + '.';
+  else dl = 'I have a third name: ' + d.name + '. ' + joinPros('analytics', d) + ' ' + S.short + ', ' + gmLast(s) + ' means ' + f(gmCons('analytics', s), 'paying for upside') + '. ' + C.short + ', ' + gmLast(c) + ': ' + f(gmCons('analytics', c), 'the value is thin') + '.';
+  await gmPost('analytics', dl); if(gm !== g) return;
+  gmLogSys('It is your call. Pick a player on the board, or talk it out with the room.');
+}
+
+/* ===================== GM BRAIN (local, no AI needed) ===================== */
+const GM_ATTR = {
+  shooting:   { re: /shoot|shot|jumper|three(?!-time)|3-point|3pt|spacing|release|catch-and-shoot|pull-up|stroke|range/i, ask: /shoot|three|3pt|3-point|3 point|jumper|spacing|range|stroke|knock down|marksman/i, label: 'shooting', who: 'analytics' },
+  defense:    { re: /defen|stopper|steal|switch|rim protect|block|lockdown|guards? up|perimeter|disrupt/i, ask: /defen|stopper|lockdown|guard.*up|stops?\b|lock\b/i, label: 'defense', who: 'coach' },
+  athleticism:{ re: /athlet|vertical|explosive|burst|quick|speed|dunk|above the rim|leap|bounce/i, ask: /athlet|explos|vertical|quick|speed|bouncy|dunk|leap/i, label: 'athleticism', who: 'scout' },
+  size:       { re: /wingspan|length|7-foot|7'|size|frame|strength|physical|rim|big man/i, ask: /size|length|wingspan|tall|height|frame|strong|strength|body|build/i, label: 'size and strength', who: 'scout' },
+  playmaking: { re: /pass|playmak|vision|handle|ball.?handl|pick-and-roll|creat|decision|point forward|read/i, ask: /pass|playmak|vision|handle|dribbl|creat|iq|smart|decision|turnover/i, label: 'playmaking', who: 'coach' },
+  rebounding: { re: /reboun|boards|glass|box(es|ing)? out/i, ask: /reboun|boards|glass/i, label: 'rebounding', who: 'analytics' },
+  scoring:    { re: /scor|bucket|finish|paint|mid-range|free throw|foul|offens/i, ask: /scor|bucket|finish|offens|points|get.*buckets/i, label: 'scoring', who: 'analytics' },
+  motor:      { re: /motor|effort|compet|tough|winning|hustle|energy|intangible|leader/i, ask: /motor|effort|compet|tough|hustle|winner|intangible|leader|attitude|character/i, label: 'motor and competitiveness', who: 'coach' }
+};
+const GM_AI_NAMES = { scout: 'scouting', coach: 'roster-fit', analytics: 'analytics' };
+function gmPolish(t){ return String(t).replace(/\.\.(?!\.)/g, '.').replace(/\.{4,}/g, '...').replace(/(?<!\bJr|\bSr|\bvs|\bSt|\bDr)([.!?])(\s+)([a-z])/g, (m, a, b, c) => a + b + c.toUpperCase()).replace(/\s{2,}/g, ' ').trim(); }
+function gmRand(a){ return a[Math.floor(Math.random() * a.length)]; }
+function gmLc(s){ s = String(s || ''); return s.charAt(0).toLowerCase() + s.slice(1); }
+function gmClean(s, n){ return gmShort(String(s || '').replace(/[.!?]+$/, ''), n || 130); }
+function gmSeason(p){ const s = p.seasons || []; return s.find(x => x.yr === CUR_SEASON_LABEL) || s[s.length - 1] || null; }
+function gmWhen(s){ return s && s.yr === CUR_SEASON_LABEL ? 'this year' : 'last season'; }
+function gmGroupName(g){ return { guard: 'guard', wing: 'wing', big: 'big man' }[g]; }
+function gmGroupNames(team, grp){
+  const ch = NBA_DEPTH_CHARTS[team]; if(!ch) return [];
+  return [...(ch.starters || []), ...(ch.second || [])].filter(x => { const a = String(x.pos || '').split('/')[0]; return (a === 'PG' || a === 'SG' ? 'guard' : a === 'SF' ? 'wing' : 'big') === grp; }).map(x => x.n);
+}
+function gmList(a){ a = a.slice(0, 3); return a.length < 2 ? (a[0] || 'nobody') : a.length === 2 ? a[0] + ' and ' + a[1] : a[0] + ', ' + a[1] + ' and ' + a[2]; }
+function gmNeedLine(p){
+  const grp = gmPosGroup(p), names = gmGroupNames(gm.team, grp), need = gmNeeds(gm.team)[grp];
+  const pl = gmGroupName(grp);
+  if(!names.length) return 'we have almost nobody at ' + pl;
+  return need > 0 ? 'we are thin at ' + pl + ' with just ' + gmList(names) : 'we already have ' + gmList(names) + ' at ' + pl;
+}
+function gmStat(p, k){
+  const s = gmSeason(p); if(!s) return null; const w = gmWhen(s);
+  if(k === 'shooting' && s.tpt != null) return s.tpt + '% from three on ' + s.tpa + ' attempts a game and ' + s.ft + '% at the line ' + w;
+  if(k === 'defense' && s.stl != null) return s.stl + ' steals and ' + s.blk + ' blocks a game ' + w;
+  if(k === 'rebounding' && s.rpg != null) return s.rpg + ' rebounds in ' + s.min + ' minutes ' + w;
+  if(k === 'playmaking' && s.apg != null) return s.apg + ' assists against ' + s.to + ' turnovers ' + w;
+  if(k === 'scoring' && s.ppg != null) return s.ppg + ' points on ' + s.fg + '% from the field ' + w;
+  return null;
+}
+function gmStatScore(p, k){
+  const s = gmSeason(p); if(!s) return 0;
+  if(k === 'shooting') return s.tpa >= 1.5 ? (s.tpt >= 36 ? 1 : s.tpt < 31 ? -1 : 0) + (s.ft >= 78 ? 1 : s.ft < 65 ? -1 : 0) : 0;
+  if(k === 'defense') return (s.stl + s.blk) >= 2 ? 1 : 0;
+  if(k === 'playmaking') return s.to > 0 ? (s.apg / s.to >= 2 ? 1 : s.apg / s.to < 1.2 ? -1 : 0) : 0;
+  if(k === 'rebounding') return s.rpg >= 7 ? 1 : 0;
+  if(k === 'scoring') return (s.ppg >= 16 && s.fg >= 46) ? 1 : (s.fg < 41 ? -1 : 0);
+  return 0;
+}
+function gmEvidence(p, k){
+  const re = GM_ATTR[k].re;
+  const pos = (p.strengths || []).filter(x => re.test(x)), neg = (p.weaknesses || []).filter(x => re.test(x));
+  const sent = String(p.summary || '').split(/(?<=[.!?])\s+/).find(x => re.test(x)) || null;
+  const stat = gmStat(p, k), sc = pos.length - neg.length + gmStatScore(p, k);
+  const verdict = (pos.length || neg.length || stat || sent) ? (sc > 0 ? 'good' : sc < 0 ? 'poor' : 'mixed') : null;
+  return { pos, neg, stat, sent, verdict };
+}
+function gmAttrAnswer(p, k){
+  const e = gmEvidence(p, k), lab = GM_ATTR[k].label, n = gmLast(p);
+  if(!e.verdict) return 'Our file does not say much about ' + n + '\'s ' + lab + ', so I would not lean on it either way.';
+  const head = e.verdict === 'good' ? gmRand(['That is a real strength for ' + n + '.', 'Yes, ' + lab + ' is a plus for him.']) : e.verdict === 'poor' ? gmRand(['That is a concern for me with ' + n + '.', lab.charAt(0).toUpperCase() + lab.slice(1) + ' is the question mark.']) : gmRand(['It is mixed with ' + n + '.', 'I would call his ' + lab + ' average with a few flashes.']);
+  const bits = [];
+  if(e.verdict !== 'poor' && e.pos[0]) bits.push(gmClean(e.pos[0], 120));
+  if(e.verdict !== 'good' && e.neg[0]) bits.push(gmClean(e.neg[0], 120));
+  if(!bits.length && e.sent) bits.push(gmClean(e.sent, 140));
+  if(e.stat) bits.push('the numbers say ' + e.stat);
+  return head + ' ' + bits.map((b, i) => (i ? 'And ' : 'Scouts say: ') + gmLc(b) + '.').join(' ');
+}
+/* positive and negative cases, lens by lens */
+function gmPros(adv, p){
+  const out = [], a = typeof p.age === 'number' ? p.age : null, s = gmSeason(p), pick = draftSimPickIndex + 1;
+  if(adv === 'scout'){
+    if(p.strengths && p.strengths[0]) out.push(gmClean(p.strengths[0], 125));
+    if(p.comps && p.comps[0]) out.push('the profile is ' + gmLc(gmClean(p.comps[0], 90)));
+    if(a && a <= 19) out.push('he is only ' + a + ' and already ' + (p.hs || 'big') + ', so the runway is long');
+    if(p.strengths && p.strengths[1]) out.push(gmClean(p.strengths[1], 110));
+  } else if(adv === 'coach'){
+    out.push(gmNeedLine(p) + (gmNeeds(gm.team)[gmPosGroup(p)] > 0 ? ', so he fills a hole' : ''));
+    if(s) out.push('he gave ' + s.ppg + ' points and ' + s.rpg + ' rebounds in ' + s.min + ' minutes ' + gmWhen(s) + ', so he is ready for a rotation');
+    const d = (p.strengths || []).find(x => GM_ATTR.defense.re.test(x)); if(d) out.push(gmLc(gmClean(d, 110)));
+    const sh = (p.strengths || []).find(x => GM_ATTR.shooting.re.test(x)); if(sh) out.push(gmLc(gmClean(sh, 110)));
+  } else {
+    if(p.rk < pick) out.push('he is #' + p.rk + ' on our board and we are picking ' + gmOrd(pick) + ', so the value is ' + (pick - p.rk) + ' spots in our favor');
+    else out.push('he is #' + p.rk + ' on our board at pick ' + pick + ', which is fair value');
+    if(a) out.push('he is ' + a + ' years old, and age against the class is the best predictor I have');
+    if(s) out.push('the efficiency holds up: ' + s.fg + '% from the field' + (s.tpa >= 1.5 ? ', ' + s.tpt + '% from three on ' + s.tpa + ' attempts' : '') + ' ' + gmWhen(s));
+    if(s && s.to > 0) out.push('his assist-to-turnover ratio is ' + (s.apg / s.to).toFixed(1));
+  }
+  return out;
+}
+function gmCons(adv, p){
+  const out = [], a = typeof p.age === 'number' ? p.age : null, s = gmSeason(p), pick = draftSimPickIndex + 1;
+  if(p.weaknesses && p.weaknesses[0]) out.push(gmClean(p.weaknesses[0], 120));
+  if(adv === 'coach'){ const n = gmNeeds(gm.team)[gmPosGroup(p)]; if(n <= 0) out.unshift(gmNeedLine(p) + ', so he would not even crack the rotation'); }
+  if(adv === 'analytics'){
+    if(p.rk - pick >= 5) out.unshift('he is #' + p.rk + ' on our board, which is a reach of ' + (p.rk - pick) + ' spots at ' + gmOrd(pick));
+    if(a && a >= 21) out.push('he is ' + a + ', and older players have a smaller margin for growth');
+    if(s && s.tpa >= 1.5 && s.tpt < 32) out.push('he is hitting only ' + s.tpt + '% from three on ' + s.tpa + ' attempts');
+    if(s && s.to >= 3) out.push('he turns it over ' + s.to + ' times a game');
+    if(s && s.ft < 65 && s.fta >= 2) out.push('he is a ' + s.ft + '% free-throw shooter');
+  }
+  if(adv === 'scout'){
+    if(p.weaknesses && p.weaknesses[1]) out.push(gmClean(p.weaknesses[1], 110));
+    if(a && a >= 21) out.push('at ' + a + ' I do not see a star ceiling');
+    if(!(p.comps && p.comps[0])) out.push('I cannot name a star comparison for him');
+  }
+  return out;
+}
+function gmOwnBest(adv){ return gmRanked(adv)[0]; }
+function gmSaid(key){ gm.used = gm.used || new Set(); if(gm.used.has(key)) return true; gm.used.add(key); return false; }
+function gmPick2(arr, key){ const f = arr.filter(x => !gmSaid(key + ':' + x)); return (f.length ? f : arr).slice(0, 2); }
+function gmSupport(adv, p){
+  const r = gmPick2(gmPros(adv, p), adv + p.id), n = gmLast(p);
+  const open = gmRand(['I am on board with ' + n + '.', n + ' works for me.', 'I like ' + n + ' here.', 'I can get behind ' + n + '.']);
+  return open + ' ' + r.map((x, i) => (i ? 'Plus ' : 'First, ') + gmLc(x) + '.').join(' ');
+}
+function gmOppose(adv, p){
+  const c = gmPick2(gmCons(adv, p), 'c' + adv + p.id), top = gmOwnBest(adv), n = gmLast(p);
+  const alt = top && top.id !== p.id ? ' I would rather take ' + top.name + ': ' + gmLc(gmPros(adv, top)[0] || 'he fits better') + '.' : '';
+  const open = gmRand(['I am not there on ' + n + '.', 'I have a problem with ' + n + ' here.', 'I would pass on ' + n + ' at this spot.', 'I am going to push back on ' + n + '.']);
+  return open + ' ' + (c.length ? c.map((x, i) => (i ? 'Also, ' : 'The issue: ') + gmLc(x) + '.').join(' ') : 'He does not match what I value.') + alt;
+}
+function gmStanceOn(adv, p){
+  const g = gm; if(g.stance && g.stance[adv] === p.id) return 'back';
+  const r = gmRanked(adv).findIndex(x => x.id === p.id);
+  return r !== -1 && r <= 1 ? 'back' : r !== -1 && r <= 3 ? 'okay' : 'against';
+}
+function gmCross(p, adv){
+  const g = gm, ads = g.adv.list;
+  const sup = ads.find(a => a.id !== adv && gmStanceOn(a.id, p) === 'back'), opp = ads.find(a => gmStanceOn(a.id, p) === 'against');
+  if(!sup || !opp || sup.id === opp.id) return null;
+  const pr = gmPros(sup.id, p)[0];
+  return { who: sup.id, text: opp.short + ', ' + gmRand(['you are underrating him.', 'here is what you are missing.', 'think about it this way.']) + ' ' + gmClean(pr, 140).replace(/^./, c => c.toUpperCase()) + '.' };
+}
+/* conversation memory and persuasion */
+function gmConcede(adv, p){
+  const g = gm; g.stance = g.stance || {}; g.stance[adv] = p.id;
+  return gmRand(['Fine, you have convinced me. If it is ' + gmLast(p) + ', I am with you.', 'All right, I will back you on ' + gmLast(p) + '. Make sure it works.', 'You have made your case on ' + gmLast(p) + '. I am in.']);
+}
+function gmSelectionReplies(p){
+  const g = gm, out = [], seen = (g.press = g.press || {});
+  g.focus = p;
+  g.adv.list.forEach(a => {
+    const st = gmStanceOn(a.id, p);
+    const key = a.id + ':' + p.id; seen[key] = (seen[key] || 0) + (g.lastSelId === p.id ? 1 : 0);
+    if(st === 'back') out.push({ who: a.id, text: gmSupport(a.id, p) });
+    else if(st === 'okay') out.push({ who: a.id, text: 'I can live with ' + gmLast(p) + '. ' + gmPros(a.id, p).slice(0, 1).map(x => gmClean(x, 120) + '.').join('') + ' I just prefer ' + gmOwnBest(a.id).name + ' by a little.' });
+    else if(seen[key] >= 1) out.push({ who: a.id, text: gmConcede(a.id, p) });
+    else out.push({ who: a.id, text: gmOppose(a.id, p) });
+  });
+  g.lastSelId = p.id;
+  const x = gmCross(p); if(x) out.push(x);
+  return out;
+}
+function gmCompare(a, b){
+  const g = gm, out = [];
+  g.adv.list.forEach(ad => {
+    const sa = gmScore(ad.id, a, gmNeeds(g.team)), sb = gmScore(ad.id, b, gmNeeds(g.team));
+    const w = sa >= sb ? a : b, l = w === a ? b : a;
+    const pw = gmPros(ad.id, w)[0], cl = gmCons(ad.id, l)[0];
+    out.push({ who: ad.id, text: 'Between those two I take ' + w.name + '. ' + gmClean(pw, 130).replace(/^./, c => c.toUpperCase()) + (cl ? '. Against that, on ' + gmLast(l) + ': ' + gmLc(cl) : '') + '.' });
+  });
+  const tally = {}; out.forEach(o => { const m = o.text.match(/I take (.+?)\. /); if(m) tally[m[1]] = (tally[m[1]] || 0) + 1; });
+  const win = Object.keys(tally).sort((x, y) => tally[y] - tally[x])[0];
+  out.push({ who: 'sys', text: 'The room leans ' + win + ' (' + tally[win] + ' of 3). Say the name if you want him.' });
+  g.focus = null;
+  return out;
+}
+/* "when will he fall" analysis */
+function gmFall(p){
+  const g = gm, pick = draftSimPickIndex + 1, later = g.mine.filter(n => n > pick)[0];
+  if(!later) return [{ who: 'analytics', text: 'We do not pick again, so if we want ' + p.name + ' it has to be now.' }];
+  const avail = gmAvail(), gap = later - pick, idx = avail.findIndex(x => x.id === p.id);
+  const gone = idx !== -1 && idx < gap;
+  return [{ who: 'analytics', text: 'We pick again at ' + later + ', which is ' + gap + ' selections from now. Teams have been taking best-available, so ' + p.name + ' ' + (gone ? 'is almost certainly gone by then.' : 'has a real chance of being there, since he is ' + (idx + 1) + ' on the board.') }];
+}
+function gmRankedBy(k, n){
+  const pool = gmAvail().slice(0, 18);
+  return pool.map(p => { const e = gmEvidence(p, k); return { p, s: e.pos.length * 2 - e.neg.length * 2 + gmStatScore(p, k) * 2 + (100 - p.rk) / 40 + (k === 'size' ? (parseInt(String(p.hs).replace(/[^0-9]/g, '').slice(0, 1) || 0) * 12 + parseInt(String(p.hs).replace(/[^0-9]/g, '').slice(1) || 0)) / 12 : 0) }; }).sort((a, b) => b.s - a.s).slice(0, n || 2).map(x => x.p);
+}
+function gmFindMentions(text){
+  const t = ' ' + nameKey(text) + ' ', hits = [], fc = {};
+  players.forEach(p => { const f = nameKey(p.name).split(' ')[0]; fc[f] = (fc[f] || 0) + 1; });
+  players.forEach(p => {
+    const full = nameKey(p.name), parts = full.split(' '), last = parts[parts.length - 1], first = parts[0];
+    let i = t.indexOf(' ' + full + ' ');
+    if(i === -1 && last.length > 3) i = t.indexOf(' ' + last + ' ');
+    if(i !== -1) hits.push({ p, i });
+  });
+  if(!hits.length) players.forEach(p => {
+    const first = nameKey(p.name).split(' ')[0];
+    if(first.length > 4 && fc[first] === 1 && !/^(about|should|would|think|player|great|young)$/.test(first)){ const i = t.indexOf(' ' + first + ' '); if(i !== -1) hits.push({ p, i }); }
+  });
+  const seen = new Set(); return hits.sort((a, b) => a.i - b.i).filter(h => { if(seen.has(h.p.id)) return false; seen.add(h.p.id); return true; }).map(h => h.p).slice(0, 3);
+}
+function gmTopAvailLine(n){ return gmAvail().slice(0, n).map(p => p.name + ' (' + p.pos + ')').join(', '); }
+function gmNeedsReply(){
+  const g = gm, n = gmNeeds(g.team), order = Object.keys(n).sort((a, b) => n[b] - n[a]), top = order[0];
+  const best = gmAvail().filter(p => gmPosGroup(p) === top).slice(0, 2);
+  const ch = NBA_DEPTH_CHARTS[g.team]; const st = ch ? ch.starters.map(x => x.n.split(' ').slice(-1)[0] + ' (' + x.pos.split('/')[0] + ')').join(', ') : 'unknown';
+  return [{ who: 'coach', text: 'Our starters are ' + st + '. The thinnest spot is ' + gmGroupName(top) + ', where we have ' + gmList(gmGroupNames(g.team, top)) + '. The best ' + gmGroupName(top) + 's left are ' + (best.map(p => p.name).join(' and ') || 'not great') + '.' }];
+}
+function gmGroupFromText(t){
+  if(/\b(big|center|five|rim protect|post)\b/.test(t)) return 'big';
+  if(/\b(guard|point|pg|sg|playmaker|ball handler)\b/.test(t)) return 'guard';
+  if(/\b(wing|forward|sf|small forward|swingman)\b/.test(t)) return 'wing';
+  return null;
+}
+/* the main entry point: returns [{who,text,select?}] */
+function gmBrain(text){
+  const g = gm, t = ' ' + text.toLowerCase().replace(/[^a-z0-9'%\s-]/g, ' ').replace(/\s+/g, ' ') + ' ';
+  let men = gmFindMentions(text); const avail = gmAvail(), last = g.lastSpeaker && g.lastSpeaker !== 'you' ? g.lastSpeaker : 'scout';
+  if(!men.length && g.focus && /\b(he|him|his|this guy|that guy|the kid|this kid|that kid|hes|he'?s)\b/.test(t) && avail.some(a => a.id === g.focus.id)) men = [g.focus];
+  const decl = /\b(i want|i'?d take|i like|take|taking|pick|go with|going with|lets? take|let'?s take|leaning|my guy|draft|select|lock in|i choose|i'?m taking)\b/.test(t);
+  const gone = men.find(m => draftSimResults.some(r => r.player.id === m.id));
+  if(men.length && gone && men.length === 1){ const r = draftSimResults.find(r => r.player.id === gone.id); return [{ who: 'scout', text: gone.name + ' is already off the board, the ' + r.team.split(' (from')[0] + ' took him at ' + gmOrd(r.pick) + '. Pick someone who is still here.' }]; }
+  const live = men.filter(m => !draftSimResults.some(r => r.player.id === m.id));
+  if(live.length >= 2 && /\b(or|vs|versus|over|better|between|compare|rather|instead)\b/.test(t) && !/\bwe pick again\b/.test(t)) return gmCompare(live[0], live[1]);
+  if(live.length >= 1){
+    const p = live[0]; g.focus = p;
+    if(/\b(how old|age|years old|young)\b/.test(t) && !decl){ const cl = p.cls || 'prospect'; return [{ who: 'analytics', text: p.name + ' is ' + p.age + ', listed as a ' + cl.toLowerCase() + '. ' + (p.age <= 18 ? 'That is very young for this class, which is a big point in his favor on the growth curve.' : p.age >= 21 ? 'That is on the older side, so I want his production to be elite and I give him less credit for projection.' : 'That is about average for the class, so he has to earn it with production.') }]; }
+    const ak = Object.keys(GM_ATTR).find(k => GM_ATTR[k].ask.test(t));
+    if(ak && !decl){
+      const res = [{ who: GM_ATTR[ak].who, text: gmAttrAnswer(p, ak) }];
+      const skeptic = g.adv.list.find(a => a.id !== GM_ATTR[ak].who && gmStanceOn(a.id, p) === 'against');
+      if(skeptic && Math.random() < .7) res.push({ who: skeptic.id, text: gmOppose(skeptic.id, p) });
+      return res;
+    }
+    if(/\b(fall|slide|still be there|be there|next pick|wait|available later|get him later)\b/.test(t)) return gmFall(p);
+    if(/\b(comp|compare to|similar|like who|reminds)\b/.test(t)) return [{ who: 'scout', text: (p.comps && p.comps[0]) ? gmLast(p) + ' is ' + gmLc(gmClean(p.comps[0], 120)) + '. ' + gmClean((p.strengths || [])[0] || '', 110) + '.' : 'I do not have a clean comparison for ' + gmLast(p) + ', which usually means he is unusual.' }];
+    if(/\b(stats|numbers|averag|production|per game|ppg)\b/.test(t)){ const s = gmSeason(p); return [{ who: 'analytics', text: s ? p.name + ' put up ' + s.ppg + ' points, ' + s.rpg + ' rebounds and ' + s.apg + ' assists in ' + s.min + ' minutes ' + gmWhen(s) + ', shooting ' + s.fg + '% overall' + (s.tpa >= 1 ? ', ' + s.tpt + '% from three' : '') + ' and ' + s.ft + '% at the line.' : 'We do not have college numbers on ' + p.name + ' yet, so I am going off the scouting reports and his age of ' + p.age + '.' }]; }
+    if(/\b(tell me|about|who is|scouting report|know about|breakdown|profile|what'?s he|how good|is he good|is he any good)\b/.test(t) && !decl){
+      return [{ who: 'scout', text: gmClean(String(p.summary || '').split(/(?<=[.!?])\s+/).slice(0, 2).join(' '), 260) + '.' }, { who: 'coach', text: gmNeedLine(p).replace(/^./, c => c.toUpperCase()) + ', so ' + (gmNeeds(g.team)[gmPosGroup(p)] > 0 ? 'the fit is there' : 'the fit is not obvious') + '.' }, { who: 'analytics', text: gmPros('analytics', p)[0].replace(/^./, c => c.toUpperCase()) + '.' }];
+    }
+    if(/\b(why not|what'?s wrong|whats wrong|problem with|issue with|concern)\b/.test(t)){ const a = g.adv.list.find(x => gmStanceOn(x.id, p) === 'against') || g.adv.list[0]; return [{ who: a.id, text: gmOppose(a.id, p) }]; }
+    g.selected = p; g.selectChanged = true;
+    return gmSelectionReplies(p).map((x, i) => i === 0 ? { ...x, select: p.id } : x);
+  }
+  /* no named player */
+  const grp = gmGroupFromText(t);
+  const best = Object.keys(GM_ATTR).find(k => /\b(best|most|top|strongest|highest|who'?s the|which|want|need|looking|prefer|someone|guy|player|kid|somebody)\b/.test(t) && GM_ATTR[k].ask.test(t));
+  if(best){ const ps = gmRankedBy(best, 2); return [{ who: GM_ATTR[best].who, text: 'For ' + GM_ATTR[best].label + ' I have ' + ps[0].name + ' first and ' + ps[1].name + ' second. ' + gmAttrAnswer(ps[0], best) }]; }
+  if(/\b(ceiling|upside|potential|star|home run|swing)\b/.test(t)){ const p = gmRanked('scout')[0]; return [{ who: 'scout', text: 'The highest ceiling left is ' + p.name + '. ' + gmPros('scout', p).slice(0, 2).map(x => gmClean(x) + '.').join(' ') }, { who: 'coach', text: 'Ceilings are nice, but remember ' + gmNeedLine(gmRanked('coach')[0]) + '.' }]; }
+  if(/\b(safe|floor|safest|ready|win now|contribut|rotation|experience)\b/.test(t)){ const p = gmRanked('coach')[0]; return [{ who: 'coach', text: 'The safest pick is ' + p.name + '. ' + gmPros('coach', p).slice(0, 2).map(x => gmClean(x) + '.').join(' ') }, { who: 'scout', text: 'Safe is how you end up with a role player at ' + gmOrd(draftSimPickIndex + 1) + '. ' + gmRanked('scout')[0].name + ' is who I want.' }]; }
+  if(/\b(young|youngest|oldest|age)\b/.test(t)){ const ps = avail.slice(0, 15).slice().sort((a, b) => /\boldest\b/.test(t) ? b.age - a.age : a.age - b.age); return [{ who: 'analytics', text: 'Among the top 15 left, the ' + (/\boldest\b/.test(t) ? 'oldest' : 'youngest') + ' is ' + ps[0].name + ' at ' + ps[0].age + ', then ' + ps[1].name + ' at ' + ps[1].age + '. Age relative to class is how I separate prospects.' }]; }
+  if(grp && /\b(need|take|should|pick|want|get|draft|go|look)\b/.test(t)){ const ps = avail.filter(p => gmPosGroup(p) === grp).slice(0, 2); if(ps.length) return [{ who: 'coach', text: 'On a ' + gmGroupName(grp) + ': ' + gmNeedLine(ps[0]) + '. Best two left: ' + ps[0].name + ' (#' + ps[0].rk + ') and ' + (ps[1] ? ps[1].name + ' (#' + ps[1].rk + ')' : 'nobody close') + '.' }, { who: 'scout', text: ps[0].rk > avail[0].rk + 4 ? 'But taking a ' + gmGroupName(grp) + ' means passing ' + avail[0].name + ', who is ' + (ps[0].rk - avail[0].rk) + ' spots higher on the board.' : gmPros('scout', ps[0])[0] ? gmClean(gmPros('scout', ps[0])[0]) + '. I can sell that.' : 'I can live with that.' }]; }
+  if(/\b(trade|trading|move up|move down|phones?|call|package|swap|deal)\b/.test(t)){ const later = g.mine.filter(n => n > draftSimPickIndex + 1)[0]; return [{ who: 'analytics', text: 'I called around and nobody is moving off their pick in this room right now. ' + (later ? 'If we stay put, we pick again at ' + later + ', and the room likely still has some value then.' : 'This is our last pick, so we should take the best player here.') }, { who: 'scout', text: 'Use the trade tool on the main site for that. Right now, the best player on my board is ' + gmRanked('scout')[0].name + '.' }]; }
+  if(/\b(need|depth|roster|lineup|starters|rotation|hole|weak)\b/.test(t)) return gmNeedsReply();
+  if(/\b(who'?s left|who is left|whos left|who'?s available|available|on the board|top prospects|options)\b/.test(t) && !/\bwho do you\b/.test(t)) return [{ who: 'scout', text: 'The top of the board is ' + gmTopAvailLine(5) + '.' }, { who: 'analytics', text: 'After that it flattens out. ' + gmRanked('analytics')[0].name + ' is the one I like most for value.' }];
+  if(/\b(last pick|who went|who did|recent|just took|just picked|previous)\b/.test(t)){ const rs = draftSimResults.slice(-3).reverse(); return [{ who: 'analytics', text: rs.length ? 'The last three picks: ' + rs.map(r => r.pick + '. ' + r.team.split(' (from')[0] + ' took ' + r.player.name).join('; ') + '.' : 'We are the first ones on the clock, nothing has happened yet.' }]; }
+  if(/\b(time|clock|how long|hurry|seconds)\b/.test(t)) return [{ who: 'analytics', text: g.clock ? (g.paused ? 'The clock is paused, so take your time.' : 'We have about ' + Math.floor(g.clockLeft / 60) + ' minutes and ' + g.clockLeft % 60 + ' seconds. I would decide with a minute left.') : 'No clock on this one. We can talk it out.' }];
+  if(/\b(wrong|bad idea|disagree|no way|terrible|reach|you'?re crazy|stupid|dumb|not sure|doubt|nope|dont agree|don'?t agree)\b/.test(t) && last){
+    const a = gmAdv(last), p = g.focus || gmOwnBest(last), pr = gmPros(last, p).slice(1)[0] || gmPros(last, p)[0];
+    g.press = g.press || {}; const k = 'p' + last; g.press[k] = (g.press[k] || 0) + 1;
+    return [{ who: last, text: g.press[k] >= 2 ? gmConcede(last, gmOwnBest(last) === p ? p : (g.selected || p)) : 'I hear you, but here is what is behind it: ' + gmLc(gmClean(pr, 140)) + '. If you have a better argument, I am listening.' }];
+  }
+  if(/\b(who do you|who would you|what would you|what do you think|thoughts|recommend|suggest|opinion|should we|who should)\b/.test(t)){
+    return g.adv.list.map(a => { const p = gmOwnBest(a.id), pr = gmPros(a.id, p); return { who: a.id, text: 'I stay with ' + p.name + '. ' + gmClean(pr[Math.min(1, pr.length - 1)], 140) + '.' }; });
+  }
+  if(/\b(why)\b/.test(t) && last){ const p = g.focus || gmOwnBest(last); return [{ who: last, text: 'Because ' + gmLc(gmClean(gmPros(last, p).slice(-1)[0], 150)) + '.' }]; }
+  if(/\b(yes|yeah|sure|agree|sounds good|lets do it|let'?s do it|do it|lock it|submit|make the pick|go for it)\b/.test(t)){
+    if(g.selected) return [{ who: 'analytics', text: 'Then press "Make the pick" and we are done. ' + g.selected.name + ' it is.' }, { who: 'scout', text: gmLast(g.selected) + ' is a good one. Let us get it in before the clock runs out.' }];
+    return [{ who: 'scout', text: 'Agree on who, though? Tell me a name or tap one on the board.' }];
+  }
+  if(/\b(hi|hey|hello|yo|sup|good evening|whats up|what'?s up)\b/.test(t)) return [{ who: gmRand(['coach', 'scout', 'analytics']), text: gmRand(['Evening. We are on the clock, so let us get to it.', 'Hey. Big night. Who is on your mind?', 'Good to see you. We have work to do.']) }];
+  if(/\b(thanks|thank you|nice|good job|great)\b/.test(t)) return [{ who: gmRand(['coach', 'analytics']), text: gmRand(['Appreciate it. Let us keep our eyes on the pick.', 'Thanks. Now, who are we taking?']) }];
+  if(/\b(fuck|shit|idiot|trash|suck|hate)\b/.test(t)) return [{ who: 'coach', text: 'Let us keep it professional, we are on the clock. Tell me what you want to do.' }];
+  /* unknown: stay useful, never repeat */
+  const a = g.adv.list.filter(x => x.id !== last)[Math.floor(Math.random() * 2)] || g.adv.list[0];
+  const p = g.focus || gmOwnBest(a.id);
+  return [{ who: a.id.id || a.id, text: gmRand(['I want to make sure I understand you. Are you asking about a specific player, a position, or about the pick itself?', 'I am not sure what you are asking me. If it helps, I can compare two players, break down ' + p.name + ', or go over our needs.', 'Give me a name, a position or a trait, like shooting or defense, and I will answer straight.']) }];
+}
+
+/* ===================== AI FRONT OFFICE (Supabase function -> Claude) ===================== */
+const gmAI = { state: 'unknown', fails: 0, noted: false };
+function gmAIStatus(){
+  if(typeof currentUser === 'undefined' || !currentUser) return { on: false, text: 'Sign in to talk to the AI front office. Until then they use the built-in brain, which still argues from real scouting data.' };
+  if(gmAI.state === 'off') return { on: false, text: 'The AI front office is not responding right now, so they are using the built-in brain.' };
+  return { on: true, text: 'AI front office is on. They will interpret anything you type.' };
+}
+function gmSlim(p){
+  const s = gmSeason(p);
+  return { id: p.id, name: p.name, pos: p.pos, school: p.school, class: p.cls, age: p.age, height: p.hs, weight: p.wt, boardRank: p.rk,
+    strengths: (p.strengths || []).slice(0, 3).map(x => gmShort(x, 150)), weaknesses: (p.weaknesses || []).slice(0, 3).map(x => gmShort(x, 150)),
+    comp: (p.comps || [])[0] || null, summary: gmShort(p.summary, 280),
+    season: s ? { when: gmWhen(s), ppg: s.ppg, rpg: s.rpg, apg: s.apg, stl: s.stl, blk: s.blk, tov: s.to, mpg: s.min, fgPct: s.fg, threePct: s.tpt, threeAttempts: s.tpa, ftPct: s.ft } : null };
+}
+function gmAIContext(text){
+  const g = gm, pickNo = draftSimPickIndex + 1, ch = NBA_DEPTH_CHARTS[g.team];
+  const avail = gmAvail(), top = avail.slice(0, 12), extra = gmFindMentions(text).filter(m => avail.some(a => a.id === m.id) && !top.some(t => t.id === m.id));
+  return {
+    team: g.team, pickNumber: pickNo, totalPicks: getVisiblePickOrder().length, yourLaterPicks: g.mine.filter(n => n > pickNo),
+    clock: g.clock ? { secondsLeft: g.clockLeft, paused: !!g.paused } : null,
+    advisors: g.adv.list.map(a => ({ id: a.id, name: a.name, title: a.role, lens: a.id === 'scout' ? 'talent and upside first' : a.id === 'coach' ? 'roster fit and readiness first' : 'age, efficiency and draft-slot value first' })),
+    depthChart: ch ? { starters: ch.starters.map(x => x.n + ' (' + x.pos + ')'), second: (ch.second || []).map(x => x.n + ' (' + x.pos + ')'), third: (ch.third || []).map(x => x.n + ' (' + x.pos + ')') } : null,
+    positionalNeed: gmNeeds(g.team),
+    recentPicks: draftSimResults.slice(-8).map(r => ({ pick: r.pick, team: r.team.split(' (from')[0], player: r.player.name })),
+    selectedPlayer: g.selected ? gmSlim(g.selected) : null, focusPlayer: g.focus ? gmSlim(g.focus) : null,
+    topAvailable: top.map(gmSlim), alsoMentioned: extra.map(gmSlim),
+    advisorFavorites: Object.fromEntries(GM_LENS.map(l => [l, gmOwnBest(l).name]))
+  };
+}
+async function gmAICall(text){
+  if(typeof currentUser === 'undefined' || !currentUser || typeof sb === 'undefined' || gmAI.state === 'off') return null;
+  try{
+    const body = { message: text, context: gmAIContext(text), history: (gm.hist || []).slice(-10) };
+    const res = await Promise.race([sb.functions.invoke('gm-chat', { body }), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 18000))]);
+    if(res.error) throw res.error;
+    const d = res.data;
+    if(!d || !Array.isArray(d.replies) || !d.replies.length) throw new Error('empty');
+    gmAI.state = 'on'; gmAI.fails = 0;
+    return d;
+  }catch(e){
+    gmAI.fails++; gmAI.lastErr = String((e && e.message) || e);
+    if(gmAI.fails >= 2) gmAI.state = 'off';
+    return null;
+  }
+}
+async function gmRespond(text){
+  const g = gm; if(!g) return;
+  if(g.reacting){ (g.queue = g.queue || []).push(text); return; }
   g.reacting = true;
   try{
-    for(const a of g.adv.list){
-      if(gm !== g) return;
-      const rank = gmRanked(a.id).findIndex(x => x.id === p.id), top = gmRanked(a.id)[0];
-      let text;
-      if(rank !== -1 && rank <= 2) text = (rank === 0 ? 'That is my guy too. ' : 'I can live with ' + gmLast(p) + '. ') + gmReason(a.id, p);
-      else text = 'I am not there on ' + gmLast(p) + '. ' + (a.id === 'scout' ? 'The upside is not what ' + top.name + ' offers. ' : a.id === 'coach' ? 'My concern is that ' + gmWeakness(p).replace(/^./, c => c.toLowerCase()) + '. ' : 'The value does not match the slot. ') + 'I would still take ' + top.name + '.';
-      await gmPost(a.id, text);
+    let out = null, ai = null;
+    if(gmAIStatus().on){ gmQuote('room', '', true); ai = await gmAICall(text); if(gm !== g) return; }
+    if(ai){
+      const ok = new Set(GM_LENS);
+      out = ai.replies.filter(r => r && ok.has(r.who) && typeof r.text === 'string' && r.text.trim()).slice(0, 3).map(r => ({ who: r.who, text: r.text.trim().slice(0, 520) }));
+      const sel = ai.select != null ? gmAvail().find(p => p.id === Number(ai.select)) : null;
+      if(sel){ g.selected = sel; g.focus = sel; gmRenderBoard(); gmRenderBar(); }
+      if(!out.length) out = null;
     }
-  } finally { if(gm === g) g.reacting = false; }
-}
-function gmFindMention(text){
-  const t = ' ' + nameKey(text) + ' ';
-  let best = null;
-  players.forEach(p => {
-    const full = nameKey(p.name), parts = full.split(' '), last = parts[parts.length - 1];
-    if(t.includes(' ' + full + ' ')) { if(!best || best.s < 3) best = { p, s: 3 }; }
-    else if(last.length > 3 && t.includes(' ' + last + ' ')) { if(!best || best.s < 2) best = { p, s: 2 }; }
-  });
-  return best ? best.p : null;
+    if(!out){
+      if(!g.noted && gmAI.state === 'off'){ g.noted = true; gmLogSys('The AI front office is offline. Using the built-in brain.'); }
+      out = gmBrain(text);
+      const sel = out.find(o => o.select); if(sel){ const p = players.find(x => x.id === sel.select); if(p){ g.selected = p; gmRenderBoard(); gmRenderBar(); } }
+    }
+    for(const o of out){ if(gm !== g) return; if(o.who === 'sys') gmLogSys(o.text); else await gmPost(o.who, o.text); }
+  } finally {
+    if(gm === g){ g.reacting = false; const nx = (g.queue || []).shift(); if(nx) gmRespond(nx); }
+  }
 }
 async function gmSend(e){
   e.preventDefault();
   const inp = document.getElementById('gmInput'); const text = inp.value.trim(); if(!text || !gm) return;
   inp.value = '';
   await gmPost('you', text, true);
-  const g = gm; if(g.reacting) return;
-  const t = text.toLowerCase();
-  const m = gmFindMention(text);
-  if(m){
-    const gone = draftSimResults.find(r => r.player.id === m.id);
-    if(gone){ await gmPost('scout', m.name + ' is off the board. The ' + gone.team.split(' (from')[0] + ' took him at ' + gmOrd(gone.pick) + '.'); return; }
-    g.selected = m; gmRenderBoard(); gmRenderBar();
-    await gmReact(m); return;
-  }
-  g.reacting = true;
-  try{
-    const rk = a => gmRanked(a)[0];
-    const say = async (id, s) => { await gmPost(id, s); };
-    if(/trade|phone|call|move (up|down)/.test(t)) await say('analytics', 'The phones are quiet. Nobody is calling about this pick, so we stay on the board.');
-    else if(/need|fit|position|roster|depth/.test(t)){ const n = gmNeeds(g.team), top = Object.keys(n).sort((a, b) => n[b] - n[a])[0]; await say('coach', 'Look at the depth chart on the screen. Our thinnest spot is ' + ({ guard: 'guard', wing: 'wing', big: 'big man' })[top] + ', and ' + rk('coach').name + ' fits that best.'); }
-    else if(/upside|ceiling|potential|star|swing/.test(t)) await say('scout', 'If you want a star, it is ' + rk('scout').name + '. ' + gmReason('scout', rk('scout')));
-    else if(/safe|floor|ready|win now|contribut|experience|rotation/.test(t)) await say('coach', 'For a guy who helps right away, I want ' + rk('coach').name + '. ' + gmReason('coach', rk('coach')));
-    else if(/young|age|value|analytic|numbers|stats|efficien/.test(t)) await say('analytics', 'By the numbers it is ' + rk('analytics').name + '. ' + gmReason('analytics', rk('analytics')));
-    else if(/best available|bpa|highest|top of the board/.test(t)) await say('scout', 'Best player available is ' + gmAvail()[0].name + '. That is the safest pick on talent.');
-    else if(/who|think|suggest|recommend|opinion|options|thoughts|help/.test(t)){ for(const a of g.adv.list) await say(a.id, 'My guy is ' + rk(a.id).name + '. ' + gmShort(gmReason(a.id, rk(a.id)), 130)); }
-    else if(/why/.test(t)){ const who = g.lastSpeaker && g.lastSpeaker !== 'you' ? g.lastSpeaker : 'scout'; await say(who, 'Because ' + gmShort(gmReason(who, rk(who)), 150).replace(/^./, c => c.toLowerCase())); }
-    else if(/agree|fine|go with|lets do|let's do|lock|sounds good|make it|do it|submit/.test(t)){ if(g.selected) await say('analytics', 'Then press "Make the pick" when you are ready. ' + g.selected.name + ' it is.'); else await say('scout', 'Who are we taking? Pick someone from the board.'); }
-    else if(/time|clock|how long/.test(t)) await say('analytics', g.clock ? (g.paused ? 'The clock is paused, so take your time.' : 'We have about ' + g.clockLeft + ' seconds left.') : 'No clock on this one. Take your time.');
-    else if(/no|disagree|wrong|not sure|hmm/.test(t)) await say('scout', 'Convince me. Who is your guy?');
-    else if(/^(hi|hey|hello|yo)\b/.test(t)) await say('coach', 'Evening. We are on the clock, so let us talk about the pick.');
-    else { const a = g.adv.list[Math.floor(Math.random() * 3)]; await say(a.id, 'Let us stay focused. ' + gmAvail()[0].name + ' is still on the board and everybody is asking about him. Who do you want?'); }
-  } finally { if(gm === g) g.reacting = false; }
+  gmRespond(text);
 }
+async function gmReact(p){ gmRespond('I like ' + p.name + '.'); }
 
 document.addEventListener("DOMContentLoaded",function(){try{gmRenderSetup();}catch(e){}});
 try{gmRenderSetup();}catch(e){}
