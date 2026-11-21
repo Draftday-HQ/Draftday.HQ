@@ -2480,7 +2480,7 @@
   .gm-skip{border-color:var(--gold); color:var(--gold);} .gm-leave:hover{color:#ff6b5b; border-color:#ff6b5b;}
   #gmView{flex:1; min-height:0; position:relative;}
   /* draft stage */
-  .gm-stage{position:absolute; inset:0; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #101a3a 0%, #070a18 55%, #030409 100%);}
+  .gm-stage{--cw:clamp(90px,13vw,132px); position:absolute; inset:0; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #101a3a 0%, #070a18 55%, #030409 100%);}
   .gm-wall{position:absolute; left:4%; right:4%; top:4%; height:37%; border:3px solid #1b2547; border-radius:6px; overflow:hidden; --tc:#2d63c8; background:
       linear-gradient(135deg, rgba(200,16,46,.55) 0%, rgba(10,22,70,.2) 40%, rgba(23,64,140,.7) 100%),
       repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 9px), repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 9px), #0a1230;
@@ -2502,7 +2502,7 @@
   .gm-lectern{position:absolute; left:50%; bottom:15%; transform:translateX(-50%); width:clamp(150px,22vw,240px); height:clamp(120px,18vh,170px); background:linear-gradient(180deg,rgba(190,215,255,.28),rgba(80,110,170,.18) 60%,rgba(20,30,60,.5)); border:2px solid rgba(190,215,255,.65); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:3; backdrop-filter:blur(2px); box-shadow:0 0 30px rgba(120,160,255,.35);}
   .gm-lect-top{position:absolute; top:-6px; left:-6px; right:-6px; height:8px; background:linear-gradient(90deg,#c8102e,#fff,#2d63c8);}
   .gm-lectern span{font-family:var(--display); font-size:clamp(1.8rem,4vw,2.6rem); letter-spacing:.14em; color:#fff; line-height:1;} .gm-lectern em{font-style:normal; font-family:var(--mono); font-size:.6rem; letter-spacing:.4em; color:#9db7ff;}
-  .gm-comm{position:absolute; bottom:calc(15% + clamp(90px,13vh,130px)); left:-20%; width:clamp(90px,13vw,132px); z-index:2; transition:left 3.4s linear; filter:drop-shadow(0 0 14px rgba(120,160,255,.35));}
+  .gm-comm{position:absolute; bottom:calc(15% + clamp(90px,13vh,130px)); left:-20%; width:var(--cw); z-index:2; transition:left 3.4s linear; filter:drop-shadow(0 0 14px rgba(120,160,255,.35));}
   .gm-comm.walking{left:calc(50% - clamp(45px,6.5vw,66px));} .gm-comm.arrived{left:calc(50% - clamp(45px,6.5vw,66px)); transition:none;}
   .gm-comm-svg{width:100%; height:auto; display:block; overflow:visible;}
   .gm-comm.walking .gm-comm-svg{animation:gmBob .5s ease-in-out infinite;}
@@ -2612,8 +2612,8 @@
   .gm-wc-info b{font-family:var(--display); font-size:clamp(1.1rem,3.2vw,2.6rem); line-height:1.05; font-weight:400; letter-spacing:.02em;} .gm-wc-info small{font-family:var(--mono); font-size:clamp(.5rem,1.1vw,.74rem); letter-spacing:.08em; text-transform:uppercase; color:#b9c9ee;}
   .gm-wc-stats{display:flex; gap:clamp(8px,1.6vw,20px); margin-top:4px;} .gm-wc-stats span{display:flex; flex-direction:column; font-family:var(--mono); font-size:clamp(.42rem,.9vw,.62rem); letter-spacing:.14em; color:#9db7ff;} .gm-wc-stats b{font-family:var(--display); font-size:clamp(.95rem,2.2vw,1.7rem); color:#fff; line-height:1.05;}
   .gm-wc-logo{width:clamp(36px,7vw,92px); height:clamp(36px,7vw,92px); object-fit:contain; flex-shrink:0; filter:drop-shadow(0 0 10px rgba(255,255,255,.3));}
-  .gm-draftee{position:absolute; bottom:calc(15% + clamp(76px,11.5vh,116px) - 20px); left:112%; width:clamp(92px,13.5vw,142px); z-index:2; pointer-events:none; filter:drop-shadow(0 0 12px rgba(255,255,255,.16));}
-  .gm-draftee.in{left:calc(50% + clamp(80px,12vw,160px)); transition:left 1.7s ease-out;}
+  .gm-draftee{position:absolute; bottom:calc(15% + clamp(76px,11.5vh,116px) - 20px); left:112%; width:calc(var(--cw) * var(--hin,78) * 0.01727); transform:scaleX(var(--bw,1)); transform-origin:50% 100%; z-index:2; pointer-events:none; filter:drop-shadow(0 0 12px rgba(255,255,255,.16));}
+  .gm-draftee.in{left:calc(50% + clamp(40px,6.5vw,90px)); transition:left 1.7s ease-out;}
   .gm-draftee.walking .gm-comm-svg{animation:gmBob .5s ease-in-out infinite;} .gm-draftee.walking .gm-leg.l{transform-origin:50px 165px; animation:gmStepL .5s ease-in-out infinite;} .gm-draftee.walking .gm-leg.r{transform-origin:71px 165px; animation:gmStepR .5s ease-in-out infinite;}
   .gm-draftee.shakehand .gm-arm.l{transform-origin:15px 84px; animation:gmShakeD .3s ease-in-out 5 alternate; transform:rotate(58deg);}
   .gm-comm.shake .gm-arm.r{transform-origin:100px 76px; animation:gmShakeC .3s ease-in-out 5 alternate; transform:rotate(-58deg);}
@@ -2622,8 +2622,8 @@
   .gm-tbl{position:relative; width:clamp(54px,8vw,96px); height:clamp(18px,2.8vw,28px); border-radius:50%; background:radial-gradient(ellipse,#2b3a6a,#121832); border:1px solid rgba(157,183,255,.4); box-shadow:0 0 16px rgba(70,110,220,.35);}
   .gm-tbl b,.gm-tbl u{position:absolute; top:-10px; width:10px; height:12px; border-radius:50% 50% 30% 30%; background:#2a2e3c;} .gm-tbl b{left:18%;} .gm-tbl u{right:18%; background:#3a3f50;}
   .gm-callout{bottom:64px;}
-  .gm-ai{font-size:.78rem; line-height:1.5; padding:10px 12px; border:1px solid var(--steel-soft); color:var(--paper-dim); margin:6px 0 12px;} .gm-ai.on{border-color:#5fd39a; color:#5fd39a;}
-  @media (max-width:640px){ .gm-wall{grid-template-columns:1fr;} .gm-wall-side{display:none;} .gm-callout{bottom:56px;} .gm-wc-pick b{font-size:1.9rem;} .gm-draftee{width:92px;} .gm-draftee.in{left:calc(50% + 62px);} .gm-tbl{width:48px;} }
+  .gm-ai{font-size:.78rem; line-height:1.5; padding:10px 12px; border:1px solid var(--steel-soft); color:var(--paper-dim); margin:6px 0 12px;} .gm-ai.on{border-color:#5fd39a; color:#5fd39a;} .gm-ai.bad{border-color:#ff6b5b; color:#ffb4aa;}
+  @media (max-width:640px){ .gm-wall{grid-template-columns:1fr;} .gm-wall-side{display:none;} .gm-callout{bottom:56px;} .gm-wc-pick b{font-size:1.9rem;} .gm-draftee.in{left:calc(50% + 34px);} .gm-tbl{width:48px;} }
 </style>
 </head>
 <body>
@@ -3095,6 +3095,7 @@
         <div class="gm-opt-row" id="gmPaceRow"><span>Time between picks</span><button type="button" data-v="3" onclick="gmSetOpt('pace',3)">3s</button><button type="button" data-v="5" onclick="gmSetOpt('pace',5)">5s</button><button type="button" data-v="8" onclick="gmSetOpt('pace',8)">8s</button></div>
         <div class="gm-opt-row" id="gmClockRow"><span>Your clock</span><button type="button" data-v="0" onclick="gmSetOpt('clock',0)">None</button><button type="button" data-v="60" onclick="gmSetOpt('clock',60)">1 min</button><button type="button" data-v="120" onclick="gmSetOpt('clock',120)">2 min</button><button type="button" data-v="300" onclick="gmSetOpt('clock',300)">5 min</button><button type="button" data-v="600" onclick="gmSetOpt('clock',600)">10 min</button></div>
         <div class="gm-ai" id="gmAIStatus"></div>
+        <button type="button" class="gm-back" id="gmAITestBtn" onclick="gmAITest()" style="margin-bottom:10px;">Test AI connection</button>
         <p class="gm-note">You can pause your clock while you are on the pick. Front office names and titles come from a 2026-27 directory and may be out of date. Everything they say in the room is simulated.</p>
         <button type="button" class="gm-propose" id="gmEnterBtn" onclick="gmEnter()" style="width:100%; margin-top:14px;">Choose your team to enter the draft room</button>
       </div>
@@ -13798,8 +13799,8 @@ async function gmPost(who, text, noDelay){
 
 const GM_COMM_SVG = `<svg viewBox="0 0 120 270" class="gm-comm-svg" aria-hidden="true">
   <defs><linearGradient id="gmSuit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a3350"/><stop offset=".5" stop-color="#3b4670"/><stop offset="1" stop-color="#232b45"/></linearGradient></defs>
-  <g class="gm-leg l"><rect x="44" y="150" width="14" height="100" rx="6" fill="#3a4468"/><rect x="39" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
-  <g class="gm-leg r"><rect x="64" y="150" width="14" height="100" rx="6" fill="#3a4468"/><rect x="59" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
+  <g class="gm-leg l"><rect x="44" y="150" width="14" height="100" rx="6" fill="#222a44"/><rect x="39" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
+  <g class="gm-leg r"><rect x="64" y="150" width="14" height="100" rx="6" fill="#222a44"/><rect x="59" y="244" width="25" height="11" rx="5" fill="#0b0b0e"/></g>
   <path d="M26 72 Q60 56 94 72 L100 165 L20 165 Z" fill="url(#gmSuit)"/>
   <path d="M50 66 L60 100 L70 66 Z" fill="#f4f2ee"/>
   <path d="M57 72 L60 78 L63 72 Z" fill="#2d63c8"/><path d="M58 78 L56 118 L60 128 L64 118 L62 78 Z" fill="#2d63c8"/>
@@ -13817,18 +13818,6 @@ const GM_COMM_SVG = `<svg viewBox="0 0 120 270" class="gm-comm-svg" aria-hidden=
   <path d="M53 52 Q60 57 67 52" stroke="#8c5a45" stroke-width="2" fill="none" stroke-linecap="round" class="gm-mouth"/>
 </svg>`;
 const GM_SKIN = ['#8d5a3b', '#c68642', '#e0ac69', '#6b4226', '#f1c27d', '#a56a43'];
-function gmDrafteeSVG(color, skin){
-  return `<svg viewBox="0 0 120 300" class="gm-comm-svg" aria-hidden="true">
-  <g class="gm-leg l"><rect x="43" y="165" width="15" height="115" rx="6" fill="#2c3040"/><rect x="38" y="272" width="26" height="12" rx="5" fill="#f2efe8"/></g>
-  <g class="gm-leg r"><rect x="64" y="165" width="15" height="115" rx="6" fill="#2c3040"/><rect x="59" y="272" width="26" height="12" rx="5" fill="#f2efe8"/></g>
-  <path d="M22 78 Q60 60 98 78 L103 180 L17 180 Z" fill="#1b1d26"/><path d="M50 70 L60 104 L70 70 Z" fill="#f4f2ee"/><path d="M60 80 L56 112 L60 150 L64 112Z" fill="${color}"/>
-  <g class="gm-arm l"><rect x="8" y="78" width="15" height="88" rx="7.5" fill="#1b1d26"/><circle cx="15.5" cy="170" r="8" fill="${skin}"/></g>
-  <g class="gm-arm r"><rect x="97" y="78" width="15" height="88" rx="7.5" fill="#1b1d26"/><circle cx="104.5" cy="170" r="8" fill="${skin}"/></g>
-  <rect x="54" y="54" width="12" height="20" fill="${skin}"/><ellipse cx="60" cy="40" rx="18" ry="22" fill="${skin}"/>
-  <path d="M40 34 Q42 10 61 10 Q80 10 80 34 L80 30 Q60 24 40 30Z" fill="${color}"/><path d="M62 26 Q92 22 96 31 Q80 33 62 31Z" fill="${color}" opacity=".85"/><circle cx="60" cy="20" r="4" fill="#fff" opacity=".85"/>
-  <circle cx="53" cy="42" r="1.8" fill="#1a1410"/><circle cx="67" cy="42" r="1.8" fill="#1a1410"/><path d="M53 54 Q60 59 67 54" stroke="#3a1f14" stroke-width="2" fill="none" stroke-linecap="round"/>
-</svg>`;
-}
 function gmStageHTML(){
   let flashes = '', tables = '';
   for(let i = 0; i < 22; i++) flashes += `<i style="left:${Math.round(Math.random() * 96) + 1}%; bottom:${Math.round(Math.random() * 18) + 2}%; animation-delay:${(Math.random() * 4).toFixed(2)}s"></i>`;
@@ -13870,15 +13859,6 @@ function gmWallCard(r, team, pl){
     <div class="gm-wc-ph">${src ? `<img src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
     <div class="gm-wc-info"><em>${gmEsc(team)}</em><b>${gmEsc(r.player.name)}</b><small>${gmEsc([pl.pos, pl.school].filter(Boolean).join(' · '))}</small>${stat}</div>
     <img class="gm-wc-logo" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'"></div>`;
-}
-function gmDrafteeIn(r, team){
-  const dr = document.getElementById('gmDraftee'); if(!dr) return;
-  dr.className = 'gm-draftee';
-  dr.innerHTML = gmDrafteeSVG(NBA_TEAM_COLOR[team] || '#c6a15b', GM_SKIN[r.player.id % GM_SKIN.length]);
-  void dr.offsetWidth;
-  dr.classList.add('in', 'walking');
-  const g = gm;
-  setTimeout(() => { if(gm !== g) return; dr.classList.remove('walking'); dr.classList.add('shakehand'); const c = document.getElementById('gmComm'); if(c){ c.classList.add('shake'); setTimeout(() => c.classList.remove('shake'), 1500); } }, g && g.fast ? 100 : 1700);
 }
 async function gmAnnounce(r){
   const g = gm;
@@ -14200,12 +14180,7 @@ function gmBrain(text){
 }
 
 /* ===================== AI FRONT OFFICE (Supabase function -> Claude) ===================== */
-const gmAI = { state: 'unknown', fails: 0, noted: false };
-function gmAIStatus(){
-  if(typeof currentUser === 'undefined' || !currentUser) return { on: false, text: 'Sign in to talk to the AI front office. Until then they use the built-in brain, which still argues from real scouting data.' };
-  if(gmAI.state === 'off') return { on: false, text: 'The AI front office is not responding right now, so they are using the built-in brain.' };
-  return { on: true, text: 'AI front office is on. They will interpret anything you type.' };
-}
+const gmAI = { state: 'unknown', fails: 0, noted: false, lastMsg: '', checked: null };
 function gmSlim(p){
   const s = gmSeason(p);
   return { id: p.id, name: p.name, pos: p.pos, school: p.school, class: p.cls, age: p.age, height: p.hs, weight: p.wt, boardRank: p.rk,
@@ -14228,22 +14203,6 @@ function gmAIContext(text){
     advisorFavorites: Object.fromEntries(GM_LENS.map(l => [l, gmOwnBest(l).name]))
   };
 }
-async function gmAICall(text){
-  if(typeof currentUser === 'undefined' || !currentUser || typeof sb === 'undefined' || gmAI.state === 'off') return null;
-  try{
-    const body = { message: text, context: gmAIContext(text), history: (gm.hist || []).slice(-10) };
-    const res = await Promise.race([sb.functions.invoke('gm-chat', { body }), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 18000))]);
-    if(res.error) throw res.error;
-    const d = res.data;
-    if(!d || !Array.isArray(d.replies) || !d.replies.length) throw new Error('empty');
-    gmAI.state = 'on'; gmAI.fails = 0;
-    return d;
-  }catch(e){
-    gmAI.fails++; gmAI.lastErr = String((e && e.message) || e);
-    if(gmAI.fails >= 2) gmAI.state = 'off';
-    return null;
-  }
-}
 async function gmRespond(text){
   const g = gm; if(!g) return;
   if(g.reacting){ (g.queue = g.queue || []).push(text); return; }
@@ -14259,7 +14218,6 @@ async function gmRespond(text){
       if(!out.length) out = null;
     }
     if(!out){
-      if(!g.noted && gmAI.state === 'off'){ g.noted = true; gmLogSys('The AI front office is offline. Using the built-in brain.'); }
       out = gmBrain(text);
       const sel = out.find(o => o.select); if(sel){ const p = players.find(x => x.id === sel.select); if(p){ g.selected = p; gmRenderBoard(); gmRenderBar(); } }
     }
@@ -14276,6 +14234,131 @@ async function gmSend(e){
   gmRespond(text);
 }
 async function gmReact(p){ gmRespond('I like ' + p.name + '.'); }
+
+const PLAYER_LOOK = {"Jasiah Jervis":{"skin":"#966343","hair":"#1b1512","style":"c","beard":1},"Rob Wright":{"skin":"#815a50","hair":"#1b1512","style":"c","beard":0},"Josh Irving":{"skin":"#c58b72","hair":"#1b1512","style":"c","beard":0},"Ethan Brown":{"skin":"#dea9a4","hair":"#6b4a2f","style":"s","beard":0},"Tristan Reed":{"skin":"#a26350","hair":"#1b1512","style":"c","beard":0},"Chase Foster":{"skin":"#9f6551","hair":"#1b1512","style":"l","beard":0},"Jaland Lowe":{"skin":"#ae7a5e","hair":"#1b1512","style":"c","beard":0},"Boogie Fland":{"skin":"#a4775d","hair":"#1b1512","style":"c","beard":1},"Kiyan Anthony":{"skin":"#b17860","hair":"#1b1512","style":"h","beard":1},"Quintero Barnett":{"skin":"#bc816f","hair":"#1b1512","style":"c","beard":0},"Nasir Meyer":{"skin":"#94624e","hair":"#1b1512","style":"l","beard":1},"Qayden Samuels":{"skin":"#b4785a","hair":"#1b1512","style":"a","beard":0},"Amani Hansberry":{"skin":"#965f45","hair":"#1b1512","style":"c","beard":1},"Brady Koehler":{"skin":"#eec9bb","hair":"#d9b36a","style":"s","beard":0},"Acaden Lewis":{"skin":"#ab6a54","hair":"#1b1512","style":"c","beard":0},"Caleb Gaskins":{"skin":"#563228","hair":"#1b1512","style":"c","beard":1},"Cruz Davis":{"skin":"#8c513b","hair":"#1b1512","style":"s","beard":1},"Denzel Aberdeen":{"skin":"#59433c","hair":"#1b1512","style":"l","beard":0},"Dylan Mingo":{"skin":"#c98671","hair":"#1b1512","style":"h","beard":0},"Keanu Dawes":{"skin":"#a37b62","hair":"#1b1512","style":"s","beard":0},"Kohl Rosario":{"skin":"#b48e73","hair":"#5a4030","style":"s","beard":0},"Luigi Suigo":{"skin":"#aa6456","hair":"#4a3626","style":"s","beard":1},"Money Williams":{"skin":"#8b6051","hair":"#1b1512","style":"l","beard":0},"Paul McNeil Jr.":{"skin":"#bb7655","hair":"#1b1512","style":"a","beard":0},"Sam Orme":{"skin":"#b38075","hair":"#1b1512","style":"s","beard":0},"Shelton Henderson":{"skin":"#945a44","hair":"#1b1512","style":"l","beard":0},"Somto Cyril":{"skin":"#5d3f33","hair":"#1b1512","style":"b","beard":1},"Stefan Joksimovic":{"skin":"#e7ac9e","hair":"#8a6a48","style":"s","beard":0},"Tahaad Pettiford":{"skin":"#a76244","hair":"#1b1512","style":"c","beard":0},"JJ Andrews":{"skin":"#8f5748","hair":"#1b1512","style":"s","beard":0},"Billy Richmond III":{"skin":"#8c6255","hair":"#1b1512","style":"b","beard":1},"Jordan Smith Jr.":{"skin":"#834f42","hair":"#1b1512","style":"A","beard":0},"Miikka Muurinen":{"skin":"#dba593","hair":"#b5643a","style":"c","beard":0},"Abdou Toure":{"skin":"#7f5248","hair":"#1b1512","style":"l","beard":0},"Adam Atamna":{"skin":"#e5a887","hair":"#1b1512","style":"c","beard":1},"Alex Condon":{"skin":"#c59489","hair":"#a67c52","style":"s","beard":0},"Alvaro Folgueiras":{"skin":"#d6aa9c","hair":"#1b1512","style":"s","beard":0},"Bryson Tiller":{"skin":"#ab7c5f","hair":"#1b1512","style":"b","beard":1},"Cameron Houindo":{"skin":"#bb876d","hair":"#1b1512","style":"c","beard":1},"Cameron Williams":{"skin":"#724431","hair":"#1b1512","style":"b","beard":1},"Cayden Boozer":{"skin":"#a36e59","hair":"#1b1512","style":"c","beard":1},"DJ Wagner":{"skin":"#c88b6a","hair":"#1b1512","style":"c","beard":0},"Dame Sarr":{"skin":"#7c5745","hair":"#1b1512","style":"l","beard":0},"Dash Daniels":{"skin":"#9a6a58","hair":"#1b1512","style":"c","beard":0},"David Punch":{"skin":"#dba694","hair":"#1b1512","style":"a","beard":1},"Deron Rippey Jr.":{"skin":"#b27555","hair":"#1b1512","style":"l","beard":0},"Eric Dailey Jr.":{"skin":"#7d4739","hair":"#1b1512","style":"b","beard":0},"Flory Bidunga":{"skin":"#794236","hair":"#1b1512","style":"b","beard":0},"Isaiah Johnson":{"skin":"#bb7768","hair":"#1b1512","style":"a","beard":0},"Jackson Shelstad":{"skin":"#cf9481","hair":"#1b1512","style":"s","beard":0},"Jason Crowe Jr.":{"skin":"#c38f6b","hair":"#1b1512","style":"a","beard":0},"John Blackwell":{"skin":"#57392b","hair":"#1b1512","style":"c","beard":0},"Killyan Toure":{"skin":"#8a6952","hair":"#1b1512","style":"h","beard":0},"Klark Reithauser":{"skin":"#9b684f","hair":"#1b1512","style":"c","beard":0},"Mackenzie Mgbako":{"skin":"#705348","hair":"#1b1512","style":"b","beard":1},"Mason Falslev":{"skin":"#c4837d","hair":"#a8744a","style":"s","beard":0},"Matas Vokietaitis":{"skin":"#f2d9d0","hair":"#d29a56","style":"s","beard":0},"Miles Byrd":{"skin":"#dda48d","hair":"#1b1512","style":"c","beard":0},"Miles Sadler":{"skin":"#956653","hair":"#1b1512","style":"a","beard":0},"Obinna Ekezie Jr.":{"skin":"#7d4d3f","hair":"#1b1512","style":"c","beard":0},"PJ Haggerty":{"skin":"#b68676","hair":"#1b1512","style":"b","beard":1},"Patrick Ngongba II":{"skin":"#85533e","hair":"#1b1512","style":"c","beard":0},"Pryce Sandfort":{"skin":"#b88979","hair":"#7b5a3a","style":"s","beard":0},"Rueben Chinyelu":{"skin":"#704d3f","hair":"#1b1512","style":"c","beard":1},"Thomas Haugh":{"skin":"#b6897c","hair":"#d6b574","style":"s","beard":0},"Trent Perry":{"skin":"#c18a6f","hair":"#6a3b22","style":"c","beard":0},"Xavier Booker":{"skin":"#7f4737","hair":"#1b1512","style":"b","beard":1},"Cheickh Niang":{"skin":"#6a4740","hair":"#1b1512","style":"b","beard":0},"Colben Landrew":{"skin":"#b07a59","hair":"#1b1512","style":"c","beard":0},"Motiejus Krivas":{"skin":"#e5b1a4","hair":"#8a6a48","style":"s","beard":0},"Kwame Evans":{"skin":"#8d4d34","hair":"#1b1512","style":"b","beard":1},"Tyler Tanner":{"skin":"#c19075","hair":"#1b1512","style":"a","beard":0},"Arafan Diane":{"skin":"#664844","hair":"#1b1512","style":"b","beard":0},"Taylen Kinney":{"skin":"#ac7f66","hair":"#1b1512","style":"a","beard":0},"Tyran Stokes":{"skin":"#bd927f","hair":"#1b1512","style":"a","beard":1},"Daniel Jacobsen":{"skin":"#dfa28d","hair":"#7a5a3a","style":"s","beard":0},"Ivan Kharchenkov":{"skin":"#e6aaa4","hair":"#1b1512","style":"s","beard":1},"Silas Demary Jr.":{"skin":"#a66c4e","hair":"#1b1512","style":"l","beard":0},"Juke Harris":{"skin":"#ae7a63","hair":"#1b1512","style":"l","beard":0},"Caleb Holt":{"skin":"#8a514f","hair":"#1b1512","style":"l","beard":0},"Anthony Thompson":{"skin":"#865139","hair":"#1b1512","style":"a","beard":0},"Anton Bonke":{"skin":"#d7afa5","hair":"#1b1512","style":"s","beard":0},"Austin Goosby":{"skin":"#d99887","hair":"#1b1512","style":"c","beard":0},"Baba Oladotun":{"skin":"#7a5140","hair":"#1b1512","style":"c","beard":0},"Baye Ndongo":{"skin":"#482f28","hair":"#1b1512","style":"b","beard":1},"Bryson Howard":{"skin":"#5a3b2f","hair":"#1b1512","style":"b","beard":0},"Caleb Foster":{"skin":"#8d593c","hair":"#1b1512","style":"b","beard":0},"David Mirkovic":{"skin":"#e7b3a4","hair":"#4a3020","style":"s","beard":0},"Jaxon Richardson":{"skin":"#a6684e","hair":"#1b1512","style":"c","beard":1},"Jeremiah Wilkinson":{"skin":"#865042","hair":"#1b1512","style":"l","beard":0},"Josh Hubbard":{"skin":"#83564b","hair":"#1b1512","style":"c","beard":1},"Lucas Morillo":{"skin":"#cc917a","hair":"#1b1512","style":"s","beard":0},"Matthew Able":{"skin":"#c38f78","hair":"#1b1512","style":"c","beard":0},"Maxime Meyer":{"skin":"#cf9484","hair":"#c9894a","style":"s","beard":0},"Maximo Adams":{"skin":"#b27961","hair":"#1b1512","style":"b","beard":1},"Mouhamed Sylla":{"skin":"#513c35","hair":"#1b1512","style":"c","beard":1},"Neoklis Avdalas":{"skin":"#e0b0a6","hair":"#1b1512","style":"s","beard":0},"Nolan Winter":{"skin":"#d2a099","hair":"#9a7c58","style":"s","beard":0},"Paul Mbiya":{"skin":"#6a4c42","hair":"#1b1512","style":"b","beard":0},"Quentin Coleman":{"skin":"#b07358","hair":"#1b1512","style":"c","beard":0},"Sayon Keita":{"skin":"#764b3a","hair":"#1b1512","style":"b","beard":0},"Sebastian Wilkins":{"skin":"#674231","hair":"#1b1512","style":"b","beard":1},"Stefan Vaaks":{"skin":"#ddab9f","hair":"#8c6a44","style":"s","beard":0},"Terrence Brown":{"skin":"#cf9683","hair":"#1b1512","style":"h","beard":1},"Aden Holloway":{"skin":"#a26042","hair":"#1b1512","style":"a","beard":0},"Amari Allen":{"skin":"#bc846d","hair":"#1b1512","style":"a","beard":1},"Andrej Stojakovic":{"skin":"#da9a84","hair":"#1b1512","style":"s","beard":0},"Braden Frager":{"skin":"#d0a08d","hair":"#a8805a","style":"s","beard":1},"Brandon McCoy Jr.":{"skin":"#b78a78","hair":"#1b1512","style":"c","beard":0},"Braylon Mullins":{"skin":"#e6ac99","hair":"#8a5e3a","style":"s","beard":0},"Bruce Branch III":{"skin":"#ac7c6c","hair":"#1b1512","style":"s","beard":0},"Christian Collins":{"skin":"#85563c","hair":"#1b1512","style":"a","beard":0},"Coen Carr":{"skin":"#996958","hair":"#1b1512","style":"c","beard":1},"Collin Chandler":{"skin":"#8f6a62","hair":"#d8c08a","style":"s","beard":0},"Darrion Williams":{"skin":"#d09c85","hair":"#1b1512","style":"s","beard":1},"Davis Fogle":{"skin":"#f1bdae","hair":"#b5642a","style":"c","beard":0},"Hugo Yimga-Moukouri":{"skin":"#7c594c","hair":"#1b1512","style":"c","beard":1},"Jacob Cofie":{"skin":"#d09578","hair":"#1b1512","style":"a","beard":0},"Jalen Haralson":{"skin":"#754f3c","hair":"#1b1512","style":"c","beard":0},"Jordan Scott":{"skin":"#aa755f","hair":"#1b1512","style":"c","beard":0},"Joseph Tugler":{"skin":"#ae7560","hair":"#1b1512","style":"l","beard":1},"Amael L'Etang":{"skin":"#b28274","hair":"#9a6a3c","style":"s","beard":1},"Lincoln Williams":{"skin":"#d39378","hair":"#1b1512","style":"l","beard":0},"Marcis Ponder":{"skin":"#5c3e31","hair":"#1b1512","style":"b","beard":0},"Ruben Prey":{"skin":"#c99584","hair":"#c7a870","style":"s","beard":0},"Tounde Yessoufou":{"skin":"#835648","hair":"#1b1512","style":"c","beard":1},"Tajh Ariza":{"skin":"#a2674f","hair":"#1b1512","style":"a","beard":0},"Thijs De Ridder":{"skin":"#af8176","hair":"#a98660","style":"s","beard":0},"Johann Grunloh":{"skin":"#b99085","hair":"#8a6a48","style":"s","beard":0},"KJ Lewis":{"skin":"#9c664a","hair":"#1b1512","style":"c","beard":1},"Tomislav Ivisic":{"skin":"#c69387","hair":"#1b1512","style":"s","beard":2},"Zvonimir Ivisic":{"skin":"#dd9f93","hair":"#5a3a22","style":"c","beard":0},"Drew Scharnowski":{"skin":"#c28c7b","hair":"#cdb07a","style":"s","beard":0},"Quinn Costello":{"skin":"#b48e88","hair":"#3a2a1e","style":"s","beard":0},"Sam Lewis":{"skin":"#a7786a","hair":"#1b1512","style":"c","beard":1},"Tre White":{"skin":"#de9e7f","hair":"#1b1512","style":"l","beard":0},"Elyjah Freeman":{"skin":"#c48365","hair":"#1b1512","style":"a","beard":0},"Dwayne Aristode":{"skin":"#6a4232","hair":"#1b1512","style":"b","beard":1},"Kayden Mingo":{"skin":"#c6846e","hair":"#1b1512","style":"c","beard":1},"Adonis Ratliff":{"skin":"#976347","hair":"#1b1512","style":"a","beard":0},"Alex Wilkins":{"skin":"#c98c6d","hair":"#1b1512","style":"l","beard":0},"Alijah Arenas":{"skin":"#ac7a59","hair":"#1b1512","style":"a","beard":0},"Amare Bynum":{"skin":"#754432","hair":"#1b1512","style":"c","beard":0},"Donovan Atwell":{"skin":"#8e573e","hair":"#1b1512","style":"b","beard":1},"Carey Booth":{"skin":"#a97460","hair":"#1b1512","style":"l","beard":0},"Bryce Lindsay":{"skin":"#b78169","hair":"#1b1512","style":"s","beard":0},"Elliot Cadeau":{"skin":"#cca7a0","hair":"#1b1512","style":"c","beard":1},"Kanon Catchings":{"skin":"#9e5a49","hair":"#1b1512","style":"c","beard":0},"Cole Cloer":{"skin":"#c49b8c","hair":"#4a3424","style":"s","beard":0},"Darius Ratliff":{"skin":"#9b6446","hair":"#1b1512","style":"l","beard":0},"Davion Thompson":{"skin":"#a97f69","hair":"#1b1512","style":"a","beard":0},"Massamba Diop":{"skin":"#885948","hair":"#1b1512","style":"b","beard":0},"Donnie Freeman":{"skin":"#9a6050","hair":"#1b1512","style":"c","beard":0},"Eric Reibe":{"skin":"#c79f8d","hair":"#9a7a52","style":"s","beard":0},"Jeremy Fears Jr.":{"skin":"#af7455","hair":"#1b1512","style":"c","beard":0},"Braden Huff":{"skin":"#e5b3a3","hair":"#4a3020","style":"c","beard":0},"JT Toppin":{"skin":"#bb7959","hair":"#1b1512","style":"l","beard":0},"Jaden Toombs":{"skin":"#a66e57","hair":"#1b1512","style":"l","beard":0},"John Mobley Jr.":{"skin":"#9a6751","hair":"#1b1512","style":"a","beard":0},"Julius Price":{"skin":"#cd8f75","hair":"#1b1512","style":"s","beard":0},"Junior County":{"skin":"#cb987d","hair":"#1b1512","style":"c","beard":1},"Kam Williams":{"skin":"#a37161","hair":"#1b1512","style":"l","beard":1},"Kevin Overton":{"skin":"#ae6f5a","hair":"#1b1512","style":"c","beard":1},"Nik Khamenia":{"skin":"#e9a799","hair":"#9a7a52","style":"s","beard":0},"Malachi Moreno":{"skin":"#dfafa2","hair":"#3a2a20","style":"c","beard":0},"Mark Mitchell":{"skin":"#975c46","hair":"#1b1512","style":"b","beard":0},"Mason Williams":{"skin":"#cf9777","hair":"#1b1512","style":"c","beard":0},"Milan Momcilovic":{"skin":"#dcb0a5","hair":"#1b1512","style":"s","beard":1},"Hamad Mousa":{"skin":"#a5755d","hair":"#1b1512","style":"a","beard":0},"Na'jai Hines":{"skin":"#bf8564","hair":"#1b1512","style":"s","beard":1},"Naithan George":{"skin":"#c99080","hair":"#1b1512","style":"s","beard":0},"Sebastian Mack":{"skin":"#ab6a47","hair":"#1b1512","style":"l","beard":1},"Moustapha Thiam":{"skin":"#7a6568","hair":"#1b1512","style":"b","beard":0},"Toni Bryant":{"skin":"#8b5f51","hair":"#1b1512","style":"b","beard":1},"Trey McKenney":{"skin":"#d3aba0","hair":"#1b1512","style":"c","beard":1},"Zoom Diallo":{"skin":"#78534b","hair":"#1b1512","style":"c","beard":0},"Larry Johnson":{"skin":"#ae6e4e","hair":"#1b1512","style":"a","beard":0},"London Jemison":{"skin":"#a1674c","hair":"#1b1512","style":"c","beard":0},"Dedan Thomas Jr.":{"skin":"#b67262","hair":"#1b1512","style":"c","beard":0},"Derek Dixon":{"skin":"#cf9281","hair":"#1b1512","style":"c","beard":1},"Gavin Placide":{"skin":"#bc806a","hair":"#1b1512","style":"c","beard":0},"Kam Taylor":{"skin":"#794630","hair":"#1b1512","style":"a","beard":0},"Kashie Natt":{"skin":"#a16c59","hair":"#1b1512","style":"b","beard":1},"Shon Abaev":{"skin":"#d7ae95","hair":"#1b1512","style":"a","beard":1},"Tyrin Jones":{"skin":"#ce8b62","hair":"#1b1512","style":"l","beard":0}};
+function gmShade(hex, f){
+  const n = parseInt(String(hex).replace('#', ''), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const c = v => Math.max(0, Math.min(255, Math.round(v * f)));
+  return '#' + [c(r), c(g), c(b)].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+function gmLook(name, id){
+  const l = (typeof PLAYER_LOOK !== 'undefined' && PLAYER_LOOK[name]) || null;
+  return l || { skin: GM_SKIN[id % GM_SKIN.length], hair: '#1b1512', style: 's', beard: 0 };
+}
+function gmHeightIn(p){ const m = String(p && p.hs || '').match(/(\d+)'\s*(\d+)?/); return m ? Number(m[1]) * 12 + Number(m[2] || 0) : 78; }
+function gmDrafteeSVG(color, look, team, logo){
+  const skin = look.skin, skinD = gmShade(skin, .82), hair = look.hair, hairD = gmShade(hair, .8), st = look.style === 'h' ? 's' : look.style;
+  const dark = gmShade(color, .72), abbr = (typeof NBA_TEAM_ABBR !== 'undefined' && NBA_TEAM_ABBR[team]) || '';
+  let back = '', front = '';
+  if(st === 'a') back = `<ellipse cx="60" cy="27" rx="32" ry="30" fill="${hair}"/>`;
+  else if(st === 'A') back = `<ellipse cx="60" cy="26" rx="40" ry="36" fill="${hair}"/>`;
+  else if(st === 'c') back = `<ellipse cx="60" cy="26" rx="25" ry="24" fill="${hair}"/><circle cx="38" cy="33" r="7" fill="${hair}"/><circle cx="82" cy="33" r="7" fill="${hair}"/><circle cx="43" cy="22" r="8" fill="${hair}"/><circle cx="77" cy="22" r="8" fill="${hair}"/>`;
+  else if(st === 's') back = `<ellipse cx="60" cy="28" rx="21" ry="21" fill="${hair}"/>`;
+  else if(st === 'l'){
+    let strands = '';
+    [[33, 20, 7, 78], [40, 20, 6, 92], [46, 22, 5, 70], [87, 20, 7, 78], [80, 20, 6, 92], [74, 22, 5, 70]].forEach(s => { strands += `<rect x="${s[0] - s[2] / 2}" y="${s[1]}" width="${s[2]}" height="${s[3]}" rx="${s[2] / 2}" fill="${hair}"/>`; });
+    back = `<ellipse cx="60" cy="27" rx="25" ry="24" fill="${hair}"/>` + strands;
+  }
+  if(st === 'b') front = `<path d="M43 33 Q43 16 60 16 Q77 16 77 33 Q74 22 60 21 Q46 22 43 33Z" fill="${hair}" opacity=".55"/>`;
+  let beard = '';
+  if(look.beard === 1) beard = `<path d="M46 44 Q60 66 74 44 Q69 58 60 59 Q51 58 46 44Z" fill="${hair}" opacity=".78"/><path d="M52 51 Q60 49 68 51 Q60 53 52 51Z" fill="${hair}" opacity=".85"/>`;
+  if(look.beard === 2) beard = `<path d="M42 38 Q60 78 78 38 Q76 64 60 67 Q44 64 42 38Z" fill="${hair}" opacity=".92"/><path d="M50 50 Q60 47 70 50 Q60 53 50 50Z" fill="${hair}"/>`;
+  const mouth = look.beard ? gmShade(skin, 1.25) : gmShade(skin, .5);
+  const logoImg = logo ? `<image href="${logo}" x="51" y="8" width="18" height="18" preserveAspectRatio="xMidYMid meet" onerror="this.style.display='none'"/>` : '';
+  return `<svg viewBox="-20 0 160 300" class="gm-comm-svg" aria-hidden="true">
+  <g class="gm-leg l"><rect x="43" y="165" width="15" height="115" rx="6" fill="#2c3040"/><rect x="38" y="272" width="26" height="12" rx="5" fill="#f2efe8"/></g>
+  <g class="gm-leg r"><rect x="64" y="165" width="15" height="115" rx="6" fill="#2c3040"/><rect x="59" y="272" width="26" height="12" rx="5" fill="#f2efe8"/></g>
+  ${back}
+  <path d="M22 78 Q60 60 98 78 L103 180 L17 180 Z" fill="#1b1d26"/><path d="M50 70 L60 104 L70 70 Z" fill="#f4f2ee"/><path d="M60 80 L56 112 L60 150 L64 112Z" fill="${color}"/>
+  <rect x="73" y="92" width="9" height="3" fill="${color}" opacity=".9"/>
+  <g class="gm-arm l"><rect x="8" y="78" width="15" height="88" rx="7.5" fill="#1b1d26"/><circle cx="15.5" cy="170" r="8" fill="${skin}"/></g>
+  <g class="gm-arm r"><rect x="97" y="78" width="15" height="88" rx="7.5" fill="#1b1d26"/><circle cx="104.5" cy="170" r="8" fill="${skin}"/></g>
+  <rect x="53" y="54" width="14" height="22" fill="${skinD}"/>
+  <circle cx="42" cy="42" r="4.2" fill="${skinD}"/><circle cx="78" cy="42" r="4.2" fill="${skinD}"/>
+  <ellipse cx="60" cy="40" rx="18" ry="22" fill="${skin}"/>
+  ${front}${beard}
+  <circle cx="53" cy="42" r="1.9" fill="#150f0c"/><circle cx="67" cy="42" r="1.9" fill="#150f0c"/>
+  <path d="M48 37 L57 36.2 M63 36.2 L72 37" stroke="${hairD}" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <path d="M53 52 Q60 57.5 67 52" stroke="${mouth}" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M36 29 Q35 4 60 4 Q85 4 84 29 Q60 22 36 29Z" fill="${color}"/>
+  <path d="M60 4 L60 22" stroke="${dark}" stroke-width=".8" opacity=".5"/>
+  <path d="M33 28 Q60 20 87 28 Q89 35 60 37 Q31 35 33 28Z" fill="${dark}"/>
+  <circle cx="60" cy="17" r="10.5" fill="#fff" opacity=".94"/>
+  <text x="60" y="20.5" text-anchor="middle" font-size="9" font-weight="700" fill="${dark}" font-family="Arial,sans-serif">${gmEsc(abbr)}</text>
+  ${logoImg}
+</svg>`;
+}
+function gmDrafteeIn(r, team){
+  const dr = document.getElementById('gmDraftee'); if(!dr) return;
+  const pl = players.find(x => x.id === r.player.id) || r.player;
+  const look = gmLook(r.player.name, r.player.id), hin = gmHeightIn(pl);
+  const bmi = (Number(pl.wt) || 200) / (hin * hin) * 703, bw = Math.max(.9, Math.min(1.14, bmi / 24));
+  dr.className = 'gm-draftee';
+  dr.style.setProperty('--hin', hin); dr.style.setProperty('--bw', bw.toFixed(3));
+  dr.innerHTML = gmDrafteeSVG(NBA_TEAM_COLOR[team] || '#c6a15b', look, team, getNbaLogoUrl(team));
+  void dr.offsetWidth;
+  dr.classList.add('in', 'walking');
+  const g = gm;
+  setTimeout(() => { if(gm !== g) return; dr.classList.remove('walking'); dr.classList.add('shakehand'); const c = document.getElementById('gmComm'); if(c){ c.classList.add('shake'); setTimeout(() => c.classList.remove('shake'), 1500); } }, g && g.fast ? 100 : 1700);
+}
+
+function gmAIExplain(status, detail, fallback){
+  const d = String(detail || fallback || '');
+  if(/not.?found/i.test(d) || status === 404) return 'Supabase cannot find a function named "gm-chat". In Supabase, open Edge Functions and check that it exists with exactly that name and that it deployed.';
+  if(/sign_in_required/.test(d)) return 'The function did not accept your login. Sign out of the site, sign back in, and try again.';
+  if(/invalid jwt|jwt/i.test(d) || status === 401 && !/upstream/.test(d)) return 'Supabase rejected the login token (' + gmShort(d, 90) + '). Sign out, sign back in, and try again. If it keeps happening, turn off "Verify JWT" for gm-chat in its settings.';
+  if(/missing_api_key/.test(d)) return 'The function runs, but the secret ANTHROPIC_API_KEY is not set. Add it under Edge Functions, Secrets, then deploy again.';
+  if(/upstream_401|authentication|invalid x-api-key/i.test(d)) return 'Anthropic rejected the API key. Check ANTHROPIC_API_KEY for typos and that the key is active.';
+  if(/upstream_404|not_found_error|model/i.test(d)) return 'Anthropic does not recognize the model name. Set a GM_MODEL secret to a model your key can use. Details: ' + gmShort(d, 160);
+  if(/upstream_429|rate|overloaded|credit|billing/i.test(d)) return 'Anthropic refused the request (rate limit or no credit on the account). Details: ' + gmShort(d, 160);
+  if(/rate_limited/.test(d)) return 'You hit the hourly message limit for the AI front office.';
+  if(/FunctionsFetchError|Failed to send|fetch/i.test(d)) return 'The browser could not reach the function (network or CORS). Check that the function is deployed in this same Supabase project.';
+  return 'Unexpected error' + (status ? ' (' + status + ')' : '') + ': ' + gmShort(d || 'no details', 200);
+}
+async function gmAIInvoke(body){
+  const res = await Promise.race([sb.functions.invoke('gm-chat', { body }), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout after 18 seconds')), 18000))]);
+  if(res.error){
+    const e = res.error; let status = null, detail = '';
+    try{ if(e.context){ status = e.context.status; const j = await e.context.clone().json(); detail = (j.error || '') + (j.detail ? ': ' + j.detail : ''); } }catch(_){ try{ detail = await e.context.text(); }catch(__){} }
+    const err = new Error(gmAIExplain(status, detail, e.message || e.name)); err.explained = true; throw err;
+  }
+  return res.data;
+}
+function gmAIStatus(){
+  if(typeof currentUser === 'undefined' || !currentUser) return { on: false, text: 'Sign in to talk to the AI front office. Until then they use the built-in brain, which still argues from real scouting data.' };
+  if(gmAI.state === 'off') return { on: false, text: 'AI front office is off: ' + (gmAI.lastMsg || 'the function did not respond') + ' They are using the built-in brain for now.' };
+  if(gmAI.state === 'on') return { on: true, text: 'AI front office is on and responding.' };
+  return { on: true, text: 'AI front office will be used when you are on the clock. Press "Test AI connection" to check that it works.' };
+}
+async function gmAITest(){
+  const el = document.getElementById('gmAIStatus'), btn = document.getElementById('gmAITestBtn');
+  if(typeof currentUser === 'undefined' || !currentUser){ gmRenderAIStatus(); return; }
+  if(btn) btn.disabled = true; if(el){ el.className = 'gm-ai'; el.textContent = 'Testing the connection...'; }
+  try{
+    const d = await gmAIInvoke({ action: 'diagnose' });
+    if(!d || !d.ok) throw new Error(gmAIExplain(null, d && d.error, 'The function answered, but with an unexpected reply.'));
+    gmAI.state = 'on'; gmAI.fails = 0; gmAI.lastMsg = '';
+    if(el){ el.className = 'gm-ai on'; el.textContent = 'Connected. The function runs, your login works, and Claude answered (' + (d.model || 'model') + ').'; }
+  }catch(e){
+    gmAI.state = 'off'; gmAI.lastMsg = e.message;
+    if(el){ el.className = 'gm-ai bad'; el.textContent = e.message; }
+  }
+  if(btn) btn.disabled = false;
+}
+async function gmAICall(text){
+  if(typeof currentUser === 'undefined' || !currentUser || typeof sb === 'undefined' || gmAI.state === 'off') return null;
+  try{
+    const d = await gmAIInvoke({ message: text, context: gmAIContext(text), history: (gm.hist || []).slice(-10) });
+    if(!d || !Array.isArray(d.replies) || !d.replies.length) throw new Error('The AI returned an empty reply.');
+    gmAI.state = 'on'; gmAI.fails = 0;
+    return d;
+  }catch(e){
+    gmAI.fails++; gmAI.lastMsg = (e && e.message) || String(e);
+    if(gmAI.fails >= 2 || /cannot find|ANTHROPIC_API_KEY|rejected|recognize/.test(gmAI.lastMsg)) gmAI.state = 'off';
+    if(gm && !gm.noted){ gm.noted = true; gmLogSys('AI front office unavailable: ' + gmAI.lastMsg + ' Using the built-in brain.'); }
+    return null;
+  }
+}
 
 document.addEventListener("DOMContentLoaded",function(){try{gmRenderSetup();}catch(e){}});
 try{gmRenderSetup();}catch(e){}
