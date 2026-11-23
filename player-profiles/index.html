@@ -14619,20 +14619,20 @@ function gmBrain(text){
   return fb;
 }
 
-/* ===================== AI FRONT OFFICE (Supabase function -> Gemini free tier) ===================== */
+/* ===================== AI FRONT OFFICE (Supabase function -> Groq free plan) ===================== */
 const GM_AI_FUNCTION = 'super-function'; // the address Supabase gave the gm-chat function
-const GM_AI_ENABLED = true; // uses the gm-chat Supabase function (Gemini free tier); falls back to the built-in brain if unavailable
+const GM_AI_ENABLED = true; // uses the gm-chat Supabase function (Groq free plan); falls back to the built-in brain if unavailable
 const gmAI = { state: 'unknown', fails: 0, noted: false, lastMsg: '', checked: null };
 function gmSlim(p){
   const s = gmSeason(p);
   return { id: p.id, name: p.name, pos: p.pos, school: p.school, class: p.cls, age: p.age, height: p.hs, weight: p.wt, boardRank: p.rk,
-    strengths: (p.strengths || []).slice(0, 3).map(x => gmShort(x, 150)), weaknesses: (p.weaknesses || []).slice(0, 3).map(x => gmShort(x, 150)),
-    comp: (p.comps || [])[0] || null, summary: gmShort(p.summary, 280),
+    strengths: (p.strengths || []).slice(0, 2).map(x => gmShort(x, 100)), weaknesses: (p.weaknesses || []).slice(0, 2).map(x => gmShort(x, 100)),
+    comp: (p.comps || [])[0] || null, summary: gmShort(p.summary, 160),
     season: s ? { when: gmWhen(s), ppg: s.ppg, rpg: s.rpg, apg: s.apg, stl: s.stl, blk: s.blk, tov: s.to, mpg: s.min, fgPct: s.fg, threePct: s.tpt, threeAttempts: s.tpa, ftPct: s.ft } : null };
 }
 function gmAIContext(text){
   const g = gm, pickNo = draftSimPickIndex + 1, ch = NBA_DEPTH_CHARTS[g.team];
-  const avail = gmAvail(), top = avail.slice(0, 12), extra = gmFindMentions(text).filter(m => avail.some(a => a.id === m.id) && !top.some(t => t.id === m.id));
+  const avail = gmAvail(), top = avail.slice(0, 7), extra = gmFindMentions(text).filter(m => avail.some(a => a.id === m.id) && !top.some(t => t.id === m.id));
   return {
     team: g.team, pickNumber: pickNo, totalPicks: getVisiblePickOrder().length, yourLaterPicks: g.mine.filter(n => n > pickNo),
     clock: g.clock ? { secondsLeft: g.clockLeft, paused: !!g.paused } : null,
@@ -14749,10 +14749,10 @@ function gmAIExplain(status, detail, fallback){
   if(/not.?found/i.test(d) || status === 404) return 'Supabase cannot find a function at the address "' + GM_AI_FUNCTION + '". In Supabase, open Edge Functions and check that it exists with exactly that name and that it deployed.';
   if(/sign_in_required/.test(d)) return 'The function did not accept your login. Sign out of the site, sign back in, and try again.';
   if(/invalid jwt|jwt/i.test(d) || status === 401 && !/upstream/.test(d)) return 'Supabase rejected the login token (' + gmShort(d, 90) + '). Sign out, sign back in, and try again. If it keeps happening, turn off "Verify JWT" for gm-chat in its settings.';
-  if(/missing_api_key/.test(d)) return 'The function runs, but the secret GEMINI_API_KEY is not set. Add it under Edge Functions, Secrets, then deploy again.';
-  if(/upstream_401|upstream_403|api key not valid|API_KEY_INVALID|permission/i.test(d)) return 'Google rejected the API key. Google says: ' + gmShort(String(d).replace(/AQ\.[A-Za-z0-9_-]+|AIza[A-Za-z0-9_-]+/g, '[key]'), 260);
-  if(/upstream_404|not_found|not found/i.test(d)) return 'Google does not recognize the model name. Set a GM_MODEL secret to a model your key can use. Details: ' + gmShort(d, 160);
-  if(/upstream_429|rate|overloaded|credit|billing/i.test(d)) return 'Google refused the request, most likely the free daily limit was reached. Details: ' + gmShort(d, 160);
+  if(/missing_api_key/.test(d)) return 'The function runs, but the secret GROQ_API_KEY is not set. Add it under Edge Functions, Secrets, then deploy again.';
+  if(/upstream_401|upstream_403|api key not valid|API_KEY_INVALID|permission/i.test(d)) return 'Groq rejected the API key. Groq says: ' + gmShort(String(d).replace(/AQ\.[A-Za-z0-9_-]+|AIza[A-Za-z0-9_-]+/g, '[key]'), 260);
+  if(/upstream_404|not_found|not found/i.test(d)) return 'Groq does not recognize the model name. Set a GM_MODEL secret to a model your key can use. Details: ' + gmShort(d, 160);
+  if(/upstream_429|rate|overloaded|credit|billing/i.test(d)) return 'Groq refused the request, most likely the free daily limit was reached. Details: ' + gmShort(d, 160);
   if(/rate_limited/.test(d)) return 'You hit the hourly message limit for the AI front office.';
   if(/FunctionsFetchError|Failed to send|fetch/i.test(d)) return 'The browser could not reach the function (network or CORS). Check that the function is deployed in this same Supabase project.';
   return 'Unexpected error' + (status ? ' (' + status + ')' : '') + ': ' + gmShort(d || 'no details', 200);
@@ -14805,7 +14805,7 @@ async function gmAICall(text){
     return d;
   }catch(e){
     gmAI.fails++; gmAI.lastMsg = (e && e.message) || String(e);
-    if(/free daily limit|rate_limited|hourly message limit|429|busy/i.test(gmAI.lastMsg)) gmAI.fails = Math.max(0, gmAI.fails - 1); else if(gmAI.fails >= 2 || /cannot find|GEMINI_API_KEY|rejected|recognize/.test(gmAI.lastMsg)) gmAI.state = 'off';
+    if(/free daily limit|rate_limited|hourly message limit|429|busy/i.test(gmAI.lastMsg)) gmAI.fails = Math.max(0, gmAI.fails - 1); else if(gmAI.fails >= 2 || /cannot find|GROQ_API_KEY|rejected|recognize/.test(gmAI.lastMsg)) gmAI.state = 'off';
     if(gm && !gm.noted){ gm.noted = true; gmLogSys('AI front office unavailable: ' + gmAI.lastMsg + ' Using the built-in brain.'); }
     return null;
   }
