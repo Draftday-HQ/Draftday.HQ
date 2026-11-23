@@ -2624,6 +2624,52 @@
   .gm-callout{bottom:64px;}
   .gm-ai{font-size:.78rem; line-height:1.5; padding:10px 12px; border:1px solid var(--steel-soft); color:var(--paper-dim); margin:6px 0 12px;} .gm-ai.on{border-color:#5fd39a; color:#5fd39a;} .gm-ai.bad{border-color:#ff6b5b; color:#ffb4aa;}
   @media (max-width:640px){ .gm-wall{grid-template-columns:1fr;} .gm-wall-side{display:none;} .gm-callout{bottom:56px;} .gm-wc-pick b{font-size:1.9rem;} .gm-draftee.in{left:calc(50% + 34px);} .gm-tbl{width:48px;} }
+/* ---- GM4 ---- */
+.gm-war-actions{display:flex; gap:8px; align-items:center; margin:0 10px;}
+.gm-act{padding:8px 13px; border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.06); color:#f2efe8; border-radius:8px; font:600 .78rem var(--body,sans-serif); cursor:pointer;}
+.gm-act.go{background:var(--tc,#c6a15b); border-color:transparent; color:#111;}
+.gm-skip:disabled{opacity:.6; cursor:default;} .gm-skip.off{opacity:.65;}
+.gm-bgl{position:absolute; left:50%; top:2%; width:112%; height:auto !important; max-width:none; transform:translateX(-50%); opacity:.9; z-index:0; object-fit:contain !important; border-radius:0 !important; pointer-events:none;}
+.gm-wc-ph, .gm-co-ph{position:relative;} .gm-co-ph .gm-bgl{top:4%; width:112%; opacity:.9;}
+.gm-wc-ph img.gm-ph, .gm-co-ph img.gm-ph{position:relative; z-index:1;}
+.gm-tmenu{position:absolute; inset:0; z-index:60; background:rgba(8,9,14,.82); display:grid; place-items:center; padding:14px;}
+.gm-tmenu-in{width:min(760px,100%); max-height:100%; overflow:auto; background:#13151d; border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:14px;}
+.gm-tmenu-h{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:#f2efe8;} .gm-tmenu-h button{background:none; border:1px solid rgba(255,255,255,.25); color:#f2efe8; border-radius:8px; padding:6px 12px; cursor:pointer;}
+.gm-tmenu-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px;}
+.gm-tmenu-grid button{display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 6px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12); border-top:3px solid var(--tc); border-radius:10px; color:#f2efe8; cursor:pointer;}
+.gm-tmenu-grid img{width:34px; height:34px; object-fit:contain;} .gm-tmenu-grid small{opacity:.6; font-size:.68rem;}
+.gm-trade{position:absolute; inset:0; z-index:55; background:rgba(8,9,14,.88); display:grid; place-items:center; padding:12px;}
+.gm-tbox{width:min(980px,100%); max-height:100%; display:flex; flex-direction:column; background:#14161f; border:1px solid rgba(255,255,255,.14); border-top:4px solid var(--tc); border-radius:14px; overflow:hidden; color:#f2efe8;}
+.gm-thead{display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.1);} .gm-thead img{width:40px; height:40px; object-fit:contain;}
+.gm-thead small{display:block; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:#7fe0a0;} .gm-thead b{display:block;} .gm-thead em{font-style:normal; opacity:.65; font-size:.78rem;}
+.gm-thang{margin-left:auto; background:#c0392b; color:#fff; border:0; border-radius:8px; padding:8px 14px; font-weight:700; cursor:pointer;}
+.gm-tbody{display:grid; grid-template-columns:1fr 1.15fr; gap:0; min-height:0; flex:1; overflow:hidden;}
+.gm-tchatwrap{display:flex; flex-direction:column; min-height:0; border-right:1px solid rgba(255,255,255,.1);}
+.gm-tchat{flex:1; overflow:auto; padding:10px; display:flex; flex-direction:column; gap:8px; min-height:160px;}
+.gm-tmsg{max-width:88%; padding:8px 11px; border-radius:12px; font-size:.86rem; line-height:1.4;} .gm-tmsg b{display:block; font-size:.7rem; opacity:.7; margin-bottom:2px;} .gm-tmsg p{margin:0;}
+.gm-tmsg.them{background:rgba(255,255,255,.08); align-self:flex-start;} .gm-tmsg.you{background:var(--tc); color:#fff; align-self:flex-end;} .gm-tmsg.sys{align-self:center; opacity:.7; font-size:.78rem; text-align:center;}
+.gm-tcounter{border:1px dashed rgba(127,224,160,.6); border-radius:10px; padding:9px 11px; display:flex; gap:10px; align-items:center; justify-content:space-between; font-size:.8rem; background:rgba(127,224,160,.07);}
+.gm-tcounter div{display:flex; flex-direction:column; gap:2px;} .gm-tcounter small{opacity:.6; text-transform:uppercase; font-size:.6rem; letter-spacing:.1em;}
+.gm-tin{display:flex; gap:6px; padding:8px; border-top:1px solid rgba(255,255,255,.1);} .gm-tin input{flex:1; background:#0c0d13; border:1px solid rgba(255,255,255,.18); color:#f2efe8; border-radius:8px; padding:9px 10px; font-size:.86rem;} .gm-tin button{background:var(--tc); border:0; color:#fff; border-radius:8px; padding:0 14px; font-weight:700; cursor:pointer;}
+.gm-tassets{display:grid; grid-template-columns:1fr 1fr; gap:0; overflow:auto; min-height:0;}
+.gm-tcol{padding:8px; border-right:1px solid rgba(255,255,255,.07);} .gm-tcol:last-child{border:0;}
+.gm-tcol-h{display:flex; align-items:center; gap:7px; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; opacity:.85; margin-bottom:6px;} .gm-tcol-h img{width:20px; height:20px; object-fit:contain;}
+.gm-tlist{display:flex; flex-direction:column; gap:5px;} .gm-tlist em{opacity:.5; font-size:.8rem;}
+.gm-tchip{display:flex; flex-direction:column; align-items:flex-start; text-align:left; padding:7px 9px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.14); border-radius:8px; color:#f2efe8; cursor:pointer;} .gm-tchip b{font-size:.82rem;} .gm-tchip small{opacity:.6; font-size:.68rem;}
+.gm-tchip.on{background:var(--tc); border-color:transparent; color:#fff;}
+.gm-tfoot{display:flex; gap:10px; align-items:center; justify-content:space-between; padding:9px 12px; border-top:1px solid rgba(255,255,255,.1); flex-wrap:wrap;}
+.gm-tsum{display:flex; flex-direction:column; font-size:.76rem; gap:2px; opacity:.9; min-width:0;} .gm-tbtns{display:flex; gap:8px;}
+.gm-tbtn{padding:9px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.07); color:#f2efe8; font-weight:600; font-size:.82rem; cursor:pointer;} .gm-tbtn.go{background:#2e9e5b; border-color:transparent; color:#fff;} .gm-tbtn.bad{background:#a93226; border-color:transparent; color:#fff;} .gm-tbtn:disabled{opacity:.4; cursor:default;}
+.gm-ring{position:absolute; top:62px; left:50%; transform:translateX(-50%); z-index:70; display:flex; align-items:center; gap:12px; padding:12px 16px; background:#14161f; border:2px solid var(--tc); border-radius:16px; color:#f2efe8; box-shadow:0 10px 40px rgba(0,0,0,.6); animation:gmRingShake .9s ease-in-out infinite; max-width:94vw;}
+.gm-ring img{width:42px; height:42px; object-fit:contain;} .gm-ring-t small{display:block; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:#7fe0a0;} .gm-ring-t b{display:block;} .gm-ring-t em{font-style:normal; opacity:.65; font-size:.76rem;} .gm-ring-b{display:flex; gap:7px;}
+.gm-ring-ic{width:34px; height:34px; border-radius:50%; background:#2e9e5b; display:grid; place-items:center;} .gm-ring-ic i{width:14px; height:14px; border:3px solid #fff; border-radius:50% 50% 50% 0; transform:rotate(-45deg);}
+@keyframes gmRingShake{0%,100%{transform:translateX(-50%) rotate(0)}10%{transform:translateX(-50%) rotate(-2deg)}20%{transform:translateX(-50%) rotate(2deg)}30%{transform:translateX(-50%) rotate(-2deg)}40%{transform:translateX(-50%) rotate(2deg)}50%{transform:translateX(-50%) rotate(0)}}
+.gm-ofcard{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:72; width:min(520px,94vw); background:#14161f; border:1px solid rgba(255,255,255,.16); border-top:5px solid var(--tc); border-radius:14px; padding:14px; color:#f2efe8; box-shadow:0 14px 50px rgba(0,0,0,.65);}
+.gm-of-h{display:flex; align-items:center; gap:10px;} .gm-of-h img{width:40px; height:40px; object-fit:contain;} .gm-of-h small{display:block; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:#7fe0a0;}
+.gm-ofcard p{font-size:.88rem; line-height:1.45; margin:10px 0;} .gm-of-cols{display:grid; grid-template-columns:1fr 1fr; gap:8px;} .gm-of-cols div{background:rgba(255,255,255,.05); border-radius:8px; padding:8px;} .gm-of-cols small{display:block; opacity:.6; text-transform:uppercase; font-size:.6rem; letter-spacing:.1em; margin-bottom:3px;} .gm-of-cols span{display:block; font-weight:600; font-size:.84rem;}
+.gm-of-b{display:flex; gap:7px; flex-wrap:wrap; margin-top:12px;}
+.gm-ofstrip{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; padding:8px 14px; background:rgba(46,158,91,.14); border-bottom:1px solid rgba(46,158,91,.5); color:#f2efe8; font-size:.8rem;} .gm-ofstrip small{display:block; opacity:.7; text-transform:uppercase; font-size:.6rem; letter-spacing:.1em;} .gm-ofstrip .gm-of-b{margin:0;}
+@media (max-width:760px){ .gm-tbody{grid-template-columns:1fr; overflow:auto;} .gm-tchatwrap{border-right:0; border-bottom:1px solid rgba(255,255,255,.1); max-height:42vh;} .gm-war-actions{margin:0 4px;} .gm-act{padding:7px 9px; font-size:.7rem;} .gm-ring{flex-wrap:wrap; justify-content:center;} }
 </style>
 </head>
 <body>
@@ -3092,6 +3138,7 @@
         <div class="gm-team-grid" id="gmTeamGrid"></div>
         <div class="gm-fo" id="gmFoPreview"></div>
         <div class="gm-opt-row"><span>Lottery</span><label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" id="gmLottery" checked onchange="gmSetOpt('lottery', this.checked)"> Simulate the lottery first</label></div>
+        <div class="gm-opt-row" id="gmRoundsRow"><span>Draft length</span><button type="button" data-v="1" onclick="gmSetOpt('rounds',1)">1 round</button><button type="button" data-v="2" onclick="gmSetOpt('rounds',2)">2 rounds</button></div>
         <div class="gm-opt-row" id="gmPaceRow"><span>Time between picks</span><button type="button" data-v="3" onclick="gmSetOpt('pace',3)">3s</button><button type="button" data-v="5" onclick="gmSetOpt('pace',5)">5s</button><button type="button" data-v="8" onclick="gmSetOpt('pace',8)">8s</button></div>
         <div class="gm-opt-row" id="gmClockRow"><span>Your clock</span><button type="button" data-v="0" onclick="gmSetOpt('clock',0)">None</button><button type="button" data-v="60" onclick="gmSetOpt('clock',60)">1 min</button><button type="button" data-v="120" onclick="gmSetOpt('clock',120)">2 min</button><button type="button" data-v="300" onclick="gmSetOpt('clock',300)">5 min</button><button type="button" data-v="600" onclick="gmSetOpt('clock',600)">10 min</button></div>
         <div class="gm-ai" id="gmAIStatus"></div>
@@ -13432,9 +13479,11 @@ routeFromHash(__initialHash || (window.__ROUTE ? '#' + window.__ROUTE : ''));
 </script>
 <script>
 const GM_FRONT_OFFICE = {"Atlanta Hawks": {"url": "https://www.nba.com/hawks/staff-directory", "staff": [["Onsi Saleh", "President of Basketball Operations"], ["Peter Dinwiddie", "Executive Vice President, Basketball Operations"], ["Kyle Korver", "Assistant General Manager / Basketball Operations (role should be reconfirmed)"]]}, "Boston Celtics": {"url": "https://www.nba.com/celtics/team/front-office", "staff": [["Brad Stevens", "President of Basketball Operations"], ["Mike Zarren", "Assistant General Manager / Chief Basketball Strategist"], ["Dave Lewin", "Assistant General Manager"]]}, "Brooklyn Nets": {"url": "https://www.nba.com/nets/team/front-office", "staff": [["Sean Marks", "General Manager"], ["Boris Balibrea", "Assistant General Manager (role should be reconfirmed)"], ["Andy Birdsong", "VP, Basketball Strategy (role should be reconfirmed)"]]}, "Charlotte Hornets": {"url": "https://www.nba.com/hornets/staff-directory", "staff": [["Jeff Peterson", "President of Basketball Operations"], ["Ryan Gisriel", "Vice President, Basketball Operations & Strategy"], ["Dutton Akinwale", "Assistant General Manager"], ["Ryan Lambert", "Director of Amateur Scouting"], ["Jakub Kucabek", "Director of International Scouting"]]}, "Chicago Bulls": {"url": "https://www.nba.com/bulls/team/front-office", "staff": [["Bryson Graham", "Executive Vice President, Basketball Operations / General Manager (2026)"], ["Brian Hagen", "Senior Vice President, Player Personnel"], ["Stephen Mervis", "Basketball operations executive; title needs confirmation"]]}, "Cleveland Cavaliers": {"url": "https://cavsdatabase.com/staff", "staff": [["Koby Altman", "President of Basketball Operations"], ["Brandon Weems", "General Manager"], ["Jon Nichols", "Associate General Manager"], ["Brendon Yu", "Assistant General Manager"], ["José Calderón", "Assistant General Manager"]]}, "Dallas Mavericks": {"url": "https://basketball.realgm.com/nba/teams/Dallas-Mavericks/6/staff-members/Current/grid", "staff": [["Masai Ujiri", "Team President"], ["Mike Schmitz", "General Manager"], ["Matt Redfield", "Assistant General Manager"], ["Khalia Collier", "Vice President, Basketball Operations"]]}, "Denver Nuggets": {"url": "https://www.nba.com/nuggets/staff", "staff": [["Ben Tenzer", "Executive Vice President, Basketball Operations"], ["Jonathan Wallace", "Executive Vice President, Player Personnel"], ["Todd Checovich", "Vice President, Basketball Operations"], ["Layne Vashro", "Vice President, Analytics & Strategy"], ["Jim Clibanoff", "Director, Amateur & Grassroots Scouting"], ["Scott Howard", "Director, College Scouting"]]}, "Detroit Pistons": {"url": "https://www.nba.com/pistons/team/front-office", "staff": [["Trajan Langdon", "President of Basketball Operations"], ["Dennis Lindsey", "Senior Vice President, Basketball Operations"], ["Bobby Marks", "Basketball operations executive/advisor (confirm current title)"]]}, "Golden State Warriors": {"url": "https://www.nba.com/warriors/team/front-office", "staff": [["Mike Dunleavy Jr.", "General Manager"], ["Kirk Lacob", "Executive Vice President, Basketball Operations"], ["Mike Dunleavy Sr.", "Senior Advisor (role should be reconfirmed)"]]}, "Houston Rockets": {"url": "https://www.nba.com/rockets/team/front-office", "staff": [["Rafael Stone", "General Manager"], ["Gersson Rosas", "Executive Vice President, Basketball Operations"], ["Monte McNair", "Senior Vice President, Basketball Operations (reported role; reconfirm)"]]}, "Indiana Pacers": {"url": "https://basketball.realgm.com/nba/teams/Indiana-Pacers/11/staff-members/Current/grid", "staff": [["Kevin Pritchard", "President of Basketball Operations"], ["Chad Buchanan", "General Manager"], ["Ted Wu", "Executive Vice President, Basketball Operations / Assistant GM"], ["Vance Catlin", "Senior Vice President, Pro Scouting"], ["Luca Desta", "Director of College Scouting"], ["Michael Born", "Vice President, Player Personnel"]]}, "Los Angeles Clippers": {"url": "https://www.nba.com/clippers/team/front-office", "staff": [["Trent Redden", "President of Basketball Operations"], ["Mark Hughes", "Assistant General Manager"], ["Daniel Katz", "Vice President, Basketball Strategy (role should be reconfirmed)"]]}, "Los Angeles Lakers": {"url": "https://basketball.realgm.com/nba/teams/Los-Angeles-Lakers/13/staff-members/Current/grid", "staff": [["Rob Pelinka", "President of Basketball Operations & General Manager"], ["Kurt Rambis", "Senior Vice President, Basketball Operations"], ["Eric Amsler", "Assistant General Manager"], ["Rohan Ramadas", "Assistant General Manager"], ["Nick Mazzella", "Senior Director, Player Personnel"], ["Irving Thomas", "Head Scout"]]}, "Memphis Grizzlies": {"url": "https://www.nba.com/grizzlies/team/front-office", "staff": [["Zach Kleiman", "Executive Vice President, Basketball Operations & General Manager"], ["Rich Cho", "Senior Vice President, Basketball Operations (verify current role)"], ["John Hollinger", "Basketball strategy/advisory role (verify current title)"]]}, "Miami Heat": {"url": "https://www.nba.com/heat/team/front-office", "staff": [["Pat Riley", "President"], ["Andy Elisburg", "General Manager"], ["Adam Simon", "Assistant General Manager"], ["C. J. Kupchak", "Vice President, Basketball Operations (verify current title)"]]}, "Milwaukee Bucks": {"url": "https://www.nba.com/bucks/team/front-office", "staff": [["Jon Horst", "General Manager"], ["Milt Newton", "Assistant General Manager"], ["Dave Babcock", "Vice President, Player Personnel"]]}, "Minnesota Timberwolves": {"url": "https://basketball.realgm.com/nba/teams/Minnesota-Timberwolves/16/staff-members/Current/grid", "staff": [["Tim Connelly", "President of Basketball Operations"], ["Matt Lloyd", "General Manager"], ["Emmanuel Rohan", "Assistant General Manager"]]}, "New Orleans Pelicans": {"url": "https://basketball.realgm.com/nba/teams/New-Orleans-Pelicans/19/rosters", "staff": [["Joe Dumars", "Executive Vice President, Basketball Operations"], ["Troy Weaver", "Senior Vice President, Basketball Operations"], ["Adam Barnes", "Assistant General Manager"], ["Anthony Goods", "Director of International Scouting"], ["A.J. Meyer", "Director of Basketball Analytics"]]}, "New York Knicks": {"url": "https://www.nba.com/knicks/front-office", "staff": [["Leon Rose", "President of Basketball Operations"], ["William Wesley", "Executive Vice President, Senior Basketball Advisor"], ["Brock Aller", "Senior Vice President, Basketball & Strategic Planning"], ["Frank Zanin", "Senior Vice President, Player Personnel"], ["Walter Perrin", "Assistant General Manager, College Scouting"], ["Nicholas Fleder", "Director, Amateur Scouting"]]}, "Oklahoma City Thunder": {"url": "https://www.nba.com/thunder/team/front-office", "staff": [["Sam Presti", "Executive Vice President & General Manager"], ["Rob Hennigan", "Vice President, Basketball Operations"], ["Rich Cho", "Senior Vice President, Basketball Operations (role should be reconfirmed)"]]}, "Orlando Magic": {"url": "https://www.nba.com/magic/orlando-magic-executives", "staff": [["Anthony Parker", "General Manager"], ["Pete D'Alessandro", "Executive Vice President, Basketball Operations"], ["John Hammond", "Senior Advisor (confirm current title)"]]}, "Philadelphia 76ers": {"url": "https://www.nba.com/sixers/team/front-office/mike-gansey", "staff": [["Mike Gansey", "President of Basketball Operations"], ["Jameer Nelson", "Executive Vice President, Basketball Operations"], ["Daryl Morey", "President of Basketball Operations (historical title; likely superseded—do not treat as current)"]]}, "Phoenix Suns": {"url": "https://www.nba.com/suns/team/front-office", "staff": [["Brian Gregory", "General Manager"], ["James Jones", "Senior Advisor"], ["Oronde Taliaferro", "Assistant General Manager"]]}, "Portland Trail Blazers": {"url": "https://www.nba.com/blazers/frontoffice", "staff": [["Joe Cronin", "General Manager"], ["Andrae Patterson", "Assistant General Manager"], ["Asjha Jones", "Director of Basketball Strategy"], ["Danny Connors", "Director of Scouting & Remix General Manager"], ["Geoff Clark", "Director of Medical Scouting"]]}, "Sacramento Kings": {"url": "https://cdn.nba.com/teams/uploads/sites/1610612758/2025/10/2025-26-Sacramento-Kings-Media-Guide-copy.pdf", "staff": [["Scott Perry", "General Manager"], ["BJ Armstrong", "Assistant General Manager"], ["Phil Jabour", "Vice President, Basketball Operations & Player Personnel"], ["Saagar Sarin", "Senior Director, Pro Personnel"], ["Marshall Payne", "Senior Data Scientist & Lead Draft Analyst"]]}, "San Antonio Spurs": {"url": "https://www.nba.com/spurs/team/front-office", "staff": [["Brian Wright", "General Manager"], ["RC Buford", "Chief Executive Officer / Basketball operations leadership"], ["Brent Barry", "Vice President, Basketball Operations (confirm current title)"]]}, "Toronto Raptors": {"url": "https://www.nba.com/news/raptors-bobby-webster-gm-extension-2026", "staff": [["Bobby Webster", "Executive Vice President & General Manager"], ["Dan Tolzman", "Vice President, Player Personnel / Assistant General Manager"], ["Keith Boyarsky", "Vice President, Basketball Strategy & Research"], ["Tyla Flexman", "Vice President, Basketball Operations"]]}, "Utah Jazz": {"url": "https://www.nba.com/jazz/team/front-office", "staff": [["Justin Zanik", "General Manager"], ["Danny Ainge", "Alternate Governor / CEO, Basketball Operations"], ["Koby Altman", "Basketball operations advisor (reported; verify current role)"]]}, "Washington Wizards": {"url": "https://www.nba.com/wizards/staff-directory", "staff": [["Michael Winger", "President, Monumental Basketball"], ["Will Dawkins", "General Manager"], ["Travis Schlenk", "Senior Vice President, Player Personnel"], ["Frank Ross", "Vice President, College Personnel"], ["Johnny Rogers", "Vice President, Pro Personnel"], ["Tony DiLeo", "Senior Director, College Personnel"], ["Antawn Jamison", "Senior Director, Pro Personnel"]]}};
+const GM_INTEL = {"Hawks": {"phase": "RETOOL / COMPETE", "read": "Lead with versatile wings and athletic defense; add a second creator who can win a late-clock possession. The post-Trae construction needs dependable half-court creation, not another ball-dominant guard by default.", "weak": "Isolation scoring and late-clock offense; guard/wing shot creation; frontcourt size and defensive rebounding; reliable backup center minutes.", "prio": "Target a two-way combo guard or big wing who can attack a tilted defense, shoot off the catch and defend up a position. A mobile, physical center is the alternative if the board offers value.", "expir": "CJ McCollum ($21.0M), Luguentz Dort ($18.22M), Jock Landale ($14.10M), Devin Carter ($5.16M) are listed as expiring; verify options and roster status before acting.", "age": "CJ McCollum (35), veteran rotation slots; prioritize long-term wing/guard athleticism.", "rule": "Keep flexibility around the post-Trae identity; use picks to find a scalable creator. Do not overpay for a name-brand scorer who duplicates existing usage."}, "Celtics": {"phase": "SUSTAIN / CONTEND", "read": "Protect the high-end core and keep replenishing inexpensive frontcourt depth. The organization has generally valued switchable defenders, shooting, internal development and continuity around its stars.", "weak": "Frontcourt depth, especially a playable big who can defend in space; secondary rebounding; insurance for an injury-heavy season.", "prio": "A sturdy, mobile center or forward who rebounds, screens, finishes and survives playoff switches. Shooting is a plus; avoid a slow-footed specialist.", "expir": "Luka Garza ($2.80M) and one other contract are on the expiring list; team total only $5.25M across two deals.", "age": "No huge aging cliff evident in the key core; role-player turnover and durability matter more than age alone.", "rule": "With limited draft capital and low expiring money, expect a value pick, stash, or developmental big. Do not assume a rookie will be playoff-ready."}, "Nets": {"phase": "RESET / ASSET ACCUMULATION", "read": "Prioritize upside, flexibility and best-player-available decisions. The roster is the league's youngest on average (24.3); there is no reason to force a positional fit before a true cornerstone emerges.", "weak": "High-end primary creator / franchise centerpiece; defensive identity; frontcourt size and long-term lineup balance.", "prio": "Best available high-upside player, especially a lead guard/wing creator with size, processing and defensive tools. Drafting for fit is secondary.", "expir": "Michael Porter Jr. ($40.81M) and Noah Clowney ($5.41M) headline the two listed expirings; total $46.22M.", "age": "MPJ (28) is not old, but the decision is contractual/value-related. Youth is the defining roster feature.", "rule": "Treat expiring salary as optionality, not automatic cap room. Seek picks or young upside if a veteran's timeline does not match the rebuild."}, "Knicks": {"phase": "SUSTAIN / CHAMPIONSHIP DEFENSE", "read": "Retain the championship-level identity: tough half-court execution, rebounding, physical wing defense and a reliable Brunson-led offense. Draft for a playoff skill, not a developmental project that cannot earn minutes.", "weak": "Bench creation and shooting; wing depth; center insurance / durability; maintaining defensive versatility.", "prio": "A rotation-ready 3-and-D wing, secondary ballhandler or mobile big who can rebound and defend multiple coverages.", "expir": "Miles McBride ($3.96M), Andre Drummond ($2.45M) and two smaller deals; total $11.30M across four expirings.", "age": "Older veteran depth is the watch item; avoid relying on 30-plus role players for every playoff matchup.", "rule": "The Knicks are near the second apron. Low-cost draft value is unusually important; expect measured, role-specific decisions."}, "76ers": {"phase": "CALIBRATE / WIN-NOW", "read": "Build around the top-end talent with reliable availability, defense and complementary shooting. Their draft pick should solve a rotation problem rather than chase another usage-heavy scorer.", "weak": "Wing defense and size; durable frontcourt depth; connective playmaking; reliable spacing around stars.", "prio": "A strong two-way wing who can guard elite forwards, hit open threes and make quick decisions. A mobile backup big is the secondary lane.", "expir": "Dominick Barlow ($3.42M), Ariel Hukporti ($3.40M), Jabari Walker ($2.58M) plus one deal; total $11.85M.", "age": "Age/availability management for veteran stars is the core risk; preserve depth behind them.", "rule": "Small expiring total means no major salary reset. Favor low-cost rotation traits and medical/durability diligence."}, "Raptors": {"phase": "ASSEMBLE / UPSIDE", "read": "Continue leaning into long, versatile athletes and multi-positional defenders, but make sure the lineup has enough shooting and a clear primary half-court organizer.", "weak": "Shooting gravity; half-court creation; center depth and rim protection; lineup spacing around long wings.", "prio": "A high-feel guard who can shoot and run pick-and-roll, or a stretch-capable big who protects the rim. Prioritize skill over length alone.", "expir": "RJ Barrett ($29.62M) and three other contracts; total $36.77M across four expirings.", "age": "Veteran role players and contract decisions matter more than a broad aging-core concern.", "rule": "Do not draft another non-shooting forward simply because he fits the length profile. Add a bankable skill."}, "Bulls": {"phase": "RESET / REASSESS", "read": "The front office should seek a coherent timeline and avoid paying premium prices for a low-ceiling middle. Development, pick value and flexible contracts should lead.", "weak": "Primary creator; rim protection; defensive rebounding; two-way wing talent; consistent identity.", "prio": "Best upside available, especially a lead guard or two-way wing with creation potential. A rim-protecting center is a strong alternative.", "expir": "Isaac Okoro ($11.81M), Jalen Smith ($9.43M), plus one; total $23.65M across three expirings.", "age": "Veteran contracts should be evaluated against the young core's growth curve; no need to chase short-term wins.", "rule": "Use the draft to add a potential starter, not a narrow specialist. Trade veterans only when return matches timeline and value."}, "Cavaliers": {"phase": "CONTEND / CALIBRATE", "read": "Keep the core's strengths while improving playoff scalability: size on the wing, switchability, shooting and options when the first action is taken away.", "weak": "Big wing defense; lineup flexibility; secondary creation; frontcourt depth behind the core bigs.", "prio": "A long, strong wing who can defend top scorers and make open threes. Avoid a small guard unless he brings exceptional creation.", "expir": "Five expirings total $10.14M; no large single expiring contract identified in the top salary list.", "age": "Manage veteran core's prime years; the issue is fit and playoff matchup flexibility more than age.", "rule": "A low-cost wing who can grow into a playoff role is the rational pick. Avoid redundant undersized guards."}, "Pistons": {"phase": "ASCEND / BUILD AROUND CORE", "read": "Keep adding shooting, decision-making and frontcourt depth around the young lead group. The organization should protect its defensive foundation while improving half-court offense.", "weak": "Reliable shooting; secondary creation; bench spacing; backup big depth and rebounding.", "prio": "A movement shooter or two-way wing who can play without the ball. A big who screens, rebounds and protects the rim is the alternative.", "expir": "Paul Reed ($5.60M), Daniss Jenkins ($4.00M), Javonte Green ($3.94M), Taurean Prince ($3.82M) plus two; total $23.59M.", "age": "Veteran depth includes 32-33-year-old players; the core remains young.", "rule": "Draft for complementary shooting and processing. Do not clog the development path of young guards with another ball-dominant prospect."}, "Pacers": {"phase": "COMPETE / RECOVER", "read": "Maintain pace, passing and shooting while ensuring the roster can defend bigger playoff teams. The front office historically values fit, ball movement and competitive depth.", "weak": "Wing size and defense; frontcourt rebounding; point-of-attack containment; backup creation if injuries hit. Realistic draft priorities A long wing defender with catch-and-shoot range, or a mobile big who rebounds and can defend in space.", "prio": "A long wing defender with catch-and-shoot range, or a mobile big who rebounds and can defend in space.", "expir": "Jarace Walker ($8.48M), Ben Sheppard ($5.03M) and one other; total $15.96M across three expirings.", "age": "Core players are in their prime; health and depth are the real variables.", "rule": "Look for a ready-to-contribute defender with a defined skill. Avoid a long developmental project if the team is trying to contend."}, "Bucks": {"phase": "RETOOL / AGE MANAGEMENT", "read": "Balance the win-now mandate with the need to refresh athleticism and shooting. The front office has often chased proven veterans; the draft should bring younger legs and defense.", "weak": "Perimeter defense; athletic wing depth; reliable secondary creation; long-term frontcourt succession.", "prio": "A rangy wing who can defend, run the floor and hit open shots. Upside at guard is useful if it does not duplicate the primary creator.", "expir": "Tyler Herro ($33.0M), Kyle Kuzma ($20.35M), Caris LeVert ($14.81M), Jaime Jaquez Jr. ($5.94M), plus three; $84.82M total across seven expirings.", "age": "Veteran-heavy roster construction and aging stars make succession planning urgent.", "rule": "Do not use the pick on an older low-upside prospect. A rookie wing with defensive tools and energy can extend the competitive window."}, "Heat": {"phase": "ALL-IN / CALIBRATE", "read": "The Giannis acquisition changes the mandate: maximize the star pairing, preserve Bam's defensive value and rebuild the shooting lost in the trade. Miami's culture/development pipeline remains a differentiator.", "weak": "High-volume shooting; secondary ballhandling; wing defense; frontcourt spacing and fit around Giannis/Bam.", "prio": "A knockdown shooter who can defend and move without the ball, or a secondary creator who punishes help. Shooting is the premium skill.", "expir": "Davion Mitchell ($12.40M), Tim Hardaway Jr. ($6.50M) and two smaller deals; total $23.80M.", "age": "Klay Thompson / Tim Hardaway age curve and veteran minutes are relevant; Bam/Giannis are the core.", "rule": "Prioritize shooting and low-mistake decision-making. A developmental non-shooter is a poor fit unless the upside is exceptional."}, "Hornets": {"phase": "RESET / DEVELOPMENT", "read": "Build around young shot creation and length; use patient development and targeted veteran support rather than premature win-now spending.", "weak": "Rim protection; reliable wing defense; shooting and health; secondary creation alongside the lead guard.", "prio": "Best available high-upside wing or big with defensive tools and a translatable offensive skill.", "expir": "Grant Williams ($14.27M), Moussa Diabate ($2.46M) and three others; $29.58M total across five expirings.", "age": "Veteran role players are not the timeline; protect minutes for young players.", "rule": "Draft for ceiling and skill development. Avoid paying to keep a crowded middle-tier rotation."}, "Magic": {"phase": "ASCEND / CONTEND", "read": "A defense-first, size-rich roster needs the offense to catch up. Add shooting and creators who can punish closeouts without weakening the defensive identity.", "weak": "High-level shooting; half-court shot creation; point guard organization; center depth if the rotation thins.", "prio": "A guard/wing shooter who can create a little off the dribble and make quick reads. Shooting must be real, not theoretical.", "expir": "Jonathan Isaac ($10.45M), Anthony Black ($10.11M), Goga Bitadze ($7.61M), plus three; $35.65M total.", "age": "Veteran frontcourt and Isaac's availability are watch points; Anthony Black is young but contract decision looms.", "rule": "The best pick is likely a shooter with size and defensive competence. Avoid another non-shooting athlete."}, "Wizards": {"phase": "RESET / HIGH-VARIANCE", "read": "The Trae Young contract and AJ Dybantsa bet create a fascinating timeline question. The front office must determine whether Trae accelerates Dybantsa or consumes the flexibility needed to build around him.", "weak": "Defensive infrastructure around small lead guard; secondary playmaking; shooting; young frontcourt development.", "prio": "A long, switchable wing defender or rim protector who can cover for guard defense. If elite creation falls, take talent over fit.", "expir": "Bilal Coulibaly ($9.24M), Deandre Ayton ($8.10M), Anthony Gill ($2.45M); $19.79M total across three.", "age": "Trae Young (28) is not old; the concern is contract commitment and defensive fit. Veteran Ayton is 28.", "rule": "Draft for defense and scalable skills. Do not treat Trae as a confirmed cornerstone until the Dybantsa pairing proves itself."}, "Nuggets": {"phase": "CONTEND / CALIBRATE", "read": "Jokic, Murray and Gordon demand a title-level supporting cast. The front office's challenge is to restore wing defense, depth and lineup flexibility after losing defensive personnel.", "weak": "Wing defense; bench scoring; athleticism; backup center minutes; perimeter pressure.", "prio": "A ready wing defender with size, shooting and enough decision-making to play beside Jokic. A mobile backup big is next.", "expir": "Cameron Johnson ($23.06M), Julian Strawther ($4.83M) and five others; $37.95M total across seven expirings.", "age": "Nikola Jokic is 31; DeMar DeRozan not in core; veteran role-player age and contract churn matter.", "rule": "The pick should be a playable rotation wing. Avoid a high-usage guard who needs the ball away from Jokic/Murray."}, "Timberwolves": {"phase": "ASSEMBLE / HIGH-VARIANCE", "read": "LaMelo Ball's arrival changes the roster geometry and offensive hierarchy around Anthony Edwards. Tim Connelly is willing to make large swings; the test is whether the pieces become more coherent.", "weak": "Defensive fit around LaMelo; wing shooting; frontcourt spacing; transition defense and turnover control.", "prio": "A big wing who can shoot, defend and play off the ball. A defensive-minded guard is viable if he can survive next to LaMelo.", "expir": "Donte DiVincenzo ($12.54M), Bones Hyland ($2.85M) and one other; $17.83M total across three.", "age": "Mike Conley (39) is an age/backup point guard succession issue.", "rule": "Draft for fit with a high-usage creator: catch-and-shoot, defense, low turnovers. Avoid another ball-dominant guard."}, "Thunder": {"phase": "SUSTAIN / RELOAD", "read": "Keep the development engine running. The front office has shown a willingness to convert expensive veterans into younger players and picks while trusting scouting and player development. Weaknesses to pressure-test Replace lost perimeter shooting/defense; add size and rebounding; maintain a surplus of playable wings.", "weak": "Replace lost perimeter shooting/defense; add size and rebounding; maintain a surplus of playable wings.", "prio": "Best available long, skilled prospect with shooting or defensive upside. A big with mobility and passing can add a different dimension.", "expir": "Kenrich Williams ($5.00M) is the lone listed expiring; $5.00M total.", "age": "Core is young; veteran role players are replaceable. The challenge is managing extensions and apron constraints.", "rule": "Do not force a need pick. Oklahoma City can draft upside, develop patiently and use roster churn to solve fit."}, "Trail Blazers": {"phase": "RESET / ASSEMBLE", "read": "Ja Morant and Deni Avdija give Portland talent but not automatic identity. The organization needs a clear offensive hierarchy, coaching continuity and a defensive standard.", "weak": "Point-of-attack defense; shooting around Morant; rim protection; role clarity and decision-making.", "prio": "A two-way wing shooter or defensive big who can protect the rim and run. Draft a complementary player, not another small guard who needs usage.", "expir": "Scoot Henderson ($13.59M), Micah Potter ($2.80M), Sidy Cissoko ($2.50M), Branden Carlson ($2.45M); total $21.33M across four expirings.", "age": "Ja Morant (27) and Scoot Henderson (22) create a crowded guard timeline; coaching continuity is the bigger issue.", "rule": "Prioritize fit, shooting and defensive role clarity. The front office must decide how Scoot fits with Ja rather than accumulate more guards."}, "Jazz": {"phase": "RESET / OPTION VALUE", "read": "Maintain flexibility, collect premium draft assets and avoid declaring a young prospect a franchise cornerstone too early. The Walker Kessler trade returned two unprotected firsts and two swaps, preserving optionality.", "weak": "Primary creator; defensive identity; frontcourt continuity after Kessler departure; shooting around young talent. Realistic draft priorities Best upside available, particularly a lead creator or two-way wing. Do not reach for positional fit.", "prio": "Best upside available, particularly a lead creator or two-way wing. Do not reach for positional fit.", "expir": "Josh Green ($14.68M), Brice Sensabaugh ($4.86M); $19.54M total across two expirings.", "age": "Young roster; focus on development rather than age-related decline.", "rule": "Keep picks and cap optionality. A prospect's ceiling and development runway outweigh short-term fit."}, "Warriors": {"phase": "SUSTAIN / TRANSITION", "read": "Aging roster and large expiring money make succession planning central. Preserve Curry's competitive window while gradually refreshing athleticism, size and two-way depth.", "weak": "Youth/athleticism; wing size; point-of-attack defense; frontcourt rebounding; future lead guard succession.", "prio": "A young two-way wing or guard with defensive tools and a credible shot. Favor players who can learn within a defined role.", "expir": "Jimmy Butler ($56.83M), Draymond Green ($27.68M), Brandon Williams ($2.45M) and three others; $94.31M total across six expirings.", "age": "Stephen Curry (38), Draymond Green (36), Jimmy Butler (37) are major aging/contract markers.", "rule": "The largest expiring pile in the league creates trade flexibility but not necessarily cap space. Draft a succession piece, not a win-now specialist."}, "Clippers": {"phase": "RESET / REBUILD", "read": "Without Kawhi Leonard and with limited draft capital/organizational headwinds, the Clippers need a genuine cornerstone and a credible identity before chasing veterans.", "weak": "Franchise-level creator; young talent; future draft capital; health and defensive foundation.", "prio": "Best available high-upside player, ideally a lead guard or wing creator. Trade down only if it adds meaningful future assets.", "expir": "Max Strus ($16.66M), Derrick Jones Jr. ($10.48M), Brook Lopez ($9.19M), Gradey Dick ($7.13M), Kris Dunn ($5.68M) and two more; $57.17M total.", "age": "Brook Lopez (38), Nicolas Batum (37, listed off roster), veteran age curve; Kawhi gone per reporting.", "rule": "Do not spend picks to patch a mediocre roster. Accumulate assets and develop a cornerstone."}, "Lakers": {"phase": "ASSEMBLE / CONTEND", "read": "The roster thesis is clear: Luka Don■i■ needs rim protection, defense, secondary creation and size. The front office has made targeted additions to address those needs while keeping Austin Reaves.", "weak": "Wing defense; size; backup creation; shooting consistency; depth behind rim-protecting center.", "prio": "A two-way wing who can guard up and down, shoot, and make simple reads. If available, a secondary creator with defensive size.", "expir": "Jake LaRavia ($6.00M), Dalton Knecht ($4.20M) and three others; $17.55M total across five expirings.", "age": "LeBron James (41) is the obvious aging curve; manage transition and avoid over-reliance on veteran minutes.", "rule": "Draft to complement Luka, not compete for his role. Defense, size and catch-and-shoot are premium."}, "Suns": {"phase": "RETOOL / UNCLEAR IDENTITY", "read": "The roster has accumulated pieces with individually understandable skills, but the team needs a clearer identity around Devin Booker. Avoid activity without a coherent plan.", "weak": "Defensive consistency; frontcourt size; secondary playmaking; role definition and shooting balance.", "prio": "A connector wing who defends, moves the ball and hits open shots; or a rim-protecting big with mobility.", "expir": "Miles Bridges ($22.83M), Jamaree Bouyea ($2.58M) and two more; $27.12M total across four expirings.", "age": "Veteran-heavy supporting cast and Booker prime years; assess age/contract fit before another short-term move.", "rule": "Do not draft a redundant scorer. Select a role player with a clear playoff job and preserve future flexibility."}, "Kings": {"phase": "RETOOL / DECIDE TIMELINE", "read": "A large expiring salary load gives Sacramento a chance to reshape the roster. The front office must decide whether to build around the current scoring core or pivot toward a younger, more balanced group.", "weak": "Defense at point of attack; rim protection; playmaking; wing athleticism and spacing balance.", "prio": "A defensive-minded wing or big who can protect the rim and finish. If a high-end creator falls, reassess the timeline.", "expir": "Zach LaVine ($48.97M), De'Andre Hunter ($24.91M), Ben Simmons ($2.45M) and one other; $78.47M total across four expirings.", "age": "LaVine (31) and older veteran pieces; prime-window pressure is real.", "rule": "Use expiring contracts as leverage for a timeline decision. Draft a defender with a translatable role, not another offense-only player."}, "Mavericks": {"phase": "RETOOL / BUILD AROUND NEXT CORE", "read": "Dallas needs to build a coherent team around its current young core while balancing shooting, frontcourt health and veteran shooting. The draft should provide scalable defense and skill.", "weak": "Wing defense; secondary creation; frontcourt availability; shooting and rim protection.", "prio": "A two-way wing or mobile big who can defend, rebound and make open shots. A guard is viable if he brings real playmaking.", "expir": "Klay Thompson ($17.46M), Dereck Lively II ($7.24M), Marcus Sasser ($5.20M); $29.90M total across three expirings.", "age": "Klay Thompson (36) is the clear veteran age marker; Lively's expiring status is a key contract/retention question.", "rule": "Do not confuse a cheap expiring with guaranteed cap room. Prioritize health, shooting and defensive fit."}, "Rockets": {"phase": "ASSEMBLE / CALIBRATE", "read": "The roster is being tested as a finished contender: Durant, ■engün, Amen and a returning point guard, with Marcus Smart restoring toughness and Bogdanovi■ adding shooting. The question is half-court offense.", "weak": "Half-court organization; reliable shooting; backup big depth; playoff spacing and turnover control.", "prio": "A low-usage shooter with size, or a versatile backup big who can defend in space. Avoid a high-usage prospect unless the value is overwhelming.", "expir": "Fred VanVleet ($25.00M), Bogdan Bogdanovi■ ($2.45M) and one other; $29.90M total across three expirings.", "age": "Kevin Durant (38), Fred VanVleet (32), Bogdan Bogdanovi■ (34) require succession planning.", "rule": "Draft for immediate role utility and future succession. The team needs shooting that opponents cannot ignore."}, "Grizzlies": {"phase": "RESET / RELOAD", "read": "Moving on from Ja Morant, drafting Cameron Boozer at No. 3 and accumulating assets signals a reset built around youth and optionality. Boozer is a major bet, not yet a proven cornerstone.", "weak": "Lead guard/creator; perimeter shooting; defensive identity; frontcourt development and veteran mentorship.", "prio": "Best upside available, especially a guard who can organize and defend or a wing shooter with size. Do not force an immediate Ja replacement if the board lacks one.", "expir": "KCP ($17.74M), Taylor Hendricks ($7.81M), Jordan Hawkins ($7.02M), Kris Murray ($5.32M), Walter Clayton ($4.19M), O-Max Prosper ($2.50M) and four others; $55.57M total across ten expirings.", "age": "Mike Conley not on Memphis; young roster average experience lowest in league (2.9 years).", "rule": "The largest expiring count offers roster churn. Keep the best young players, avoid rushing the timeline and use the draft to find a lead creator."}, "Pelicans": {"phase": "RETOOL / RESET", "read": "A high payroll and uneven fit create pressure to identify a durable core. The front office must decide whether to consolidate talent or keep collecting complementary pieces.", "weak": "Rim protection; perimeter defense; reliable half-court creation; shooting and availability.", "prio": "A durable two-way wing or mobile center. If the roster lacks a true lead guard, prioritize playmaking over another finisher.", "expir": "Jordan Poole ($34.04M) and three others; $38.94M total across four expirings.", "age": "Veteran salary commitments and health histories are the key risk; prioritize durable players.", "rule": "Do not draft for name value. Choose a player who can defend, shoot and stay on the floor, or use the pick in a consolidation deal."}, "Spurs": {"phase": "SUSTAIN / CONTEND", "read": "The Spurs have moved from rebuild to contender, building around Wembanyama with size, strength and complementary frontcourt pieces. The front office has a coherent, patient system and has not yet had to sacrifice core assets.", "weak": "Perimeter shooting; secondary creation; guard defense; lineup balance around Wembanyama's unique rim protection.", "prio": "A skilled guard who can shoot, run pick-and-roll and defend. Another big only if he offers a distinct spacing/physicality skill.", "expir": "Keldon Johnson ($17.50M), Harrison Barnes ($8.00M) and one other; $27.95M total across three expirings.", "age": "Harrison Barnes (34) is a veteran transition marker; Wembanyama's prime window is just beginning.", "rule": "Avoid redundant frontcourt size. Add guard skill, shooting and processing to maximize Wembanyama. Front-office behavior: what the staff should actually know 1. Start with the mandate Before discussing a prospect, identify whether the club is resetting, assembling, calibrating, sustaining or retooling. A contender should discount a long-development project; a rebuilding club should discount a low-ceiling senior prospect. 2. Separate needs from preferences A need is a missing function (point-of-attack defense, rim protection, shooting gravity, secondary creation). A preference is a player archetype or listed position. Draft for function, not labels. 3. Evaluate lineup fit, not depth-chart labels Ask: Can this player share the floor with the best players? Does he improve spacing? Can he defend the opponent’s likely playoff target? Who loses minutes? Does he need the ball? 4. Price opportunity cost A pick has value beyond the player selected: rookie-scale contract, team control, trade value and the option to select a different prospect. Compare keeping the pick with trading down, trading up, or moving it for a proven player. 5. Respect the CBA Salary matching, cap holds, exceptions, hard caps, apron restrictions, aggregation rules, trade restrictions, poison pills, BYC, cash limits and pick protections can make an otherwise attractive trade illegal. The staff should ask for a cap check before recommending it. 6. Treat expiring contracts correctly An expiring contract is not automatically cap room. Team salary, cap holds, exceptions, option decisions and Bird rights determine what space exists. An expiring player may be a trade-matching tool, rental, retention candidate or non-asset. 7. Model age as a curve, not a cutoff Separate player age, mileage, injury history, role, athletic dependency and contract length. A 31-year-old shooter may age well; a 27-year-old explosive guard with recurring lower-body injuries may carry more risk. 8. Track asset ownership precisely For every pick, store year, round, original team, current owner, protection, swap rights, conveyance conditions and whether the obligation has been satisfied. Never assume a team controls its own first. 9. Think in probabilities Use outcome bands (starter / rotation / fringe / out of league), confidence ranges and downside cases. Do not speak as if a 19-year-old prospect’s median outcome is guaranteed. 10. Account for organizational style without stereotyping"}};
 /* ===================== GM DRAFT ROOM v2 ===================== */
 let gm = null;
-const gmSetup = { team: null, pace: 5, clock: 120, lottery: true };
+const gmSetup = { team: null, pace: 5, clock: 120, lottery: true, rounds: 1 };
+let gmPrevLen = null;
 const GM_LENS = ['scout', 'coach', 'analytics'];
 const GM_LENS_COLOR = { scout: '#e0b85c', coach: '#6aa9e8', analytics: '#5fd39a', you: '#f2efe8' };
 const GM_FALLBACK = [{ name: 'Marcus Hale', title: 'Director of Scouting' }, { name: 'Dana Whitfield', title: 'Assistant General Manager' }, { name: 'Sam Okafor', title: 'Director of Analytics' }];
@@ -13464,7 +13513,7 @@ function gmAdv(id){ return gm && gm.adv.map[id]; }
 function gmRenderSetup(){
   const grid = document.getElementById('gmTeamGrid');
   if(!grid) return;
-  const total = getVisiblePickOrder().length;
+  const total = gmSetup.rounds === 2 ? 60 : 30;
   const rows = NBA_TEAMS.map(t => {
     const short = getTeamShortName(t);
     const nums = tradeTeamPickNums(short).filter(n => n <= total);
@@ -13474,7 +13523,7 @@ function gmRenderSetup(){
     <img src="${getNbaLogoUrl(r.short)}" alt="" onerror="this.style.visibility='hidden'">
     <b>${gmEsc(r.short)}</b><small>${r.nums.length ? r.nums.join(', ') : 'No picks'}</small></button>`).join('');
   const set = (id, val) => document.querySelectorAll('#' + id + ' button').forEach(b => b.classList.toggle('on', b.dataset.v === String(val)));
-  set('gmPaceRow', gmSetup.pace); set('gmClockRow', gmSetup.clock);
+  set('gmPaceRow', gmSetup.pace); set('gmClockRow', gmSetup.clock); set('gmRoundsRow', gmSetup.rounds);
   const lt = document.getElementById('gmLottery'); if(lt) lt.checked = gmSetup.lottery;
   const go = document.getElementById('gmEnterBtn'); if(go) go.textContent = gmSetup.team ? 'Enter the draft room as the ' + gmSetup.team : 'Choose your team to enter the draft room';
   gmRenderAIStatus();
@@ -13507,11 +13556,12 @@ function gmEnter(){
   if(!gmSetup.team){ alert('Pick the team you want to run first.'); return; }
   if(typeof coopEnabled !== 'undefined' && coopEnabled){ alert('Turn off Co-Op mode to use the draft room.'); return; }
   if(gmSetup.lottery && !lotteryHasRun) simulateLottery();
+  gmPrevLen = draftLength; draftLength = gmSetup.rounds === 2 ? 60 : 30; gmAudio();
   const order = getVisiblePickOrder();
   const mine = order.map((t, i) => t.split(' (from')[0].trim() === gmSetup.team ? i + 1 : 0).filter(Boolean);
-  if(!mine.length){ alert('The ' + gmSetup.team + ' have no picks in this draft length.'); return; }
+  if(!mine.length){ alert('The ' + gmSetup.team + ' have no picks in this draft length.'); draftLength = gmPrevLen; return; }
   const pool = getBoardSourcePlayers();
-  if(pool.length < order.length){ alert('Your player source only has ' + pool.length + ' players for ' + order.length + ' picks. Pick another source or a shorter draft.'); return; }
+  if(pool.length < order.length){ alert('Your player source only has ' + pool.length + ' players for ' + order.length + ' picks. Pick another source or a shorter draft.'); draftLength = gmPrevLen; return; }
   mockTradeLog = []; tradeMoves = {}; tradeCashLedger = {}; depthEdits = {};
   draftSimActive = true; draftSimPickIndex = 0; draftSimResults = []; draftSimAvailableIds = pool.map(p => p.id);
   gm = { team: gmSetup.team, adv: gmBuildAdvisors(gmSetup.team), pace: gmSetup.pace, clock: gmSetup.clock, fast: false, selected: null, mine, clockLeft: 0, clockTimer: null, lastSpeaker: null, lastRec: null, paused: false };
@@ -13519,7 +13569,7 @@ function gmEnter(){
   const ov = document.createElement('div');
   ov.id = 'gmRoom';
   ov.innerHTML = `<div class="gm-top"><div class="gm-top-title">2027 NBA Draft <span>Draft Room</span></div>
-      <div class="gm-top-btns"><button class="gm-skip" id="gmSkipBtn" onclick="gmSkip()">Skip to my pick</button><button class="gm-leave" onclick="gmLeave()">Leave</button></div></div>
+      <div class="gm-top-btns"><button class="gm-skip" id="gmWarBtn" onclick="gmOpenWar()">War room</button><button class="gm-skip" id="gmSndBtn" onclick="gmToggleSound()">Sound on</button><button class="gm-skip" id="gmSkipBtn" onclick="gmSkip()">Skip to my next pick</button><button class="gm-leave" onclick="gmLeave()">Leave</button></div></div>
     <div id="gmView"></div>`;
   document.body.appendChild(ov);
   document.body.style.overflow = 'hidden';
@@ -13527,7 +13577,7 @@ function gmEnter(){
 }
 function gmLeave(){
   if(!confirm('Leave the draft room? Your mock draft will not be saved.')) return;
-  gmClose(); quitMockDraft();
+  gmClose(); if(gmPrevLen != null) draftLength = gmPrevLen; quitMockDraft();
 }
 function gmClose(){
   if(gm && gm.clockTimer) clearInterval(gm.clockTimer);
@@ -13810,8 +13860,7 @@ const GM_COMM_SVG = `<svg viewBox="0 0 120 270" class="gm-comm-svg" aria-hidden=
   <g class="gm-arm r"><rect x="93" y="72" width="15" height="80" rx="7.5" fill="url(#gmSuit)"/><circle cx="100.5" cy="156" r="8" fill="#e0b08a"/></g>
   <rect x="54" y="50" width="12" height="20" fill="#d4a37c"/>
   <ellipse cx="60" cy="36" rx="19" ry="23" fill="#e0b08a"/>
-  <path d="M40 34 Q40 8 62 9 Q81 10 80 34 Q78 22 66 19 Q50 17 40 34Z" fill="#c9ccd4"/>
-  <path d="M41 34 Q39 26 43 22 L43 36Z M79 34 Q81 26 77 22 L77 36Z" fill="#b9bdc7"/>
+  <ellipse cx="53" cy="17" rx="9" ry="4.2" fill="#f2cfae" opacity=".55"/>
   <rect x="48" y="31" width="9" height="2.4" rx="1.2" fill="#8a8e98"/><rect x="63" y="31" width="9" height="2.4" rx="1.2" fill="#8a8e98"/>
   <circle cx="52.5" cy="40" r="1.8" fill="#2a2018"/><circle cx="67.5" cy="40" r="1.8" fill="#2a2018"/>
   <g class="gm-glasses" fill="rgba(200,225,255,.16)" stroke="#16171c" stroke-width="1.7"><rect x="45" y="34.5" width="15" height="11.5" rx="4"/><rect x="60" y="34.5" width="15" height="11.5" rx="4"/><path d="M60 38.5 Q60 37.5 60 38.5" fill="none"/><path d="M45 38 L40.5 36.5 M75 38 L79.5 36.5" fill="none"/></g>
@@ -13856,7 +13905,7 @@ function gmWallCard(r, team, pl){
   w.parentElement.style.setProperty('--tc', col);
   const stat = s ? `<div class="gm-wc-stats"><span><b>${s.ppg}</b>PPG</span><span><b>${s.rpg}</b>RPG</span><span><b>${s.apg}</b>APG</span></div>` : `<div class="gm-wc-stats"><span><b>${gmEsc(pl.hs || '')}</b>HT</span><span><b>${pl.wt || ''}</b>WT</span><span><b>${pl.age || ''}</b>AGE</span></div>`;
   w.innerHTML = `<div class="gm-wc"><div class="gm-wc-pick"><small>PICK</small><b>${r.pick}</b></div>
-    <div class="gm-wc-ph">${src ? `<img src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
+    <div class="gm-wc-ph"><img class="gm-bgl" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'">${src ? `<img class="gm-ph" src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
     <div class="gm-wc-info"><em>${gmEsc(team)}</em><b>${gmEsc(r.player.name)}</b><small>${gmEsc([pl.pos, pl.school].filter(Boolean).join(' · '))}</small>${stat}</div>
     <img class="gm-wc-logo" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'"></div>`;
 }
@@ -13866,7 +13915,7 @@ async function gmAnnounce(r){
   const team = r.team.split(' (from')[0].trim(), pl = players.find(x => x.id === r.player.id) || r.player, mine = team === g.team;
   document.getElementById('gmCallout').classList.remove('on');
   const dr = document.getElementById('gmDraftee'); if(dr) dr.className = 'gm-draftee';
-  gmWallClock(team, r.pick);
+  gmWallClock(team, r.pick); if(r.pick === 1) gmSfx('draft');
   await gmSleep(900); if(gm !== g) return;
   bubble.classList.add('on'); if(comm) comm.classList.add('talking');
   await gmType(txt, 'With the ' + gmOrd(r.pick) + ' pick in the 2027 NBA Draft, the ' + team + ' select...', 24); if(gm !== g) return;
@@ -13881,7 +13930,7 @@ async function gmAnnounce(r){
   const co = document.getElementById('gmCallout');
   co.style.setProperty('--tc', NBA_TEAM_COLOR[team] || '#c6a15b');
   co.innerHTML = `<div class="gm-co-num">${r.pick}</div>
-    <div class="gm-co-ph">${src ? `<img src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
+    <div class="gm-co-ph"><img class="gm-bgl" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'">${src ? `<img class="gm-ph" src="${src}" alt="">` : `<span>${gmEsc(initials(r.player.name))}</span>`}</div>
     <div class="gm-co-info"><b>${gmEsc(r.player.name)}</b><small>${gmEsc([pl.pos, pl.school, pl.hs].filter(Boolean).join(' · '))}</small><em>${gmEsc(team)}${mine ? ' · your pick' : ''}</em></div>
     <img class="gm-co-logo" src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'">`;
   co.classList.add('on');
@@ -14663,6 +14712,7 @@ async function gmRespond(text){
       out = gmBrain(text);
       const sel = out.find(o => o.select); if(sel){ const p = players.find(x => x.id === sel.select); if(p){ g.selected = p; gmRenderBoard(); gmRenderBar(); } }
     }
+    out = gmFilterAddressed(out, text);
     for(const o of out){ if(gm !== g) return; if(o.who === 'sys') gmLogSys(o.text); else await gmPost(o.who, o.text); }
   } finally {
     if(gm === g){ g.reacting = false; const nx = (g.queue || []).shift(); if(nx) gmRespond(nx); }
@@ -14810,6 +14860,724 @@ async function gmAICall(text){
     return null;
   }
 }
+
+/* ===================== GM v3: intel, trades, offers, sound ===================== */
+const GM_INTEL_SHORT = { 'LA Clippers': 'Clippers', 'Los Angeles Lakers': 'Lakers', 'Philadelphia 76ers': '76ers', 'Portland Trail Blazers': 'Trail Blazers' };
+function gmIntel(team){ const t = String(team || '').split(' (from')[0].trim(); return (typeof GM_INTEL !== 'undefined' && GM_INTEL[t]) || null; }
+function gmPhase(team){
+  const i = gmIntel(team); if(!i) return 'mid';
+  const w = String(i.phase || '').toUpperCase().split(/[\s\/]+/)[0];
+  if(w === 'RESET') return 'rebuild';
+  if(/^(CONTEND|SUSTAIN|ALL-IN|WIN|CHAMPIONSHIP)/.test(w)) return 'contend';
+  return 'mid';
+}
+function gmPhaseLabel(team){ const i = gmIntel(team); return i ? String(i.phase).toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : 'Unknown'; }
+function gmFirstSentence(s){ s = String(s || '').trim(); const m = s.match(/^.+?[.!?](\s|$)/); return (m ? m[0] : s).trim(); }
+function gmClause(s, n){ s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n).replace(/[;,]?\s+\S*$/, '') : s; }
+
+/* ---------- what each team wants (from the intel) ---------- */
+const GM_TRAIT_RX = {
+  shoot: /shoot|spac|three|catch|floor/i, wingd: /wing|perimeter|defen|switch|two-way|point of attack/i, rim: /rim|center|rebound|paint|interior|frontcourt/i,
+  create: /creat|playmak|handl|guard|lead|half-court|pick-and-roll|passing/i, size: /size|length|physical|big wing|frame/i, athl: /athlet|explosive|mobile|bounce|vertical/i
+};
+const GM_PROS_RX = {
+  shoot: /shoot|three|3-point|catch|spacing|stretch|floor spac|range|shot-making/i, wingd: /wing defen|perimeter defen|point of attack|lockdown|versatil|switch|two-way|defen/i,
+  rim: /rim protect|shot.?block|rim|rebound|paint|glass|interior/i, create: /creator|playmak|pick.?and.?roll|handl|shot creat|passing|lead guard|primary|facilitat/i,
+  size: /size|length|wingspan|7-?foot|physical|frame|big wing/i, athl: /athlet|explosive|vertical|bounce|burst|transition|speed/i
+};
+function gmTeamTraits(team){
+  const i = gmIntel(team); if(!i) return null;
+  const w = {}; Object.keys(GM_TRAIT_RX).forEach(k => { let s = 0; [[i.prio, 2], [i.weak, 1.3], [i.read, 1]].forEach(([txt, m]) => { const mm = String(txt || '').match(new RegExp(GM_TRAIT_RX[k].source, 'ig')); if(mm) s += Math.min(2, mm.length) * m; }); w[k] = s; });
+  const text = (i.prio + ' ' + i.weak + ' ' + i.read).toLowerCase(), pos = { guard: 0, wing: 0, big: 0 };
+  (text.match(/guard|creator|playmak|point/g) || []).forEach(() => pos.guard++); (text.match(/wing|forward/g) || []).forEach(() => pos.wing++); (text.match(/center|big|frontcourt|rim/g) || []).forEach(() => pos.big++);
+  return { w, pos };
+}
+function gmPlayerTraits(p){
+  const txt = [(p.strengths || []).join(' '), p.summary || '', p.archetype || '', p.pos || ''].join(' ');
+  const t = {}; Object.keys(GM_PROS_RX).forEach(k => { t[k] = GM_PROS_RX[k].test(txt) ? 1 : 0; });
+  return t;
+}
+function gmFitScore(team, p){
+  const tt = gmTeamTraits(team); if(!tt) return 0;
+  const pt = gmPlayerTraits(p); let s = 0;
+  Object.keys(pt).forEach(k => { if(pt[k]) s += Math.min(3, tt.w[k] || 0); });
+  const grp = gmPosGroup(p), tot = tt.pos.guard + tt.pos.wing + tt.pos.big || 1;
+  s += (tt.pos[grp] / tot) * 4;
+  return s;
+}
+function gmFitWhy(team, p){
+  const tt = gmTeamTraits(team); if(!tt) return null;
+  const pt = gmPlayerTraits(p), names = { shoot: 'shooting', wingd: 'wing defense', rim: 'rim protection and rebounding', create: 'shot creation', size: 'size', athl: 'athleticism' };
+  const hits = Object.keys(pt).filter(k => pt[k] && (tt.w[k] || 0) >= 1.5).sort((a, b) => tt.w[b] - tt.w[a]);
+  return hits.length ? hits.slice(0, 2).map(k => names[k]).join(' and ') : null;
+}
+function gmAutomatedChoice(team, pickNo){
+  const base = String(team).split(' (from')[0].trim(), avail = gmAvail();
+  if(!avail.length) return null;
+  const ph = gmPhase(base), have = new Set(draftSimResults.filter(r => r.team.split(' (from')[0].trim() === base).map(r => gmPosGroup(players.find(x => x.id === r.player.id) || r.player)));
+  const depth = Math.min(10, 4 + Math.round(pickNo * 0.12));
+  const pool = avail.slice(0, depth);
+  const fitW = ph === 'contend' ? 1.5 : ph === 'rebuild' ? 0.9 : 1.2;
+  let best = null, bs = -1e9;
+  pool.forEach((p, i) => {
+    const age = typeof p.age === 'number' ? p.age : 20;
+    let s = (100 - Math.min(p.rk, 100)) - i * 0.4 + gmFitScore(base, p) * 2.2 * fitW;
+    if(ph === 'rebuild') s += Math.max(0, 21 - age) * 1.8 + (p.rk <= 8 ? 3 : 0);
+    if(ph === 'contend') s += (/Senior|Junior|5th/.test(p.cls || '') ? 5 : 0) + Math.max(0, age - 20) * 1.2;
+    if(have.has(gmPosGroup(p))) s -= 3;
+    s += (Math.random() - 0.5) * 7;
+    if(s > bs){ bs = s; best = p; }
+  });
+  return best || avail[0];
+}
+(function(){
+  const _needs = gmNeeds;
+  gmNeeds = function(team){
+    const n = _needs(team), tt = gmTeamTraits(team);
+    if(tt){ const tot = tt.pos.guard + tt.pos.wing + tt.pos.big || 1; ['guard', 'wing', 'big'].forEach(k => { n[k] += Math.round((tt.pos[k] / tot) * 1.6); }); }
+    return n;
+  };
+})();
+function gmIntelLines(team){
+  const i = gmIntel(team); if(!i) return null;
+  return { phase: gmPhaseLabel(team), read: gmFirstSentence(i.read), weak: gmClause(i.weak, 190), prio: gmFirstSentence(i.prio), rule: gmFirstSentence(i.rule), expir: gmClause(i.expir, 200), age: gmFirstSentence(i.age) };
+}
+async function gmIntelOpener(){
+  const g = gm, L = gmIntelLines(g.team); if(!L) return;
+  await gmPost('coach', 'Before we look at names, here is where we stand. We are in a ' + L.phase.toLowerCase() + ' phase. ' + L.read + ' The weak spots: ' + L.weak.replace(/\.$/, '') + '.');
+  if(gm !== g) return;
+  await gmPost('analytics', 'My rule for tonight: ' + gmLc(L.rule).replace(/^./, c => c.toUpperCase()) + ' That said, you make the call, and I will tell you straight if the board says otherwise.');
+}
+(function(){
+  const _brain = gmBrain;
+  gmBrain = function(text){
+    const g = gm, t = ' ' + String(text).toLowerCase().replace(/[^a-z0-9'\s]/g, ' ').replace(/\s+/g, ' ') + ' ';
+    if(g && g.pendingOffer && /\b(accept|take it|do it|deal|should we|worth|good offer|bad offer|decline|turn (it|them) down|counter|ask for more|what do you think|thoughts)\b/.test(t)) return gmOfferTalk();
+    const other = gmTeamMention(text), own = other === g.team;
+    const asksNeeds = /\b(looking for|want|wants|need|needs|targeting|priorit\w*|weak\w*|mandate|direction|timeline|plan)\b/.test(t);
+    if(other && !own && asksNeeds && /\b(what|who|where|how)\b/.test(t) && !gmFindMentions(text).length){
+      const L = gmIntelLines(other); if(L){
+        return [{ who: 'analytics', text: 'The ' + other + ' are in a ' + L.phase.toLowerCase() + ' phase. ' + L.read }, { who: 'scout', text: 'What they want: ' + L.prio + ' Their holes: ' + L.weak.replace(/\.$/, '') + '.' }, { who: 'coach', text: 'If you are going to call them, that is your leverage. ' + L.rule }];
+      }
+    }
+    if(!gmFindMentions(text).length){
+      const L = gmIntelLines(g.team);
+      if(L && /\b(mandate|direction|timeline|window|phase|our (identity|situation|plan|philosophy)|where are we|what are we (doing|trying)|what.?s the plan)\b/.test(t))
+        return [{ who: 'coach', text: 'We are in a ' + L.phase.toLowerCase() + ' phase. ' + L.read }, { who: 'analytics', text: L.rule }, { who: 'scout', text: 'For me that means: ' + L.prio.replace(/^./, c => c.toLowerCase()) }];
+      if(L && /\b(expir\w*|contracts?|cap space|free agen\w*)\b/.test(t) && /\b(our|we|us)\b/.test(t)) return [{ who: 'analytics', text: L.expir }, { who: 'coach', text: L.age }];
+      if(L && /\b(weak\w*|holes?|biggest need|what do we need|what are our needs|priorit\w*)\b/.test(t) && /\b(our|we|us|do we)\b/.test(t))
+        return [{ who: 'coach', text: 'Our weak spots: ' + L.weak }, { who: 'scout', text: 'The target: ' + L.prio }, { who: 'analytics', text: 'And do not forget the principle: ' + L.rule }];
+    }
+    return _brain(text);
+  };
+  const _ctx = gmAIContext;
+  gmAIContext = function(text){
+    const c = _ctx(text), L = gmIntelLines(gm.team);
+    if(L) c.teamIntel = { note: 'Use as background, but defer to the GM when they disagree with good reason.', phase: L.phase, read: L.read, weak: L.weak, priority: L.prio, rule: L.rule, expiring: L.expir };
+    if(gm.pendingOffer) c.pendingTradeOffer = gmOfferSummary(gm.pendingOffer);
+    return c;
+  };
+})();
+
+/* ---------- sound ---------- */
+let gmAC = null, gmMuted = false;
+function gmAudio(){ try{ if(!gmAC) gmAC = new (window.AudioContext || window.webkitAudioContext)(); if(gmAC.state === 'suspended') gmAC.resume(); return gmAC; }catch(e){ return null; } }
+function gmTone(ac, f, t0, dur, type, vol, f2){
+  const o = ac.createOscillator(), gn = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t0); if(f2) o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
+  gn.gain.setValueAtTime(0.0001, t0); gn.gain.exponentialRampToValueAtTime(vol, t0 + 0.02); gn.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(gn); gn.connect(ac.destination); o.start(t0); o.stop(t0 + dur + 0.05);
+}
+function gmSfx(kind){
+  if(gmMuted) return; const ac = gmAudio(); if(!ac) return; const t = ac.currentTime + 0.02;
+  if(kind === 'draft'){
+    gmTone(ac, 110, t, 0.9, 'sine', 0.5, 45);
+    [[261.6, 0], [329.6, 0.28], [392, 0.56], [523.3, 0.84]].forEach(([f, d]) => { gmTone(ac, f, t + d, 0.5, 'sawtooth', 0.16); gmTone(ac, f * 2, t + d, 0.4, 'triangle', 0.08); });
+    [261.6, 329.6, 392, 523.3].forEach(f => gmTone(ac, f, t + 1.2, 1.5, 'sawtooth', 0.12));
+    gmTone(ac, 65, t + 1.2, 1.4, 'sine', 0.4, 55);
+  }
+}
+function gmRingBurst(ac, t){ [0, 0.5].forEach(d => { gmTone(ac, 440, t + d, 0.4, 'square', 0.07); gmTone(ac, 480, t + d, 0.4, 'square', 0.07); }); }
+function gmRingStart(){
+  if(gmMuted) return () => {}; const ac = gmAudio(); if(!ac) return () => {};
+  const go = () => gmRingBurst(ac, ac.currentTime + 0.02); go(); const iv = setInterval(go, 2600);
+  return () => clearInterval(iv);
+}
+function gmToggleSound(){ gmMuted = !gmMuted; const b = document.getElementById('gmSndBtn'); if(b){ b.textContent = gmMuted ? 'Sound off' : 'Sound on'; b.classList.toggle('off', gmMuted); } if(gmMuted && gm && gm.stopRing) gm.stopRing(); }
+
+/* ---------- skip button ---------- */
+function gmNextMineIdx(){ const g = gm, o = getVisiblePickOrder(); for(let i = draftSimPickIndex; i < o.length; i++) if(o[i].split(' (from')[0].trim() === g.team) return i; return -1; }
+function gmSyncSkip(){
+  const g = gm, b = document.getElementById('gmSkipBtn'); if(!g || !b) return;
+  const idx = gmNextMineIdx(), onStage = !!document.getElementById('gmComm') && !g.warOpen;
+  b.textContent = idx === -1 ? 'Skip to the end' : 'Skip to my next pick';
+  b.style.display = (g.fast || !onStage || draftSimPickIndex >= getVisiblePickOrder().length) ? 'none' : '';
+  gmSyncWarBtn();
+}
+
+/* ---------- commissioner speaks ---------- */
+async function gmCommSay(text){
+  const g = gm; gmEnsureStage();
+  const comm = document.getElementById('gmComm'), bubble = document.getElementById('gmBubble'), txt = document.getElementById('gmBubbleText');
+  document.getElementById('gmCallout')?.classList.remove('on');
+  bubble.classList.add('on'); comm?.classList.add('talking');
+  await gmType(txt, text, 28); if(gm !== g) return;
+  comm?.classList.remove('talking'); await gmSleep(1300);
+}
+
+/* ---------- main loop ---------- */
+function gmWaitHold(){ const g = gm; return new Promise(res => { const iv = setInterval(() => { if(gm !== g || !g.hold){ clearInterval(iv); res(); } }, 150); }); }
+function gmPaceWait(ms){ const g = gm; return new Promise(res => { const end = Date.now() + (g.fast ? Math.min(ms, 120) : ms); const iv = setInterval(() => { if(gm !== g || g.wantWar || Date.now() >= end){ clearInterval(iv); res(); } }, 80); }); }
+async function gmNext(){
+  const g = gm; if(!g) return;
+  if(g.wantWar){ g.wantWar = false; g.hold = true; gmWarRoom('free'); }
+  else if(!g.hold && gmOfferDue()){ await gmDoOffer(); if(gm !== g) return; }
+  if(g.hold){ await gmWaitHold(); if(gm !== g) return; g.backFromHold = true; if(g.wasFast){ g.fast = true; g.wasFast = false; } return gmNext(); }
+  const order = getVisiblePickOrder();
+  if(draftSimPickIndex >= order.length){ gmFinish(); return; }
+  const team = order[draftSimPickIndex], base = team.split(' (from')[0].trim(), pickNo = draftSimPickIndex + 1;
+  if(base === g.team){
+    g.fast = false; gmWarRoom('clock'); return;
+  }
+  gmEnsureStage();
+  if(g.backFromHold){ g.backFromHold = false; gmWallClock(base, pickNo); document.getElementById('gmCallout')?.classList.remove('on'); }
+  if(pickNo === 31 && !g.r2said){ g.r2said = true; await gmCommSay('That brings the first round to a close. We now move on to the second round.'); if(gm !== g) return; }
+  gmSyncSkip();
+  const player = gmAutomatedChoice(team, pickNo);
+  draftSimResults.push({ pick: pickNo, team, player, automated: true });
+  draftSimAvailableIds = draftSimAvailableIds.filter(id => id !== player.id);
+  draftSimPickIndex++;
+  gmOfferTick();
+  await gmAnnounce(draftSimResults[draftSimResults.length - 1]);
+  if(gm !== g) return;
+  await gmPaceWait(g.pace * 1000);
+  if(gm !== g) return;
+  gmNext();
+}
+async function gmSubmit(){
+  const g = gm; if(!g || g.submitting || !g.selected) return;
+  g.submitting = true; clearInterval(g.clockTimer); g.warOpen = false; gmTradeClose(true);
+  const p = g.selected, order = getVisiblePickOrder(), team = order[draftSimPickIndex];
+  draftSimResults.push({ pick: draftSimPickIndex + 1, team, player: p });
+  draftSimAvailableIds = draftSimAvailableIds.filter(id => id !== p.id);
+  draftSimPickIndex++; gmOfferTick();
+  document.getElementById('gmBar').innerHTML = `<div class="gm-sel"><span>Pick submitted</span><b>${gmEsc(p.name)}</b></div>`;
+  const rec = g.lastRec || {}, adv = g.adv.list[Math.floor(Math.random() * 3)], agree = rec[adv.id] && rec[adv.id].id === p.id;
+  await gmPost(adv.id, agree ? 'Good call. Let us go get him.' : 'Not who I would have taken, but I trust you. I hope you are right.');
+  if(gm !== g) return;
+  await gmSleep(1300); if(gm !== g) return;
+  g.submitting = false;
+  document.getElementById('gmView').innerHTML = gmStageHTML();
+  document.getElementById('gmComm').classList.add('arrived'); document.getElementById('gmBubble').classList.add('on');
+  gmSyncSkip();
+  await gmAnnounce(draftSimResults[draftSimResults.length - 1]); if(gm !== g) return;
+  await gmPaceWait(Math.max(2200, g.pace * 1000)); if(gm !== g) return;
+  gmNext();
+}
+async function gmFinish(){
+  const g = gm; g.warOpen = false;
+  document.getElementById('gmView').innerHTML = gmStageHTML();
+  document.getElementById('gmComm').classList.add('arrived'); document.getElementById('gmBubble').classList.add('on');
+  gmTickerRender();
+  const sb = document.getElementById('gmSkipBtn'); if(sb) sb.style.display = 'none';
+  const wb = document.getElementById('gmWarBtn'); if(wb) wb.style.display = 'none';
+  await gmType(document.getElementById('gmBubbleText'), 'That concludes the 2027 NBA Draft. Thank you, everybody.', 30);
+  if(gm !== g) return;
+  document.getElementById('gmCallout').classList.add('on');
+  document.getElementById('gmCallout').innerHTML = `<div class="gm-co-info" style="padding:6px 8px;"><b>Draft complete</b><small>${draftSimResults.length} picks made</small></div><button class="gm-go" onclick="gmShowResults()">View the results</button>`;
+}
+
+/* ---------- war room anywhere ---------- */
+function gmOpenWar(){
+  const g = gm; if(!g || g.warOpen || g.submitting) return;
+  if(g.hold && !g.offerOpen) return;
+  const b = document.getElementById('gmWarBtn');
+  if(g.offerOpen){ gmOfferDiscuss(); return; }
+  g.wantWar = true; if(b){ b.textContent = 'Opening after this pick...'; b.disabled = true; }
+}
+function gmBackToDraft(){
+  const g = gm; if(!g || g.mode !== 'free') return;
+  gmTradeClose(true); clearInterval(g.clockTimer); g.warOpen = false; g.mode = null;
+  document.getElementById('gmView').innerHTML = gmStageHTML();
+  document.getElementById('gmComm').classList.add('arrived'); document.getElementById('gmBubble').classList.add('on');
+  gmTickerRender(); g.backFromHold = true; g.hold = false; gmSyncWarBtn();
+}
+function gmSyncWarBtn(){ const g = gm, b = document.getElementById('gmWarBtn'); if(!g || !b) return; b.disabled = false; b.textContent = 'War room'; b.style.display = (g.warOpen || draftSimPickIndex >= getVisiblePickOrder().length) ? 'none' : ''; }
+const _gmWarRoomBase = gmWarRoom;
+gmWarRoom = function(mode){
+  const g = gm; mode = mode || 'clock'; g.mode = mode; g.warOpen = true; g.wasFast = false;
+  const sb = document.getElementById('gmSkipBtn'); if(sb) sb.style.display = 'none';
+  gmSyncWarBtn();
+  const keepClock = g.clock; if(mode === 'free') g.clock = 0;
+  _gmWarRoomBase();
+  g.clock = keepClock;
+  const top = document.querySelector('.gm-war-top > div:nth-child(2)'), order = getVisiblePickOrder(), pickNo = draftSimPickIndex + 1;
+  const dock = document.createElement('div'); dock.className = 'gm-war-actions';
+  dock.innerHTML = `<button type="button" class="gm-act" onclick="gmTradeMenu()">Call a team</button>` + (mode === 'free' ? `<button type="button" class="gm-act go" onclick="gmBackToDraft()">Back to the draft</button>` : '');
+  document.querySelector('.gm-war-top')?.insertBefore(dock, document.querySelector('.gm-clockbox'));
+  if(mode === 'free'){
+    const on = (order[draftSimPickIndex] || '').split(' (from')[0].trim();
+    const b = document.querySelector('.gm-war-top b'); if(b) b.textContent = on ? 'On the clock: ' + on + ' (pick ' + pickNo + ')' : 'Draft complete';
+    const bar = document.getElementById('gmBar'); if(bar) bar.innerHTML = `<div class="gm-sel"><span>War room</span><b>The draft is paused. Take your time.</b></div><button class="gm-propose" onclick="gmBackToDraft()">Back to the draft</button>`;
+  }
+  if(g.pendingOffer) gmOfferStrip();
+  if(g.afterWar){ const f = g.afterWar; g.afterWar = null; setTimeout(() => { if(gm === g) f(); }, 500); }
+};
+(function(){
+  const _open = gmOpeners;
+  gmOpeners = async function(){
+    const g = gm;
+    if(g.mode === 'free'){
+      gmLogSys('You are in the war room. The draft is paused until you head back.');
+      if(g.pendingOffer) return gmOfferAnalysis();
+      const L = gmIntelLines(g.team);
+      if(L) await gmPost('analytics', 'We are here whenever you need us. Ask us anything, or call another front office. Reminder: ' + L.rule);
+      return;
+    }
+    await gmIntelOpenerWrap(_open);
+  };
+})();
+async function gmIntelOpenerWrap(open){
+  const g = gm, L = gmIntelLines(g.team);
+  if(L && !g.introIntel){
+    g.introIntel = true;
+    await gmIntelOpener(); if(gm !== g) return;
+  }
+  return open();
+}
+
+/* ---------- addressing people & phone calls ---------- */
+function gmTeamGM(team){
+  const full = NBA_TEAMS.find(t => getTeamShortName(t) === team), fo = full && GM_FRONT_OFFICE[full], staff = (fo ? fo.staff : []);
+  const pick = staff.find(s => /general manager/i.test(s[1]) && !/assistant|associate|deputy|vice/i.test(s[1])) || staff.find(s => /president/i.test(s[1]) && !/assistant|associate/i.test(s[1])) || staff[0];
+  if(!pick) return { name: 'the front office', short: 'The ' + team + ' front office', title: 'Front office' };
+  const parts = pick[0].replace(/\b(jr\.?|sr\.?|ii|iii|iv)$/i, '').trim().split(/\s+/);
+  return { name: pick[0], short: parts[parts.length - 1], title: gmCleanTitle(pick[1]) };
+}
+(function(){
+  const _resp = gmRespond;
+  gmRespond = async function(text){
+    const g = gm; if(!g) return;
+    const t = ' ' + text.toLowerCase().replace(/[^a-z0-9'\s]/g, ' ').replace(/\s+/g, ' ') + ' ';
+    const callRx = /\b(call|phone|ring|dial|get .{0,24}on the (phone|line)|(talk|speak)\w* (to|with) .{0,30}(gm|general manager|front office|president)|negotiat\w*|reach out|trade (talks|offer|proposal)|make an offer|see if .{0,30}(trade|move|deal)|ask .{0,40}(trade|deal|move))\b/;
+    const team = gmTeamMention(text);
+    if(callRx.test(t) && team && team !== g.team && !g.reacting){
+      const who = gmAddressed(t) || 'scout', adv = gmAdv(who), gmn = gmTeamGM(team);
+      g.reacting = true;
+      try{ await gmPost(who, 'On it. I am getting ' + gmn.short + ' of the ' + team + ' on the line.'); } finally { g.reacting = false; }
+      if(gm !== g) return; gmTradeOpen(team); return;
+    }
+    if(callRx.test(t) && /\b(trade|deal|move up|move down|trade up|trade down)\b/.test(t) && !team){
+      g.reacting = true; try{ await gmPost(gmAddressed(t) || 'analytics', 'Which team do you want to call? Name them, or hit "Call a team" at the top.'); } finally { g.reacting = false; } return;
+    }
+    return _resp(text);
+  };
+})();
+function gmFilterAddressed(out, text){
+  const t = ' ' + text.toLowerCase().replace(/[^a-z0-9'\s]/g, ' ').replace(/\s+/g, ' ') + ' ', a = gmAddressed(t);
+  if(!a) return out;
+  const mine = out.filter(o => o.who === a || o.who === 'sys');
+  if(mine.some(o => o.who === a)) return mine;
+  const first = out.find(o => o.who !== 'sys'); return first ? [{ who: a, text: first.text, select: first.select }].concat(out.filter(o => o.who === 'sys')) : out;
+}
+
+/* ---------- trade values ---------- */
+function gmPickNo(key){ const m = key.match(/^pick:(r1|r2):(\d+)$/); return m ? (m[1] === 'r1' ? 1 : 31) + (+m[2]) : 0; }
+function gmPickBase(n){ return n <= 30 ? 100 * Math.pow(0.935, n - 1) : 7 * Math.pow(0.96, n - 31); }
+function gmPlayerBase(rec){ if(!rec || !rec.sal) return 3; const m = rec.sal / 1e6, yr = rec.yrs >= 2 ? 1 : 0.7; return (4 + m * 2.0) * yr; }
+function gmStars(team){ return new Set(tradeRosterOf(team).slice(0, 2).map(r => r.n)); }
+function gmMult(team){ return { rebuild: 1.2, mid: 1, contend: 0.85 }[gmPhase(team)]; }
+function gmVal(team, key){
+  const mult = gmMult(team);
+  if(key.startsWith('pick:')){
+    const n = gmPickNo(key); let v = gmPickBase(n) * mult;
+    const ahead = n - (draftSimPickIndex + 1);
+    if(n <= 30 && ahead >= 0 && ahead <= 3 && gm){ const b = gmAvail()[ahead]; if(b && b.rk <= n + 2) v *= 1.1; }
+    return v;
+  }
+  if(key.startsWith('player:')){
+    const rec = tradeRecByName[key.slice(7)], base = gmPlayerBase(rec), ph = gmPhase(team);
+    let v = base * (ph === 'rebuild' ? 0.8 : ph === 'contend' ? 1.15 : 1);
+    if(rec && tradeTeamOf(rec) === team && gmStars(team).has(rec.n)) v *= ph === 'rebuild' ? 1.4 : 2.2;
+    return v;
+  }
+  if(key.startsWith('cash:')) return (+key.slice(5) / 1e6) * 0.8;
+  return 0;
+}
+function gmSum(team, keys){ return [...keys].reduce((s, k) => s + gmVal(team, k), 0); }
+function gmMargin(team){ let h = 0; for(const c of team) h = (h * 31 + c.charCodeAt(0)) % 7; return 0.05 + h * 0.01; }
+function gmAssets(team){
+  tradeInit();
+  const out = { picks: [], players: [] }, o = getVisiblePickOrder();
+  const own = (s) => String(s).split(' (from')[0].trim() === team;
+  mockDraftPicks.forEach((s, i) => { if(own(s) && i >= draftSimPickIndex && i < o.length) out.picks.push({ key: 'pick:r1:' + i, n: i + 1 }); });
+  if(draftLength === 60) mockDraftPicksRound2.forEach((s, i) => { if(own(s) && i + 30 >= draftSimPickIndex && i + 30 < o.length) out.picks.push({ key: 'pick:r2:' + i, n: i + 31 }); });
+  out.players = tradeRosterOf(team).filter(r => r.sal);
+  return out;
+}
+function gmAssetLabel(key){
+  if(key.startsWith('pick:')){ const n = gmPickNo(key); return n <= 30 ? 'Pick #' + n : 'Pick #' + n + ' (2nd round)'; }
+  if(key.startsWith('player:')){ const r = tradeRecByName[key.slice(7)]; return key.slice(7) + (r && r.sal ? ' (' + tradeFmtM(r.sal) + ')' : ''); }
+  return formatAssetLabel(key);
+}
+function gmListLabels(keys){ const a = [...keys].map(gmAssetLabel); return a.length ? (a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a[0]) : 'nothing'; }
+function gmTradeLegal(team, give, get){
+  const sv = { t: { ...tradeTeams }, s: { left: tradeSelections.left, right: tradeSelections.right } };
+  try{
+    tradeTeams = { left: gm.team, right: team }; tradeSelections = { left: new Set(give), right: new Set(get) };
+    const v = validateTrade(); const fails = [];
+    v.teams.forEach(t => t.checks.forEach(c => { if(c.status === 'FAIL') fails.push(c.simple || c.detail); }));
+    return { ok: v.verdict !== 'ILLEGAL', fails };
+  } finally { tradeTeams = sv.t; tradeSelections = sv.s; }
+}
+function gmEvalTrade(team, give, get){
+  const gain = gmSum(team, give), loss = gmSum(team, get), mar = gmMargin(team);
+  return { gain, loss, mar, need: loss * (1 + mar), ratio: loss > 0 ? gain / loss : (gain > 0 ? 9 : 0) };
+}
+function gmFindCounter(team, give, get){
+  const ev = gmEvalTrade(team, give, get), gap = ev.need - ev.gain; if(gap <= 0) return null;
+  const mine = gmAssets(gm.team), pool = mine.picks.map(p => p.key).concat(mine.players.map(p => 'player:' + p.n)).filter(k => !give.has(k));
+  const vals = pool.map(k => ({ k, v: gmVal(team, k) })).filter(x => x.v > 0.5).sort((a, b) => a.v - b.v);
+  const tryAdd = (extra) => { const g2 = new Set([...give, ...extra]); const lg = gmTradeLegal(team, g2, get); return lg.ok ? { give: g2, get: new Set(get) } : null; };
+  const singles = vals.filter(x => x.v >= gap && x.v <= gap * 2.4);
+  for(const s of singles.slice(0, 4)){ const r = tryAdd([s.k]); if(r) return r; }
+  const small = vals.filter(x => x.v < gap).slice(-8);
+  for(let i = 0; i < small.length; i++) for(let j = i + 1; j < small.length; j++){ if(small[i].v + small[j].v >= gap && small[i].v + small[j].v <= gap * 2){ const r = tryAdd([small[i].k, small[j].k]); if(r) return r; } }
+  if(get.size > 1){
+    const gv = [...get].map(k => ({ k, v: gmVal(team, k) })).sort((a, b) => a.v - b.v);
+    for(const x of gv){ if(ev.gain >= (ev.loss - x.v) * (1 + ev.mar)){ const g3 = new Set(get); g3.delete(x.k); const lg = gmTradeLegal(team, give, g3); if(lg.ok && g3.size) return { give: new Set(give), get: g3 }; } }
+  }
+  return null;
+}
+function gmFindWhatItTakes(team, get){
+  const r = gmFindCounter(team, new Set(), get); if(r) return r;
+  const mine = gmAssets(gm.team), all = mine.picks.map(p => p.key).concat(mine.players.map(p => 'player:' + p.n)), need = gmEvalTrade(team, new Set(), get).need;
+  const vals = all.map(k => ({ k, v: gmVal(team, k) })).sort((a, b) => b.v - a.v); let s = 0; const pick = new Set();
+  for(const x of vals){ if(s >= need) break; pick.add(x.k); s += x.v; }
+  if(s < need) return null; const lg = gmTradeLegal(team, pick, get); return lg.ok ? { give: pick, get: new Set(get) } : null;
+}
+function gmWhy(team, kind){
+  const i = gmIntel(team), ph = gmPhase(team), pr = i ? gmFirstSentence(i.prio).replace(/^./, c => c.toLowerCase()).replace(/\.$/, '') : '';
+  const A = {
+    rebuild: ['We are collecting assets right now, and that does not move the needle.', 'We are not trying to win tonight, we are trying to build something. I need more for that.'],
+    contend: ['We are trying to win now, and I cannot give up that kind of depth for this.', 'I have a window to protect. This does not help us in it.'],
+    mid: ['It is not enough for what we would be giving up.', 'I like parts of it, but the math does not work for us.']
+  }[ph];
+  const line = A[Math.floor(Math.random() * A.length)];
+  return line + (pr && Math.random() < 0.6 ? ' What we are really after: ' + gmShort(gmFirstSentence(i.prio), 140) : '');
+}
+
+/* ---------- applying a trade ---------- */
+function gmApplyTrade(team, give, get){
+  const g = gm;
+  const mv = (keys, from, to) => keys.forEach(key => { const m = key.match(/^pick:(r1|r2):(\d+)$/); if(!m) return; const idx = +m[2]; (m[1] === 'r1' ? mockDraftPicks : mockDraftPicksRound2)[idx] = to + ' (from ' + from + ')'; });
+  mv([...give], g.team, team); mv([...get], team, g.team);
+  [...give].forEach(k => { if(k.startsWith('player:') && tradeRecByName[k.slice(7)]) tradeMoves[tradeRecByName[k.slice(7)].key] = team; });
+  [...get].forEach(k => { if(k.startsWith('player:') && tradeRecByName[k.slice(7)]) tradeMoves[tradeRecByName[k.slice(7)].key] = g.team; });
+  const cash = (keys, from, to) => { const amt = cashOf([...keys]); if(!amt) return; (tradeCashLedger[from] = tradeCashLedger[from] || { paid: 0, rec: 0 }).paid += amt; (tradeCashLedger[to] = tradeCashLedger[to] || { paid: 0, rec: 0 }).rec += amt; };
+  cash(give, g.team, team); cash(get, team, g.team);
+  const nums = []; [...give, ...get].forEach(k => { const n = gmPickNo(k); if(n) nums.push(n); });
+  mockTradeLog.push({ pickNums: nums, team1: g.team, team1Receives: [...get].map(formatAssetLabel), team2: team, team2Receives: [...give].map(formatAssetLabel) });
+  const o = getVisiblePickOrder(); g.mine = o.map((t, i) => t.split(' (from')[0].trim() === g.team ? i + 1 : 0).filter(Boolean);
+  g.lastTradeAt = draftSimResults.length; g.dealt = (g.dealt || 0) + 1;
+}
+function gmTradeEnded(){
+  const g = gm; if(!g) return;
+  const o = getVisiblePickOrder(), on = (o[draftSimPickIndex] || '').split(' (from')[0].trim();
+  if(g.mode === 'clock' && on !== g.team){
+    clearInterval(g.clockTimer); gmTradeClose(true); g.warOpen = false; g.mode = null; g.hold = false; g.selected = null;
+    gmLogSys('You no longer hold this pick.');
+    document.getElementById('gmView').innerHTML = gmStageHTML(); document.getElementById('gmComm').classList.add('arrived'); document.getElementById('gmBubble').classList.add('on');
+    gmTickerRender(); gmSyncWarBtn(); setTimeout(() => { if(gm === g) gmNext(); }, 600);
+  } else if(g.mode === 'clock' && on === g.team){
+    gmRenderBoard(); gmRenderBar(); const d = document.getElementById('gmDepth'); if(d) d.innerHTML = gmDepthHTML();
+  } else if(g.mode === 'free'){
+    const b = document.querySelector('.gm-war-top b'); if(b) b.textContent = on ? 'On the clock: ' + on + ' (pick ' + (draftSimPickIndex + 1) + ')' : 'Draft complete';
+  }
+}
+
+/* ---------- negotiation panel ---------- */
+function gmTradeMenu(){
+  const g = gm; if(!g) return; document.getElementById('gmTradeMenu')?.remove();
+  const o = getVisiblePickOrder(), seen = {};
+  const teams = NBA_TEAMS.map(getTeamShortName).filter(t => t !== g.team).map(t => ({ t, n: gmAssets(t).picks.map(p => p.n) })).sort((a, b) => (a.n[0] || 999) - (b.n[0] || 999));
+  const m = document.createElement('div'); m.id = 'gmTradeMenu'; m.className = 'gm-tmenu';
+  m.innerHTML = `<div class="gm-tmenu-in"><div class="gm-tmenu-h"><b>Who do you want to call?</b><button type="button" onclick="document.getElementById('gmTradeMenu').remove()">Close</button></div>
+    <div class="gm-tmenu-grid">${teams.map(x => `<button type="button" style="--tc:${NBA_TEAM_COLOR[x.t] || '#888'}" onclick="document.getElementById('gmTradeMenu').remove(); gmTradeOpen('${x.t.replace(/'/g, "\\'")}')"><img src="${getNbaLogoUrl(x.t)}" alt="" onerror="this.style.visibility='hidden'"><b>${gmEsc(x.t)}</b><small>${x.n.length ? x.n.slice(0, 3).join(', ') : 'No picks left'}</small></button>`).join('')}</div></div>`;
+  document.getElementById('gmRoom').appendChild(m);
+}
+function gmTradeOpen(team, opts){
+  const g = gm; if(!g) return; opts = opts || {};
+  document.getElementById('gmTradeMenu')?.remove();
+  if(!g.warOpen && !opts.incoming){ g.pendingCallTeam = team; g.wantWar = true; g.afterWar = () => gmTradeOpen(team); return; }
+  g.tr = { team, gm: gmTeamGM(team), give: new Set(opts.give || []), get: new Set(opts.get || []), rounds: 0, counter: null, log: [], incoming: !!opts.incoming };
+  gmTradeClose(true, true);
+  const host = document.querySelector('.gm-war') || document.getElementById('gmRoom');
+  const el = document.createElement('div'); el.id = 'gmTrade'; el.className = 'gm-trade'; el.style.setProperty('--tc', NBA_TEAM_COLOR[team] || '#c6a15b');
+  host.appendChild(el); g.trOpen = true; gmTradeRender();
+  const L = gmIntelLines(team);
+  if(opts.greet) gmTradeSay(opts.greet);
+  else gmTradeSay('This is ' + g.tr.gm.short + ' with the ' + team + '. ' + (opts.give || opts.get ? 'Let us talk about it.' : 'What do you have in mind?') + (L ? ' I will say up front that we are in a ' + L.phase.toLowerCase() + ' phase.' : ''));
+}
+function gmTradeClose(silent, keep){
+  const g = gm; const el = document.getElementById('gmTrade'); if(el) el.remove();
+  if(g && !keep){ g.trOpen = false; if(g.tr && g.tr.fromOffer && !silent){ } }
+}
+function gmTradeSay(text, who){
+  const tr = gm && gm.tr; if(!tr) return; tr.log.push({ who: who || 'them', text });
+  const c = document.getElementById('gmTrChat'); if(!c) return;
+  const m = document.createElement('div'); m.className = 'gm-tmsg ' + (who === 'you' ? 'you' : who === 'sys' ? 'sys' : 'them');
+  m.innerHTML = (who === 'you' || who === 'sys' ? '' : `<b>${gmEsc(tr.gm.short)}</b>`) + `<p>${gmEsc(gmPolish(text))}</p>`;
+  c.appendChild(m); c.scrollTop = c.scrollHeight;
+}
+function gmTradeRender(){
+  const g = gm, tr = g && g.tr, el = document.getElementById('gmTrade'); if(!tr || !el) return;
+  const mine = gmAssets(g.team), theirs = gmAssets(tr.team);
+  const chip = (side, key, label, sub, on) => `<button type="button" class="gm-tchip${on ? ' on' : ''}" onclick="gmTradeToggle('${side}','${key.replace(/'/g, "\\'")}')"><b>${gmEsc(label)}</b>${sub ? `<small>${gmEsc(sub)}</small>` : ''}</button>`;
+  const col = (side, A, team) => {
+    const set = side === 'give' ? tr.give : tr.get;
+    return `<div class="gm-tcol"><div class="gm-tcol-h"><img src="${getNbaLogoUrl(team)}" alt="" onerror="this.style.display='none'"><span>${side === 'give' ? 'You send' : 'You get'}</span></div>
+      <div class="gm-tlist">${A.picks.map(p => chip(side, p.key, 'Pick #' + p.n, p.n > 30 ? '2nd round' : '1st round', set.has(p.key))).join('')}${A.players.slice(0, 9).map(r => chip(side, 'player:' + r.n, r.n, tradeFmtM(r.sal) + (r.yrs ? ' · ' + r.yrs + 'y' : ''), set.has('player:' + r.n))).join('')}${!A.picks.length && !A.players.length ? '<em>Nothing available</em>' : ''}</div></div>`;
+  };
+  const done = tr.rounds >= 6;
+  el.innerHTML = `<div class="gm-tbox"><div class="gm-thead"><img src="${getNbaLogoUrl(tr.team)}" alt="" onerror="this.style.display='none'"><div><small>${tr.incoming ? 'Incoming call' : 'On the phone'}</small><b>${gmEsc(tr.gm.name)}</b><em>${gmEsc(tr.team)} · ${gmEsc(tr.gm.title)}</em></div><button type="button" class="gm-thang" onclick="gmTradeHang()">Hang up</button></div>
+    <div class="gm-tbody"><div class="gm-tchatwrap"><div class="gm-tchat" id="gmTrChat"></div>
+      <form class="gm-tin" onsubmit="gmTradeText(event)"><input id="gmTrIn" type="text" autocomplete="off" maxlength="160" placeholder="Say it: &quot;I'll give you #19 for #12&quot;"><button type="submit">Send</button></form></div>
+      <div class="gm-tassets">${col('give', mine, g.team)}${col('get', theirs, tr.team)}</div></div>
+    <div class="gm-tfoot"><div class="gm-tsum" id="gmTrSum"></div><div class="gm-tbtns"><button type="button" class="gm-tbtn" onclick="gmTradeAsk()" ${done ? 'disabled' : ''}>What would it take?</button><button type="button" class="gm-tbtn go" onclick="gmTradePropose()" ${done ? 'disabled' : ''}>Send offer</button></div></div></div>`;
+  const c = document.getElementById('gmTrChat'); tr.log.forEach(l => { const m = document.createElement('div'); m.className = 'gm-tmsg ' + (l.who === 'you' ? 'you' : l.who === 'sys' ? 'sys' : 'them'); m.innerHTML = (l.who === 'you' || l.who === 'sys' ? '' : `<b>${gmEsc(tr.gm.short)}</b>`) + `<p>${gmEsc(l.text)}</p>`; c.appendChild(m); }); c.scrollTop = c.scrollHeight;
+  gmTradeSum();
+  if(tr.counter) gmTradeCounterCard();
+}
+function gmTradeSum(){
+  const tr = gm.tr, el = document.getElementById('gmTrSum'); if(!el) return;
+  el.innerHTML = `<span>Send: <b>${gmEsc(gmListLabels(tr.give))}</b></span><span>Get: <b>${gmEsc(gmListLabels(tr.get))}</b></span>`;
+}
+function gmTradeToggle(side, key){
+  const tr = gm.tr; if(!tr) return; const s = side === 'give' ? tr.give : tr.get;
+  if(s.has(key)) s.delete(key); else s.add(key);
+  tr.counter = null; gmTradeRender();
+}
+function gmTradeCounterCard(){
+  const tr = gm.tr, host = document.getElementById('gmTrChat'); if(!host || !tr.counter) return;
+  const c = document.createElement('div'); c.className = 'gm-tcounter';
+  c.innerHTML = `<div><small>Their offer</small><span>You send: <b>${gmEsc(gmListLabels(tr.counter.give))}</b></span><span>You get: <b>${gmEsc(gmListLabels(tr.counter.get))}</b></span></div><button type="button" class="gm-tbtn go" onclick="gmTradeAcceptCounter()">Accept this</button>`;
+  host.appendChild(c); host.scrollTop = host.scrollHeight;
+}
+function gmTradeAcceptCounter(){ const tr = gm.tr; if(!tr || !tr.counter) return; tr.give = new Set(tr.counter.give); tr.get = new Set(tr.counter.get); tr.counter = null; gmTradeDeal(); }
+function gmTradeDeal(){
+  const g = gm, tr = g.tr, lg = gmTradeLegal(tr.team, tr.give, tr.get);
+  if(!lg.ok){ gmTradeSay('The league office would reject that: ' + lg.fails[0] + ' We would need to fix that first.'); return; }
+  gmApplyTrade(tr.team, tr.give, tr.get);
+  gmTradeSay('Done. ' + ['Pleasure doing business.', 'We will get the paperwork to the league office.', 'Good doing business with you.'][Math.floor(Math.random() * 3)], 'them');
+  gmLogSys('Trade completed with the ' + tr.team + ': you sent ' + gmListLabels(tr.give) + ' and received ' + gmListLabels(tr.get) + '.');
+  const wasOffer = tr.fromOffer; g.pendingOffer = null; g.offerOpen = false; document.getElementById('gmOfferStrip')?.remove();
+  setTimeout(() => { if(gm !== g) return; g.tr = null; gmTradeClose(true); if(wasOffer && !g.warOpen){ g.hold = false; } gmTradeEnded(); }, 1400);
+}
+function gmTradeHang(){
+  const g = gm, tr = g.tr; if(!tr) return;
+  const wasOffer = tr.fromOffer; g.tr = null; gmTradeClose(true);
+  if(wasOffer){ g.pendingOffer = null; g.offerOpen = false; document.getElementById('gmOfferStrip')?.remove(); if(!g.warOpen) g.hold = false; }
+  if(g.afterWar) g.afterWar = null;
+}
+function gmTradePropose(){
+  const g = gm, tr = g.tr; if(!tr) return;
+  if(!tr.give.size && !tr.get.size){ gmTradeSay('Pick what you would send and what you want back, or just tell me.', 'sys'); return; }
+  tr.rounds++; tr.counter = null;
+  gmTradeSay('I will send ' + gmListLabels(tr.give) + ' and I want ' + gmListLabels(tr.get) + '.', 'you');
+  const ev = gmEvalTrade(tr.team, tr.give, tr.get);
+  const lg = gmTradeLegal(tr.team, tr.give, tr.get);
+  if(!lg.ok){ gmTradeSay('Our side loves the idea, but the league office would never approve it. ' + lg.fails[0]); return; }
+  if(!tr.get.size){ gmTradeSay('You want nothing back? Sure, we will take it, but I would not do that if I were you.'); }
+  if(ev.gain >= ev.need){
+    if(ev.gain > ev.need * 1.5 && tr.get.size) gmTradeSay('That works. Honestly, that is more than I would have asked for. Want to keep it?'), tr.counter = null;
+    else gmTradeSay('That works for us. Shall we make it official?');
+    tr.counter = { give: new Set(tr.give), get: new Set(tr.get) }; gmTradeCounterCard(); return;
+  }
+  if(tr.rounds >= 6){ gmTradeSay('I think we have talked this through. If your thinking changes, call me back.'); gmTradeRender(); return; }
+  if(ev.ratio < 0.5){ gmTradeSay(gmWhy(tr.team) + ' We are not close.'); return; }
+  const c = gmFindCounter(tr.team, tr.give, tr.get);
+  if(c){
+    const added = [...c.give].filter(k => !tr.give.has(k)), removed = [...tr.get].filter(k => !c.get.has(k));
+    gmTradeSay(added.length ? 'Close. If you add ' + gmListLabels(added) + ', we have a deal.' : 'Close. I can do it without ' + gmListLabels(removed) + ' in the package. ' + gmWhy(tr.team));
+    tr.counter = c; gmTradeCounterCard();
+  } else gmTradeSay(gmWhy(tr.team) + ' I do not see a version of this that works from what you have shown me.');
+}
+function gmTradeAsk(){
+  const g = gm, tr = g.tr; if(!tr) return;
+  if(!tr.get.size){ gmTradeSay('Tell me which picks or players of ours you want, and I will tell you what it takes.', 'sys'); return; }
+  tr.rounds++; tr.counter = null;
+  gmTradeSay('What would it take to get ' + gmListLabels(tr.get) + '?', 'you');
+  const r = gmFindWhatItTakes(tr.team, tr.get);
+  if(r){ gmTradeSay('For ' + gmListLabels(r.get) + ', I would need ' + gmListLabels(r.give) + '.'); tr.counter = r; gmTradeCounterCard(); }
+  else gmTradeSay('Honestly, I do not see a package from your side that works for us on value and also clears the league rules. Try a different target.');
+}
+function gmTradeParse(text){
+  const g = gm, tr = g.tr, mine = gmAssets(g.team), theirs = gmAssets(tr.team), res = { give: new Set(), get: new Set() };
+  const nums = new Set();
+  (text.match(/(?:#|pick\s*(?:number|no\.?)?\s*)(\d{1,2})/ig) || []).forEach(m => nums.add(+m.replace(/\D/g, '')));
+  (text.match(/\b(\d{1,2})(?:st|nd|rd|th)\b/ig) || []).forEach(m => nums.add(+m.replace(/\D/g, '')));
+  nums.forEach(n => { const a = mine.picks.find(p => p.n === n), b = theirs.picks.find(p => p.n === n); if(a) res.give.add(a.key); if(b) res.get.add(b.key); });
+  const nk = tradeNameKey(text);
+  const find = (A, set) => A.players.forEach(r => { const full = tradeNameKey(r.n), last = full.split(' ').slice(-1)[0]; if(nk.includes(full) || (last.length > 4 && new RegExp('\\b' + last + '\\b').test(nk))) set.add('player:' + r.n); });
+  find(mine, res.give); find(theirs, res.get);
+  return res;
+}
+function gmTradeText(e){
+  e.preventDefault(); const g = gm, tr = g && g.tr; if(!tr) return;
+  const inp = document.getElementById('gmTrIn'), text = inp.value.trim(); if(!text) return; inp.value = '';
+  gmTradeSay(text, 'you');
+  const t = ' ' + text.toLowerCase() + ' ';
+  if(/\b(looking for|want|need|priorit\w*|weak\w*|what are you)\b/.test(t) && /\b(you|your|your team|ya)\b/.test(t) && !/#|\d/.test(t)){
+    const L = gmIntelLines(tr.team); if(L){ gmTradeSay('We are a ' + L.phase.toLowerCase() + ' team. ' + L.prio + ' ' + L.weak.replace(/\.$/, '') + '.'); return; }
+  }
+  const p = gmTradeParse(text);
+  p.give.forEach(k => tr.give.add(k)); p.get.forEach(k => tr.get.add(k));
+  const any = p.give.size + p.get.size;
+  if(!any){ gmTradeSay(/\b(hello|hi|hey|thanks|thank you)\b/.test(t) ? 'Good to talk. What are you thinking?' : 'I did not catch a pick or a player in that. Say something like "my #19 for your #12", or use the lists.'); return; }
+  gmTradeRender();
+  if(/\b(what would it take|what will it take|what do you want|what do i have to|how much)\b/.test(t) || (!tr.give.size && tr.get.size)) return gmTradeAsk();
+  if(tr.give.size || tr.get.size) gmTradePropose();
+}
+
+/* ---------- incoming offers ---------- */
+function gmOfferTick(){ const g = gm; if(g){ g.sinceOffer = (g.sinceOffer == null ? 0 : g.sinceOffer) + 1; } }
+function gmOfferDue(){
+  const g = gm; if(!g || g.warOpen || g.hold || g.submitting) return false;
+  const o = getVisiblePickOrder(); if(draftSimPickIndex >= o.length) return false;
+  const ni = gmNextMineIdx(); if(ni === -1 || ni === draftSimPickIndex) return false;
+  const away = ni - draftSimPickIndex; if(away > 16 || away < 1) return false;
+  const since = g.sinceOffer == null ? 0 : g.sinceOffer; if(since < 5) return false;
+  let p = 0.16 + 0.05 * Math.max(0, since - 5); if(since >= 14) p = 1; if(g.fast) p *= 0.7;
+  if(Math.random() > p) return false;
+  const off = gmGenOffer(); if(!off) return false; g.nextOffer = off; return true;
+}
+function gmGenOffer(){
+  const g = gm, o = getVisiblePickOrder(), mineA = gmAssets(g.team).picks.filter(p => p.n <= 45);
+  if(!mineA.length) return null;
+  let order = mineA.slice().sort((a, b) => a.n - b.n); const firsts = order.filter(x => x.n <= 30); if(firsts.length && Math.random() < 0.85) order = firsts;
+  const cands = [];
+  order.forEach(mp => {
+    NBA_TEAMS.map(getTeamShortName).filter(t => t !== g.team).forEach(t => {
+      if(g.coolTeams && g.coolTeams[t] > draftSimResults.length) return;
+      const ta = gmAssets(t).picks.filter(p => p.n > mp.n && p.n - mp.n <= 14 && p.n > draftSimPickIndex + 1);
+      if(!ta.length) return;
+      ta.forEach(tp => cands.push({ team: t, mine: mp, base: tp }));
+    });
+  });
+  if(!cands.length) return null;
+  for(let tries = 0; tries < 12; tries++){
+    const c = cands[Math.floor(Math.random() * cands.length)], giveKeys = new Set([c.mine.key]), getKeys = new Set([c.base.key]);
+    const sweet = gmAssets(c.team).picks.filter(p => p.key !== c.base.key).sort((a, b) => a.n - b.n);
+    const target = gmSum(c.team, giveKeys) / (1 + gmMargin(c.team));
+    let have = gmSum(c.team, getKeys), idx = 0;
+    // from their view they need to be getting more than giving: their gain = my pick, loss = their assets
+    const lossOf = () => gmSum(c.team, getKeys);
+    sweet.reverse();
+    while(lossOf() < target * 0.93 && idx < sweet.length){ getKeys.add(sweet[idx].key); idx++; }
+    const ev = gmEvalTrade(c.team, giveKeys, getKeys);
+    if(ev.gain < ev.need || lossOf() < gmSum(c.team, giveKeys) * 0.86) continue;
+    const lg = gmTradeLegal(c.team, giveKeys, getKeys); if(!lg.ok) continue;
+    return { team: c.team, give: giveKeys, get: getKeys };
+  }
+  return null;
+}
+function gmOfferSummary(off){ return { team: off.team, youSend: [...off.give].map(gmAssetLabel), youGet: [...off.get].map(gmAssetLabel) }; }
+function gmOfferText(off){
+  const gmn = gmTeamGM(off.team), n = Math.min(...[...off.give].map(gmPickNo).filter(Boolean));
+  const L = gmIntelLines(off.team);
+  return 'It is ' + gmn.short + ' with the ' + off.team + '. We want to move up to pick ' + n + '. We would send you ' + gmListLabels(off.get) + ' for ' + gmListLabels(off.give) + '.' + (L && Math.random() < 0.6 ? ' ' + L.prio : '');
+}
+async function gmDoOffer(){
+  const g = gm, off = g.nextOffer; g.nextOffer = null; if(!off) return;
+  g.hold = true; g.offerOpen = true; g.pendingOffer = off; g.sinceOffer = 0; g.wasFast = g.fast; g.fast = false; (g.coolTeams = g.coolTeams || {})[off.team] = draftSimResults.length + 12;
+  const sb = document.getElementById('gmSkipBtn'); if(sb) sb.style.display = 'none';
+  gmEnsureStage();
+  const gmn = gmTeamGM(off.team), host = document.getElementById('gmView');
+  const el = document.createElement('div'); el.id = 'gmRing'; el.className = 'gm-ring'; el.style.setProperty('--tc', NBA_TEAM_COLOR[off.team] || '#c6a15b');
+  el.innerHTML = `<div class="gm-ring-ic"><i></i></div><img src="${getNbaLogoUrl(off.team)}" alt="" onerror="this.style.display='none'"><div class="gm-ring-t"><small>Incoming call</small><b>${gmEsc(gmn.name)}</b><em>${gmEsc(off.team)}</em></div><div class="gm-ring-b"><button type="button" class="gm-tbtn go" onclick="gmOfferAnswer()">Answer</button><button type="button" class="gm-tbtn" onclick="gmOfferIgnore()">Ignore</button></div>`;
+  (document.getElementById('gmRoom') || host).appendChild(el);
+  g.stopRing = gmRingStart();
+  g.ringTimer = setTimeout(() => { if(gm === g && g.offerOpen && document.getElementById('gmRing')) gmOfferIgnore(true); }, 15000);
+  await gmWaitHold(); if(gm === g){ g.backFromHold = true; if(g.wasFast){ g.fast = true; g.wasFast = false; } }
+}
+function gmOfferStopRing(){ const g = gm; if(!g) return; if(g.stopRing){ g.stopRing(); g.stopRing = null; } clearTimeout(g.ringTimer); document.getElementById('gmRing')?.remove(); }
+function gmOfferIgnore(missed){
+  const g = gm; if(!g) return; gmOfferStopRing();
+  g.pendingOffer = null; g.offerOpen = false; g.hold = false; g.sinceOffer = 0;
+}
+function gmOfferAnswer(){
+  const g = gm, off = g.pendingOffer; if(!off) return; gmOfferStopRing();
+  const el = document.createElement('div'); el.id = 'gmOfferCard'; el.className = 'gm-ofcard'; el.style.setProperty('--tc', NBA_TEAM_COLOR[off.team] || '#c6a15b');
+  const gmn = gmTeamGM(off.team);
+  el.innerHTML = `<div class="gm-of-h"><img src="${getNbaLogoUrl(off.team)}" alt="" onerror="this.style.display='none'"><div><small>Trade offer</small><b>${gmEsc(gmn.name)}, ${gmEsc(off.team)}</b></div></div>
+    <p>${gmEsc(gmOfferText(off))}</p>
+    <div class="gm-of-cols"><div><small>You send</small>${[...off.give].map(k => `<span>${gmEsc(gmAssetLabel(k))}</span>`).join('')}</div><div><small>You get</small>${[...off.get].map(k => `<span>${gmEsc(gmAssetLabel(k))}</span>`).join('')}</div></div>
+    <div class="gm-of-b"><button type="button" class="gm-tbtn go" onclick="gmOfferAccept()">Accept</button><button type="button" class="gm-tbtn" onclick="gmOfferCounter()">Counter</button><button type="button" class="gm-tbtn" onclick="gmOfferDiscuss()">Discuss with front office</button><button type="button" class="gm-tbtn bad" onclick="gmOfferDecline()">Decline</button></div>`;
+  document.getElementById('gmRoom').appendChild(el);
+}
+function gmOfferClearCard(){ document.getElementById('gmOfferCard')?.remove(); }
+function gmOfferAccept(){
+  const g = gm, off = g.pendingOffer; if(!off) return; gmOfferClearCard(); document.getElementById('gmOfferStrip')?.remove();
+  const lg = gmTradeLegal(off.team, off.give, off.get); if(!lg.ok){ gmLogSys('The league office rejected the deal: ' + lg.fails[0]); gmOfferDecline(); return; }
+  gmApplyTrade(off.team, off.give, off.get);
+  if(g.warOpen) gmLogSys('Trade completed with the ' + off.team + '.');
+  g.pendingOffer = null; g.offerOpen = false; g.sinceOffer = 0;
+  if(g.warOpen){ gmTradeEnded(); } else g.hold = false;
+}
+function gmOfferDecline(){
+  const g = gm; gmOfferClearCard(); document.getElementById('gmOfferStrip')?.remove();
+  if(g.warOpen) gmLogSys('You turned down the ' + (g.pendingOffer ? g.pendingOffer.team : '') + '.');
+  g.pendingOffer = null; g.offerOpen = false; g.sinceOffer = 0; if(!g.warOpen) g.hold = false;
+}
+function gmOfferCounter(){
+  const g = gm, off = g.pendingOffer; if(!off) return; gmOfferClearCard();
+  if(!g.warOpen){ g.mode = 'free'; gmWarRoom('free'); }
+  gmTradeOpen(off.team, { incoming: true, give: off.give, get: off.get, greet: 'You have my attention. What would you change?' });
+  g.tr.fromOffer = true;
+}
+function gmOfferDiscuss(){
+  const g = gm, off = g.pendingOffer; if(!off) return; gmOfferClearCard();
+  if(!g.warOpen){ g.mode = 'free'; gmWarRoom('free'); } else if(!document.getElementById('gmOfferStrip')) gmOfferStrip();
+}
+function gmOfferStrip(){
+  const g = gm, off = g.pendingOffer; if(!off || document.getElementById('gmOfferStrip')) return;
+  const s = document.createElement('div'); s.id = 'gmOfferStrip'; s.className = 'gm-ofstrip';
+  s.innerHTML = `<div><small>Offer from the ${gmEsc(off.team)}</small><b>You send ${gmEsc(gmListLabels(off.give))}. You get ${gmEsc(gmListLabels(off.get))}.</b></div><div class="gm-of-b"><button type="button" class="gm-tbtn go" onclick="gmOfferAccept()">Accept</button><button type="button" class="gm-tbtn" onclick="gmOfferCounter()">Counter</button><button type="button" class="gm-tbtn bad" onclick="gmOfferDecline()">Decline</button></div>`;
+  const w = document.querySelector('.gm-war-main'); if(w) w.parentNode.insertBefore(s, w);
+}
+function gmOfferView(off){
+  const g = gm, myPick = Math.min(...[...off.give].map(gmPickNo).filter(Boolean)), theirPick = Math.min(...[...off.get].map(gmPickNo).filter(Boolean));
+  const pickNo = draftSimPickIndex + 1, av = gmAvail();
+  const atMine = av[Math.max(0, myPick - pickNo)] || av[av.length - 1], atTheirs = av[Math.max(0, Math.min(av.length - 1, theirPick - pickNo))];
+  const myVal = gmSum(g.team, off.give), gotVal = gmSum(g.team, off.get);
+  return { myPick, theirPick, atMine, atTheirs, ratio: myVal ? gotVal / myVal : 1, drop: atTheirs.rk - atMine.rk };
+}
+async function gmOfferAnalysis(){
+  const g = gm, off = g.pendingOffer; if(!off) return; const v = gmOfferView(off), nm = (p) => p.name;
+  gmLogSys('The ' + off.team + ' want to move up. Your front office is reviewing the offer.');
+  await gmPost('scout', 'They want #' + v.myPick + '. At that spot, I expect ' + nm(v.atMine) + ' to be there. ' + (v.atMine.id === v.atTheirs.id ? 'But the same player may still be there at #' + v.theirPick + ', so moving back costs nothing.' : 'At #' + v.theirPick + ' the best I expect is ' + nm(v.atTheirs) + ', who is ' + (v.drop > 0 ? v.drop + ' spots lower on our board.' : 'close on our board.'))); if(gm !== g) return;
+  const fit = gmFitWhy(g.team, v.atMine), fit2 = gmFitWhy(g.team, v.atTheirs);
+  await gmPost('coach', fit && !fit2 ? nm(v.atMine) + ' is exactly what our board room asked for: ' + fit + '. ' + nm(v.atTheirs) + ' does not give us that.' : fit2 && !fit ? 'Fit-wise I am fine moving back. ' + nm(v.atTheirs) + ' gives us ' + fit2 + '.' : 'Fit is a wash for me. Either player can help us, so this comes down to value.'); if(gm !== g) return;
+  await gmPost('analytics', 'In pure value, they are paying ' + (v.ratio >= 1.05 ? 'more than the pick is worth, about ' + Math.round((v.ratio - 1) * 100) + ' percent over.' : v.ratio >= 0.95 ? 'about fair value.' : 'under market. I would ask for more.') + ' My vote: ' + (v.ratio >= 1.05 && v.drop <= 5 ? 'take it.' : v.ratio < 0.95 ? 'counter.' : 'your call, it is close.')); if(gm !== g) return;
+  gmLogSys('Use Accept, Counter or Decline in the bar above. Or ask us what we think.');
+}
+function gmOfferTalk(){
+  const g = gm, off = g.pendingOffer, v = gmOfferView(off);
+  const s = v.drop >= 7 ? 'Decline. We drop too far on our board.' : v.drop >= 3 ? 'I lean no. We lose real talent.' : 'I could live with it.';
+  const a = v.ratio >= 1.05 ? 'Accept. The price is right.' : v.ratio >= 0.95 ? 'Fair. I would try to squeeze out a little more first.' : 'Counter. They are underpaying.';
+  const fit = gmFitWhy(g.team, v.atMine), fit2 = gmFitWhy(g.team, v.atTheirs);
+  const c = fit && !fit2 ? 'Do not do it. We would be giving up the fit.' : fit2 && !fit ? 'Fine by me. The player we get still fits.' : 'No strong feeling. Whatever you decide.';
+  return [{ who: 'scout', text: s }, { who: 'coach', text: c }, { who: 'analytics', text: a }];
+}
+
+(function(){
+  const _bar = gmRenderBar;
+  gmRenderBar = function(){
+    const g = gm; if(g && g.mode === 'free'){ const el = document.getElementById('gmBar'); if(el) el.innerHTML = `<div class="gm-sel"><span>War room</span><b>${g.selected ? gmEsc(g.selected.name) + ' is your pick when you are on the clock' : 'The draft is paused. Take your time.'}</b></div><button class="gm-propose" onclick="gmBackToDraft()">Back to the draft</button>`; return; }
+    return _bar();
+  };
+})();
 
 document.addEventListener("DOMContentLoaded",function(){try{gmRenderSetup();}catch(e){}});
 try{gmRenderSetup();}catch(e){}
