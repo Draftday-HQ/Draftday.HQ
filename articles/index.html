@@ -14620,6 +14620,7 @@ function gmBrain(text){
 }
 
 /* ===================== AI FRONT OFFICE (Supabase function -> Gemini free tier) ===================== */
+const GM_AI_FUNCTION = 'super-function'; // the address Supabase gave the gm-chat function
 const GM_AI_ENABLED = true; // uses the gm-chat Supabase function (Gemini free tier); falls back to the built-in brain if unavailable
 const gmAI = { state: 'unknown', fails: 0, noted: false, lastMsg: '', checked: null };
 function gmSlim(p){
@@ -14745,11 +14746,11 @@ function gmDrafteeIn(r, team){
 
 function gmAIExplain(status, detail, fallback){
   const d = String(detail || fallback || '');
-  if(/not.?found/i.test(d) || status === 404) return 'Supabase cannot find a function named "gm-chat". In Supabase, open Edge Functions and check that it exists with exactly that name and that it deployed.';
+  if(/not.?found/i.test(d) || status === 404) return 'Supabase cannot find a function at the address "' + GM_AI_FUNCTION + '". In Supabase, open Edge Functions and check that it exists with exactly that name and that it deployed.';
   if(/sign_in_required/.test(d)) return 'The function did not accept your login. Sign out of the site, sign back in, and try again.';
   if(/invalid jwt|jwt/i.test(d) || status === 401 && !/upstream/.test(d)) return 'Supabase rejected the login token (' + gmShort(d, 90) + '). Sign out, sign back in, and try again. If it keeps happening, turn off "Verify JWT" for gm-chat in its settings.';
   if(/missing_api_key/.test(d)) return 'The function runs, but the secret GEMINI_API_KEY is not set. Add it under Edge Functions, Secrets, then deploy again.';
-  if(/upstream_401|upstream_403|api key not valid|API_KEY_INVALID|permission/i.test(d)) return 'Google rejected the API key. Check GEMINI_API_KEY for typos and make sure the key came from aistudio.google.com/apikey.';
+  if(/upstream_401|upstream_403|api key not valid|API_KEY_INVALID|permission/i.test(d)) return 'Google rejected the API key. Google says: ' + gmShort(String(d).replace(/AQ\.[A-Za-z0-9_-]+|AIza[A-Za-z0-9_-]+/g, '[key]'), 260);
   if(/upstream_404|not_found|not found/i.test(d)) return 'Google does not recognize the model name. Set a GM_MODEL secret to a model your key can use. Details: ' + gmShort(d, 160);
   if(/upstream_429|rate|overloaded|credit|billing/i.test(d)) return 'Google refused the request, most likely the free daily limit was reached. Details: ' + gmShort(d, 160);
   if(/rate_limited/.test(d)) return 'You hit the hourly message limit for the AI front office.';
@@ -14757,15 +14758,15 @@ function gmAIExplain(status, detail, fallback){
   return 'Unexpected error' + (status ? ' (' + status + ')' : '') + ': ' + gmShort(d || 'no details', 200);
 }
 async function gmAIInvoke(body){
-  const res = await Promise.race([sb.functions.invoke('gm-chat', { body }), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout after 18 seconds')), 18000))]);
+  const res = await Promise.race([sb.functions.invoke(GM_AI_FUNCTION, { body }), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout after 18 seconds')), 18000))]);
   if(res.error){
     const e = res.error; let status = null, detail = '';
     try{ if(e.context){ status = e.context.status; const j = await e.context.clone().json(); detail = (j.error || '') + (j.detail ? ': ' + j.detail : ''); } }catch(_){ try{ detail = await e.context.text(); }catch(__){} }
     let msg = gmAIExplain(status, detail, e.message || e.name);
     if(e.name === 'FunctionsFetchError' || /fetch|Failed to send/i.test(String(e.message || ''))){
       let reachable = false;
-      try{ await fetch(sb.supabaseUrl + '/functions/v1/gm-chat', { method: 'GET', mode: 'no-cors' }); reachable = true; }catch(_){}
-      const u = sb.supabaseUrl + '/functions/v1/gm-chat';
+      try{ await fetch(sb.supabaseUrl + '/functions/v1/' + GM_AI_FUNCTION, { method: 'GET', mode: 'no-cors' }); reachable = true; }catch(_){}
+      const u = sb.supabaseUrl + '/functions/v1/' + GM_AI_FUNCTION;
       msg = (reachable ? 'Supabase answered, but the browser blocked the reply, so the function is either missing, still checking logins, or crashing.' : 'The browser could not reach Supabase. Check your connection and any ad blockers.') + ' Open this link in a new browser tab and read what it says: ' + u + '  ({"error":"method_not_allowed"} means the function is working; "NOT_FOUND" means it is not deployed under the name gm-chat; "Missing authorization header" means Verify JWT is still on.)';
     }
     const err = new Error(msg); err.explained = true; throw err;
