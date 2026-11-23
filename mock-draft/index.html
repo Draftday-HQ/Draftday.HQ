@@ -13455,7 +13455,7 @@ function gmBuildAdvisors(short){
   GM_LENS.forEach(l => { if(!out[l]){ const i = staff.findIndex((s, k) => !used.has(k)); if(i !== -1){ out[l] = staff[i]; used.add(i); } } });
   GM_LENS.forEach((l, i) => { if(!out[l]) out[l] = GM_FALLBACK[i]; });
   const res = {};
-  GM_LENS.forEach(l => { const s = out[l]; const parts = s.name.replace(/\b(jr\.?|sr\.?|ii|iii|iv)$/i, '').trim().split(/\s+/); res[l] = { id: l, name: s.name, short: parts[parts.length - 1], role: gmShort(s.title, 44), color: GM_LENS_COLOR[l], ini: gmInit(s.name) }; });
+  GM_LENS.forEach(l => { const s = out[l]; const parts = s.name.replace(/\b(jr\.?|sr\.?|ii|iii|iv)$/i, '').trim().split(/\s+/); res[l] = { id: l, name: s.name, short: parts[parts.length - 1], role: gmShort(s.title, 44).replace(/\.+$/, ''), color: GM_LENS_COLOR[l], ini: gmInit(s.name) }; });
   return { list: GM_LENS.map(l => res[l]), map: res, url: fo ? fo.url : null };
 }
 function gmAdv(id){ return gm && gm.adv.map[id]; }
@@ -13484,7 +13484,7 @@ function gmRenderSetup(){
     else { const a = gmBuildAdvisors(gmSetup.team); fp.innerHTML = `<div class="gm-fo-h">Your front office in the room</div>` + a.list.map(x => `<div class="gm-fo-r"><span class="gm-fo-av" style="--ac:${x.color}">${gmEsc(x.ini)}</span><div><b>${gmEsc(x.name)}</b><small>${gmEsc(x.role)}</small></div></div>`).join('') + (a.url ? `<a class="gm-fo-src" href="${gmEsc(a.url)}" target="_blank" rel="noopener">Front office source</a>` : ''); }
   }
 }
-function gmRenderAIStatus(){ const el = document.getElementById('gmAIStatus'); if(!el) return; const s = gmAIStatus(); el.className = 'gm-ai' + (s.on ? ' on' : ''); el.textContent = s.text; }
+function gmRenderAIStatus(){ const el = document.getElementById('gmAIStatus'); if(!el) return; const tb = document.getElementById('gmAITestBtn'); if(!GM_AI_ENABLED){ el.style.display = 'none'; if(tb) tb.style.display = 'none'; return; } const s = gmAIStatus(); el.className = 'gm-ai' + (s.on ? ' on' : ''); el.textContent = s.text; }
 function gmPickTeam(t){ gmSetup.team = t; gmRenderSetup(); }
 function gmSetOpt(k, v){ gmSetup[k] = v; gmRenderSetup(); }
 
@@ -13921,7 +13921,7 @@ const GM_ATTR = {
 const GM_AI_NAMES = { scout: 'scouting', coach: 'roster-fit', analytics: 'analytics' };
 function gmPolish(t){ return String(t).replace(/\.\.(?!\.)/g, '.').replace(/\.{4,}/g, '...').replace(/(?<!\bJr|\bSr|\bvs|\bSt|\bDr)([.!?])(\s+)([a-z])/g, (m, a, b, c) => a + b + c.toUpperCase()).replace(/\s{2,}/g, ' ').trim(); }
 function gmRand(a){ return a[Math.floor(Math.random() * a.length)]; }
-function gmLc(s){ s = String(s || ''); return s.charAt(0).toLowerCase() + s.slice(1); }
+function gmLc(s){ s = String(s || ''); if(/^[A-Z]{2,}|^[A-Z][a-z]*[A-Z]/.test(s)) return s; return s.charAt(0).toLowerCase() + s.slice(1); }
 function gmClean(s, n){ return gmShort(String(s || '').replace(/[.!?]+$/, ''), n || 130); }
 function gmSeason(p){ const s = p.seasons || []; return s.find(x => x.yr === CUR_SEASON_LABEL) || s[s.length - 1] || null; }
 function gmWhen(s){ return s && s.yr === CUR_SEASON_LABEL ? 'this year' : 'last season'; }
@@ -14109,13 +14109,13 @@ function gmNeedsReply(){
   return [{ who: 'coach', text: 'Our starters are ' + st + '. The thinnest spot is ' + gmGroupName(top) + ', where we have ' + gmList(gmGroupNames(g.team, top)) + '. The best ' + gmGroupName(top) + 's left are ' + (best.map(p => p.name).join(' and ') || 'not great') + '.' }];
 }
 function gmGroupFromText(t){
-  if(/\b(big|center|five|rim protect|post)\b/.test(t)) return 'big';
-  if(/\b(guard|point|pg|sg|playmaker|ball handler)\b/.test(t)) return 'guard';
-  if(/\b(wing|forward|sf|small forward|swingman)\b/.test(t)) return 'wing';
+  if(/\b(bigs?|centers?|fives?|rim protect\w*|post|big men|big man)\b/.test(t)) return 'big';
+  if(/\b(guards?|point guards?|pgs?|sgs?|playmakers?|ball handlers?)\b/.test(t)) return 'guard';
+  if(/\b(wings?|forwards?|sfs?|small forwards?|swingmen|swingman)\b/.test(t)) return 'wing';
   return null;
 }
 /* the main entry point: returns [{who,text,select?}] */
-function gmBrain(text){
+function gmBrain1(text){
   const g = gm, t = ' ' + text.toLowerCase().replace(/[^a-z0-9'%\s-]/g, ' ').replace(/\s+/g, ' ') + ' ';
   let men = gmFindMentions(text); const avail = gmAvail(), last = g.lastSpeaker && g.lastSpeaker !== 'you' ? g.lastSpeaker : 'scout';
   if(!men.length && g.focus && /\b(he|him|his|this guy|that guy|the kid|this kid|that kid|hes|he'?s)\b/.test(t) && avail.some(a => a.id === g.focus.id)) men = [g.focus];
@@ -14179,7 +14179,448 @@ function gmBrain(text){
   return [{ who: a.id.id || a.id, text: gmRand(['I want to make sure I understand you. Are you asking about a specific player, a position, or about the pick itself?', 'I am not sure what you are asking me. If it helps, I can compare two players, break down ' + p.name + ', or go over our needs.', 'Give me a name, a position or a trait, like shooting or defense, and I will answer straight.']) }];
 }
 
-/* ===================== AI FRONT OFFICE (Supabase function -> Claude) ===================== */
+
+/* ===================== BRAIN V2: entity parsing + topic handlers ===================== */
+function gmNk(s){ return nameKey(s); }
+function gmCorpus(p){ return [p.summary].concat(p.strengths || [], p.weaknesses || []).filter(Boolean).join(' '); }
+function gmSents(p){ return gmCorpus(p).split(/(?<=[.!?])\s+|\s{2,}/).map(x => x.trim()).filter(x => x.length > 12); }
+function gmFind(p, re, n){ const out = []; (p.strengths || []).concat(p.weaknesses || [], gmSents(p)).forEach(s => { if(re.test(s) && !out.some(o => o.slice(0, 30) === s.slice(0, 30))) out.push(s); }); return out.slice(0, n || 2); }
+const GM_CLS = { freshman: 'freshmen', sophomore: 'sophomores', junior: 'juniors', senior: 'seniors', international: 'international prospects', 'big man': 'bigs', guard: 'guards', wing: 'wings' };
+function gmPl(d){ return GM_CLS[d] || (players.some(p => p.school === d) ? 'players from ' + d : d + 's'); }
+function gmUp(s){ return String(s).replace(/^./, c => c.toUpperCase()); }
+function gmSentence(s, n){ const c = gmClean(s, n || 170); return /\.\.\.$/.test(c) ? c : c + '.'; }
+function gmFeet(p){ const i = gmHeightIn(p); return Math.floor(i / 12) + "'" + (i % 12) + '"'; }
+function gmWeight(p){ const m = String(p.wt || '').match(/\d+/); return m ? Number(m[0]) : null; }
+function gmWingspan(p){ const t = gmCorpus(p); const m = t.match(/(\d)(?:'|-foot-?|\s?foot\s?)\s?(\d{1,2})?(?:"|-inch)?\s+wingspan/i) || t.match(/wingspan (?:of )?(?:about |roughly )?(\d)'\s?(\d{1,2})?/i); if(m) return m[1] + "'" + (m[2] || '0') + '"'; if(/7-foot wingspan|wingspan of 7 feet|roughly 7-foot wingspan/i.test(t)) return "7'0\""; return null; }
+
+/* ---- NBA rosters ---- */
+let GM_NBA_IDX = null;
+function gmNbaIndex(){
+  if(GM_NBA_IDX) return GM_NBA_IDX;
+  const idx = [];
+  NBA_TEAMS.forEach(full => { const sh = getTeamShortName(full); let r = []; try{ r = tradeRosterOf(sh) || []; }catch(e){} r.forEach(x => idx.push({ n: x.n, key: gmNk(x.n), team: sh, sal: x.sal, yrs: x.yrs, pos: x.pos })); const ch = NBA_DEPTH_CHARTS[sh]; if(ch) [...(ch.starters || []), ...(ch.second || []), ...(ch.third || [])].forEach(x => { if(!idx.some(y => y.team === sh && y.key === gmNk(x.n))) idx.push({ n: x.n, key: gmNk(x.n), team: sh, sal: null, yrs: null, pos: x.pos }); }); });
+  return (GM_NBA_IDX = idx);
+}
+function gmNbaMentions(text, strict){
+  const t = ' ' + gmNk(text) + ' ', hits = [], idx = gmNbaIndex(), lastCount = {};
+  idx.forEach(x => { const l = x.key.split(' ').pop(); lastCount[l] = (lastCount[l] || 0) + 1; });
+  idx.forEach(x => { const parts = x.key.split(' '), l = parts[parts.length - 1]; let i = t.indexOf(' ' + x.key + ' '); if(i === -1 && !strict && l.length > 4 && lastCount[l] === 1 && new RegExp('\\b' + l.charAt(0).toUpperCase() + l.slice(1) + '\\b').test(text) && !/^(young|brown|jones|green|smith|white|williams|johnson|james|davis|walker|jackson|harris|murray|thomas|robinson)$/.test(l)) i = t.indexOf(' ' + l + ' '); if(i === -1 && ['lebron', 'steph', 'luka', 'giannis', 'jokic', 'embiid', 'wemby', 'wembanyama', 'sga', 'ant'].includes(l) === false) return; if(i !== -1) hits.push({ x, i }); });
+  const alias = { lebron: 'lebron james', steph: 'stephen curry', luka: 'luka doncic', giannis: 'giannis antetokounmpo', jokic: 'nikola jokic', embiid: 'joel embiid', wemby: 'victor wembanyama', wembanyama: 'victor wembanyama', sga: 'shai gilgeous alexander', kd: 'kevin durant', ant: 'anthony edwards' };
+  Object.keys(alias).forEach(k => { if(t.includes(' ' + k + ' ')){ const x = idx.find(y => y.key === alias[k]); if(x && !hits.some(h => h.x === x)) hits.push({ x, i: t.indexOf(' ' + k + ' ') }); } });
+  const seen = new Set(); return hits.sort((a, b) => a.i - b.i).map(h => h.x).filter(x => { const k = x.team + x.key; if(seen.has(k)) return false; seen.add(k); return true; }).slice(0, 3);
+}
+function gmTeamMention(text){
+  const t = ' ' + text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ') + ' ';
+  const alias = { 'sixers': '76ers', 'blazers': 'Trail Blazers', 'wolves': 'Timberwolves', 'cavs': 'Cavaliers', 'mavs': 'Mavericks', 'dubs': 'Warriors', 'knicks': 'Knicks' };
+  for(const k of Object.keys(alias)) if(t.includes(' ' + k + ' ')) return alias[k];
+  const cities = { 'boston': 'Celtics', 'brooklyn': 'Nets', 'charlotte': 'Hornets', 'chicago': 'Bulls', 'cleveland': 'Cavaliers', 'dallas': 'Mavericks', 'denver': 'Nuggets', 'detroit': 'Pistons', 'golden state': 'Warriors', 'houston': 'Rockets', 'indiana': 'Pacers', 'memphis': 'Grizzlies', 'miami': 'Heat', 'milwaukee': 'Bucks', 'minnesota': 'Timberwolves', 'new orleans': 'Pelicans', 'new york': 'Knicks', 'oklahoma city': 'Thunder', 'okc': 'Thunder', 'orlando': 'Magic', 'philadelphia': '76ers', 'philly': '76ers', 'phoenix': 'Suns', 'portland': 'Trail Blazers', 'sacramento': 'Kings', 'san antonio': 'Spurs', 'toronto': 'Raptors', 'utah': 'Jazz', 'washington': 'Wizards', 'atlanta': 'Hawks' };
+  for(const k of Object.keys(cities)) if(t.includes(' ' + k + ' ')) return cities[k];
+  const hit = NBA_TEAMS.map(getTeamShortName).find(s => t.includes(' ' + s.toLowerCase().replace(/[^a-z0-9\s]/g, ' ') + ' '));
+  if(hit) return hit;
+  const abbr = Object.keys(NBA_TEAM_ABBR || {}).find(s => t.includes(' ' + NBA_TEAM_ABBR[s].toLowerCase() + ' ') && NBA_TEAM_ABBR[s].length > 2);
+  return abbr || null;
+}
+function gmMoney(n){ return n == null ? 'unknown' : n >= 1e6 ? '$' + (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : '$' + Math.round(n / 1000) + 'K'; }
+function gmRoster(short){ const idx = gmNbaIndex().filter(x => x.team === short); const withSal = idx.filter(x => x.sal != null).sort((a, b) => b.sal - a.sal); return withSal.length ? withSal.concat(idx.filter(x => x.sal == null)) : idx; }
+function gmRosterGroups(short){ const c = { guard: [], wing: [], big: [] }; gmRoster(short).slice(0, 10).forEach(x => { const a = String(x.pos || '').split('/')[0]; c[a === 'PG' || a === 'SG' ? 'guard' : a === 'SF' ? 'wing' : 'big'].push(x.n); }); return c; }
+
+/* ---- who is being addressed / which prospects the user means ---- */
+function gmAddressed(t){
+  const g = gm; if(!g) return null;
+  for(const a of g.adv.list){ const nm = a.short.toLowerCase(), full = a.name.toLowerCase().replace(/[^a-z\s]/g, ''); if(t.includes(' ' + nm + ' ') || t.includes(' ' + full + ' ')) return a.id; }
+  if(/\b(scout|scouting guy|scouting director)\b/.test(t)) return 'scout';
+  if(/\b(coach|coaching)\b/.test(t) && !/\bcoach(ing)? (him|up)\b/.test(t)) return 'coach';
+  if(/\b(analytics|analyst|numbers guy|data guy|stats guy)\b/.test(t)) return 'analytics';
+  return null;
+}
+function gmMen(text, t){
+  const g = gm, avail = gmAvail(); let men = gmFindMentions(text);
+  g.recent = g.recent || [];
+  if(!men.length){
+    const ord = t.match(/\b(first|second|third|number one|number two|number 1|number 2|#1|#2|1st|2nd|3rd)\s+(one|guy|player|kid|prospect|available|option|left|name|pick)\b/) || t.match(/\b(top|best)\s+(one|guy|kid)\b/);
+    if(ord){ const i = { first: 0, top: 0, best: 0, 'number one': 0, 'number 1': 0, '#1': 0, '1st': 0, second: 1, 'number two': 1, 'number 2': 1, '#2': 1, '2nd': 1, third: 2, '3rd': 2 }[ord[1]]; if(avail[i] && !/\b(shoot|defend|rebound|pass)/.test(t)) men = [avail[i]]; }
+  }
+  if(!men.length && /\b(he|him|his|this guy|that guy|the kid|this kid|that kid|hes|he'?s|the guy|your guy|their guy)\b/.test(t)){
+    const f = g.focus || g.selected || g.recent[0]; if(f) men = [f];
+  }
+  if(!men.length && /\b(blocks?|assists?|steals?|rebounds?|points|turnovers?|minutes|ppg|threes)\b/.test(t) && /\b(how many|average|averages|per game|does he|did he|has he)\b/.test(t) && (g.focus || g.recent[0])) men = [g.focus || g.recent[0]];
+  if(men.length === 1 && /\b(compared? to|versus|vs|than|relative to|next to him|against)\b/.test(t) && (g.focus || g.recent[0]) && (g.focus || g.recent[0]).id !== men[0].id && /\b(his|he|him)\b/.test(t)) men = [g.focus || g.recent[0], men[0]];
+  if(!men.length && /\b(the other (one|guy)|other guy|other one)\b/.test(t) && g.recent[1]) men = [g.recent[1]];
+  if(men.length){ g.recent = men.concat(g.recent.filter(r => !men.some(m => m.id === r.id))).slice(0, 4); }
+  return men;
+}
+function gmIsGone(p){ return draftSimResults.some(r => r.player.id === p.id); }
+function gmWho(p){ const r = draftSimResults.find(r => r.player.id === p.id); return r ? r.team.split(' (from')[0] + ' took him at ' + gmOrd(r.pick) : null; }
+function gmAdvFor(topic, addr){ return addr || ({ character: 'coach', injury: 'scout', physical: 'scout', stats: 'analytics', fit: 'coach', ceiling: 'scout', value: 'analytics', age: 'analytics' }[topic] || 'scout'); }
+
+/* ---- personality / character ---- */
+const GM_PERS = {
+  workEthic: /work ethic|motor|effort|hustle|compet|toughness|tough|relentless|gym|grinder|energy|dedicat|tireless|intens/i,
+  leadership: /leader|captain|vocal|culture|teammate|unselfish|selfless|winning|winner|locker/i,
+  iq: /\biq\b|feel for|vision|reads?\b|smart|savvy|instinct|decision|processing|anticipat|cerebral|poise/i,
+  confidence: /confiden|swagger|aggress|fearless|bold|attack|assertive|alpha|demanding/i,
+  coachable: /coachab|receptive|willing to|teachable|open to|adjusts? (well|quickly)/i,
+  passive: /passive|deferr|disappear|inconsisten|lack(s|ing)? (of )?(aggress|assertive|consisten)|streak|cold stretch|shy|quiet/i,
+  maturity: /matur|late-bloom|poise|steady|composed|even-keel|calm/i
+};
+function gmPersonality(p, t, addr){
+  const n = gmLast(p), pros = [], cons = [];
+  const a = gmAdvFor('character', addr);
+  const keys = /\b(lead|captain)\b/.test(t) ? ['leadership'] : /\b(work ethic|hard work|work hard|works hard|hard worker|workaholic|gym rat|motor|effort|hustle|grind)\b/.test(t) ? ['workEthic'] : /\b(iq|smart|intelligen|cerebral|feel|processing|basketball brain)\b/.test(t) ? ['iq'] : /\b(confiden|swagger|aggress|alpha|bold)\b/.test(t) ? ['confidence'] : /\b(coachab|teachable|attitude|receptive|ego)\b/.test(t) ? ['coachable'] : /\b(mature|maturity|young|ready)\b/.test(t) ? ['maturity'] : Object.keys(GM_PERS);
+  const found = [];
+  keys.forEach(k => { gmFind(p, GM_PERS[k], 2).forEach(s => { if(!found.some(f => f.slice(0, 25) === s.slice(0, 25))) found.push(s); }); });
+  const bad = found.filter(s => GM_PERS.passive.test(s) || (p.weaknesses || []).includes(s)), good = found.filter(s => !bad.includes(s));
+  const out = [];
+  if(!found.length){
+    const age = typeof p.age === 'number' ? p.age : null;
+    out.push({ who: a, text: 'Honest answer: our file does not say much about ' + n + '\'s personality or makeup. ' + (age && age <= 19 ? 'He is ' + age + ', so you are betting on the person he becomes, and we would want the interview and the workout before we trust it.' : 'That is the kind of thing we would nail down in interviews and a call to his coach before draft night.') });
+  } else {
+    const head = good.length >= bad.length ? gmRand(['What I can say about ' + n + ':', 'On the intangibles, here is what we have on ' + n + '.', n + ' reads well on the makeup side.']) : gmRand(['Mixed, and I will be straight with you.', 'There are a couple of flags on ' + n + ' I want you to hear.']);
+    out.push({ who: a, text: head + ' ' + gmList([].concat(good.slice(0, 2), bad.slice(0, 1)).map(s => gmClean(s, 120))) .replace(/^./, c => c) + '.' });
+  }
+  const other = g_other(a);
+  if(other && found.length && Math.random() < .6){ const pr = gmPros(other, p)[0]; out.push({ who: other, text: 'Character matters, but I will add the on-court case: ' + gmLc(gmClean(pr, 120)) + '.' }); }
+  return out;
+}
+function g_other(a){ const l = gm.adv.list.filter(x => x.id !== a); return l.length ? gmRand(l).id : null; }
+
+/* ---- injuries / health ---- */
+function gmInjury(p, addr){
+  const n = gmLast(p), a = gmAdvFor('injury', addr);
+  const inj = gmFind(p, /injur|acl|surgery|fractur|torn|sprain|stress reaction|missed (time|games|most|the season)|medical redshirt|knee|ankle|foot|shoulder|back (issue|problem)|health|durab/i, 2);
+  const gp = (p.seasons || []).map(s => s.gp).filter(x => x != null);
+  if(inj.length) return [{ who: a, text: 'Yes, there is something to check on ' + n + ': ' + gmLc(gmClean(inj[0], 170)) + '. We would want our doctors to clear him before we spend a pick on him.' }];
+  const low = gmSeason(p) && gmSeason(p).gp != null && gmSeason(p).gp < 20 && p.cls !== 'International';
+  return [{ who: a, text: 'Nothing flagged in our file on ' + n + '\'s health' + (low ? ', although he only played ' + gmSeason(p).gp + ' games, which I would ask about' : '') + '. Medicals are the last thing we do before a pick is final, so I would never call it fully clean from here.' }];
+}
+
+/* ---- physical profile ---- */
+function gmVersatile(p, addr){
+  const n = gmLast(p), v = gmFind(p, /versatil|switch|multiple positions|positions|lineup|hybrid|combo|point forward|1-5|guard (both|multiple)/i, 1);
+  return [{ who: 'coach', text: n + ' is listed as ' + p.pos + (v[0] ? '. ' + gmUp(gmSentence(v[0], 150)) : '. Our file does not call out a lot of positional versatility, so I would plan on him at ' + String(p.pos).split('/')[0] + '.') }];
+}
+function gmPhysical(p, t, addr){
+  const n = gmLast(p), a = gmAdvFor('physical', addr), ws = gmWingspan(p), wt = gmWeight(p);
+  if(/\b(wingspan|length|reach)\b/.test(t)) return [{ who: a, text: ws ? n + ' has a ' + ws + ' wingspan on a ' + p.hs + ' frame' + (ws.startsWith("7'") && gmHeightIn(p) <= 79 ? ', which is real length for his size.' : '.') : 'We do not have a measured wingspan on ' + n + '. He is listed at ' + p.hs + (wt ? ' and ' + wt + ' pounds' : '') + ', and the combine will give us the real number.' }];
+  if(/\b(weight|heavy|pounds|lbs|skinny|thin|strong|strength|frame|build|body)\b/.test(t)){ const bmi = wt ? wt / Math.pow(gmHeightIn(p), 2) * 703 : null; return [{ who: a, text: n + ' is ' + p.hs + (wt ? ' and ' + wt + ' pounds' : '') + '. ' + (bmi ? (bmi < 22 ? 'That is a lean frame, so he will need to add strength before he can handle NBA contact.' : bmi > 27 ? 'He is thick for his height, which helps him absorb contact but we need to watch his quickness.' : 'That is a solid NBA-ready build.') : '') + (gmFind(p, GM_ATTR.size.re, 1)[0] ? ' Scouts say: ' + gmLc(gmClean(gmFind(p, GM_ATTR.size.re, 1)[0], 120)) + '.' : '') }]; }
+  if(/\b(where|hometown|from|born|grow up|city|state)\b/.test(t) && !/\bschool\b/.test(t)) return [{ who: a, text: n + ' is from ' + (p.hometown || 'a place our file does not list') + ' and played at ' + p.school + '.' }];
+  if(/\b(school|college|play for|played|team|program)\b/.test(t)){ const mates = players.filter(x => x.school === p.school && x.id !== p.id && !gmIsGone(x)).slice(0, 3).map(x => x.name); return [{ who: a, text: n + ' is at ' + p.school + ' as a ' + String(p.cls || '').toLowerCase() + '.' + (mates.length ? ' His school also has ' + gmList(mates) + ' on our board.' : '') }]; }
+  if(/\b(what position|which position|positions?|guard spots|both guard|multiple positions|versatil\w*|switch)\b/.test(t)) return gmVersatile(p, addr);
+  if(/\b(play with|teammates)\b/.test(t)){ const mates = players.filter(x => x.school === p.school && x.id !== p.id).slice(0, 4).map(x => x.name); return [{ who: a, text: mates.length ? 'At ' + p.school + ' he shares the roster with ' + gmList(mates) + ' from our board.' : 'We do not have any of his teammates on our board.' }]; }
+  if(/\b(one and done|one-and-done|class|year|freshman|sophomore|junior|senior|international)\b/.test(t)) return [{ who: a, text: n + ' is a ' + String(p.cls || '').toLowerCase() + ', ' + p.age + ' years old.' }];
+  return [{ who: a, text: p.name + ' is ' + p.hs + (wt ? ', ' + wt + ' pounds' : '') + ', ' + p.pos + (ws ? ', ' + ws + ' wingspan' : '') + ', ' + p.age + ' years old, from ' + (p.hometown || p.school) + '.' }];
+}
+
+/* ---- statistics ---- */
+function gmStatsAsk(p, t, addr){
+  const n = gmLast(p), s = gmSeason(p), a = gmAdvFor('stats', addr), ss = (p.seasons || []);
+  if(!s) return [{ who: a, text: 'We do not have box score numbers on ' + n + (p.cls === 'International' ? ', which is common for international prospects' : '') + '. I would lean on the film and the scouting report.' }];
+  const w = gmWhen(s), per36 = k => s.min ? (s[k] * 36 / s.min) : null;
+  if(/\b(trend|improv|progress|better than last|last year|year over year|develop|jump|growth|regress|declin|get(ting)? better)\b/.test(t) && ss.length >= 2){
+    const f = ss[0], l = ss[ss.length - 1], d = (a, b, k) => (b[k] - a[k]);
+    return [{ who: a, text: n + ' from ' + f.yr + ' to ' + l.yr + ': points ' + f.ppg + ' to ' + l.ppg + ', rebounds ' + f.rpg + ' to ' + l.rpg + ', assists ' + f.apg + ' to ' + l.apg + ', three-point ' + f.tpt + '% to ' + l.tpt + '%. ' + (d(f, l, 'ppg') > 2 ? 'The production is climbing.' : d(f, l, 'ppg') < -2 ? 'The production slipped, and I would want to know why.' : 'He is steady, not a big jump either way.') }];
+  }
+  if(/\b(per 36|per thirty|per-36|rate|minutes|min)\b/.test(t) && s.min){ return [{ who: a, text: 'Per 36 minutes ' + n + ' projects to ' + per36('ppg').toFixed(1) + ' points, ' + per36('rpg').toFixed(1) + ' rebounds and ' + per36('apg').toFixed(1) + ' assists, off ' + s.min + ' minutes a game ' + w + '.' }]; }
+  if(/\b(turnover|turnovers|careless|ball security)\b/.test(t)) return [{ who: a, text: n + ' had ' + s.to + ' turnovers against ' + s.apg + ' assists ' + w + ', a ' + (s.to ? (s.apg / s.to).toFixed(2) : 'n/a') + ' ratio. ' + (s.apg / (s.to || 1) >= 2 ? 'That is clean.' : s.apg / (s.to || 1) < 1.2 ? 'That is a worry.' : 'That is average.') }];
+  if(/\b(free throw|ft|at the line|foul shot)\b/.test(t)) return [{ who: a, text: n + ' shot ' + s.ft + '% from the line on ' + s.fta + ' attempts ' + w + '. ' + (s.ft >= 78 ? 'Good sign for his shooting touch.' : s.ft < 65 ? 'That makes me doubt the jumper will carry over.' : 'Fine, nothing alarming.') }];
+  if(/\b(three|3 point|3pt|3-point|from deep|beyond the arc|efficien)\b/.test(t) && !/\b(true shooting|ts)\b/.test(t)) return [{ who: a, text: n + ' hit ' + s.tpt + '% from three on ' + s.tpa + ' attempts a game ' + w + ' and ' + s.fg + '% overall. ' + (s.tpa < 1.5 ? 'The volume is too low to trust it.' : s.tpt >= 36 ? 'That is a legitimate shooter.' : s.tpt < 31 ? 'That is not NBA-level yet.' : 'That is solid but not elite.') }];
+  if(/\b(block|steal|stocks|rim protect|deflect)\b/.test(t)) return [{ who: a, text: n + ' averaged ' + s.stl + ' steals and ' + s.blk + ' blocks ' + w + ' in ' + s.min + ' minutes. ' + (s.stl + s.blk >= 2.5 ? 'That is a lot of disruption.' : s.stl + s.blk >= 1.5 ? 'That is decent activity.' : 'That is low, so the defense is not coming from stats.') }];
+  if(/\b(rebound|boards|glass)\b/.test(t)) return [{ who: a, text: n + ' pulled ' + s.rpg + ' rebounds in ' + s.min + ' minutes ' + w + ', about ' + (per36('rpg') || 0).toFixed(1) + ' per 36. ' + (p.cls === 'International' ? '' : '') + (per36('rpg') >= 9 ? 'That is strong for his position.' : '') }];
+  if(/\b(assist|dime|passing numbers)\b/.test(t)) return [{ who: a, text: n + ' averaged ' + s.apg + ' assists to ' + s.to + ' turnovers ' + w + '.' }];
+  if(/\b(point|points|ppg|scor|buckets)\b/.test(t) && /\b(how many|average|per game|number)\b/.test(t)) return [{ who: a, text: n + ' scored ' + s.ppg + ' a game ' + w + ' on ' + s.fg + '% shooting in ' + s.min + ' minutes.' }];
+  return [{ who: a, text: p.name + ' ' + w + ': ' + s.ppg + ' points, ' + s.rpg + ' rebounds, ' + s.apg + ' assists, ' + s.stl + ' steals, ' + s.blk + ' blocks in ' + s.min + ' minutes. Shooting ' + s.fg + '% overall' + (s.tpa >= 1 ? ', ' + s.tpt + '% from three' : '') + ', ' + s.ft + '% at the line. Per 36 that is ' + per36('ppg').toFixed(1) + ' points.' }];
+}
+
+/* ---- fit, roles, archetypes, ceiling/floor ---- */
+function gmArche(p){
+  const t = gmCorpus(p).toLowerCase(), g = gmPosGroup(p), tags = [];
+  if(/shoot|spacing|jumper|three/.test(t)) tags.push('shooter'); if(/defen|stopper|switch/.test(t)) tags.push('defender'); if(/pass|playmak|vision|creat/.test(t)) tags.push('playmaker'); if(/rim|dunk|lob|roll/.test(t) && g === 'big') tags.push('rim-runner'); if(/rebound/.test(t)) tags.push('rebounder'); if(/scor|bucket|finish/.test(t)) tags.push('scorer'); if(/athlet|explos/.test(t)) tags.push('athlete');
+  return tags.slice(0, 3);
+}
+function gmFitNba(p, nba, t, addr){
+  const g = gm, n = gmLast(p), a = gmAdvFor('fit', addr), pg = gmPosGroup(p), op = String(nba.pos || '').split('/')[0], og = op === 'PG' || op === 'SG' ? 'guard' : op === 'SF' ? 'wing' : 'big';
+  const same = og === pg, tags = gmArche(p), sh = tags.includes('shooter'), ctr = pg === 'big';
+  const lead = nba.team === g.team ? 'our own ' : '';
+  let txt;
+  if(same) txt = n + ' and ' + nba.n + ' are both ' + gmGroupName(pg) + 's, so they would compete for the same minutes unless one slides to another spot. ' + (sh ? 'The upside is that ' + n + ' can play off the ball as a shooter next to him.' : 'That overlap is the thing I would worry about.');
+  else txt = 'Different positions, which is good. ' + n + ' is a ' + gmGroupName(pg) + ' and ' + nba.n + ' is a ' + gmGroupName(og) + ', so they would not take each other\'s minutes. ' + (tags.length ? 'What ' + n + ' brings next to him is ' + gmList(tags) + '.' : '');
+  const res = [{ who: a, text: txt }];
+  const o = g_other(a); if(o && nba.sal != null) res.push({ who: o, text: nba.n + ' is on ' + gmMoney(nba.sal) + ' with ' + (nba.yrs || '?') + ' year' + (nba.yrs === 1 ? '' : 's') + ' left' + (nba.team !== g.team ? ' for the ' + nba.team : '') + ', so ' + (nba.yrs >= 3 ? 'that pairing has a long runway.' : 'that window is short, which matters for how fast ' + n + ' needs to be ready.') });
+  return res;
+}
+function gmRoleAsk(p, t, addr){
+  const g = gm, n = gmLast(p), a = gmAdvFor('fit', addr), pg = gmPosGroup(p), names = gmGroupNames(g.team, pg), need = gmNeeds(g.team)[pg];
+  const ro = gmRosterGroups(g.team)[pg] || [];
+  if(/\b(start|starter|starting|play right away|minutes|play time|playing time|rotation|bench)\b/.test(t)){
+    const rk = p.rk, win = typeof p.age === 'number' && p.age >= 21 && /Junior|Senior/.test(p.cls || '');
+    return [{ who: 'coach', text: names.length ? 'At ' + gmGroupName(pg) + ' we have ' + gmList(names) + '. ' + (need > 0 ? n + ' could crack the rotation as a rookie, probably as a ' + (rk <= 8 ? 'starter by midseason' : 'second-unit player') + '.' : 'Honestly he starts on the bench. ' + (rk <= 6 ? 'But at that talent level we would find him minutes.' : 'He would need to earn it.')) : 'There is room for him to play right away.' }, { who: 'scout', text: gmWhen2(p) }];
+  }
+  const tg = gmArche(p).join(', ') || 'a rotation piece';
+  return [{ who: a, text: 'I see ' + n + ' as ' + (tg === 'a rotation piece' ? tg : 'a ' + gmGroupName(pg) + ' who is a ' + tg.replace(/, ([^,]*)$/, ' and $1')) + '. ' + gmNeedLine(p).replace(/^./, c => c.toUpperCase()) + '.' }];
+}
+function gmWhen2(p){ const age = p.age; return 'Development-wise, ' + gmLast(p) + ' is ' + age + ', ' + (age <= 19 ? 'so expect a year or two of growing before he is steady.' : age >= 21 ? 'so he is closer to what he will be, which is good for a team that wants help soon.' : 'which gives him a normal runway.'); }
+function gmCeilFloor(p, t, addr){
+  const n = gmLast(p), a = gmAdvFor('ceiling', addr), pr = gmPros('scout', p), cn = gmCons('scout', p), cmp = p.comps && p.comps[0];
+  if(/\b(worst|bust|downside|floor|risk|go wrong|fail|red flags?|biggest (concern|risk))\b/.test(t)) return [{ who: 'analytics', text: 'Biggest risk with ' + n + ': ' + gmLc(gmClean(cn[0] || gmWeakness(p), 150)) + '. ' + (p.age >= 21 ? 'And he is older, so there is less time to fix it.' : 'He is young, so there is time, but it has to improve.') }, { who: 'coach', text: 'The floor is a ' + (p.rk <= 10 ? 'rotation player' : 'bench contributor') + ' if the weakness never gets fixed. ' + gmNeedLine(p).replace(/^./, c => c.toUpperCase()) + '.' }];
+  if(/\b(best case|ceiling|upside|become|turn into|peak|star|all-star|potential)\b/.test(t)) return [{ who: 'scout', text: 'Best case, ' + n + ' becomes ' + (cmp ? gmLc(gmClean(cmp, 120)) : 'a high-level starter') + '. ' + gmClean(pr[0] || gmStrength(p), 140) + '.' }, { who: 'analytics', text: 'For that to happen, ' + gmLc(gmClean(cn[0] || gmWeakness(p), 120)) + ' has to get better.' }];
+  return [{ who: a, text: n + ' has ' + (p.rk <= 5 ? 'star' : p.rk <= 15 ? 'starter' : 'rotation') + ' upside. ' + gmClean(pr[0], 130) + '.' }];
+}
+
+/* ---- board searches ---- */
+function gmFilter(t, pool){
+  let ps = pool, desc = [];
+  if(/\b(freshman|freshmen|one-and-done|one and done)\b/.test(t)){ ps = ps.filter(p => /fresh/i.test(p.cls)); desc.push('freshman'); }
+  else if(/\bsophomores?\b/.test(t)){ ps = ps.filter(p => /soph/i.test(p.cls)); desc.push('sophomore'); }
+  else if(/\bjuniors?\b/.test(t)){ ps = ps.filter(p => /junior/i.test(p.cls)); desc.push('junior'); }
+  else if(/\bseniors?\b|\bfifth.?year/.test(t)){ ps = ps.filter(p => /senior|5th/i.test(p.cls)); desc.push('senior'); }
+  else if(/\b(international|europe|overseas|foreign|euro)\b/.test(t)){ ps = ps.filter(p => /intern/i.test(p.cls)); desc.push('international'); }
+  const sch = [...new Set(players.map(p => p.school))].find(s => s && t.includes(' ' + s.toLowerCase().replace(/[^a-z0-9\s]/g, '') + ' '));
+  if(sch){ ps = ps.filter(p => p.school === sch); desc.push(sch); }
+  const grp = gmGroupFromText(t); if(grp && /\b(guard|guards|wing|wings|big|bigs|forward|forwards|center|centers|point guard|playmaker)\b/.test(t)){ ps = ps.filter(p => gmPosGroup(p) === grp); desc.push(gmGroupName(grp)); }
+  const pm = t.match(/\b(pg|sg|sf|pf|c)\b/); if(pm && !grp){ ps = ps.filter(p => String(p.pos).split('/').includes(pm[1].toUpperCase())); desc.push(pm[1].toUpperCase()); }
+  return { ps, desc };
+}
+function gmBoardSearch(t, addr){
+  const avail = gmAvail(), f = gmFilter(t, avail), ps = f.ps, d = f.desc.join(' ');
+  if(!ps.length) return [{ who: 'scout', text: 'There is nobody left who fits ' + (d || 'that') + '. The board has thinned out.' }];
+  const nm = t.match(/\b(top|best)\s+(\d+|three|two|five|four|ten)\b/); const num = nm ? ({ two: 2, three: 3, four: 4, five: 5, ten: 10 }[nm[2]] || Number(nm[2])) : 3;
+  if(/\b(tallest|biggest|longest|largest)\b/.test(t)){ const s = ps.slice().sort((a, b) => gmHeightIn(b) - gmHeightIn(a)); return [{ who: 'scout', text: 'Tallest ' + (d ? gmPl(d) + ' ' : '') + 'left: ' + s.slice(0, 3).map(p => p.name + ' (' + p.hs + ')').join(', ') + '.' }]; }
+  if(/\b(shortest|smallest)\b/.test(t)){ const s = ps.slice().sort((a, b) => gmHeightIn(a) - gmHeightIn(b)); return [{ who: 'scout', text: 'Smallest ' + (d ? gmPl(d) + ' ' : '') + 'left: ' + s.slice(0, 3).map(p => p.name + ' (' + p.hs + ')').join(', ') + '.' }]; }
+  if(/\b(heaviest|strongest|bulkiest)\b/.test(t)){ const s = ps.filter(p => gmWeight(p)).sort((a, b) => gmWeight(b) - gmWeight(a)); return [{ who: 'scout', text: 'Heaviest ' + (d ? gmPl(d) + ' ' : '') + 'left: ' + s.slice(0, 3).map(p => p.name + ' (' + gmWeight(p) + ' lbs)').join(', ') + '.' }]; }
+  if(/\b(youngest)\b/.test(t)){ const s = ps.slice().sort((a, b) => a.age - b.age); return [{ who: 'analytics', text: 'Youngest ' + (d ? gmPl(d) + ' ' : '') + 'left: ' + s.slice(0, 3).map(p => p.name + ' (' + p.age + ')').join(', ') + '.' }]; }
+  if(/\b(oldest)\b/.test(t)){ const s = ps.slice().sort((a, b) => b.age - a.age); return [{ who: 'analytics', text: 'Oldest ' + (d ? gmPl(d) + ' ' : '') + 'left: ' + s.slice(0, 3).map(p => p.name + ' (' + p.age + ')').join(', ') + '.' }]; }
+  if(/\b(how many|count|number of)\b/.test(t)) return [{ who: 'analytics', text: 'There are ' + ps.length + ' ' + (d ? gmPl(d) + ' ' : 'prospects ') + 'still on the board. The best is ' + ps[0].name + ' (#' + ps[0].rk + ').' }];
+  const t2 = t.replace(/\b(top|best) (three|3|two|2|five|5|four|4|ten|10)\b/g, '$1 N'), ak = Object.keys(GM_ATTR).find(k => GM_ATTR[k].ask.test(t2));
+  if(ak){ const sc = ps.slice(0, 25).map(p => { const e = gmEvidence(p, k2(ak)); return { p, s: e.pos.length * 2 - e.neg.length * 2 + gmStatScore(p, ak) * 2 + (100 - p.rk) / 40 }; }).sort((a, b) => b.s - a.s).slice(0, Math.min(num, 3)).map(x => x.p); return [{ who: GM_ATTR[ak].who, text: 'Best ' + (d ? gmPl(d) + ' ' : '') + 'for ' + GM_ATTR[ak].label + ' left: ' + sc.map(p => p.name + ' (#' + p.rk + ')').join(', ') + '. ' + gmAttrAnswer(sc[0], ak) }]; }
+  return [{ who: 'scout', text: 'Best ' + (d ? gmPl(d) + ' ' : 'players ') + 'left: ' + ps.slice(0, Math.min(num, 5)).map(p => p.name + ' (#' + p.rk + ', ' + p.pos + ')').join(', ') + '.' }, { who: 'analytics', text: ps.length + ' ' + (d ? gmPl(d) : 'prospects') + ' remain on the board.' }];
+}
+function k2(k){ return k; }
+
+/* ---- NBA roster questions ---- */
+function gmRosterQ(t, short, addr){
+  { const pm = t.match(/\b(point guard|shooting guard|small forward|power forward|center|pg|sg|sf|pf)\b/); if(pm && /\b(who|starting|starter|our)\b/.test(t)){ const code = { 'point guard': 'PG', 'shooting guard': 'SG', 'small forward': 'SF', 'power forward': 'PF', center: 'C' }[pm[1]] || pm[1].toUpperCase(); const ch0 = NBA_DEPTH_CHARTS[short]; if(ch0){ const all = [].concat(ch0.starters || [], ch0.second || [], ch0.third || []).filter(x => String(x.pos).split('/').includes(code)); if(all.length) return [{ who: 'coach', text: (short === gm.team ? 'Our' : 'The ' + short + '\'') + ' ' + pm[1] + ' spot: ' + all.map(x => x.n).join(', ') + '. ' + all[0].n + ' starts.' }]; } } }
+  const g = gm, mine = short === g.team, pr = mine ? 'We have' : 'The ' + short + ' have', r = gmRoster(short);
+  if(!r.length) return [{ who: 'coach', text: 'I do not have a clean roster for the ' + short + ' in our files.' }];
+  const top = r.filter(x => x.sal != null).slice(0, 5);
+  if(/\b(payroll|cap|luxury|tax|apron|money|salary|salaries|paid|highest|expensive|contract|contracts)\b/.test(t)){
+    let pay = null; try{ pay = tradePayroll(short); }catch(e){} const cba = typeof TRADE_CBA !== 'undefined' ? TRADE_CBA : null;
+    const exp = r.filter(x => x.yrs === 1 && x.sal != null).sort((a, b) => b.sal - a.sal).slice(0, 3);
+    if(/\b(expir\w*|ending|free agen\w*|off the books)\b/.test(t)) return [{ who: 'analytics', text: 'Expiring after this season for ' + (mine ? 'us' : 'the ' + short) + ': ' + (exp.length ? exp.map(x => x.n + ' (' + gmMoney(x.sal) + ')').join(', ') : 'nobody significant') + '.' }];
+    return [{ who: 'analytics', text: (mine ? 'Our' : 'The ' + short + '\'') + ' payroll is about ' + (pay ? gmMoney(pay) : 'unknown') + (cba && pay ? ', ' + (pay > cba.tax ? 'over the tax line of ' + gmMoney(cba.tax) : pay > cba.cap ? 'over the cap but under the tax line' : 'under the cap') : '') + '. Biggest deals: ' + top.slice(0, 3).map(x => x.n + ' ' + gmMoney(x.sal) + ' through ' + (x.yrs || '?') + ' more year' + (x.yrs === 1 ? '' : 's')).join('; ') + '.' }, { who: 'coach', text: 'A rookie scale contract at this pick is cheap talent, which matters ' + (pay && cba && pay > cba.tax ? 'a lot because we are over the tax.' : 'for flexibility.') }];
+  }
+  if(/\b(best player|star|franchise|leader|go-to|first option|top guy|best guy|face)\b/.test(t) && top[0]) return [{ who: 'coach', text: (mine ? 'Our' : 'Their') + ' highest-paid player is ' + top[0].n + ' (' + gmMoney(top[0].sal) + ', ' + top[0].pos + '), and that is who the team is built around.' }];
+  if(/\b(young|old|oldest|youngest|age|veteran)\b/.test(t) && false) return null;
+  const c = gmRosterGroups(short);
+  const needs = gmNeeds(short), order = Object.keys(needs).sort((a, b) => needs[b] - needs[a]);
+  if(/\b(need|needs|weak|thin|hole|biggest need|lacks?|missing|struggl|improve)\b/.test(t)) return [{ who: 'coach', text: (mine ? 'Our' : 'The ' + short + '\'') + ' thinnest spot is ' + gmGroupName(order[0]) + ': ' + (c[order[0]].length ? gmList(c[order[0]]) : 'almost nobody') + '. ' + (mine ? 'The best ' + gmGroupName(order[0]) + 's left are ' + (gmAvail().filter(p => gmPosGroup(p) === order[0]).slice(0, 2).map(p => p.name).join(' and ') || 'not great') + '.' : '') }];
+  if(/\b(how many|count)\b/.test(t)){ const grp = gmGroupFromText(t) || 'guard'; return [{ who: 'coach', text: pr + ' ' + c[grp].length + ' ' + gmPl(gmGroupName(grp)) + ' in the main rotation: ' + c[grp].join(', ') + '.' }]; }
+  const ch = NBA_DEPTH_CHARTS[short];
+  return [{ who: 'coach', text: (mine ? 'Our' : 'The ' + short + '\'') + ' starters: ' + (ch ? ch.starters.map(x => x.n + ' (' + x.pos.split('/')[0] + ')').join(', ') : gmList(top.map(x => x.n))) + '. Guards: ' + gmList(c.guard) + '. Wings: ' + gmList(c.wing) + '. Bigs: ' + gmList(c.big) + '.' }];
+}
+function gmNbaPlayerQ(x, t){
+  const g = gm;
+  if(/\b(how old|age|birthday|born)\b/.test(t)) return [{ who: 'coach', text: 'I do not have birthdays for NBA players in our files. What I do have on ' + x.n + ' is the contract: ' + (x.sal != null ? gmMoney(x.sal) + ' with ' + x.yrs + ' year' + (x.yrs === 1 ? '' : 's') + ' left.' : 'not listed.') }];
+  const line = x.n + ' plays ' + (x.pos || 'for the ' + x.team) + ' for the ' + x.team + (x.sal != null ? ', earns ' + gmMoney(x.sal) + ' and has ' + x.yrs + ' year' + (x.yrs === 1 ? '' : 's') + ' left on his deal' : '') + '.';
+  return [{ who: 'coach', text: line + (x.team === g.team ? ' He is on our roster.' : '') }, { who: 'scout', text: 'I only have contract and position on NBA players in this room, so for how he actually plays I would trust your own eye over me.' }];
+}
+
+/* ---- alternatives / similar ---- */
+function gmSimilar(p, t){
+  const avail = gmAvail().filter(x => x.id !== p.id), pg = gmPosGroup(p), tags = gmArche(p);
+  const sc = avail.map(x => { let s = 0; if(gmPosGroup(x) === pg) s += 6; gmArche(x).forEach(tg => { if(tags.includes(tg)) s += 2; }); s -= Math.abs(x.rk - p.rk) / 4; if(/\bbetter\b/.test(t) && x.rk > p.rk) s -= 10; return { x, s }; }).sort((a, b) => b.s - a.s).slice(0, 3).map(o => o.x);
+  const ex = /\b(gone|taken|off the board|if we miss|if he|miss out)\b/.test(t);
+  return [{ who: 'scout', text: (ex ? 'If ' + gmLast(p) + ' is gone, the closest thing left is ' : 'Players who profile like ' + gmLast(p) + ': ') + sc.map(x => x.name + ' (#' + x.rk + ')').join(', ') + '.' }, { who: 'coach', text: sc[0] ? gmClean(gmPros('coach', sc[0])[0], 140) + '.' : '' }].filter(r => r.text);
+}
+
+/* ---- strategy / meta ---- */
+function gmStrategy(t){
+  const g = gm, pick = draftSimPickIndex + 1, a = gmAvail();
+  if(/\b(best available|bpa|talent over|fit over|best player or|need or talent|talent or need)\b/.test(t)){ const b = a[0], n = gmRanked('coach')[0]; return [{ who: 'scout', text: 'Best available, always. Talent is scarce, positions can be traded around. That is ' + b.name + '.' }, { who: 'coach', text: 'I get that, but a roster needs balance. ' + (n.id === b.id ? 'The good news is the best player is also what we need.' : 'If we want to fill a hole, ' + n.name + ' is who I would take.') }, { who: 'analytics', text: 'The gap between ' + b.name + ' and ' + n.name + ' on my board is ' + Math.abs(b.rk - n.rk) + ' spots. When it is that small, take the need. When it is big, take talent.' }]; }
+  if(/\b(risk|safe|swing|gamble|boom or bust|bust)\b/.test(t)) return [{ who: 'scout', text: 'At ' + gmOrd(pick) + ' I am willing to swing. If ' + a[0].name + ' works, we got a star.' }, { who: 'coach', text: 'If he does not, we have wasted a rotation spot. I would take ' + gmRanked('coach')[0].name + '.' }, { who: 'analytics', text: 'My model says the volatility is fine if the age is right. ' + gmRanked('analytics')[0].name + ' is the best mix.' }];
+  if(/\b(stash|overseas|draft and stash|international|euro)\b/.test(t) && !/\bbest\b/.test(t)){ const ip = a.filter(p => /intern/i.test(p.cls)).slice(0, 2); return [{ who: 'analytics', text: ip.length ? 'Draft-and-stash is a real option. The best international left is ' + ip[0].name + (ip[1] ? ', then ' + ip[1].name : '') + '. You keep the rights while he develops.' : 'There are no international prospects left worth stashing.' }]; }
+  if(/\b(second round|later|trade down|move down|accumulate|more picks|extra pick)\b/.test(t)) return [{ who: 'analytics', text: 'Trading down is a value play. I cannot make a call from this room, but if you want to explore it, the trade simulator is the place. For now: ' + (g.mine.filter(n => n > pick)[0] ? 'we pick again at ' + g.mine.filter(n => n > pick)[0] + '.' : 'this is our last pick.') }];
+  if(/\b(what would you do|what do you do|if you were me|in my shoes|your call|your pick|decide for me|you choose|pick for me)\b/.test(t)){ const votes = g.adv.list.map(ad => gmOwnBest(ad.id)); const tally = {}; votes.forEach(p => tally[p.name] = (tally[p.name] || 0) + 1); const w = Object.keys(tally).sort((x, y) => tally[y] - tally[x])[0]; return [{ who: 'coach', text: tally[w] > 1 ? 'We have a majority here: ' + w + '. If it were my decision, that is who I take.' : 'We split three ways, which means it is a real decision: ' + votes.map(v => v.name).join(', ') + '. Your call, boss.' }]; }
+  if(/\b(poll|vote|everyone|each of you|all of you|show of hands|go around)\b/.test(t)) return g.adv.list.map(ad => { const p = gmOwnBest(ad.id); return { who: ad.id, text: 'My vote: ' + p.name + '. ' + gmClean(gmPros(ad.id, p)[0], 120) + '.' }; });
+  if(/\b(devil'?s advocate|argue against|other side|play devil)\b/.test(t)){ const p = g.selected || g.focus || a[0]; const ad = g.adv.list.find(x => gmStanceOn(x.id, p) === 'against') || gmRand(g.adv.list); return [{ who: ad.id, text: 'Fine, I will argue against ' + p.name + '. ' + (function(){ const c = gmClean(gmCons(ad.id, p)[0] || gmWeakness(p), 150); return c + '.' + (/already have|thin at/.test(c) ? '' : ' And ' + gmNeedLine(p) + '.'); })() }]; }
+  if(/\b(convince|sell me|persuade|three reasons|3 reasons|reasons to|why should)\b/.test(t)){ const p = g.focus || g.selected || a[0]; const who = g.adv.list.find(x => gmStanceOn(x.id, p) === 'for') || g.adv.list[0]; const r = gmPros(who.id, p).slice(0, 3).map((x, i) => (i + 1) + ') ' + gmClean(x, 90)); return [{ who: who.id, text: 'Three reasons for ' + p.name + ': ' + r.join('; ') + '.' }]; }
+  return null;
+}
+function gmDraftContext(t){
+  const g = gm, order = getVisiblePickOrder(), pick = draftSimPickIndex + 1, a = gmAvail();
+  if(/\b(next pick|who(?:'s| is) next|who picks next|who(?:'s| is) after us|picking after)\b/.test(t)){ const nt = order[draftSimPickIndex + 1]; return [{ who: 'analytics', text: nt ? 'The ' + nt.split(' (from')[0] + ' pick next at ' + gmOrd(pick + 1) + '. ' + (function(){ const s = getTeamShortName(nt.split(' (from')[0].trim()); const nd = gmNeeds(s), tp = Object.keys(nd).sort((x, y) => nd[y] - nd[x])[0]; return 'They are thinnest at ' + gmGroupName(tp) + ', so I expect them to look at ' + (a.filter(p => gmPosGroup(p) === tp)[0] || a[0]).name + '.'; })() : 'This is the last pick of the round.' }]; }
+  if(/\b(steals?|reach(es|ed)?|sliding|slid|fell|falling|value pick|overpay|too high|too early)\b/.test(t)){ const rs = draftSimResults.slice(-12); const st = rs.map(r => ({ r, d: r.pick - r.player.rk })).sort((x, y) => y.d - x.d); return [{ who: 'analytics', text: rs.length ? 'Best value so far: ' + (st[0].d > 0 ? st[0].r.player.name + ' at ' + st[0].r.pick + ' (ranked ' + st[0].r.player.rk + '). ' : 'nothing slipping yet. ') + 'Biggest reach: ' + (st[st.length - 1].d < 0 ? st[st.length - 1].r.player.name + ' at ' + st[st.length - 1].r.pick + ' (ranked ' + st[st.length - 1].r.player.rk + ').' : 'nobody yet.') : 'Nothing has happened yet, so no steals or reaches.' }]; }
+  if(/\b(what do other teams|other teams|teams behind|teams after|who else (needs|wants)|rival|competition)\b/.test(t)){ const nxt = order.slice(draftSimPickIndex + 1, draftSimPickIndex + 4).map(x => x.split(' (from')[0]); return [{ who: 'analytics', text: nxt.length ? 'Teams right behind us: ' + nxt.map((x, i) => x + ' (' + gmOrd(pick + 1 + i) + ')').join(', ') + '. If you want a guy in the top ' + (pick + 3) + ', he is at risk.' : 'Nobody is left to pick after us.' }]; }
+  if(/\b(pick number|which picks?|what picks?|where are we|what number|how many picks|picks left|our picks)\b/.test(t)) return [{ who: 'analytics', text: 'We are on the clock at ' + gmOrd(pick) + '. Our picks: ' + g.mine.map(gmOrd).join(', ') + '.' }];
+  if(/\b(how many (players|prospects) (are )?left|how deep|deep draft|class strength|weak class|strong class)\b/.test(t)) return [{ who: 'scout', text: 'There are ' + a.length + ' on the board and the real talent gap hits around ' + gmOrd(Math.min(a[0].rk + 14, 30)) + '. After that it is role players.' }];
+  return null;
+}
+function gmMetaSocial(t){
+  const g = gm, l = g.adv.list;
+  if(/\b(who are you|your name|what do you do|your role|introduce|background|what'?s your job|are you real|are you ai|are you a bot)\b/.test(t)) return l.map(a => ({ who: a.id, text: 'I am ' + a.name + ', ' + a.role.replace(/\.+$/, '') + '. I look at the board through a ' + ({ scout: 'talent and upside', coach: 'roster fit and readiness', analytics: 'age and efficiency' }[a.id]) + ' lens.' }));
+  if(/\b(nervous|scared|pressure|stress|anxious|freaking out|worried|choke|mess up)\b/.test(t)) return [{ who: 'coach', text: 'That is normal. Pick a name you believe in and we will back you. A first-time GM always feels this.' }, { who: 'analytics', text: 'We have a deep board. A good option is available no matter what you choose.' }];
+  if(/\b(do you trust me|trust me|believe in me|will you back me|got my back|support me)\b/.test(t)) return [{ who: 'coach', text: 'We trust the process, and we will back whatever you pick as long as you can tell us why. That is all we ask.' }];
+  if(/\b(joke|funny|lol|haha|lmao|kidding)\b/.test(t)) return [{ who: gmRand(['analytics', 'scout']), text: gmRand(['Good one. Now, about the clock.', 'Ha. Our owner is not as relaxed as you are.', 'Keep that energy, it will help in the later rounds.']) }];
+  if(/\b(good luck|let'?s go|lets go|big night|excited|hype)\b/.test(t)) return [{ who: 'scout', text: gmRand(['Big night. We have a real shot to find someone special.', 'Let us make it a night they remember.']) }];
+  if(/\b(help|what can you|what do you know|what can i ask|how do i|how does this work|commands|options)\b/.test(t)) return [{ who: 'coach', text: 'Ask us about a player (his shooting, defense, stats, health, personality, fit), compare two, ask for the best at a position, class or school, or ask about our roster and contracts. Say a name to get a vote on him, then press Make the pick.' }];
+  if(/\b(sorry|my bad|apolog)\b/.test(t)) return [{ who: 'coach', text: 'No problem. We are on the clock. What are you thinking?' }];
+  if(/\b(you suck|useless|worthless|bad at your job)\b/.test(t)) return [{ who: 'analytics', text: 'Tough room. Tell me what you want to know and I will get it right.' }];
+  return null;
+}
+
+
+function gmOpinion(p, t, addr){
+  const n = gmLast(p), g = gm;
+  if(/\b(small|short|thin|skinny|light|undersized)\b/.test(t)) return gmPhysical(p, ' weight frame ', addr);
+  if(/\b(shoot|shooter|shooting|jumper|three)\b/.test(t)) return [{ who: 'analytics', text: gmAttrAnswer(p, 'shooting') }];
+  if(/\b(athletic|athlete|explosive|quick|slow)\b/.test(t)) return [{ who: 'scout', text: gmAttrAnswer(p, 'athleticism') }];
+  if(/\b(defen|defend)\w*/.test(t)) return [{ who: 'coach', text: gmAttrAnswer(p, 'defense') }];
+  if(/\b(old|older|age)\b/.test(t)) return [{ who: 'analytics', text: n + ' is ' + p.age + ', a ' + String(p.cls || '').toLowerCase() + '. ' + (p.age >= 21 ? 'You are right that it caps his upside. I want his production to be elite.' : 'I would not call that old for this class.') }];
+  if(/\b(young|raw|risky|bust|gamble)\b/.test(t)) return gmCeilFloor(p, ' risk ', addr);
+  const a = g.adv.list.find(x => gmStanceOn(x.id, p) === 'for') || g.adv.list[0], c = g.adv.list.find(x => gmStanceOn(x.id, p) === 'against');
+  return [{ who: c ? c.id : a.id, text: 'Fair, but ' + (c ? 'I share some of that. ' + gmClean(gmCons(c.id, p)[0] || gmWeakness(p), 130) + '.' : 'here is why I like him: ' + gmLc(gmClean(gmPros(a.id, p)[0], 130)) + '.') }];
+}
+function gmWhyLike(p, last){
+  const g = gm, a = last && last !== 'you' ? last : (g.adv.list.find(x => gmStanceOn(x.id, p) === 'for') || g.adv.list[0]).id;
+  const pr = gmPros(a, p); return [{ who: a, text: 'Mostly this: ' + gmLc(gmClean(pr[0], 140)) + '. ' + (pr[1] ? gmUp(gmSentence(pr[1], 120)) : '') }];
+}
+function gmValue(p, t){
+  const g = gm, pick = draftSimPickIndex + 1, d = pick - p.rk;
+  const tag = d >= 4 ? 'a steal' : d >= 1 ? 'good value' : d >= -2 ? 'fair value' : d >= -6 ? 'a slight reach' : 'a real reach';
+  const out = [{ who: 'analytics', text: p.name + ' is #' + p.rk + ' on our board and we are on the clock at ' + gmOrd(pick) + ', so he would be ' + tag + '.' }];
+  const o = g.adv.list.find(x => x.id !== 'analytics' && gmStanceOn(x.id, p) === (d < -2 ? 'against' : 'for'));
+  if(o) out.push({ who: o.id, text: d < -2 ? 'I agree it is a stretch: ' + gmLc(gmClean(gmCons(o.id, p)[0] || gmWeakness(p), 120)) + '.' : 'And it is not just the number: ' + gmLc(gmClean(gmPros(o.id, p)[0], 120)) + '.' });
+  return out;
+}
+const GM_ARCH = [
+  { re: /three.?and.?d|3.?and.?d|3 ?& ?d/, keys: ['shooting', 'defense'], grp: ['wing', 'guard'], label: 'three-and-D players' },
+  { re: /rim protect|shot.?block|paint protect|defensive anchor|anchor/, keys: ['defense', 'size'], grp: ['big'], label: 'rim protectors' },
+  { re: /stretch (four|five|4|5|big)|shooting big|floor.?spacing big/, keys: ['shooting'], grp: ['big'], label: 'shooting bigs' },
+  { re: /point forward|playmaking (big|wing|forward)|passing big|big passer/, keys: ['playmaking'], grp: ['wing', 'big'], label: 'playmaking forwards and bigs' },
+  { re: /floor spacer|spacer|movement shooter|sniper|marksman/, keys: ['shooting'], grp: null, label: 'floor spacers' },
+  { re: /slasher|downhill|rim attacker|finisher|lob threat|rim.?runner|roller|dunker/, keys: ['athleticism', 'scoring'], grp: null, label: 'downhill finishers' },
+  { re: /lockdown|stopper|point of attack|perimeter defender|on.?ball defender/, keys: ['defense', 'athleticism'], grp: ['guard', 'wing'], label: 'perimeter defenders' },
+  { re: /combo guard|scoring guard|shot creator|shot.?creation|go-to scorer|bucket getter|bucket-getter/, keys: ['scoring', 'playmaking'], grp: ['guard'], label: 'shot-creating guards' },
+  { re: /glue guy|role player|connector|high.?iq/, keys: ['motor', 'playmaking'], grp: null, label: 'glue players' }
+];
+function gmArchSearch(t){
+  const a = GM_ARCH.find(x => x.re.test(t)); if(!a) return null;
+  const pool = gmAvail().slice(0, 40).filter(p => !a.grp || a.grp.includes(gmPosGroup(p)));
+  const sc = pool.map(p => { let s = (100 - p.rk) / 25; a.keys.forEach(k => { const e = gmEvidence(p, k); s += e.pos.length * 2 - e.neg.length * 2 + gmStatScore(p, k) * 2; }); return { p, s }; }).sort((x, y) => y.s - x.s).slice(0, 3).map(x => x.p);
+  if(!sc.length) return [{ who: 'scout', text: 'Not really. Nobody left fits ' + a.label + ' well.' }];
+  return [{ who: 'scout', text: 'Best ' + a.label + ' left: ' + sc.map(p => p.name + ' (#' + p.rk + ')').join(', ') + '. ' + gmUp(gmSentence((sc[0].strengths || [])[0] || gmStrength(sc[0]), 140)) }, { who: 'coach', text: gmNeedLine(sc[0]).replace(/^./, c => c.toUpperCase()) + '.' }];
+}
+function gmAvoid(t){
+  const g = gm, pool = gmAvail().slice(0, 16);
+  if(/\b(overrated|overhyped|overvalued|hyped)\b/.test(t) || /\b(not take|avoid|stay away|pass on|steer clear|would you not|wouldn'?t take|worst pick|bad pick|biggest bust)\b/.test(t)){
+    const sc = pool.slice(0, 12).map(p => ({ p, s: (gmCons('analytics', p).length) * 2 + (p.age >= 21 ? 2 : 0) + (p.rk > 6 ? 0 : 1) + gmFind(p, /injur|acl|surgery|fractur|torn|redshirt/i, 1).length * 3 + gmFind(p, /inconsisten|efficien|turnover|raw|question|concern/i, 2).length })).sort((a, b) => b.s - a.s)[0].p;
+    return [{ who: 'analytics', text: 'If I had to name one I would be careful with, it is ' + sc.name + ' (#' + sc.rk + '). ' + gmUp(gmSentence(gmCons('analytics', sc)[0] || gmWeakness(sc), 150)) }, { who: 'scout', text: 'I would not say avoid. I would say the price has to be right. ' + (sc.rk <= 6 ? 'At the top of the board it is not.' : 'Outside the top five it is easier to live with.') }];
+  }
+  const sl = gmAvail().slice(8, 40).map(p => ({ p, s: gmScore('analytics', p, gmNeeds(g.team)) - (100 - Math.min(p.rk, 100)) * 0.7 })).sort((a, b) => b.s - a.s)[0].p;
+  return [{ who: 'analytics', text: 'My sleeper is ' + sl.name + ' (#' + sl.rk + '). ' + gmUp(gmSentence(gmPros('analytics', sl)[0], 150)) }, { who: 'scout', text: 'I would want to see him in a workout, but I understand the case.' }];
+}
+
+function gmTeamEval(t){
+  const g = gm, c = gmRosterGroups(g.team), ch = NBA_DEPTH_CHARTS[g.team], needs = gmNeeds(g.team), order = Object.keys(needs).sort((a, b) => needs[b] - needs[a]);
+  const sec = ch && ch.second ? ch.second.map(x => x.n) : [];
+  if(/\b(bench|second unit|reserves|depth)\b/.test(t)) return [{ who: 'coach', text: 'Our second unit on the depth chart is ' + (sec.length ? gmList(sec) : 'thin') + '. The thinnest group overall is ' + gmGroupName(order[0]) + 's.' }, { who: 'analytics', text: 'A rookie who can play right away is the cheapest way to fix a bench.' }];
+  if(/\b(playoff|contend|title|championship|good team|bad team|rebuild|good enough|win now)\b/.test(t)){ let pay = null; try{ pay = tradePayroll(g.team); }catch(e){} return [{ who: 'analytics', text: 'I cannot give you a win projection from this room. What I can say: our payroll is about ' + (pay ? gmMoney(pay) : 'unknown') + ' and our best-paid players are ' + gmList(gmRoster(g.team).filter(x => x.sal != null).slice(0, 3).map(x => x.n)) + '.' }, { who: 'coach', text: 'Either way, this pick should help us now or in two years. Tell me which one you want.' }]; }
+  if(/\b(shoot|shooting|spacing|spacers?|three)\b/.test(t)){ const ps = gmRankedBy('shooting', 2); return [{ who: 'analytics', text: 'I do not have NBA shooting percentages for our players in this room, so I cannot grade the current group. What I can tell you is the best shooters left: ' + gmList(ps.map(p => p.name)) + '.' }, { who: 'coach', text: 'If shooting is the worry, ' + ps[0].name + ' is the pick that answers it. ' + gmNeedLine(ps[0]).replace(/^./, c2 => c2.toUpperCase()) + '.' }]; }
+  if(/\b(small|size|length|tall|undersized|big enough|physical)\b/.test(t)) return [{ who: 'coach', text: 'By position we have ' + c.big.length + ' bigs, ' + c.wing.length + ' wings and ' + c.guard.length + ' guards in the main group, and the thinnest is ' + gmGroupName(order[0]) + '. I do not have measurements for our own players, but that is where I would add size.' }];
+  if(/\b(rebound|defen|defense|rim protect|passing|playmak|ball handl|athlet)\w*/.test(t)){ const ak = Object.keys(GM_ATTR).find(k => GM_ATTR[k].ask.test(t)); if(ak){ const ps = gmRankedBy(ak, 2); return [{ who: GM_ATTR[ak].who, text: 'I cannot grade our current players on ' + GM_ATTR[ak].label + ' from here. The best ' + GM_ATTR[ak].label + ' on the board is ' + ps[0].name + ', then ' + ps[1].name + '.' }]; } }
+  return null;
+}
+function gmBestStats(){
+  const sc = gmAvail().slice(0, 40).map(p => { const s = gmSeason(p); if(!s || !s.min) return null; const k = x => s[x] * 36 / s.min; return { p, s, v: k('ppg') + k('rpg') * 1.2 + k('apg') * 1.5 + k('stl') * 2 + k('blk') * 2 - k('to') * 1.5 + (s.fg - 44) / 4 }; }).filter(Boolean).sort((a, b) => b.v - a.v).slice(0, 3);
+  return [{ who: 'analytics', text: 'On pure production per minute, the best left are ' + sc.map(x => x.p.name + ' (' + x.s.ppg + ' points, ' + x.s.rpg + ' rebounds, ' + x.s.apg + ' assists)').join('; ') + '.' }, { who: 'scout', text: 'Stats are one input. Check the age and the level of competition before you fall in love.' }];
+}
+function gmSmartFallback(t){
+  if(/^\s*(actually )?(no|nope|nevermind|never mind|scratch that|change of plans|wait no)\s*$/.test(t) || /\bactually no\b/.test(t)){ gm.selected = null; gm.selectChanged = true; return [{ who: 'coach', text: 'No problem, we have not locked anything in. Who are you thinking now?' }]; }
+  const g = gm, a = gmAvail(), top = a[0], pg = Object.keys(gmNeeds(g.team)).sort((x, y) => gmNeeds(g.team)[y] - gmNeeds(g.team)[x])[0], w = g.adv.list.filter(x => x.id !== g.lastSpeaker);
+  const who = (w[Math.floor(Math.random() * w.length)] || g.adv.list[0]).id;
+  if(/^\s*(ok|okay|k|kk|hmm+|alright|fine|cool|got it|i see|interesting|right|sure|yep|yeah|yes|nah|no|nope|maybe|idk|i dont know|i don'?t know|not sure|let me think|give me a (minute|sec|second|moment)|one sec|one second|hold on|hang on|wait|hmm+ ok|thinking)\s*$/.test(t)) return [{ who, text: gmRand(['Take your time. If it helps, my vote is still ' + gmOwnBest(who).name + '.', 'No rush. Tell me what is on your mind and we will work it out.', 'Whenever you are ready. ' + top.name + ' is still the top name on the board.']) }];
+  const ex = [ 'is ' + top.name.split(' ')[0] + ' a good shooter?', 'how does ' + a[1].name.split(' ')[0] + ' fit our roster?', 'who is the best ' + gmGroupName(pg) + ' left?', 'compare ' + top.name.split(' ').slice(-1)[0] + ' and ' + a[2].name.split(' ').slice(-1)[0] ];
+  return [{ who, text: gmRand(['I did not catch that one, and I do not want to guess at it. Try something like "' + ex[0] + '" or "' + ex[2] + '"', 'That one is outside what I can answer from here. I can talk players, roster fit, contracts, the board and strategy. For example: "' + ex[1] + '"', 'Not sure how to answer that. Ask me about a player or a position, or try "' + ex[3] + '"']) + '.' }];
+}
+
+/* ---- main v2 router ---- */
+function gmBrain(text){
+  const g = gm, t = ' ' + text.toLowerCase().replace(/[^a-z0-9'%#\s-]/g, ' ').replace(/\s+/g, ' ') + ' ';
+  const addr = gmAddressed(t), men = gmMen(text, t);
+  let nba = gmNbaMentions(text, men.length > 0); { const nt = ' ' + gmNk(text) + ' '; const fullHit = nba.filter(x => nt.includes(' ' + x.key + ' ')); if(fullHit.length){ const nl = new Set(); fullHit.forEach(x => x.key.split(' ').forEach(w => nl.add(w))); const keep = men.filter(m => nt.includes(' ' + gmNk(m.name) + ' ') || !nl.has(gmNk(m.name).split(' ').pop())); men.length = 0; keep.forEach(m => men.push(m)); } }
+  const live = men.filter(m => !gmIsGone(m)), goneL = men.filter(gmIsGone);
+  const team = gmTeamMention(text), ours = /\b(our|we|us|my team|my roster)\b/.test(t);
+  const declRaw = /\b(i want|i'?d take|i like|take|taking|pick|go with|going with|lets? take|let'?s take|leaning|my guy|draft|select|lock in|i choose|i'?m taking)\b/.test(t);
+  const decl = declRaw && !/^\s*(who|what|how|is|does|do|did|can|could|would|should|why|when|where|which|are|any)\b/.test(t);
+  const ask = /\b(is|does|did|can|could|has|have|how|what|why|who|when|where|tell|explain|any|any concerns|worried|concern)\b/.test(t) || /\?/.test(text);
+  const pick = r => r && r.length ? r : null;
+  try{
+    /* meta and social first only if no entity */
+    if(!men.length && !nba.length){ const m = gmMetaSocial(t); if(m && !/\b(who should|recommend|best)\b/.test(t)) return m; }
+    /* NBA player on the roster + prospect = fit question */
+    if(live.length && nba.length && !decl) return gmFitNba(live[0], nba[0], t, addr);
+    if(!live.length && nba.length && !goneL.length && nba.length === 1 && !/\b(draft|pick)\b/.test(t)){ return gmNbaPlayerQ(nba[0], t); }
+    if(goneL.length && !live.length){ const p = goneL[0]; const w = gmWho(p); return [{ who: 'scout', text: p.name + ' is off the board, ' + w + '. ' + gmSimilar(p, ' gone ')[0].text }]; }
+    if(live.length === 1){
+      const p = live[0]; g.focus = p;
+      if(!decl || /\?|\b(is he|does he|how is|what about)\b/.test(text.toLowerCase())){
+        if(/\b(personality|character|attitude|work ethic|hard work|workaholic|gym rat|leader|leadership|captain|iq|basketball iq|smart|intelligen|coachab|ego|maturity|mature|confiden|swagger|locker room|teammate|intangible|motor|effort|competitive|competitor|tough|toughness|clutch|makeup|off the court|mentality|humble|cocky|chip|passion|dedicat|heart|killer|alpha|work hard|works hard|hard worker|hard-working|hardworking)\w*\b/.test(t) && !/\bmotor skills\b/.test(t)) return gmPersonality(p, t, addr);
+        if(/\b(injur|hurt|health|healthy|acl|knee|ankle|surgery|medical|durab|miss(ed)? (time|games)|redshirt|fragile|injury prone|broke|torn|sprain|recover)\w*\b/.test(t)) return gmInjury(p, addr);
+        if(/\b(wingspan|reach|height|how tall|weight|how heavy|pounds|lbs|frame|body|build|hometown|where is he from|where'?s he from|from where|grew up|born|what school|which school|where did he play|college|class|freshman|sophomore|junior|senior|measurements|measure|play with|teammates|one and done|one-and-done|what position|which position|positions?|guard spots|both guard|multiple positions|versatil|switch)\w*\b/.test(t) && !/\b(improv|get better|growth)\b/.test(t)) return gmPhysical(p, t, addr);
+        if(/\b(weakness|weaknesses|flaw|flaws|bad at|struggle|struggles|concern|concerns|negatives|downside)\w*\b/.test(t)) return [{ who: gmAdvFor('ceiling', addr), text: gmUp(gmSentence(gmCons('scout', p)[0] || gmWeakness(p), 170)) }, { who: 'analytics', text: gmUp(gmSentence(gmCons('analytics', p)[0] || gmWeakness(p), 150)) }];
+        if(/\b(strength|strengths|good at|best skill|best thing|pros|positives|what does he do well|signature|elite|best (skill|trait|part|thing))\w*\b/.test(t)) return [{ who: gmAdvFor('ceiling', addr), text: gmUp(gmSentence((p.strengths || [])[0] || gmStrength(p), 170)) }, { who: 'coach', text: (p.strengths || [])[1] ? gmUp(gmSentence(p.strengths[1], 150)) : gmNeedLine(p).replace(/^./, c => c.toUpperCase()) + '.' }];
+        if(/\b(per 36|per-36|per game|average|averag|stats|numbers|statistically|ppg|rpg|apg|how many|turnover|free throw|ft%|three point|3p|3-point|efficien|production|trend|improv|progress|last year|last season|year over year|growth|regress|declin|minutes|usage|turn the ball over|turns the ball over|how much does he play|blocks?|steals?|assists?|rebounds?|points)\w*\b/.test(t) && !/\b(tell me about|breakdown)\b/.test(t)) return gmStatsAsk(p, t, addr);
+        if(/\b(start|starter|starting|minutes|rotation|play time|playing time|play right away|ready|day one|immediately|role|fit|fits|fit us|archetype|position|what does he do|type of player|how would he be used|how would we use|use him|bench)\w*\b/.test(t) && !decl) return gmRoleAsk(p, t, addr);
+        if(/\b(convince|sell me|persuade|three reasons|3 reasons|reasons to)\b/.test(t)){ const r = gmStrategy(t); if(r) return r; }
+        if(/\b(top competition|tournament|march|big games?|against (good|top|ranked|elite)|level of competition|competition level|conference play|biggest stage|clutch)\b/.test(t)){ const f = gmFind(p, /tournament|ncaa|march madness|competition|conference play|ranked|clutch|big game|stage/i, 2); return [{ who: 'scout', text: f.length ? gmUp(gmSentence(f[0], 170)) : 'Our file does not break down his results against top competition, so I would watch tape from his biggest games before we commit.' }]; }
+        if(/\b(worst (skill|trait|part|thing)|least (skill|polished)|weakest)\b/.test(t)) return [{ who: gmAdvFor('ceiling', addr), text: gmUp(gmSentence(gmCons('scout', p)[0] || gmWeakness(p), 170)) }];
+        if(/\b(worst case|best case|bust|downside|floor|ceiling|upside|become|turn into|peak|all-star|potential|risk|red flags?|biggest (concern|risk|weakness|flaw)|what could go wrong|red flag)\w*\b/.test(t)) return gmCeilFloor(p, t, addr);
+        if(/\b(someone like|similar to|players like|alternative|instead of|if (he|we miss|he'?s) (is )?gone|if (he|we) (gets?|get) taken|plan b|backup plan|other options|close to|comparable|who else)\w*\b/.test(t)) return gmSimilar(p, t);
+      }
+      if(/\b(why do you like|why are you (so )?(high|into|on)|why (him|he)|what do you (see|like) in|why you like|why would you (take|pick|want))\b/.test(t)) return gmWhyLike(p, g.lastSpeaker);
+      if(/\b(steal|reach|value|worth (the|a|it)|overpay|too high|too early|fair)\b/.test(t) && /\b(pick|here|us|at|steal|reach|worth)\b/.test(t) && !decl) return gmValue(p, t);
+      if(/\b(anyone|anybody|someone|any team|teams?)\b/.test(t) && /\b(take|taking|grab|snag|pick|steal)\b/.test(t) && /\bbefore\b/.test(t)) return gmFall(p);
+      if(/\b(too (small|short|thin|old|young|raw|risky|slow|light|soft)|not (athletic|big enough|a shooter|good|strong|tall)|can'?t shoot|cant shoot|doesn'?t shoot|bad shooter|no (shot|jumper)|don'?t like|dont like|not (a )?fan|not impressed|worried about)\b/.test(t) && !decl) return gmOpinion(p, t, addr);
+      if(gmFindMentions(text).length) return gmBrain1(text);
+      return gmBrain1(decl ? text + ' ' + p.name : 'tell me about ' + p.name);
+    }
+    if(live.length >= 2){
+      if(/\b(compare|vs|versus|or|over|better|between|rather|instead|who'?s better)\b/.test(t) && !/\bbefore\b/.test(t)){
+        const ak = Object.keys(GM_ATTR).find(k => GM_ATTR[k].ask.test(t));
+        if(ak && !decl){ const [a, b] = live; const ea = gmEvidence(a, ak), eb = gmEvidence(b, ak), sa = ea.pos.length - ea.neg.length + gmStatScore(a, ak), sb = eb.pos.length - eb.neg.length + gmStatScore(b, ak); const w = sa >= sb ? a : b, l = w === a ? b : a; return [{ who: GM_ATTR[ak].who, text: 'On ' + GM_ATTR[ak].label + ' I take ' + w.name + '. ' + gmAttrAnswer(w, ak) }, { who: gmRand(g.adv.list.filter(x => x.id !== GM_ATTR[ak].who)).id, text: gmLast(l) + ' is not far behind: ' + (gmEvidence(l, ak).stat || gmClean((gmEvidence(l, ak).pos[0] || gmStrength(l)), 120)) + '.' }]; }
+        return gmCompare(live[0], live[1]);
+      }
+      if(/\b(fit|fits|together|both|pair|play together|same team|backcourt|frontcourt|overlap)\b/.test(t)){ const [a, b] = live; const same = gmPosGroup(a) === gmPosGroup(b); return [{ who: 'coach', text: same ? a.name + ' and ' + b.name + ' are both ' + gmGroupName(gmPosGroup(a)) + 's, so they would split minutes more than complement each other.' : 'They fit well together: ' + a.name + ' is a ' + gmGroupName(gmPosGroup(a)) + ' and ' + b.name + ' is a ' + gmGroupName(gmPosGroup(b)) + '. We cannot take both with one pick though.' }]; }
+      return gmCompare(live[0], live[1]);
+    }
+    /* personality in general, no player: who on the board has it */
+    if(/\b(best (leader|worker|character)|hardest working|best locker room|highest iq|smartest|most coachable|best motor|toughest)\b/.test(t)){ const k = /\b(leader)\b/.test(t) ? 'leadership' : /\b(iq|smartest)\b/.test(t) ? 'iq' : /\bcoachable\b/.test(t) ? 'coachable' : 'workEthic'; const ps = gmAvail().slice(0, 25).filter(p => gmFind(p, GM_PERS[k], 1).length); return ps.length ? [{ who: 'coach', text: 'On makeup, the names that come up in our files are ' + gmList(ps.slice(0, 3).map(p => p.name)) + '. ' + gmClean(gmFind(ps[0], GM_PERS[k], 1)[0], 130) + '.' }] : [{ who: 'coach', text: 'Our files do not single anyone out on that. It is interview work.' }]; }
+    /* no entity: roster / team questions */
+    if(team && team !== g.team || (nba.length === 0 && team)){ const sh = team || g.team; if(/\b(roster|lineup|starters?|need|needs|payroll|cap|contract|contracts|depth|guards|wings|bigs|weak|thin|who(?:'s| is) on|best player|expiring|salary|tax|apron|how many)\b/.test(t)) return gmRosterQ(t, sh, addr); if(sh !== g.team) return gmRosterQ(t, sh, addr); }
+    if(/\b(roster|lineup|starters?|payroll|cap space|luxury tax|the tax|the apron|contracts?|salary|salaries|expir\w*|highest paid|best player|star|who(?:'s| is) our|how many (guards|wings|bigs|centers|forwards)|veterans?|depth|depth chart|rotation|cap situation|our cap|the cap|over the cap)\b/.test(t) && (ours || /\b(roster|lineup|payroll|contracts?|salary|depth chart|starters?|expiring|cap|the tax|the apron)\b/.test(t))) return gmRosterQ(t, g.team, addr);
+    { const ar = gmArchSearch(t); if(ar) return ar; }
+    if(/\b(best|top) (stats|numbers|production|statistical)|most productive|best (statistically|numbers)\b/.test(t)) return gmBestStats();
+    { const grp0 = gmGroupFromText(t); if(grp0 && /\b(any|is there|are there|got any|anybody|anyone|any good)\b/.test(t)) return gmBoardSearch(t, addr); }
+    if(/\b(we|our|us)\b/.test(t) && /\b(enough|too small|too slow|too old|too young|good enough|playoff|contend|bench|second unit|depth|how good|rebounding|shooting|defense|spacing|size|length|athletic)\b/.test(t)){ const te = gmTeamEval(t); if(te) return te; }
+    if(/\b(overrated|overhyped|underrated|sleeper|hidden gem|not take|avoid|stay away|pass on|steer clear|wouldn'?t take|worst pick|bust)\b/.test(t)) return gmAvoid(t);
+    if(/\b(best fit|fits? (us|our|best)|fit our|our fit|second unit|bench|backup)\b/.test(t)){ const r = gmRanked('coach').slice(0, 2); return [{ who: 'coach', text: 'The best fit for us is ' + r[0].name + '. ' + gmUp(gmSentence(gmPros('coach', r[0])[0], 150)) }, { who: 'scout', text: 'My runner-up for fit is ' + r[1].name + '. ' + gmUp(gmSentence((r[1].strengths || [])[0] || gmStrength(r[1]), 120)) }]; }
+    const bs = /\b(tallest|shortest|biggest|longest|heaviest|youngest|oldest|how many|best (freshman|sophomore|junior|senior|international|guard|wing|big|center|point|pg|sg|sf|pf)|top (\d+|three|five|two|four|ten)|freshmen|sophomores|juniors|seniors|internationals|best .* from|anyone from|players? from|who(?:'s| is) at)\b/.test(t) || (function(){ const f = gmFilter(t, gmAvail()); return f.desc.length > 0 && /\b(best|top|who|which|any|anyone|show|list|left|available|options)\b/.test(t); })();
+    if(bs) return gmBoardSearch(t, addr);
+    const dc = gmDraftContext(t); if(dc) return dc;
+    const st = gmStrategy(t); if(st) return st;
+    const mt = gmMetaSocial(t); if(mt) return mt;
+    /* advisor-addressed with no entity: that advisor gives his own view */
+    if(addr && /\b(what|who|think|recommend|take|pick|want|like|prefer|vote|opinion)\b/.test(t)){ const p = gmOwnBest(addr); return [{ who: addr, text: 'My guy is ' + p.name + '. ' + gmClean(gmPros(addr, p)[0], 140) + '. ' + gmClean(gmPros(addr, p)[1] || '', 120) + '.' }]; }
+    /* wanting a position or trait */
+    const ak = Object.keys(GM_ATTR).find(k => GM_ATTR[k].ask.test(t));
+    if(ak && /\b(need|want|looking|prefer|more|better|improve|addition|add|someone|guy|player|who)\b/.test(t)){ const f = gmFilter(t, gmAvail()); const pool = f.ps.slice(0, 20); const c = pool.map(p => { const e = gmEvidence(p, ak); return { p, s: e.pos.length * 2 - e.neg.length * 2 + gmStatScore(p, ak) * 2 + (100 - p.rk) / 40 }; }).sort((a, b) => b.s - a.s)[0]; if(c) return [{ who: GM_ATTR[ak].who, text: 'For ' + GM_ATTR[ak].label + ', ' + c.p.name + ' is who I would look at. ' + gmAttrAnswer(c.p, ak) }, { who: 'coach', text: gmNeedLine(c.p).replace(/^./, x => x.toUpperCase()) + '.' }]; }
+  }catch(e){ console.warn('brain2', e); }
+  const fb = gmBrain1(text);
+  if(fb.length === 1 && /make sure I understand|not sure what you are asking|Give me a name, a position/.test(fb[0].text)) return gmSmartFallback(t);
+  return fb;
+}
+
+/* ===================== AI FRONT OFFICE (Supabase function -> Gemini free tier) ===================== */
+const GM_AI_ENABLED = true; // uses the gm-chat Supabase function (Gemini free tier); falls back to the built-in brain if unavailable
 const gmAI = { state: 'unknown', fails: 0, noted: false, lastMsg: '', checked: null };
 function gmSlim(p){
   const s = gmSeason(p);
@@ -14307,10 +14748,10 @@ function gmAIExplain(status, detail, fallback){
   if(/not.?found/i.test(d) || status === 404) return 'Supabase cannot find a function named "gm-chat". In Supabase, open Edge Functions and check that it exists with exactly that name and that it deployed.';
   if(/sign_in_required/.test(d)) return 'The function did not accept your login. Sign out of the site, sign back in, and try again.';
   if(/invalid jwt|jwt/i.test(d) || status === 401 && !/upstream/.test(d)) return 'Supabase rejected the login token (' + gmShort(d, 90) + '). Sign out, sign back in, and try again. If it keeps happening, turn off "Verify JWT" for gm-chat in its settings.';
-  if(/missing_api_key/.test(d)) return 'The function runs, but the secret ANTHROPIC_API_KEY is not set. Add it under Edge Functions, Secrets, then deploy again.';
-  if(/upstream_401|authentication|invalid x-api-key/i.test(d)) return 'Anthropic rejected the API key. Check ANTHROPIC_API_KEY for typos and that the key is active.';
-  if(/upstream_404|not_found_error|model/i.test(d)) return 'Anthropic does not recognize the model name. Set a GM_MODEL secret to a model your key can use. Details: ' + gmShort(d, 160);
-  if(/upstream_429|rate|overloaded|credit|billing/i.test(d)) return 'Anthropic refused the request (rate limit or no credit on the account). Details: ' + gmShort(d, 160);
+  if(/missing_api_key/.test(d)) return 'The function runs, but the secret GEMINI_API_KEY is not set. Add it under Edge Functions, Secrets, then deploy again.';
+  if(/upstream_401|upstream_403|api key not valid|API_KEY_INVALID|permission/i.test(d)) return 'Google rejected the API key. Check GEMINI_API_KEY for typos and make sure the key came from aistudio.google.com/apikey.';
+  if(/upstream_404|not_found|not found/i.test(d)) return 'Google does not recognize the model name. Set a GM_MODEL secret to a model your key can use. Details: ' + gmShort(d, 160);
+  if(/upstream_429|rate|overloaded|credit|billing/i.test(d)) return 'Google refused the request, most likely the free daily limit was reached. Details: ' + gmShort(d, 160);
   if(/rate_limited/.test(d)) return 'You hit the hourly message limit for the AI front office.';
   if(/FunctionsFetchError|Failed to send|fetch/i.test(d)) return 'The browser could not reach the function (network or CORS). Check that the function is deployed in this same Supabase project.';
   return 'Unexpected error' + (status ? ' (' + status + ')' : '') + ': ' + gmShort(d || 'no details', 200);
@@ -14324,15 +14765,15 @@ async function gmAIInvoke(body){
     if(e.name === 'FunctionsFetchError' || /fetch|Failed to send/i.test(String(e.message || ''))){
       let reachable = false;
       try{ await fetch(sb.supabaseUrl + '/functions/v1/gm-chat', { method: 'GET', mode: 'no-cors' }); reachable = true; }catch(_){}
-      msg = reachable
-        ? 'The function exists, but the browser blocked its reply (CORS). Redeploy the newest gm-chat/index.ts. If it still fails, open Edge Functions, then gm-chat, then Logs in Supabase and look for a red error line.'
-        : 'The browser could not reach Supabase at ' + sb.supabaseUrl.replace('https://', '') + '/functions. Check your internet connection, ad blockers or extensions, and that gm-chat is deployed in this project.';
+      const u = sb.supabaseUrl + '/functions/v1/gm-chat';
+      msg = (reachable ? 'Supabase answered, but the browser blocked the reply, so the function is either missing, still checking logins, or crashing.' : 'The browser could not reach Supabase. Check your connection and any ad blockers.') + ' Open this link in a new browser tab and read what it says: ' + u + '  ({"error":"method_not_allowed"} means the function is working; "NOT_FOUND" means it is not deployed under the name gm-chat; "Missing authorization header" means Verify JWT is still on.)';
     }
     const err = new Error(msg); err.explained = true; throw err;
   }
   return res.data;
 }
 function gmAIStatus(){
+  if(!GM_AI_ENABLED) return { on: false, text: '' };
   if(typeof currentUser === 'undefined' || !currentUser) return { on: false, text: 'Sign in to talk to the AI front office. Until then they use the built-in brain, which still argues from real scouting data.' };
   if(gmAI.state === 'off') return { on: false, text: 'AI front office is off: ' + (gmAI.lastMsg || 'the function did not respond') + ' They are using the built-in brain for now.' };
   if(gmAI.state === 'on') return { on: true, text: 'AI front office is on and responding.' };
@@ -14346,7 +14787,7 @@ async function gmAITest(){
     const d = await gmAIInvoke({ action: 'diagnose' });
     if(!d || !d.ok) throw new Error(gmAIExplain(null, d && d.error, 'The function answered, but with an unexpected reply.'));
     gmAI.state = 'on'; gmAI.fails = 0; gmAI.lastMsg = '';
-    if(el){ el.className = 'gm-ai on'; el.textContent = 'Connected. The function runs, your login works, and Claude answered (' + (d.model || 'model') + ').'; }
+    if(el){ el.className = 'gm-ai on'; el.textContent = 'Connected. The function runs, your login works, and the AI answered (' + (d.model || 'model') + ').'; }
   }catch(e){
     gmAI.state = 'off'; gmAI.lastMsg = e.message;
     if(el){ el.className = 'gm-ai bad'; el.textContent = e.message; }
@@ -14354,6 +14795,7 @@ async function gmAITest(){
   if(btn) btn.disabled = false;
 }
 async function gmAICall(text){
+  if(!GM_AI_ENABLED) return null;
   if(typeof currentUser === 'undefined' || !currentUser || typeof sb === 'undefined' || gmAI.state === 'off') return null;
   try{
     const d = await gmAIInvoke({ message: text, context: gmAIContext(text), history: (gm.hist || []).slice(-10) });
@@ -14362,7 +14804,7 @@ async function gmAICall(text){
     return d;
   }catch(e){
     gmAI.fails++; gmAI.lastMsg = (e && e.message) || String(e);
-    if(gmAI.fails >= 2 || /cannot find|ANTHROPIC_API_KEY|rejected|recognize/.test(gmAI.lastMsg)) gmAI.state = 'off';
+    if(/free daily limit|rate_limited|hourly message limit|429|busy/i.test(gmAI.lastMsg)) gmAI.fails = Math.max(0, gmAI.fails - 1); else if(gmAI.fails >= 2 || /cannot find|GEMINI_API_KEY|rejected|recognize/.test(gmAI.lastMsg)) gmAI.state = 'off';
     if(gm && !gm.noted){ gm.noted = true; gmLogSys('AI front office unavailable: ' + gmAI.lastMsg + ' Using the built-in brain.'); }
     return null;
   }
