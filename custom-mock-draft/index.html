@@ -4643,8 +4643,8 @@ function openProfile(idx, fromHistory){
               <button class="adv-year-tab active" onclick="switchAdvYear(${p.id}, 'live', this)">${ADV_LIVE_LABEL[p.id]}</button>
               <button class="adv-year-tab" onclick="switchAdvYear(${p.id}, 'last', this)">2025-26</button>
             </div>` : ''}
-            <div id="advYearBody">${renderSeasonAdvancedRows(SEASON_ADVANCED[p.id])}</div>
-            <p class="profile-empty" id="advYearNote" style="margin-top:10px;">${ADV_LIVE_LABEL[p.id] ? 'Live advanced metrics from CollegeBasketballData.com, updated nightly.' : 'Advanced metrics created by Bart Torvik.'}</p>
+            <div id="advYearBody">${renderSeasonAdvancedRows(SEASON_ADVANCED[p.id], ADV_SOURCE[p.id]==='trank')}</div>
+            <p class="profile-empty" id="advYearNote" style="margin-top:10px;">${ADV_LIVE_LABEL[p.id] ? (ADV_SOURCE[p.id]==='trank' ? 'Advanced metrics created by Bart Torvik (T-Rank), updated weekly.' : 'Live advanced metrics from CollegeBasketballData.com, updated nightly.') : 'Advanced metrics created by Bart Torvik.'}</p>
           </div>
         </div>` : ''}
         ${stockMarketVisible ? `
@@ -4966,17 +4966,163 @@ function autoLinkPlayerNamesInArticle(text, seen){
 // SEASON_ADVANCED entry (so last season's numbers never get mixed with this season's);
 // fields the feed doesn't have show as N/A. No row = the hand-entered entry stays as is.
 const ADV_LIVE_LABEL = {};
+const ADV_SOURCE = {};
+const ADV_TRANK_BAKED_AT = "2026-11-26T23:58:00-08:00";
+const ADV_TRANK_BAKED = {"1":{"minPct":63.2,"prpg":2.7,"dprpg":4.4,"bpm":7.3,"obpm":2.6,"dbpm":4.7,"ortg":108.9,"drtg":90.5,"usg":24.8,"efg":51.4,"ts":55.0,"orb":3.3,"drb":14.3},"2":{"minPct":52.3,"prpg":2.9,"dprpg":4.0,"bpm":8.0,"obpm":4.1,"dbpm":3.9,"ortg":110.1,"drtg":85.5,"usg":29.0,"efg":57.0,"ts":60.5,"orb":8.5,"drb":25.1},"4":{"minPct":76.6,"prpg":4.6,"dprpg":4.3,"bpm":7.7,"obpm":4.7,"dbpm":3.0,"ortg":122.8,"drtg":93.2,"usg":24.0,"efg":57.2,"ts":61.9,"orb":6.8,"drb":17.7},"5":{"minPct":68.4,"prpg":1.8,"dprpg":3.4,"bpm":0.6,"obpm":-0.9,"dbpm":1.5,"ortg":100.1,"drtg":97.8,"usg":26.8,"efg":51.2,"ts":51.5,"orb":3.8,"drb":18.3},"9":{"minPct":47.7,"prpg":1.5,"dprpg":3.0,"bpm":4.6,"obpm":-0.8,"dbpm":5.3,"ortg":123.0,"drtg":88.2,"usg":14.9,"efg":60.7,"ts":62.9,"orb":12.0,"drb":12.4},"8":{"minPct":57.5,"prpg":2.0,"dprpg":4.4,"bpm":10.3,"obpm":3.7,"dbpm":6.6,"ortg":106.9,"drtg":77.7,"usg":27.1,"efg":47.1,"ts":50.8,"orb":6.6,"drb":21.9},"7":{"minPct":66.1,"prpg":2.4,"dprpg":2.3,"bpm":2.2,"obpm":0.7,"dbpm":1.5,"ortg":115.9,"drtg":108.1,"usg":21.7,"efg":57.1,"ts":62.0,"orb":1.6,"drb":4.7},"14":{"minPct":83.3,"prpg":7.0,"dprpg":3.8,"bpm":12.5,"obpm":10.6,"dbpm":2.0,"ortg":146.5,"drtg":100.3,"usg":19.8,"efg":71.1,"ts":72.8,"orb":9.6,"drb":15.4},"13":{"minPct":62.3,"prpg":1.9,"dprpg":4.0,"bpm":8.4,"obpm":3.0,"dbpm":5.4,"ortg":111.1,"drtg":86.9,"usg":18.9,"efg":60.0,"ts":64.5,"orb":4.4,"drb":10.8},"22":{"minPct":85.4,"prpg":5.7,"dprpg":4.6,"bpm":11.1,"obpm":7.2,"dbpm":3.9,"ortg":119.5,"drtg":94.4,"usg":29.7,"efg":59.5,"ts":62.7,"orb":5.6,"drb":16.6},"81":{"minPct":57.7,"prpg":1.2,"dprpg":3.4,"bpm":3.0,"obpm":1.7,"dbpm":1.3,"ortg":109.9,"drtg":90.8,"usg":17.8,"efg":47.6,"ts":49.8,"orb":9.9,"drb":19.3},"15":{"minPct":66.3,"prpg":4.1,"dprpg":4.2,"bpm":12.5,"obpm":6.6,"dbpm":5.9,"ortg":123.2,"drtg":88.1,"usg":26.0,"efg":65.1,"ts":67.1,"orb":12.4,"drb":18.2},"17":{"minPct":54.0,"prpg":3.1,"dprpg":4.1,"bpm":12.4,"obpm":5.9,"dbpm":6.6,"ortg":122.8,"drtg":86.3,"usg":21.5,"efg":65.4,"ts":64.0,"orb":10.5,"drb":24.5},"19":{"minPct":73.4,"prpg":5.6,"dprpg":4.4,"bpm":12.9,"obpm":7.6,"dbpm":5.4,"ortg":129.7,"drtg":90.6,"usg":26.4,"efg":73.4,"ts":75.0,"orb":9.8,"drb":25.6},"88":{"minPct":52.0,"prpg":0.8,"dprpg":2.5,"bpm":-0.1,"obpm":-0.8,"dbpm":0.7,"ortg":107.8,"drtg":98.3,"usg":15.2,"efg":47.1,"ts":51.0,"orb":10.5,"drb":15.0},"35":{"minPct":48.2,"prpg":0.7,"dprpg":2.1,"bpm":-0.3,"obpm":-0.4,"dbpm":0.1,"ortg":100.0,"drtg":101.7,"usg":19.2,"efg":41.9,"ts":47.4,"orb":5.4,"drb":13.5},"21":{"minPct":67.0,"prpg":6.3,"dprpg":3.1,"bpm":15.5,"obpm":11.6,"dbpm":4.0,"ortg":148.9,"drtg":100.1,"usg":22.4,"efg":62.7,"ts":69.2,"orb":6.3,"drb":13.7},"16":{"minPct":76.8,"prpg":4.2,"dprpg":3.8,"bpm":3.4,"obpm":3.9,"dbpm":-0.5,"ortg":118.8,"drtg":97.8,"usg":29.6,"efg":56.4,"ts":62.5,"orb":0.0,"drb":8.4},"26":{"minPct":69.3,"prpg":4.6,"dprpg":3.5,"bpm":8.1,"obpm":7.4,"dbpm":0.8,"ortg":121.1,"drtg":97.2,"usg":28.5,"efg":53.0,"ts":59.1,"orb":1.3,"drb":10.8},"79":{"minPct":70.5,"prpg":2.9,"dprpg":4.1,"bpm":6.6,"obpm":3.7,"dbpm":2.9,"ortg":117.7,"drtg":91.2,"usg":19.4,"efg":44.9,"ts":53.0,"orb":9.9,"drb":15.2},"27":{"minPct":58.2,"prpg":6.6,"dprpg":4.7,"bpm":17.2,"obpm":10.3,"dbpm":6.8,"ortg":143.6,"drtg":83.2,"usg":27.2,"efg":66.7,"ts":68.8,"orb":9.5,"drb":14.6},"28":{"minPct":83.1,"prpg":4.4,"dprpg":2.4,"bpm":4.4,"obpm":5.9,"dbpm":-1.5,"ortg":136.2,"drtg":112.7,"usg":16.8,"efg":64.3,"ts":66.0,"orb":1.9,"drb":11.2},"30":{"minPct":69.5,"prpg":3.9,"dprpg":3.2,"bpm":8.9,"obpm":5.3,"dbpm":3.6,"ortg":123.6,"drtg":100.3,"usg":25.9,"efg":66.7,"ts":66.5,"orb":15.4,"drb":20.4},"40":{"minPct":70.6,"prpg":3.9,"dprpg":3.6,"bpm":10.6,"obpm":6.5,"dbpm":4.1,"ortg":129.8,"drtg":96.8,"usg":20.6,"efg":63.8,"ts":65.2,"orb":15.5,"drb":19.6},"31":{"minPct":78.8,"prpg":5.7,"dprpg":4.3,"bpm":10.3,"obpm":8.1,"dbpm":2.1,"ortg":132.3,"drtg":94.2,"usg":26.7,"efg":58.9,"ts":65.1,"orb":4.5,"drb":8.3},"32":{"minPct":62.5,"prpg":3.4,"dprpg":3.3,"bpm":6.6,"obpm":3.5,"dbpm":3.1,"ortg":124.8,"drtg":95.6,"usg":20.3,"efg":69.3,"ts":70.4,"orb":13.4,"drb":25.7},"33":{"minPct":54.8,"prpg":1.8,"dprpg":3.9,"bpm":4.8,"obpm":2.1,"dbpm":2.7,"ortg":114.4,"drtg":88.1,"usg":20.4,"efg":52.3,"ts":54.8,"orb":6.5,"drb":16.9},"34":{"minPct":57.3,"prpg":4.0,"dprpg":3.8,"bpm":13.0,"obpm":8.5,"dbpm":4.5,"ortg":132.7,"drtg":85.5,"usg":23.9,"efg":60.6,"ts":63.5,"orb":11.9,"drb":19.0},"36":{"minPct":76.8,"prpg":4.9,"dprpg":3.8,"bpm":11.4,"obpm":7.9,"dbpm":3.6,"ortg":133.9,"drtg":97.9,"usg":21.1,"efg":60.0,"ts":63.1,"orb":8.8,"drb":13.3},"29":{"minPct":55.1,"prpg":3.5,"dprpg":3.1,"bpm":5.4,"obpm":4.8,"dbpm":0.6,"ortg":125.4,"drtg":92.5,"usg":26.2,"efg":55.4,"ts":54.9,"orb":10.1,"drb":13.7},"49":{"minPct":79.0,"prpg":5.3,"dprpg":5.0,"bpm":13.0,"obpm":6.5,"dbpm":6.5,"ortg":128.3,"drtg":88.1,"usg":24.0,"efg":50.7,"ts":55.2,"orb":1.8,"drb":15.6},"39":{"minPct":64.4,"prpg":3.7,"dprpg":3.9,"bpm":11.5,"obpm":6.3,"dbpm":5.1,"ortg":141.1,"drtg":89.2,"usg":17.3,"efg":66.3,"ts":66.4,"orb":11.3,"drb":13.6},"38":{"minPct":80.2,"prpg":3.9,"dprpg":3.0,"bpm":4.2,"obpm":3.9,"dbpm":0.3,"ortg":118.5,"drtg":106.7,"usg":20.2,"efg":50.5,"ts":54.2,"orb":1.3,"drb":11.1},"99":{"minPct":60.5,"prpg":3.6,"dprpg":3.4,"bpm":5.2,"obpm":5.0,"dbpm":0.3,"ortg":123.4,"drtg":92.8,"usg":29.5,"efg":70.0,"ts":69.5,"orb":18.8,"drb":17.4},"83":{"minPct":67.6,"prpg":3.4,"dprpg":5.0,"bpm":11.9,"obpm":6.1,"dbpm":5.8,"ortg":122.2,"drtg":80.2,"usg":25.3,"efg":52.7,"ts":56.8,"orb":8.6,"drb":19.2},"57":{"minPct":76.3,"prpg":5.8,"dprpg":4.5,"bpm":15.0,"obpm":10.4,"dbpm":4.5,"ortg":141.0,"drtg":90.5,"usg":22.7,"efg":66.1,"ts":69.7,"orb":4.3,"drb":14.1},"41":{"minPct":57.2,"prpg":1.7,"dprpg":3.4,"bpm":3.3,"obpm":0.5,"dbpm":2.7,"ortg":114.6,"drtg":90.8,"usg":15.4,"efg":62.9,"ts":61.9,"orb":8.3,"drb":19.1},"45":{"minPct":80.3,"prpg":5.8,"dprpg":5.9,"bpm":14.8,"obpm":6.9,"dbpm":7.9,"ortg":139.1,"drtg":80.1,"usg":23.4,"efg":55.7,"ts":61.1,"orb":4.4,"drb":17.1},"80":{"minPct":78.3,"prpg":4.1,"dprpg":4.3,"bpm":6.5,"obpm":4.2,"dbpm":2.4,"ortg":116.5,"drtg":93.7,"usg":23.8,"efg":45.8,"ts":50.2,"orb":6.1,"drb":13.4},"43":{"minPct":64.3,"prpg":3.1,"dprpg":3.0,"bpm":5.7,"obpm":4.2,"dbpm":1.5,"ortg":130.2,"drtg":99.4,"usg":18.2,"efg":60.6,"ts":63.1,"orb":0.7,"drb":6.9},"44":{"minPct":46.2,"prpg":1.3,"dprpg":3.3,"bpm":7.3,"obpm":3.1,"dbpm":4.2,"ortg":113.5,"drtg":82.2,"usg":16.5,"efg":64.1,"ts":61.9,"orb":8.6,"drb":31.3},"142":{"minPct":49.3,"prpg":1.9,"dprpg":2.7,"bpm":1.7,"obpm":2.0,"dbpm":-0.2,"ortg":124.1,"drtg":94.5,"usg":18.3,"efg":66.7,"ts":67.6,"orb":19.4,"drb":31.2},"46":{"minPct":74.9,"prpg":3.6,"dprpg":4.1,"bpm":8.9,"obpm":4.5,"dbpm":4.4,"ortg":113.6,"drtg":93.9,"usg":25.4,"efg":52.2,"ts":55.5,"orb":11.2,"drb":21.9},"103":{"minPct":68.8,"prpg":3.4,"dprpg":4.1,"bpm":8.8,"obpm":4.6,"dbpm":4.2,"ortg":114.1,"drtg":90.3,"usg":29.9,"efg":50.0,"ts":55.5,"orb":3.8,"drb":9.7},"77":{"minPct":70.4,"prpg":3.3,"dprpg":2.5,"bpm":4.8,"obpm":3.6,"dbpm":1.2,"ortg":121.0,"drtg":107.6,"usg":23.6,"efg":63.3,"ts":63.0,"orb":3.0,"drb":11.9},"86":{"minPct":47.7,"prpg":1.4,"dprpg":3.0,"bpm":3.6,"obpm":-0.8,"dbpm":4.4,"ortg":102.5,"drtg":94.5,"usg":18.7,"efg":44.0,"ts":49.8,"orb":8.7,"drb":24.6},"66":{"minPct":73.4,"prpg":1.1,"dprpg":2.9,"bpm":-1.7,"obpm":-1.6,"dbpm":-0.1,"ortg":89.2,"drtg":104.8,"usg":27.3,"efg":37.5,"ts":42.9,"orb":3.3,"drb":7.8},"53":{"minPct":70.3,"prpg":1.0,"dprpg":3.6,"bpm":-0.4,"obpm":-0.3,"dbpm":-0.2,"ortg":99.7,"drtg":96.1,"usg":19.0,"efg":47.1,"ts":51.6,"orb":1.7,"drb":9.1},"58":{"minPct":54.6,"prpg":1.0,"dprpg":3.4,"bpm":1.7,"obpm":-1.6,"dbpm":3.3,"ortg":104.0,"drtg":88.8,"usg":19.9,"efg":51.0,"ts":54.7,"orb":5.1,"drb":11.3},"89":{"minPct":65.2,"prpg":3.0,"dprpg":3.2,"bpm":3.9,"obpm":3.2,"dbpm":0.7,"ortg":114.5,"drtg":98.5,"usg":27.9,"efg":46.6,"ts":51.2,"orb":7.9,"drb":17.0},"55":{"minPct":53.6,"prpg":3.0,"dprpg":3.1,"bpm":7.8,"obpm":4.6,"dbpm":3.2,"ortg":125.7,"drtg":92.2,"usg":23.1,"efg":59.8,"ts":61.5,"orb":7.4,"drb":12.3},"114":{"minPct":49.9,"prpg":1.9,"dprpg":3.1,"bpm":7.7,"obpm":3.3,"dbpm":4.4,"ortg":116.5,"drtg":88.2,"usg":19.2,"efg":48.7,"ts":53.1,"orb":6.3,"drb":12.8},"116":{"minPct":57.8,"prpg":1.8,"dprpg":3.4,"bpm":2.5,"obpm":0.9,"dbpm":1.6,"ortg":110.5,"drtg":90.4,"usg":22.8,"efg":46.5,"ts":50.7,"orb":6.3,"drb":15.4},"107":{"minPct":68.9,"prpg":5.1,"dprpg":3.6,"bpm":10.1,"obpm":5.7,"dbpm":4.4,"ortg":135.8,"drtg":96.2,"usg":24.2,"efg":64.5,"ts":69.5,"orb":10.4,"drb":21.0},"96":{"minPct":47.5,"prpg":2.3,"dprpg":3.2,"bpm":5.1,"obpm":1.2,"dbpm":3.9,"ortg":126.1,"drtg":85.1,"usg":18.6,"efg":53.1,"ts":58.1,"orb":12.0,"drb":25.0},"85":{"minPct":77.7,"prpg":5.2,"dprpg":4.4,"bpm":8.1,"obpm":4.8,"dbpm":3.2,"ortg":128.4,"drtg":92.7,"usg":28.7,"efg":56.7,"ts":62.0,"orb":2.3,"drb":22.2},"59":{"minPct":73.1,"prpg":6.6,"dprpg":3.7,"bpm":13.8,"obpm":10.4,"dbpm":3.4,"ortg":137.7,"drtg":97.2,"usg":29.0,"efg":64.0,"ts":70.9,"orb":1.2,"drb":5.8},"108":{"minPct":64.5,"prpg":3.6,"dprpg":3.7,"bpm":10.1,"obpm":6.5,"dbpm":3.6,"ortg":132.5,"drtg":92.0,"usg":21.9,"efg":62.7,"ts":66.2,"orb":1.4,"drb":9.6},"92":{"minPct":50.0,"prpg":1.7,"dprpg":3.7,"bpm":7.0,"obpm":1.2,"dbpm":5.8,"ortg":118.1,"drtg":80.7,"usg":19.5,"efg":65.7,"ts":66.6,"orb":14.3,"drb":13.0},"70":{"minPct":72.0,"prpg":5.6,"dprpg":3.5,"bpm":13.4,"obpm":10.0,"dbpm":3.4,"ortg":135.7,"drtg":98.5,"usg":25.1,"efg":65.0,"ts":70.6,"orb":2.1,"drb":13.9},"84":{"minPct":78.0,"prpg":4.6,"dprpg":4.1,"bpm":9.3,"obpm":7.4,"dbpm":1.9,"ortg":133.4,"drtg":95.5,"usg":20.6,"efg":57.3,"ts":61.5,"orb":3.9,"drb":17.4},"60":{"minPct":57.8,"prpg":0.9,"dprpg":3.7,"bpm":5.2,"obpm":-0.3,"dbpm":5.5,"ortg":110.8,"drtg":87.0,"usg":14.4,"efg":51.2,"ts":52.0,"orb":6.2,"drb":16.9},"62":{"minPct":60.9,"prpg":2.1,"dprpg":4.3,"bpm":6.4,"obpm":1.3,"dbpm":5.1,"ortg":111.1,"drtg":82.0,"usg":21.1,"efg":43.8,"ts":48.4,"orb":15.2,"drb":18.2},"118":{"minPct":66.8,"prpg":4.0,"dprpg":3.5,"bpm":8.4,"obpm":6.7,"dbpm":1.7,"ortg":128.5,"drtg":95.2,"usg":24.9,"efg":49.2,"ts":57.4,"orb":5.4,"drb":10.0},"106":{"minPct":71.9,"prpg":4.4,"dprpg":4.1,"bpm":8.2,"obpm":5.3,"dbpm":2.9,"ortg":109.7,"drtg":92.0,"usg":38.1,"efg":49.0,"ts":53.9,"orb":0.7,"drb":7.6},"119":{"minPct":87.1,"prpg":3.9,"dprpg":7.1,"bpm":11.8,"obpm":4.1,"dbpm":7.7,"ortg":120.0,"drtg":75.0,"usg":21.9,"efg":57.1,"ts":60.2,"orb":1.3,"drb":13.5},"101":{"minPct":67.5,"prpg":2.2,"dprpg":4.3,"bpm":3.5,"obpm":0.3,"dbpm":3.2,"ortg":113.5,"drtg":87.6,"usg":21.9,"efg":48.6,"ts":51.5,"orb":5.9,"drb":19.1},"63":{"minPct":68.0,"prpg":1.1,"dprpg":2.7,"bpm":2.1,"obpm":0.6,"dbpm":1.5,"ortg":108.2,"drtg":104.8,"usg":16.0,"efg":56.1,"ts":57.0,"orb":5.8,"drb":16.9},"95":{"minPct":67.0,"prpg":3.0,"dprpg":4.5,"bpm":5.5,"obpm":2.4,"dbpm":3.1,"ortg":118.9,"drtg":85.1,"usg":24.3,"efg":57.4,"ts":61.0,"orb":7.1,"drb":23.1},"113":{"minPct":79.0,"prpg":0.7,"dprpg":4.9,"bpm":1.5,"obpm":-1.1,"dbpm":2.6,"ortg":97.4,"drtg":88.4,"usg":21.8,"efg":38.6,"ts":42.5,"orb":1.6,"drb":10.5},"64":{"minPct":69.5,"prpg":6.6,"dprpg":3.7,"bpm":11.5,"obpm":9.4,"dbpm":2.1,"ortg":142.6,"drtg":94.6,"usg":28.6,"efg":62.4,"ts":66.4,"orb":5.1,"drb":11.8},"109":{"minPct":55.6,"prpg":2.0,"dprpg":2.9,"bpm":3.0,"obpm":2.7,"dbpm":0.3,"ortg":114.5,"drtg":95.5,"usg":19.1,"efg":50.0,"ts":52.7,"orb":6.4,"drb":11.5},"98":{"minPct":74.2,"prpg":2.7,"dprpg":3.1,"bpm":4.4,"obpm":3.9,"dbpm":0.5,"ortg":115.1,"drtg":103.2,"usg":20.1,"efg":63.2,"ts":66.2,"orb":2.9,"drb":25.4},"100":{"minPct":56.3,"prpg":2.4,"dprpg":3.4,"bpm":8.3,"obpm":4.5,"dbpm":3.7,"ortg":129.1,"drtg":89.9,"usg":18.1,"efg":65.2,"ts":65.3,"orb":8.1,"drb":16.8},"90":{"minPct":73.3,"prpg":4.7,"dprpg":4.1,"bpm":8.4,"obpm":5.9,"dbpm":2.4,"ortg":126.4,"drtg":93.3,"usg":22.5,"efg":54.2,"ts":56.8,"orb":12.3,"drb":11.3},"67":{"minPct":67.8,"prpg":3.3,"dprpg":3.8,"bpm":5.1,"obpm":2.9,"dbpm":2.1,"ortg":112.8,"drtg":92.7,"usg":30.4,"efg":58.9,"ts":61.5,"orb":4.2,"drb":10.7},"69":{"minPct":49.7,"prpg":2.0,"dprpg":3.5,"bpm":5.6,"obpm":1.9,"dbpm":3.7,"ortg":115.4,"drtg":89.9,"usg":17.0,"efg":50.0,"ts":55.2,"orb":6.1,"drb":13.5},"117":{"minPct":72.3,"prpg":3.5,"dprpg":2.9,"bpm":4.1,"obpm":3.9,"dbpm":0.2,"ortg":126.5,"drtg":104.3,"usg":16.9,"efg":59.3,"ts":61.3,"orb":0.0,"drb":7.4},"78":{"minPct":62.9,"prpg":4.0,"dprpg":2.9,"bpm":6.7,"obpm":6.2,"dbpm":0.5,"ortg":114.6,"drtg":100.1,"usg":34.2,"efg":48.6,"ts":52.2,"orb":2.5,"drb":9.0},"71":{"minPct":68.1,"prpg":2.2,"dprpg":3.3,"bpm":6.0,"obpm":2.8,"dbpm":3.1,"ortg":115.7,"drtg":98.3,"usg":18.0,"efg":54.0,"ts":53.2,"orb":2.2,"drb":15.7},"72":{"minPct":79.9,"prpg":4.5,"dprpg":3.5,"bpm":7.9,"obpm":6.7,"dbpm":1.2,"ortg":123.8,"drtg":102.0,"usg":23.8,"efg":56.0,"ts":60.6,"orb":1.0,"drb":4.3},"73":{"minPct":47.2,"prpg":4.7,"dprpg":2.4,"bpm":7.7,"obpm":7.5,"dbpm":0.3,"ortg":139.9,"drtg":107.5,"usg":18.1,"efg":63.5,"ts":72.3,"orb":0.8,"drb":4.5},"115":{"minPct":82.0,"prpg":1.9,"dprpg":3.2,"bpm":1.0,"obpm":0.4,"dbpm":0.5,"ortg":115.0,"drtg":105.7,"usg":15.6,"efg":45.2,"ts":48.7,"orb":1.1,"drb":12.9},"74":{"minPct":44.0,"prpg":0.7,"dprpg":3.2,"bpm":1.7,"obpm":-1.5,"dbpm":3.2,"ortg":95.4,"drtg":88.0,"usg":25.6,"efg":35.9,"ts":48.7,"orb":10.3,"drb":20.3},"75":{"minPct":61.9,"prpg":1.5,"dprpg":3.4,"bpm":3.5,"obpm":1.5,"dbpm":2.0,"ortg":106.8,"drtg":93.8,"usg":20.8,"efg":46.3,"ts":46.4,"orb":15.2,"drb":15.8},"76":{"minPct":72.5,"prpg":5.0,"dprpg":4.8,"bpm":10.6,"obpm":7.3,"dbpm":3.3,"ortg":127.3,"drtg":85.4,"usg":28.2,"efg":63.3,"ts":65.7,"orb":15.9,"drb":26.7},"93":{"minPct":76.4,"prpg":3.2,"dprpg":2.1,"bpm":4.6,"obpm":6.0,"dbpm":-1.5,"ortg":106.8,"drtg":113.7,"usg":30.5,"efg":64.4,"ts":65.7,"orb":4.3,"drb":13.5},"121":{"minPct":52.0,"prpg":6.5,"dprpg":4.1,"bpm":9.9,"obpm":7.6,"dbpm":2.3,"ortg":128.8,"drtg":101.1,"usg":29.2,"efg":46.5,"ts":59.0,"orb":2.5,"drb":15.5},"123":{"minPct":56.9,"prpg":2.7,"dprpg":2.7,"bpm":4.5,"obpm":4.0,"dbpm":0.5,"ortg":117.8,"drtg":99.4,"usg":24.1,"efg":54.0,"ts":55.2,"orb":3.0,"drb":10.8},"126":{"minPct":42.7,"prpg":1.8,"dprpg":2.9,"bpm":6.7,"obpm":1.6,"dbpm":5.1,"ortg":120.5,"drtg":85.2,"usg":18.4,"efg":42.9,"ts":56.2,"orb":9.2,"drb":13.3},"129":{"minPct":65.0,"prpg":1.1,"dprpg":3.9,"bpm":3.0,"obpm":-0.9,"dbpm":3.9,"ortg":112.5,"drtg":90.3,"usg":15.8,"efg":38.5,"ts":46.6,"orb":2.8,"drb":15.7},"130":{"minPct":66.1,"prpg":4.6,"dprpg":4.2,"bpm":13.2,"obpm":8.6,"dbpm":4.6,"ortg":133.6,"drtg":87.5,"usg":24.3,"efg":65.7,"ts":66.4,"orb":8.4,"drb":22.1},"133":{"minPct":75.1,"prpg":3.6,"dprpg":4.0,"bpm":6.9,"obpm":3.5,"dbpm":3.4,"ortg":117.2,"drtg":94.6,"usg":25.2,"efg":49.4,"ts":54.0,"orb":1.4,"drb":6.7},"136":{"minPct":76.1,"prpg":3.0,"dprpg":3.9,"bpm":5.0,"obpm":2.5,"dbpm":2.5,"ortg":119.6,"drtg":96.5,"usg":19.8,"efg":54.0,"ts":55.1,"orb":11.8,"drb":13.8},"137":{"minPct":70.3,"prpg":3.4,"dprpg":3.7,"bpm":4.5,"obpm":2.9,"dbpm":1.6,"ortg":122.0,"drtg":95.7,"usg":23.0,"efg":55.9,"ts":60.5,"orb":4.0,"drb":10.5},"138":{"minPct":63.6,"prpg":1.4,"dprpg":3.7,"bpm":2.7,"obpm":-0.3,"dbpm":3.0,"ortg":106.0,"drtg":92.0,"usg":19.4,"efg":43.8,"ts":53.0,"orb":9.4,"drb":14.7},"140":{"minPct":54.9,"prpg":2.9,"dprpg":4.5,"bpm":13.8,"obpm":6.5,"dbpm":7.2,"ortg":123.7,"drtg":82.6,"usg":16.8,"efg":58.0,"ts":56.8,"orb":6.4,"drb":19.2},"179":{"minPct":61.8,"prpg":0.9,"dprpg":3.3,"bpm":2.1,"obpm":0.7,"dbpm":1.4,"ortg":104.4,"drtg":95.4,"usg":17.0,"efg":50.9,"ts":52.8,"orb":2.8,"drb":9.7},"178":{"minPct":62.9,"prpg":6.3,"dprpg":3.8,"bpm":15.7,"obpm":10.2,"dbpm":5.5,"ortg":173.9,"drtg":89.5,"usg":14.7,"efg":82.0,"ts":82.6,"orb":5.1,"drb":16.0},"183":{"minPct":56.7,"prpg":2.6,"dprpg":2.1,"bpm":3.4,"obpm":3.5,"dbpm":-0.0,"ortg":119.5,"drtg":106.3,"usg":24.0,"efg":49.2,"ts":55.6,"orb":2.3,"drb":9.5},"184":{"minPct":79.6,"prpg":2.9,"dprpg":2.3,"bpm":2.1,"obpm":3.4,"dbpm":-1.3,"ortg":111.2,"drtg":112.8,"usg":25.4,"efg":57.8,"ts":59.8,"orb":2.1,"drb":11.4},"185":{"minPct":75.7,"prpg":4.4,"dprpg":3.5,"bpm":8.3,"obpm":6.5,"dbpm":1.9,"ortg":120.5,"drtg":100.5,"usg":28.6,"efg":53.8,"ts":57.2,"orb":7.6,"drb":19.1},"186":{"minPct":41.9,"prpg":1.7,"dprpg":1.9,"bpm":1.5,"obpm":1.3,"dbpm":0.1,"ortg":109.4,"drtg":100.0,"usg":26.0,"efg":43.0,"ts":56.8,"orb":4.6,"drb":11.7},"187":{"minPct":77.3,"prpg":5.1,"dprpg":3.4,"bpm":10.1,"obpm":7.8,"dbpm":2.3,"ortg":134.1,"drtg":102.1,"usg":22.6,"efg":60.0,"ts":62.2,"orb":9.4,"drb":11.2},"188":{"minPct":72.2,"prpg":5.2,"dprpg":3.6,"bpm":11.7,"obpm":9.2,"dbpm":2.6,"ortg":137.7,"drtg":97.3,"usg":23.0,"efg":68.4,"ts":70.2,"orb":5.8,"drb":23.9},"143":{"minPct":55.4,"prpg":1.5,"dprpg":2.1,"bpm":1.0,"obpm":1.0,"dbpm":0.0,"ortg":111.9,"drtg":106.5,"usg":14.9,"efg":45.5,"ts":48.4,"orb":3.1,"drb":9.6},"144":{"minPct":70.0,"prpg":3.1,"dprpg":3.4,"bpm":3.6,"obpm":3.2,"dbpm":0.4,"ortg":116.0,"drtg":98.7,"usg":25.0,"efg":59.6,"ts":64.0,"orb":4.9,"drb":10.6},"146":{"minPct":66.5,"prpg":3.3,"dprpg":4.0,"bpm":9.7,"obpm":6.5,"dbpm":3.2,"ortg":117.8,"drtg":89.8,"usg":26.1,"efg":48.3,"ts":50.1,"orb":4.1,"drb":13.4},"149":{"minPct":61.6,"prpg":2.4,"dprpg":2.7,"bpm":2.3,"obpm":2.7,"dbpm":-0.3,"ortg":115.5,"drtg":102.3,"usg":24.1,"efg":47.2,"ts":52.8,"orb":2.1,"drb":7.1},"150":{"minPct":77.4,"prpg":5.1,"dprpg":3.0,"bpm":6.8,"obpm":5.7,"dbpm":1.2,"ortg":129.0,"drtg":105.7,"usg":23.5,"efg":59.1,"ts":65.1,"orb":1.7,"drb":6.7},"153":{"minPct":45.9,"prpg":2.5,"dprpg":2.1,"bpm":7.2,"obpm":5.5,"dbpm":1.6,"ortg":136.3,"drtg":101.1,"usg":14.3,"efg":65.1,"ts":64.8,"orb":4.2,"drb":10.7},"154":{"minPct":48.6,"prpg":2.4,"dprpg":1.3,"bpm":0.1,"obpm":1.9,"dbpm":-1.9,"ortg":127.7,"drtg":114.4,"usg":20.1,"efg":48.6,"ts":54.0,"orb":3.3,"drb":5.5},"155":{"minPct":77.6,"prpg":2.6,"dprpg":2.7,"bpm":-0.9,"obpm":1.2,"dbpm":-2.1,"ortg":104.3,"drtg":108.1,"usg":28.4,"efg":50.0,"ts":56.0,"orb":1.5,"drb":12.7},"156":{"minPct":77.3,"prpg":2.3,"dprpg":3.3,"bpm":2.1,"obpm":1.0,"dbpm":1.0,"ortg":108.2,"drtg":102.9,"usg":20.4,"efg":50.8,"ts":57.0,"orb":5.6,"drb":16.2},"157":{"minPct":84.4,"prpg":3.3,"dprpg":3.2,"bpm":1.1,"obpm":1.8,"dbpm":-0.8,"ortg":112.6,"drtg":106.0,"usg":23.9,"efg":53.8,"ts":60.3,"orb":2.3,"drb":10.8},"158":{"minPct":40.2,"prpg":2.1,"dprpg":2.2,"bpm":4.4,"obpm":2.5,"dbpm":1.8,"ortg":125.3,"drtg":94.2,"usg":21.3,"efg":64.7,"ts":63.5,"orb":22.0,"drb":20.2},"159":{"minPct":60.0,"prpg":1.9,"dprpg":3.3,"bpm":6.7,"obpm":2.6,"dbpm":4.2,"ortg":111.6,"drtg":93.8,"usg":22.2,"efg":65.9,"ts":66.3,"orb":9.8,"drb":20.1},"160":{"minPct":49.1,"prpg":2.8,"dprpg":3.4,"bpm":11.7,"obpm":7.0,"dbpm":4.8,"ortg":131.1,"drtg":83.1,"usg":20.8,"efg":63.3,"ts":66.8,"orb":9.7,"drb":20.6},"161":{"minPct":56.1,"prpg":2.0,"dprpg":3.9,"bpm":7.2,"obpm":1.4,"dbpm":5.8,"ortg":124.2,"drtg":83.3,"usg":15.7,"efg":62.8,"ts":65.9,"orb":5.6,"drb":20.3},"163":{"minPct":63.8,"prpg":4.5,"dprpg":3.6,"bpm":10.5,"obpm":6.7,"dbpm":3.8,"ortg":156.3,"drtg":92.4,"usg":14.2,"efg":80.0,"ts":80.9,"orb":9.0,"drb":14.2},"164":{"minPct":46.7,"prpg":0.8,"dprpg":1.9,"bpm":-1.9,"obpm":-0.2,"dbpm":-1.7,"ortg":102.7,"drtg":104.5,"usg":18.5,"efg":41.5,"ts":48.2,"orb":2.5,"drb":12.4},"165":{"minPct":78.5,"prpg":5.5,"dprpg":1.7,"bpm":7.1,"obpm":7.9,"dbpm":-0.8,"ortg":116.0,"drtg":117.8,"usg":37.0,"efg":54.0,"ts":56.5,"orb":7.1,"drb":7.2},"166":{"minPct":82.7,"prpg":1.2,"dprpg":3.2,"bpm":-1.1,"obpm":0.0,"dbpm":-1.1,"ortg":99.5,"drtg":105.7,"usg":18.4,"efg":47.7,"ts":50.7,"orb":1.5,"drb":4.5},"167":{"minPct":79.9,"prpg":7.0,"dprpg":4.4,"bpm":13.3,"obpm":9.4,"dbpm":3.9,"ortg":139.9,"drtg":93.3,"usg":25.3,"efg":55.5,"ts":63.3,"orb":0.6,"drb":5.2},"168":{"minPct":68.9,"prpg":2.3,"dprpg":4.1,"bpm":3.7,"obpm":1.1,"dbpm":2.6,"ortg":112.0,"drtg":90.1,"usg":21.4,"efg":50.7,"ts":56.0,"orb":8.9,"drb":17.9},"169":{"minPct":82.2,"prpg":3.3,"dprpg":3.9,"bpm":6.9,"obpm":4.0,"dbpm":2.8,"ortg":116.7,"drtg":99.5,"usg":21.2,"efg":48.5,"ts":54.4,"orb":8.1,"drb":14.6},"170":{"minPct":74.3,"prpg":3.2,"dprpg":4.2,"bpm":7.0,"obpm":4.1,"dbpm":2.9,"ortg":115.7,"drtg":92.2,"usg":24.6,"efg":53.8,"ts":55.4,"orb":13.2,"drb":18.9},"171":{"minPct":60.3,"prpg":3.3,"dprpg":4.1,"bpm":13.7,"obpm":6.0,"dbpm":7.7,"ortg":127.8,"drtg":83.9,"usg":21.5,"efg":52.5,"ts":57.5,"orb":9.1,"drb":20.2},"172":{"minPct":69.3,"prpg":3.1,"dprpg":3.1,"bpm":3.2,"obpm":1.6,"dbpm":1.5,"ortg":130.0,"drtg":100.8,"usg":17.6,"efg":47.4,"ts":57.6,"orb":4.8,"drb":8.3},"173":{"minPct":66.9,"prpg":2.8,"dprpg":3.4,"bpm":5.8,"obpm":3.3,"dbpm":2.4,"ortg":119.2,"drtg":97.2,"usg":23.3,"efg":45.9,"ts":52.4,"orb":3.7,"drb":14.4},"174":{"minPct":89.7,"prpg":4.7,"dprpg":3.1,"bpm":5.4,"obpm":5.4,"dbpm":-0.0,"ortg":121.8,"drtg":108.1,"usg":25.2,"efg":53.5,"ts":58.8,"orb":1.5,"drb":8.7},"189":{"minPct":92.3,"prpg":6.5,"dprpg":3.8,"bpm":7.5,"obpm":6.7,"dbpm":0.8,"ortg":122.3,"drtg":103.9,"usg":32.5,"efg":52.7,"ts":62.0,"orb":9.4,"drb":15.8},"190":{"minPct":53.1,"prpg":1.9,"dprpg":3.9,"bpm":9.4,"obpm":2.8,"dbpm":6.5,"ortg":125.6,"drtg":80.0,"usg":15.8,"efg":72.4,"ts":69.1,"orb":8.3,"drb":14.1},"191":{"minPct":62.4,"prpg":4.4,"dprpg":3.1,"bpm":8.4,"obpm":7.3,"dbpm":1.1,"ortg":135.4,"drtg":97.5,"usg":22.8,"efg":62.8,"ts":67.1,"orb":1.4,"drb":9.3},"192":{"minPct":84.8,"prpg":4.0,"dprpg":5.1,"bpm":8.5,"obpm":4.2,"dbpm":4.3,"ortg":115.8,"drtg":89.9,"usg":26.9,"efg":43.6,"ts":48.2,"orb":0.4,"drb":6.4},"193":{"minPct":73.7,"prpg":5.3,"dprpg":3.5,"bpm":11.0,"obpm":8.6,"dbpm":2.4,"ortg":136.0,"drtg":99.4,"usg":26.2,"efg":60.8,"ts":68.7,"orb":5.1,"drb":13.0},"194":{"minPct":57.4,"prpg":4.0,"dprpg":3.7,"bpm":11.8,"obpm":7.2,"dbpm":4.7,"ortg":143.8,"drtg":86.5,"usg":19.2,"efg":76.0,"ts":78.3,"orb":12.2,"drb":25.7},"195":{"minPct":64.9,"prpg":3.5,"dprpg":4.6,"bpm":7.2,"obpm":4.5,"dbpm":2.7,"ortg":127.6,"drtg":89.1,"usg":19.2,"efg":52.9,"ts":56.6,"orb":3.7,"drb":17.3},"196":{"minPct":82.5,"prpg":4.8,"dprpg":4.5,"bpm":8.1,"obpm":6.4,"dbpm":1.7,"ortg":123.7,"drtg":93.6,"usg":26.2,"efg":52.6,"ts":62.3,"orb":3.4,"drb":9.9},"198":{"minPct":59.6,"prpg":2.0,"dprpg":2.8,"bpm":2.5,"obpm":3.6,"dbpm":-1.2,"ortg":116.8,"drtg":99.4,"usg":19.4,"efg":57.1,"ts":59.8,"orb":1.2,"drb":9.1},"199":{"minPct":67.3,"prpg":3.3,"dprpg":2.7,"bpm":5.0,"obpm":5.5,"dbpm":-0.5,"ortg":132.3,"drtg":104.7,"usg":15.4,"efg":65.2,"ts":65.2,"orb":6.6,"drb":12.2},"200":{"minPct":81.5,"prpg":5.0,"dprpg":3.3,"bpm":7.6,"obpm":6.5,"dbpm":1.1,"ortg":128.5,"drtg":104.3,"usg":23.9,"efg":54.4,"ts":63.0,"orb":4.0,"drb":12.5},"202":{"minPct":62.5,"prpg":5.3,"dprpg":3.0,"bpm":10.8,"obpm":9.1,"dbpm":1.7,"ortg":136.9,"drtg":98.4,"usg":29.3,"efg":70.4,"ts":73.5,"orb":16.8,"drb":23.1},"203":{"minPct":85.7,"prpg":8.0,"dprpg":2.6,"bpm":15.6,"obpm":14.3,"dbpm":1.3,"ortg":138.4,"drtg":111.8,"usg":30.3,"efg":58.0,"ts":65.3,"orb":2.4,"drb":11.3},"204":{"minPct":88.3,"prpg":5.1,"dprpg":2.0,"bpm":6.8,"obpm":7.3,"dbpm":-0.5,"ortg":119.2,"drtg":116.7,"usg":28.7,"efg":61.4,"ts":66.2,"orb":2.5,"drb":16.6},"205":{"minPct":82.3,"prpg":4.9,"dprpg":2.0,"bpm":4.9,"obpm":6.2,"dbpm":-1.3,"ortg":124.6,"drtg":115.6,"usg":26.9,"efg":61.6,"ts":67.3,"orb":4.8,"drb":4.6}};
+const ADV_COLS_PLAIN = ['minPct','prpg','dprpg','bpm','obpm','dbpm','ortg','usg','efg','ts','orb','drb','ast','tov','blk','stl'];
+const ADV_COLS_DRTG = ['minPct','prpg','dprpg','bpm','obpm','dbpm','ortg','drtg','usg','efg','ts','orb','drb','ast','tov','blk','stl'];
+function applyTrankAdv(pid, data, label){
+  SEASON_ADVANCED[pid] = Object.assign({}, data);
+  ADV_LIVE_LABEL[pid] = label || '2026-27';
+  ADV_SOURCE[pid] = 'trank';
+}
 async function loadAdvStatsLive(){
+  Object.keys(ADV_TRANK_BAKED).forEach(id => applyTrankAdv(+id, ADV_TRANK_BAKED[id], '2026-27'));
   try{
-    const { data, error } = await sb.from('player_adv_stats').select('player_id, season_label, data');
+    const { data, error } = await sb.from('player_adv_stats').select('player_id, season_label, data, source, updated_at');
     if(error){ console.warn('Live advanced stats unavailable', error.message || error); return; }
     (data || []).forEach(row => {
       if(!row || !row.data) return;
+      const isT = row.source === 'trank';
+      if(isT){ if(ADV_TRANK_BAKED[row.player_id] && new Date(row.updated_at || 0) < new Date(ADV_TRANK_BAKED_AT)) return; applyTrankAdv(row.player_id, row.data, row.season_label); return; }
+      if(ADV_SOURCE[row.player_id] === 'trank') return;
       SEASON_ADVANCED[row.player_id] = Object.assign({}, row.data);
       ADV_LIVE_LABEL[row.player_id] = row.season_label || 'Live';
     });
   } catch(e){ console.warn('Live advanced stats unavailable', e); }
 }
+/* ---- Weekly T-Rank advanced stats upload (owner only) ---- */
+function advOwner(){ return !!(currentUser && typeof MASTER_BOARD_USER_ID !== 'undefined' && currentUser.id === MASTER_BOARD_USER_ID); }
+function advEtParts(d){
+  const f = new Intl.DateTimeFormat('en-US', { timeZone:'America/New_York', weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false });
+  const o = {}; f.formatToParts(d).forEach(p => { o[p.type] = p.value; }); return o;
+}
+// The most recent Saturday 1:00 PM Eastern that is not in the future.
+function advLastSaturdayCut(now){
+  let t = new Date(Math.floor(now.getTime() / 900000) * 900000);
+  for(let i = 0; i < 8 * 96; i++){ const p = advEtParts(t); if(p.weekday === 'Sat' && (+p.hour % 24) === 13 && p.minute === '00') return t; t = new Date(t.getTime() - 900000); }
+  return null;
+}
+async function advLastUploadAt(){
+  let last = new Date(ADV_TRANK_BAKED_AT);
+  try{
+    const { data } = await sb.from('player_adv_stats').select('updated_at').eq('source', 'trank').order('updated_at', { ascending:false }).limit(1);
+    if(data && data[0] && data[0].updated_at){ const d = new Date(data[0].updated_at); if(d > last) last = d; }
+  }catch(e){}
+  return last;
+}
+async function maybeAdvUploadPrompt(){
+  if(!advOwner() || document.getElementById('advUploadModal')) return;
+  const cut = advLastSaturdayCut(new Date()); if(!cut) return;
+  try{ if(sessionStorage.getItem('ddhq_adv_snooze') === cut.toISOString()) return; }catch(e){}
+  const last = await advLastUploadAt();
+  if(last >= cut) return;
+  openAdvUpload(true, cut);
+}
+function advLoadPdfJs(){
+  return new Promise((res, rej) => {
+    if(window.pdfjsLib) return res(window.pdfjsLib);
+    const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = () => { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(pdfjsLib); };
+    s.onerror = () => rej(new Error('Could not load the PDF reader. Check your connection and try again.'));
+    document.head.appendChild(s);
+  });
+}
+async function advParsePdf(buf){
+  const pdfjs = await advLoadPdfJs(), doc = await pdfjs.getDocument({ data: buf }).promise, rows = [];
+  for(let pn = 1; pn <= doc.numPages; pn++){
+    const tc = await (await doc.getPage(pn)).getTextContent(), toks = [];
+    tc.items.forEach(it => {
+      const str = it.str; if(!str || !str.trim()) return;
+      const x = it.transform[4], y = it.transform[5], w = it.width || 0; let off = 0;
+      str.split(/(\s+)/).forEach(pt => { if(pt && !/^\s+$/.test(pt)) toks.push({ x: x + (w * off / str.length), y, s: pt }); off += pt.length; });
+    });
+    const cnt = {}; toks.forEach(t => { if(/^(Fr|So|Jr|Sr|RS)$/.test(t.s)){ const k = Math.round(t.x); cnt[k] = (cnt[k] || 0) + 1; } });
+    const ks = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]); if(!ks.length) continue;
+    const cx = +ks[0], lines = {}, cols = toks.some(t => t.s === 'D-RTG') ? ADV_COLS_DRTG : ADV_COLS_PLAIN;
+    toks.forEach(t => { const k = Math.round(t.y / 2.5); (lines[k] = lines[k] || []).push(t); });
+    Object.values(lines).forEach(line => {
+      line.sort((a, b) => a.x - b.x); const tk = line.map(t => t.s); if(tk.length < 16) return;
+      const ci = tk.findIndex((w, i) => /^(Fr|So|Jr|Sr|RS)$/.test(w) && /^\d-\d+$/.test(tk[i + 1] || '') && /^\d+$/.test(tk[i - 1] || ''));
+      if(ci < 1) return;
+      let j = tk.length; while(j > ci + 2 && /^-?\d+(\.\d+)?$/.test(tk[j - 1])) j--;
+      const tail = tk.slice(j); if(tail.length < 13) return;
+      // A right-hand column cut off by the page edge leaves a partial last number, so only count what is fully shown.
+      const nv = tail.slice(0, tail.length >= 16 ? tail.length : 13).map(Number), mid = line.slice(ci + 2, j - 1), o = {};
+      nv.forEach((v, i) => { if(cols[i]) o[cols[i]] = v; });
+      rows.push({ rk: +tk[ci - 1], name: mid.filter(t => t.x < cx + 147).map(t => t.s).join(' '), team: mid.filter(t => t.x >= cx + 147).map(t => t.s).join(' '), o });
+    });
+  }
+  // Keep only the stats that every player in the file has.
+  let common = null; rows.forEach(r => { const k = Object.keys(r.o); common = common ? common.filter(x => k.includes(x)) : k; });
+  rows.forEach(r => { Object.keys(r.o).forEach(k => { if(!common.includes(k)) delete r.o[k]; }); });
+  rows.common = common || [];
+  return rows;
+}
+function advNorm(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\b(jr|sr|ii|iii|iv)\b\.?/g, '').replace(/[^a-z]/g, ''); }
+function advSchool(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\bsaint\b/g, 'st').replace(/\bstate\b/g, 'st').replace(/\buconn\b/g, 'connecticut').replace(/[^a-z]/g, ''); }
+function advSchoolOk(a, b){ a = advSchool(a); b = advSchool(b); return !!(a && b && (a === b || a.startsWith(b) || b.startsWith(a))); }
+function advLast(n){ const p = String(n).toLowerCase().replace(/\b(jr|sr|ii|iii|iv)\b\.?/g, '').trim().split(/\s+/); return (p[p.length - 1] || '').replace(/[^a-z]/g, ''); }
+function advMatch(rows){
+  const by = {}; rows.forEach(r => { (by[advNorm(r.name)] = by[advNorm(r.name)] || []).push(r); });
+  const out = [], missing = [];
+  players.forEach(p => {
+    let c = by[advNorm(p.name)] || [];
+    if(c.length > 1) c = c.filter(x => advSchoolOk(x.team, p.school)).length ? c.filter(x => advSchoolOk(x.team, p.school)) : c;
+    if(!c.length) c = rows.filter(x => advLast(x.name) === advLast(p.name) && advSchoolOk(x.team, p.school) && x.name.toLowerCase().slice(0, 3) === p.name.toLowerCase().slice(0, 3));
+    if(!c.length){ missing.push(p.name); return; }
+    out.push({ p, data: Object.assign({}, c[0].o) });
+  });
+  return { matched: out, missing };
+}
+let advPending = null;
+function openAdvUpload(isPrompt, cut){
+  document.getElementById('advUploadModal')?.remove();
+  const o = document.createElement('div'); o.className = 'modal-overlay open'; o.id = 'advUploadModal'; o.style.zIndex = 9800;
+  o.innerHTML = `<div class="modal-box profile-modal-box" style="max-width:560px;">
+    <button class="modal-close" onclick="advUploadClose()">&times;</button>
+    <h2 style="margin-bottom:8px;">${isPrompt ? 'It is Saturday: upload this week\'s advanced stats' : 'Upload advanced stats'}</h2>
+    <p class="profile-empty" style="margin:0 0 14px;">Drop in this week's Bart Torvik T-Rank PDF. Players on the site are matched by name and school, and their Season Advanced Analytics update for everyone.</p>
+    <input type="file" id="advFile" accept="application/pdf,.pdf" onchange="advHandleFile(this.files[0])" style="width:100%; margin-bottom:12px;">
+    <div id="advStatus" class="modal-msg"></div>
+    <div id="advPreview" style="max-height:200px; overflow:auto; font-size:.8rem; margin:8px 0;"></div>
+    <button class="btn btn-solid" id="advSaveBtn" style="width:100%; margin-top:8px;" disabled onclick="advSave()">Save to site</button>
+    ${isPrompt ? `<button class="btn btn-ghost" style="width:100%; margin-top:8px;" onclick="advSnooze('${cut ? cut.toISOString() : ''}')">Not now</button>` : ''}
+  </div>`;
+  document.body.appendChild(o); advPending = null;
+}
+function advUploadClose(){ document.getElementById('advUploadModal')?.remove(); }
+function advSnooze(iso){ try{ sessionStorage.setItem('ddhq_adv_snooze', iso); }catch(e){} advUploadClose(); }
+async function advHandleFile(f){
+  const st = document.getElementById('advStatus'), pv = document.getElementById('advPreview'), btn = document.getElementById('advSaveBtn');
+  if(!f) return; btn.disabled = true; pv.innerHTML = ''; advPending = null;
+  st.className = 'modal-msg'; st.textContent = 'Reading the PDF...';
+  try{
+    const rows = await advParsePdf(await f.arrayBuffer());
+    if(!rows.length){ st.className = 'modal-msg error'; st.textContent = 'No T-Rank player rows found in that file.'; return; }
+    const m = advMatch(rows), kept = (rows.common || []).length;
+    advPending = m.matched;
+    st.className = 'modal-msg'; st.textContent = `Read ${rows.length} players. ${m.matched.length} of your ${players.length} site players matched.` + ` Only the ${kept} stats shown for every player in the PDF are kept.`;
+    pv.innerHTML = m.matched.slice(0, 400).map(x => `<div>${x.p.name} <span style="opacity:.6">${x.p.school}</span> &middot; PRPG! ${x.data.prpg} &middot; BPM ${x.data.bpm}</div>`).join('') + (m.missing.length ? `<p class="profile-empty" style="margin-top:8px;">Not in this PDF: ${m.missing.length} players (below the minutes cutoff or not matched). Their existing numbers stay as they are.</p>` : '');
+    btn.disabled = !m.matched.length;
+  }catch(e){ st.className = 'modal-msg error'; st.textContent = e.message || 'Could not read that PDF.'; }
+}
+async function advSave(){
+  if(!advPending || !advOwner()) return;
+  const st = document.getElementById('advStatus'), btn = document.getElementById('advSaveBtn'); btn.disabled = true; st.className = 'modal-msg'; st.textContent = 'Saving...';
+  const now = new Date().toISOString();
+  const rows = advPending.map(x => { const data = Object.assign({}, x.data); return { player_id: x.p.id, season: 2027, season_label: '2026-27', data, source: 'trank', updated_at: now }; });
+  try{
+    for(let i = 0; i < rows.length; i += 100){
+      const { error } = await sb.from('player_adv_stats').upsert(rows.slice(i, i + 100), { onConflict: 'player_id' });
+      if(error) throw error;
+    }
+    rows.forEach(r => applyTrankAdv(r.player_id, r.data, r.season_label));
+    st.className = 'modal-msg'; st.textContent = `Saved. ${rows.length} players updated on the site.`;
+    setTimeout(advUploadClose, 1600);
+  }catch(e){ st.className = 'modal-msg error'; st.textContent = 'Could not save: ' + (e.message || e) + ' (run adv_stats_upload.sql in Supabase once if you have not).'; btn.disabled = false; }
+}
+
 // Players whose scouting paragraph was rewritten in this file: a stale saved edit must not hide the new text.
 const FILE_SUMMARY_WINS = new Set([188, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 18, 20, 22, 23, 24, 27, 28, 33, 35, 37, 43, 44, 51, 53, 58, 70, 74, 78, 81, 83, 88, 89, 92, 93, 95, 98, 99, 100, 101, 104, 106, 108, 110, 113, 114, 115, 116, 117, 118, 120, 122, 126, 127, 128, 129, 131, 132, 134, 135, 140, 142, 143, 145, 146, 150, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 168, 169, 170, 171, 172, 173, 174, 47, 86, 66, 52, 61, 91, 54, 94, 55, 56, 82, 102, 107, 96, 85, 166, 167, 49, 39, 38, 50, 57, 111, 48, 87, 41, 42, 45, 80, 46, 103, 77, 15, 16, 17, 19, 21, 25, 26, 29, 30, 31, 32, 34, 36, 40, 79, 62, 84, 90, 64, 59, 68, 63, 60, 65]);
 async function loadAndApplyPlayerOverrides(){
@@ -6378,8 +6524,8 @@ const SEASON_ADV_DEFS = {
 };
 const SEASON_ADV_PCT_FIELDS_WHOLE = ["minPct","usg","efg","ts","orb","drb","ast","tov","blk","stl","ftr"];
 const SEASON_ADV_PCT_FIELDS_DECIMAL = ["far2pct","ftpct"];
-function renderSeasonAdvancedRows(data){
-  return Object.keys(SEASON_ADV_LABELS).filter(key => !['ftpct','minPct','fc40','far2pct','tpr100'].includes(key) && !(['ft','far2'].includes(key) && (data[key]===null || data[key]===undefined))).map(key => {
+function renderSeasonAdvancedRows(data, hideNA){
+  return Object.keys(SEASON_ADV_LABELS).filter(key => !['ftpct','minPct','fc40','far2pct','tpr100'].includes(key) && !(['ft','far2'].includes(key) && (data[key]===null || data[key]===undefined)) && !(hideNA && (data[key]===null || data[key]===undefined))).map(key => {
     const val = data[key];
     let display;
     if(val === null || val === undefined) display = 'N/A';
@@ -6392,8 +6538,8 @@ function renderSeasonAdvancedRows(data){
 function switchAdvYear(pid, which, btn){
   const d = which === 'last' ? SEASON_ADVANCED_LASTYEAR[pid] : SEASON_ADVANCED[pid];
   if(!d) return;
-  document.getElementById('advYearBody').innerHTML = renderSeasonAdvancedRows(d);
-  document.getElementById('advYearNote').textContent = which === 'last' ? 'Advanced metrics created by Bart Torvik.' : 'Live advanced metrics from CollegeBasketballData.com, updated nightly.';
+  document.getElementById('advYearBody').innerHTML = renderSeasonAdvancedRows(d, which !== 'last' && ADV_SOURCE[pid]==='trank');
+  document.getElementById('advYearNote').textContent = (which === 'last' || ADV_SOURCE[pid]==='trank') ? (which === 'last' ? 'Advanced metrics created by Bart Torvik.' : 'Advanced metrics created by Bart Torvik (T-Rank), updated weekly.') : 'Live advanced metrics from CollegeBasketballData.com, updated nightly.';
   btn.parentElement.querySelectorAll('.adv-year-tab').forEach(b => b.classList.toggle('active', b === btn));
   const panel = document.getElementById('seasonAdvPanel'); if(panel) panel.style.maxHeight = panel.scrollHeight + 'px';
 }
@@ -11351,6 +11497,7 @@ async function openProfileModal(){
 
   renderProfileModal(savedBoard, holdings, prices, ownFollowerCount, ownFollowingCount);
   loadStaffActivity();
+  if(advOwner()){ try{ const c = document.getElementById('profileModalContent'); if(c && !document.getElementById('advUploadBtn')){ const bt = document.createElement('button'); bt.id = 'advUploadBtn'; bt.className = 'btn btn-ghost'; bt.style.cssText = 'margin:0 0 12px;'; bt.textContent = 'Upload advanced stats'; bt.onclick = () => openAdvUpload(false); c.insertBefore(bt, c.firstChild); } }catch(e){} maybeAdvUploadPrompt(); }
 }
 
 function renderProfileModal(savedBoard, holdings, prices, ownFollowerCount, ownFollowingCount){
